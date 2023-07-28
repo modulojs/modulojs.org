@@ -1,0 +1,23 @@
+/* You can put site-wide settings here. These will never be prefixed and
+   instead included verbatim. Component styles will be listed after. */
+
+html {
+    line-height: 1.15;
+    text-size-adjust: 100%;
+    font-weight: 400;
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+
+
