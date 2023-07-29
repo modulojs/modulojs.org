@@ -10,14 +10,75 @@
         showarticles=true
         showtop=true
     >
+
+    <a name="start">
+    <h1 style="font-size: 3rem; color: var(--color-fg-semidark)">Modulo is easy to get started:</h1>
+
+    <x-TwoPanes class="highlighted">
+        <article slot="left">
+            <h2>Step 1: Include &amp; define a component:</h2>
+            <x-SyntaxHighlighter
+                value='<script Modulo src="//unpkg.com/mdu.js">
+    <Component name="Greet">
+        <Template>
+            <h2>Hello <slot></slot></h2>
+        </Template>
+    </Component>
+&lt;/script&gt;'></x-SyntaxHighlighter>
+        </article>
+
+        <article slot="right">
+            <h2>Step 2: Use &amp; re-use like it's regular HTML:</h2>
+<x-SyntaxHighlighter value='<div>
+    <x-Greet>Modulo</x-Greet>
+    <x-Greet>
+        My new <tt>HTML</tt>
+        Web Component!
+    </x-Greet>
+&lt;/div&gt;'></x-SyntaxHighlighter>
+        </article>
+    </x-TwoPanes>
+
+
+    <x-TwoPanes class="highlighted">
+        <article slot="left">
+            <h2>Brand new? Take the tutorial!</h2>
+            <p style="width: 300px">Modulo is brand new in general, so it's probably brand new to
+            you as well! The Modulo tutorial goes through Modulo basics,
+            starting with HTML and CSS (part 1 and 2), and then JavaScript
+            (part 3).</p>
+        </article>
+
+        <article slot="right">
+            <h2>Or, use NPM to start a new JAMStack project:</h2>
+            <x-SyntaxHighlighter
+                mode="bash"
+                value='# Run in a shell with NPM:
+npm init modulo
+cd new-modulo-app/
+npm run start # https://localhost:3334
+
+# Optional, for Decap CMS to edit articles:
+npm run startcms # (run in separate shell)
+# https://localhost:3334/static/cms/admin/'></x-SyntaxHighlighter>
+        </article>
+
+    </x-TwoPanes>
+
+<h3 style="text-align: center">
+Download:
+    <a href="https://unpkg.com/mdu.js" download="Modulo.js">
+    <span alt="Down arrow">&#x2304;</span> Modulo.js (Latest)</a>
+</h3>
+
+
     <x-TwoPanes>
-        <aside slot="left-slot">
+        <aside slot="left">
             <h3><span alt="Null set">&#8709;</span></h3>
-            <h3>Fewer</h3>
-            <h3>assumptions</h3>
-            <p><a href="start.html">Get started now &#187;</a></p>
+            <h3>Fewer<br />assumptions</h3>
+            <!--<p><a href="/docs/tutorial_part1.html">Continue learning with the tutorial &#187;</a></p>-->
         </aside>
-        <aside slot="right-slot">
+        <article slot="right">
             <p><strong>Zero set-up</strong> - Like the "golden age" of jQuery,
             just drop it into any HTML file.  Unlike jQuery, that 1 file packs
             in many of the creature-comforts of a modern component framework,
@@ -38,7 +99,147 @@
             that will never go away? Sprinkle in some Modulo components to make
             your "traditional" web apps
             <em>shine</em>.</p>
+        </article>
+    </x-TwoPanes>
+
+
+<!--
+
+        <h2>Starting snippet (library)</h2>
+        <p>When keeping your <em>Components</em> in a separate file (e.g.
+        <code>static/components.html</code>), include with the following:</p>
+        <mws-Demo
+        text='<script Modulo
+    src="https://unpkg.com/mdu.js"
+    -src="/static/components.html"
+></script>'></mws-Demo>
+
+    </div>
+
+
+        <section class="Tutorial-tryit">
+            <h4>Brand new?</h4>
+
+            <p style="margin-top: 10px"><strong>Take the tutorial!</strong></p>
+
+            <p>Modulo is brand new in general, so it's probably brand new to you as
+            well! The Modulo tutorial goes through Modulo basics, starting with
+            HTML and CSS (part 1 and 2), and then JavaScript (part 3).</p>
+
+            <a class="m-Btn" style="margin-top: 30px"
+                href="/docs/tutorial_part1.html">Start the Tutorial &#187;</a>
+        </section>
+
+
+<div class="Docs-sideBySide">
+    <div class="Docs-squareInfo">
+    </div>
+
+    <div class="Docs-squareInfo Docs-demos Tutorial-tryit">
+        <p><strong style="background: white;">Learn by example?</strong></p>
+        <a class="m-Btn" href="/demos/">
+            <span>Explore the demos &#187;</span>
+        </a>
+    </div>
+</div>
+
+
+<div class="Docs-squareInfo">
+    <h2>More ways to get started</h2>
+
+    <h3>Alternative CDNs</h3>
+    <ul>
+
+        <li>You can pin a specific version of Modulo as such:
+        <pre>https://unpkg.com/mdu.js@0.0.36/src/Modulo.js</pre>
+        </li>
+
+    </ul>
+</div>
+-->
+<div class="Docs-sideBySide">
+    <div>
+
+    </div>
+    <div>
+        <h3>NPM (Experimental)</h3>
+        <p>If you prefer developing using <code>npm</code>, or want to try
+        using Modulo to build an SSG-powered website, then get started with the
+        tiny <a href="http://npmjs.com/package/create-modulo">create-modulo</a>
+        scaffolding tool.</p>
+        <ul>
+            <li> <code>npm init modulo</code>
+            <br /> <em> or...</em><br />
+            </li>
+            <li> <code>npx create-modulo</code> </li>
+        </ul>
+
+    </div>
+</div>
+
+
+    <x-TwoPanes>
+        <article slot="left">
+            <p><strong>Component Parts</strong> - Modular "Lego blocks" for
+            your components! Combine Script, Style, State, Props, and Templates to
+            make components that with these features.</p>
+
+            <p><strong>Everything is transparent and swappable</strong> -
+            Component Parts (CParts) are a flexible form of component middleware:
+            You can create custom CParts to support your backend APIs, "mix and
+            match" your favorite JS templating languages (e.g., <a
+            href="/demos/jsx_template.html">JSX</a> or <a
+            href="/demos/handlebars_templater.html">Handlebars</a>), or fine-tune
+            DOM-resolution behavior, either globally, or on a per-component basis.
+            Lifecycle callbacks are especially powerful, allowing you to hook your
+            own code into the DOM or any steps of the rendering process.</p>
+
+            <p><strong>A novel approach to component development</strong> -
+            Modulo's separation of CPart development from component development
+            allows JavaScript developers to write <a
+              title="Click for a demonstration of a custom CPart that wraps an API"
+              href="/demos/custom_cpart_for_api.html">pure JS to wrap APIs</a>, and
+            component developers to tie it all together with "low-code".</p>
+        </article>
+        <aside slot="right">
+            <h3><span alt="Sigma">&#x03A3;</span></h3>
+            <h3>More<br />modular</h3>
+            <!--<p><a href="/docs/">Read the docs &#187;</a></p>-->
         </aside>
+    </x-TwoPanes>
+
+
+    <x-TwoPanes>
+        <aside slot="left">
+            <h3><span alt="Modulo operator">%</span></h3>
+            <h3>Similar<br />(but&nbsp;simpler)</h3>
+            <!--<p><a href="/demos/">Play around with some examples &#187;</a></p>-->
+        </aside>
+        <article slot="right">
+            <p><strong>"It's like React"</strong> - Modulo is
+            "batteries-included" to function like React.js or Vue.js. You get
+            encapsulated components with state management, two-way data
+            binding, props, computed values, smart DOM resolution, event
+            directives, and more. You even get a simple importing and
+            namespacing system, which can "self-pack" your components into a
+            single JS file!</p>
+
+            <p><strong>Clean & concise</strong> - The code-base of Modulo
+            itself is intentionally kept short &amp; sweet: It's roughly 1500
+            <abbr title="Source Lines of Code - This counts 'physical lines' and thus does not include comments, documentation, blanks, etc">SLOC</abbr>,
+            80 char line limit, 4 spaces of indent, and a
+            <abbr title="Try to keep cyclomatic complexity of functions to 3 or lower">low-complexity</abbr>
+            imperative style. When something goes
+            wrong (which it probably will since it's new), it's easier to
+            "<tt>git blame</tt>"
+            Modulo.</p>
+
+            <p><strong>A basis for whatever comes next</strong> - Writing your own
+            framework? Modulo's core for loading &amp; mounting CParts is only ~500
+            SLOC. Read the source code, fork away, and swap the
+            "batteries-included" for your own!</p>
+
+        </article>
     </x-TwoPanes>
 
 </x-Page>
@@ -46,63 +247,11 @@
 
 <!--
 <section class="SideBySide">
-    <aside>
-        <p><strong>Component Parts</strong> - Modular "Lego blocks" for
-        your components! Combine Script, Style, State, Props, and Templates to
-        make components that with these features.</p>
-
-        <p><strong>Everything is transparent and swappable</strong> -
-        Component Parts (CParts) are a flexible form of component middleware:
-        You can create custom CParts to support your backend APIs, "mix and
-        match" your favorite JS templating languages (e.g., <a
-        href="/demos/jsx_template.html">JSX</a> or <a
-        href="/demos/handlebars_templater.html">Handlebars</a>), or fine-tune
-        DOM-resolution behavior, either globally, or on a per-component basis.
-        Lifecycle callbacks are especially powerful, allowing you to hook your
-        own code into the DOM or any steps of the rendering process.</p>
-
-        <p><strong>A novel approach to component development</strong> -
-        Modulo's separation of CPart development from component development
-        allows JavaScript developers to write <a
-          title="Click for a demonstration of a custom CPart that wraps an API"
-          href="/demos/custom_cpart_for_api.html">pure JS to wrap APIs</a>, and
-        component developers to tie it all together with "low-code".</p>
-    </aside>
-    <aside>
-        <h3><span alt="Sigma">&#x03A3;</span></h3>
-        <h3>More<br />modular</h3>
-        <p><a href="/docs/">Read the docs &#187;</a></p>
-    </aside>
-</section>
-
-<section class="SideBySide">
     <aside class="TitleAside">
-        <h3><span alt="Modulo operator">%</span></h3>
-        <h3>Similar<br />(but&nbsp;simpler)</h3>
-        <p><a href="/demos/">Play around with some examples &#187;</a></p>
     </aside>
 
     <aside>
-        <p><strong>"It's like React"</strong> - Modulo is "batteries-included"
-        to function like React.js or Vue.js. You get encapsulated components
-        with state management, two-way data binding, props, computed values,
-        smart DOM resolution, event directives, and more. You even get a simple
-        importing and namespacing system, which can "self-pack" your components
-        into a single JS file!</p>
-
-        <p><strong>Clean & concise</strong> - The code-base of Modulo itself is
-        intentionally kept short &amp; sweet: It's roughly 1500
-        <abbr title="Source Lines of Code - This counts 'physical lines' and thus does not include comments, documentation, blanks, etc">SLOC</abbr>,
-        80 char line limit, 4 spaces of
-        indent, and a <abbr title="Try to keep cyclomatic complexity of functions to 3 or lower">low-complexity</abbr>
-        imperative style. When something goes wrong (which it
-        probably will since it's new), it's easier to "<tt>git blame</tt>"
-        Modulo.</p>
-
-        <p><strong>A basis for whatever comes next</strong> - Writing your own
-        framework? Modulo's core for loading &amp; mounting CParts is only ~500
-        SLOC. Read the source code, fork away, and swap the
-        "batteries-included" for your own!</p>
     </aside>
 </section>
 -->
+

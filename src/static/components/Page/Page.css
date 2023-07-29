@@ -5,7 +5,9 @@
     --btn-shadow-dist-neg: -4px;
     --color-fg: black;
     --color-fg-semi: #00000088;
+    --color-fg-semidark: #000000DD;
     --color: #B90183;
+    --color-alt: #a2e4b8;
     --color-content-bg: white;
     --color-outline: #111;
 }
@@ -25,12 +27,7 @@
 }
 
 .page-content {
-    border: 1px solid var(--color-fg-semi);
-    box-shadow: 5px 5px var(--color-fg-semi);
     background: var(--color-content-bg);
-    border-radius: 0 5px 5px 5px;
-    padding: 10px;
-    margin: 10px;
 }
 
 .page-content h1 {
@@ -39,6 +36,17 @@
 
 .page-content code {
     border-bottom: 1px dashed gray;
+}
+
+.page-content a {
+    color: var(--color-fg-semidark);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--color);
+}
+
+
+.page-content a:hover {
+    border-bottom: 1px solid var(--color);
 }
 
 .page-nav {

@@ -1,8 +1,9 @@
 <!--
-    This is the common "header" across all the pages on this site. Define more
-    components here to have them be available with an "x-" prefix, or create
-    new libraries and include them in file with <Library -src=...></Library>
+  This is the common "header" across all the pages on this site.
+  All components necessary for the main pages of the modulo website are defined
+  here.
 -->
+
 <Component name="Page" mode="vanish-into-document">
     <Props
         pagetitle
@@ -77,29 +78,19 @@
 </Component>
 
 <Component name="TwoPanes" mode="vanish">
+    <Props
+        class
+    ></Props>
     <Template>
         <section>
-            <slot name="left-slot" class="pane"></slot>
-            <slot name="right-slot" class="pane"></slot>
+            <slot name="left" class="pane {{ props.class }}"></slot>
+            <slot name="right" class="pane {{ props.class }}"></slot>
         </section>
     </Template>
-    <Style -auto-isolate="vanish">
-      section {
-          display: flex;
-          padding: 10px;
-          width: 100%;
-      }
-      .pane {
-          display: block;
-          border: 1px solid var(--color);
-          margin: 10px;
-          min-width: 200px;
-          padding: 10px;
-      }
-      p strong {
-          color: var(--color);
-      }
-    </Style>
+    <Style
+        -auto-isolate="vanish"
+        -src="./components/TwoPanes/TwoPanes.css"
+    ></Style>
 </Component>
 
 <Component name="SyntaxHighlighter">
@@ -114,8 +105,14 @@
               element.innerHTML = hljs.highlight(text, opts).value;
           }
     </Script>
-    <Style
-        -src="./components/SyntaxHighlighter/highlight/atom-one-light.css"
-    ></Style>
+    <Style -src="./components/SyntaxHighlighter/highlight/atom-one-light.css">
+        :host {
+            font-family: monospace;
+            text-align: start;
+            white-space: pre-wrap;
+            overflow-wrap: break-word;
+            box-sizing: border-box;
+        }
+    </Style>
 </Component>
 
