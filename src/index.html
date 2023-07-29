@@ -10,55 +10,46 @@
         showarticles=true
         showtop=true
     >
-    <a name="about"></a>
-    <h1>Upgrade your HTML with components</h1>
+    <x-TwoPanes>
+        <aside slot="left-slot">
+            <h3><span alt="Null set">&#8709;</span></h3>
+            <h3>Fewer</h3>
+            <h3>assumptions</h3>
+            <p><a href="start.html">Get started now &#187;</a></p>
+        </aside>
+        <aside slot="right-slot">
+            <p><strong>Zero set-up</strong> - Like the "golden age" of jQuery,
+            just drop it into any HTML file.  Unlike jQuery, that 1 file packs
+            in many of the creature-comforts of a modern component framework,
+            without any dependencies or new syntax to learn. You can even compile
+            to a single JS file, directly from your browser!</p>
 
-<section class="SideBySide">
-    <aside class="TitleAside">
-        <h3><span alt="Null set">&#8709;</span></h3>
-        <h3>Fewer</h3>
-        <h3>assumptions</h3>
-        <p><a href="start.html">Get started now &#187;</a></p>
-    </aside>
-    <aside>
-        <p><strong>Zero set-up</strong> - Like the "golden age" of jQuery,
-        just drop it into any HTML file.  Unlike jQuery, that 1 file packs
-        in many of the creature-comforts of a modern component framework,
-        without any dependencies or new syntax to learn. You can even compile
-        to a single JS file, directly from your browser!</p>
-        <!--
-        a modern component system, a swappable templating language based on
-        Liquid-syntax, DOM resolution, and more.  , a tiny build system to pack
-        your CSS and JS for production, and even debug tools.</p>-->
+            <p><strong>A gentler learning curve</strong> - Modulo's declarative,
+            synchronous HTML-first approach was designed to be easier for coding
+            newbies to pick-up&mdash;in fact, useful components can be developed
+            without writing any JavaScript code!</p>
 
-        <p><strong>A gentler learning curve</strong> - Modulo's declarative,
-        synchronous HTML-first approach was designed to be easier for coding
-        newbies to pick-up&mdash;in fact, useful components can be developed
-        without writing any JavaScript code!</p>
+            <p><strong><strike style="color: gray">Progressive Web Apps</strike>
+            Progressive Enhancement</strong> - Modulo makes few assumptions, and
+            renders components mixed with plain HTML for easier integration into
+            backend apps. SPA's and PWA's are fine and all, and Modulo could be
+            used for these as well, but what about all our existing server-side
+            apps in Ruby on Rails, Python, Go, or that one home-grown PHP monster
+            that will never go away? Sprinkle in some Modulo components to make
+            your "traditional" web apps
+            <em>shine</em>.</p>
+        </aside>
+    </x-TwoPanes>
 
-        <p><strong><strike style="color: gray">Progressive Web Apps</strike>
-        Progressive Enhancement</strong> - Modulo makes few assumptions, and
-        renders components mixed with plain HTML for easier integration into
-        backend apps. SPA's and PWA's are fine and all, and Modulo could be
-        used for these as well, but what about all our existing server-side
-        apps in Ruby on Rails, Python, Go, or that one home-grown PHP monster
-        that will never go away? Sprinkle in some Modulo components to make
-        your "traditional" web apps
-        <em>shine</em>.</p>
-        <!--
-        <abbr title="In fact, Modulo templating language uses a backend-inspired 'Djangolike' or Liquid-style syntax templating language, e.g. {{ example|filter }}">
-        </abbr>
-        -->
-    </aside>
-</section>
+</x-Page>
 
+
+<!--
 <section class="SideBySide">
     <aside>
         <p><strong>Component Parts</strong> - Modular "Lego blocks" for
         your components! Combine Script, Style, State, Props, and Templates to
-        make components that with these features.<!--
-        Reusing CParts between components provides a powerful system
-        of "composition-based" inheritance.--></p>
+        make components that with these features.</p>
 
         <p><strong>Everything is transparent and swappable</strong> -
         Component Parts (CParts) are a flexible form of component middleware:
@@ -88,7 +79,6 @@
     <aside class="TitleAside">
         <h3><span alt="Modulo operator">%</span></h3>
         <h3>Similar<br />(but&nbsp;simpler)</h3>
-        <!--<p><a href="https://github.com/modulojs/modulo/blob/main/src/Modulo.js">Read the source</a></p>-->
         <p><a href="/demos/">Play around with some examples &#187;</a></p>
     </aside>
 
@@ -115,7 +105,4 @@
         "batteries-included" for your own!</p>
     </aside>
 </section>
-
-
-</x-Page>
-
+-->

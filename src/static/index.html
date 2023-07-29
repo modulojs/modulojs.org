@@ -76,6 +76,32 @@
     ></Style>
 </Component>
 
+<Component name="TwoPanes" mode="vanish">
+    <Template>
+        <section>
+            <slot name="left-slot" class="pane"></slot>
+            <slot name="right-slot" class="pane"></slot>
+        </section>
+    </Template>
+    <Style -auto-isolate="vanish">
+      section {
+          display: flex;
+          padding: 10px;
+          width: 100%;
+      }
+      .pane {
+          display: block;
+          border: 1px solid var(--color);
+          margin: 10px;
+          min-width: 200px;
+          padding: 10px;
+      }
+      p strong {
+          color: var(--color);
+      }
+    </Style>
+</Component>
+
 <Component name="SyntaxHighlighter">
     <Props
         value

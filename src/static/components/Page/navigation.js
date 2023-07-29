@@ -1,16 +1,16 @@
 {
     navigation: [
         {
-            title: "About",
+            title: "Start",
             file: "index.html",
             urlFrag: "about",
         },
         {
-            title: "Start",
+            title: "Docs",
             file: "about.html",
         },
         {
-            title: "Docs",
+            title: "Examples",
             file: "contact.html",
         },
     ],
