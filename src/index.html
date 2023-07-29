@@ -7,51 +7,60 @@
 <x-Page
         pagetitle="Modulo"
         navselected="index.html"
-        showarticles=true
+        shownews=true
         showtop=true
     >
 
-    <a name="start">
-    <h1 style="font-size: 3rem; color: var(--color-fg-semidark)">Modulo is easy to get started:</h1>
+    <a name="start"></a>
+    <h1>Easy to start</h1>
 
+    <p>Writing your first component takes only <strong>2 steps</strong>,
+    and integrates with nearly any web app or project that uses HTML:</p>
     <x-TwoPanes class="highlighted">
         <article slot="left">
-            <h2>Step 1: Include &amp; define a component:</h2>
+            <h2>Step 1: Include Modulo &amp; define a component:</h2>
             <x-SyntaxHighlighter
-                value='<script Modulo src="//unpkg.com/mdu.js">
+                value='<script Modulo src="https://unpkg.com/mdu.js">
     <Component name="Greet">
         <Template>
-            <h2>Hello <slot></slot></h2>
+            <h2>Hey there, <slot></slot>!</h2>
         </Template>
     </Component>
 &lt;/script&gt;'></x-SyntaxHighlighter>
         </article>
 
         <article slot="right">
-            <h2>Step 2: Use &amp; re-use like it's regular HTML:</h2>
+            <h2>Step 2: Use like it's regular HTML:</h2>
 <x-SyntaxHighlighter value='<div>
     <x-Greet>Modulo</x-Greet>
     <x-Greet>
-        My new <tt>HTML</tt>
-        Web Component!
+        my new <tt>HTML</tt>
+        web component
     </x-Greet>
 &lt;/div&gt;'></x-SyntaxHighlighter>
         </article>
     </x-TwoPanes>
 
 
-    <x-TwoPanes class="highlighted">
+    <x-TwoPanes class="subtle">
         <article slot="left">
             <h2>Brand new? Take the tutorial!</h2>
-            <p style="width: 300px">Modulo is brand new in general, so it's probably brand new to
-            you as well! The Modulo tutorial goes through Modulo basics,
-            starting with HTML and CSS (part 1 and 2), and then JavaScript
-            (part 3).</p>
+            <p style="max-width: 380px">Modulo is brand new in general, so it's
+            probably brand new to you as well! The Modulo tutorial goes through
+            Modulo basics, starting with HTML and CSS (part 1 and 2), and then
+            JavaScript (part 3).
+            </p>
+            <p>
+                <a href="/tutorial/" class="cta-btn">Start Tutorial &raquo;</a>
+            </p>
         </article>
 
         <article slot="right">
-            <h2>Or, use NPM to start a new JAMStack project:</h2>
+            <h2>Advanced usage: Using NPM to start a new project:</h2>
+            <p>Scaffold a JAMStack project configured with CMS and SSR for
+            building on Netlify and other hosts:</p>
             <x-SyntaxHighlighter
+                style="padding-left: 20px;"
                 mode="bash"
                 value='# Run in a shell with NPM:
 npm init modulo
@@ -59,24 +68,26 @@ cd new-modulo-app/
 npm run start # https://localhost:3334
 
 # Optional, for Decap CMS to edit articles:
-npm run startcms # (run in separate shell)
-# https://localhost:3334/static/cms/admin/'></x-SyntaxHighlighter>
+npm run startcms # (run in separate shell)'></x-SyntaxHighlighter>
         </article>
 
     </x-TwoPanes>
 
-<h3 style="text-align: center">
-Download:
-    <a href="https://unpkg.com/mdu.js" download="Modulo.js">
-    <span alt="Down arrow">&#x2304;</span> Modulo.js (Latest)</a>
-</h3>
+    <h3 style="text-align: right">
+        Download the one file directly:
+        <a href="https://unpkg.com/mdu.js" download="Modulo.js">
+            Modulo.js (<x-ProjectVersion></x-ProjectVersion>)
+            <span alt="Down arrow">&#x2304;</span>
+        </a>
+    </h3>
 
+    <h1>Why Modulo?</h1>
 
     <x-TwoPanes>
         <aside slot="left">
             <h3><span alt="Null set">&#8709;</span></h3>
             <h3>Fewer<br />assumptions</h3>
-            <!--<p><a href="/docs/tutorial_part1.html">Continue learning with the tutorial &#187;</a></p>-->
+            <p><a href="/tutorial/">Get started now &#187;</a></p>
         </aside>
         <article slot="right">
             <p><strong>Zero set-up</strong> - Like the "golden age" of jQuery,
@@ -101,82 +112,6 @@ Download:
             <em>shine</em>.</p>
         </article>
     </x-TwoPanes>
-
-
-<!--
-
-        <h2>Starting snippet (library)</h2>
-        <p>When keeping your <em>Components</em> in a separate file (e.g.
-        <code>static/components.html</code>), include with the following:</p>
-        <mws-Demo
-        text='<script Modulo
-    src="https://unpkg.com/mdu.js"
-    -src="/static/components.html"
-></script>'></mws-Demo>
-
-    </div>
-
-
-        <section class="Tutorial-tryit">
-            <h4>Brand new?</h4>
-
-            <p style="margin-top: 10px"><strong>Take the tutorial!</strong></p>
-
-            <p>Modulo is brand new in general, so it's probably brand new to you as
-            well! The Modulo tutorial goes through Modulo basics, starting with
-            HTML and CSS (part 1 and 2), and then JavaScript (part 3).</p>
-
-            <a class="m-Btn" style="margin-top: 30px"
-                href="/docs/tutorial_part1.html">Start the Tutorial &#187;</a>
-        </section>
-
-
-<div class="Docs-sideBySide">
-    <div class="Docs-squareInfo">
-    </div>
-
-    <div class="Docs-squareInfo Docs-demos Tutorial-tryit">
-        <p><strong style="background: white;">Learn by example?</strong></p>
-        <a class="m-Btn" href="/demos/">
-            <span>Explore the demos &#187;</span>
-        </a>
-    </div>
-</div>
-
-
-<div class="Docs-squareInfo">
-    <h2>More ways to get started</h2>
-
-    <h3>Alternative CDNs</h3>
-    <ul>
-
-        <li>You can pin a specific version of Modulo as such:
-        <pre>https://unpkg.com/mdu.js@0.0.36/src/Modulo.js</pre>
-        </li>
-
-    </ul>
-</div>
--->
-<div class="Docs-sideBySide">
-    <div>
-
-    </div>
-    <div>
-        <h3>NPM (Experimental)</h3>
-        <p>If you prefer developing using <code>npm</code>, or want to try
-        using Modulo to build an SSG-powered website, then get started with the
-        tiny <a href="http://npmjs.com/package/create-modulo">create-modulo</a>
-        scaffolding tool.</p>
-        <ul>
-            <li> <code>npm init modulo</code>
-            <br /> <em> or...</em><br />
-            </li>
-            <li> <code>npx create-modulo</code> </li>
-        </ul>
-
-    </div>
-</div>
-
 
     <x-TwoPanes>
         <article slot="left">
@@ -204,7 +139,7 @@ Download:
         <aside slot="right">
             <h3><span alt="Sigma">&#x03A3;</span></h3>
             <h3>More<br />modular</h3>
-            <!--<p><a href="/docs/">Read the docs &#187;</a></p>-->
+            <p><a href="/docs/">Read the docs &#187;</a></p>
         </aside>
     </x-TwoPanes>
 
@@ -213,7 +148,7 @@ Download:
         <aside slot="left">
             <h3><span alt="Modulo operator">%</span></h3>
             <h3>Similar<br />(but&nbsp;simpler)</h3>
-            <!--<p><a href="/demos/">Play around with some examples &#187;</a></p>-->
+            <p><a href="/examples/">Play around with some examples &#187;</a></p>
         </aside>
         <article slot="right">
             <p><strong>"It's like React"</strong> - Modulo is

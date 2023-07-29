@@ -58,7 +58,7 @@
         </ul>
     </nav>
 
-    <div class="page-container container {% if props.showarticles %}articles-container{% endif %}">
+    <div class="page-container container {% if props.shownews %}articles-container{% endif %}">
         <main class="page-content">
             {% if props.navbreadcrumb %}
                     {% for page in staticdata.navigation %}
@@ -76,34 +76,34 @@
             <slot></slot>
         </main>
 
-        {% if props.showarticles %}
-            <nav class="article-nav">
+        {% if props.shownews %}
+        <div class="container">
+            <nav class="page-content">
+                <h1>Development News</h1>
                 <ul>
-                    <h1>Read one of our articles</h1>
                     {% for article in staticdata.articles %}
                         <li class="{% if article.file == props.navselected %}page-li--selected{% endif %}">
-                                <a
-                                    href="/{{ article.file }}"
-                                    title="{{ article.title }}"
-                                    class="page-nav-link {% if page.file == props.navselected %}page-nav-link--selected{% endif %}"
-                                    style="background: var(--color); color: white; font-size: 1.6rem"
-                                >
-                                    <span style="min-width: 250px; display: inline-block">{{ article.title }}</span>
-                                    <span style="margin-left: 5px; font-weight: normal; font-size: 1.4rem;">
-                                        {{ article.byline }}
-                                    </span>
-                                    <span style="margin: 11px; float: right; margin-top: -18px; opacity: 0.9">
-                                        <span style="font-size: 1.1rem; font-weight: normal;">
-                                            {{ article.estimate }}
-                                        </span><br />
-                                        <span style="font-size: 1.1rem">READ MORE</span>
-                                        &raquo;
-                                    </span>
+                            <a
+                                href="/{{ article.file }}"
+                                title="{{ article.title }}"
+                                class="page-nav-link {% if page.file == props.navselected %}page-nav-link--selected{% endif %}">
+                                <span style="min-width: 250px; display: inline-block">{{ article.title }}</span>
+                                <span style="margin-left: 5px; font-weight: normal; font-size: 1.4rem;">
+                                    {{ article.byline }}
+                                </span>
+                                <span style="margin: 11px; float: right; margin-top: -18px; opacity: 0.9">
+                                    <span style="font-size: 1.1rem; font-weight: normal;">
+                                        {{ article.estimate }}
+                                    </span><br />
+                                    <span style="font-size: 1.1rem">READ MORE</span>
+                                    &raquo;
+                                </span>
                             </a>
                         </li>
                     {% endfor %}
-              </ul>
-            </nav>
+                </ul>
+              </nav>
+          </div>
         {% endif %}
     </div>
 

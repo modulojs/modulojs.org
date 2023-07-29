@@ -3,15 +3,15 @@
         {
             title: "Start",
             file: "index.html",
-            urlFrag: "about",
+            urlFrag: "start",
         },
         {
             title: "Docs",
-            file: "about.html",
+            file: "docs/",
         },
         {
             title: "Examples",
-            file: "contact.html",
+            file: "examples/",
         },
     ],
     articles: [
