@@ -8,16 +8,65 @@ img {
     height: 80px;
 }
 
-h1 {
+h1 span {
     font-size: 3rem;
     margin: 0;
-    font-weight: 800;
+    font-weight: lighter;
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -2px;
+    font-size-adjust: 0.46;
 }
 
-h1 span {
+h1 span.ext {
     color: var(--color);
     font-size: 2.3rem;
 }
+
+.flying-letters {
+    font-weight: lighter;
+    position: fixed;
+    height: 0;
+    top: 0;
+    left: 0;
+    display: block;
+    visibility: hidden;
+    width: 80px;
+    height: 80px;
+    z-index: 2;
+    transition:
+        top 0.12s,
+        left 0.12s;
+}
+
+.flying-letters .letter {
+    position: absolute;
+    font-size: 3rem;
+    transition:
+        top 0.5s,
+        font-size: 0.7s,
+        left 0.2s;
+}
+
+.as-title .letter { font-size: 1rem; }
+.as-title .letter-m { left: 0; top: 0; }
+.as-title .letter-o { left: 1.04em; top: 0; }
+.as-title .letter-d { left: 1.68em; top: 0; }
+.as-title .letter-u { left: 2.42em; top: 0; }
+.as-title .letter-l { left: 3.19em; top: 0; }
+.as-title .letter-O { left: 3.50em; top: 0; }
+
+
+.as-logo .letter-m { left: 0.2rem; top: 0.2rem; }
+.as-logo .letter-o { left: 1.14em; top: 0.2rem; }
+.as-logo .letter-d { left: 0.2rem; top: 1.65rem; }
+.as-logo .letter-u { left: 0.74em; top: 1.4rem; }
+.as-logo .letter-l { left: 1.59em; top: 0.8rem;
+        transform: rotate(32deg); }
+.as-logo .letter-O { left: 1.79em; top: 1.6rem; }
+
+.as-title .letter { font-size: 2.4rem; }
+.as-logo .letter { font-size: 1.8rem; }
 
 h2 {
     font-size: 1.5rem;
@@ -50,6 +99,7 @@ li::before {
     transition: transform 0.1s;
     */
 }
+
 
 /*
 li:hover::before {

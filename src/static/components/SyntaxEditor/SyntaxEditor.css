@@ -3,10 +3,11 @@
     position: relative;
     min-height: 1rem;
     min-width: 1rem;
+    text-align: start;
+    text-size-adjust: 0.5;
 
-    /* Outline default is 50% gray, 90% opacity, so it should be
-        passable for both "lightmode" and "darkmode" type designs */
-    --outline-color: rgba(127, 127, 127, 0.9);
+    /* Passable for both "lightmode" and "darkmode" type designs */
+    --outline-color: #888888EA;
     --outline-width: 3px;
     --text-color: #151515;
 }
@@ -19,6 +20,7 @@
 textarea {
     top: 0;
     left: 0;
+    text-size-adjust: 0.5;
     font-size: 16px;
     width: 100%;
     border: none;
@@ -32,7 +34,10 @@ textarea {
     white-space: pre-wrap;
     overflow-wrap: break-word;
     box-sizing: border-box;
-    color: var(--text-color);
+    position: relative;
+    background: none;
+    color: #00000000 !important;
+    caret-color: var(--text-color);
 }
 
 .editor-underlay-container {
@@ -44,14 +49,6 @@ textarea {
 .editor-underlay-offset-wrapper {
     left: 0;
     position: absolute;
-}
-
-textarea {
-    position: relative;
-    background: none;
-    /*color: rgba(0, 0, 0, 0.001);*/
-    color: rgba(0, 0, 0, 0);
-    caret-color: var(--text-color);
 }
 
 textarea:focus {

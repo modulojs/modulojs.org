@@ -1,8 +1,6 @@
 :host {
     --footer-height: 100px;
     --navbar-height: 100px;
-    --logo-width: 50px;
-    --logo-height: 50px;
     --btn-shadow-dist: 4px;
     --btn-shadow-dist-neg: -4px;
     --color-fg: black;
@@ -11,6 +9,7 @@
     --color-content-bg: white;
     --color-outline: #111;
 }
+
 
 .container {
     display: grid;
@@ -47,13 +46,9 @@
     border-bottom: 1px solid var(--color-fg);
     background: var(--color-content-bg);
     height: var(--navbar-height);
-}
-
-.page-nav .nav-logo {
-    width: var(--logo-width);
-    height: var(--logo-height);
-    margin: 10px;
-    margin-left: auto;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .page-nav-right a {
@@ -73,9 +68,6 @@
     padding-top: 0;
 }
 
-.page-nav ul div.logo {
-    margin-top: 10px;
-}
 
 .page-nav li {
     list-style: none;
@@ -124,4 +116,16 @@
 
 .breadcrumb--selected {
     color: var(--color-fg-semi);
+}
+
+.page-nav ul div.logo {
+    margin-top: 10px;
+    position: relative;
+}
+
+.page-nav ul div.logo .logo-overlay {
+    opacity: 0.0;
+    position: absolute;
+    top: 0;
+    left: 0;
 }

@@ -11,7 +11,7 @@
 <body>
     {% if props.showtop %}
         <main class="container">
-            <x-HomeSplash></x-HomeSplash>
+            <x-HomeSplash image="#logo_overlay"></x-HomeSplash>
         </main>
     {% endif %}
 
@@ -19,10 +19,23 @@
         <ul>
             <div class="logo">
                 <a href="/">
-                    <img
-                        height="80"
-                        src="https://modulojs.org/img/modulo_logo.svg"
-                    />
+                    {% if props.showtop %}
+                        <img
+                            height="80"
+                            src="/static/images/logo_border.svg"
+                        />
+                        <img
+                            class="logo-overlay"
+                            id="logo_overlay"
+                            height="80"
+                            src="/static/images/modulo_logo.svg"
+                        />
+                    {% else %}
+                        <img
+                            height="80"
+                            src="/static/images/modulo_logo.svg"
+                        />
+                    {% endif %}
                 </a>
             </div>
 

@@ -39,7 +39,7 @@ function mergeStrings(baseText, overlayText) {
     let results = '';
     while (baseIndex < baseText.length || overlayIndex < overlayText.length) {
         const overlayChar = overlayText[overlayIndex];
-        const baseChar = baseText[baseIndex];
+        const baseChar = (baseIndex < baseText.length) ? baseText[baseIndex] : SIGIL;
         if (baseChar === SIGIL || baseChar === overlayChar) {
             results += (overlayChar && overlayChar !== SIGIL) ? overlayChar : ''; // Ensure str
             overlayIndex++;
@@ -76,12 +76,11 @@ function keyDown(ev) {
         clearTimeout(globalDebounce);
         globalDebounce = null;
     }
-    // If nothing / only whitespace is after this, then we can use the fast
-    // type-ahead effect
+    // Need to check if nothing / whitespace is after this (if can use fast lookahead)
     const originalValue = textarea.value;
     const after = originalValue.substr(state.selectionStart);
     const isOnEmptyLine = /^\s*$/.test(after) || /^\s*[\n\r]+/.test(after);
-    if (!isOnEmptyLine || !isCharacterKeyPress(ev)) { // Debounce at 10ms
+    if (!props.fast || !isOnEmptyLine || !isCharacterKeyPress(ev)) {
         globalDebounce = setTimeout(() => setStateAndRerender(textarea), 10);
         return; // Don't do fast-type-ahead
     }
@@ -93,7 +92,6 @@ function keyDown(ev) {
     // Person is typing, remove keydown for as fast as possible interaction
     textarea.removeEventListener('keydown', keyDown);
     textarea.removeEventListener('keyup', keyUp);
-
 
     setStateAndRerender(textarea); // Ensure state is updated with val 
 
@@ -112,7 +110,7 @@ function keyDown(ev) {
         setStateAndRerender(textarea);
         textarea.addEventListener('keydown', keyDown); // restore keydown
         textarea.addEventListener('keyup', keyUp); // restore keydown
-    }, 30); // Debounce at 30
+    }, 100); // Debounce at 100
 }
 
 function updateDimensions() {

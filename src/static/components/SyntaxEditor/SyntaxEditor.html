@@ -12,6 +12,15 @@
             <{{ props.component|default:"x-SyntaxHighlighter" }}
                 value="{{ state.value }}"
                 number="{{ props.number|default:'on' }}"
+                style="
+                    font-size: 16px;
+                    font-family: monospace;
+                    text-align: start;
+                    resize: none;
+                    white-space: pre-wrap;
+                    overflow-wrap: break-word;
+                    box-sizing: border-box;
+                "
             ></{{ props.component|default:"x-SyntaxHighlighter" }}>
         </div>
     </div>

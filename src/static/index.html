@@ -27,6 +27,9 @@
 </Component>
 
 <Component name="HomeSplash">
+    <Props
+        image
+    ></Props>
     <Template
         -src="./components/HomeSplash/HomeSplash.html"
     ></Template>
@@ -39,14 +42,18 @@
 </Component>
 
 <Component name="ProjectVersion" mode="vanish">
+  <Template>alpha&nbsp;v0.0.54</Template>
+  <!--
     <Template>alpha&nbsp;v{{ staticdata.version }}</Template>
     <StaticData -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"></StaticData>
+  -->
 </Component>
 
 <Component name="SyntaxEditor" rerender="manual">
     <Props
         value
         name
+        fast
         spellcheck
         component
         debounce-time
@@ -72,13 +79,17 @@
 <Component name="SyntaxHighlighter">
     <Props
         value
-        number
+        mode
     ></Props>
-    <Script
-        -src="./components/SyntaxHighlighter.js"
-    ></Script>
+    <Script -src="./components/SyntaxHighlighter/highlight/highlight.min.js">
+          function updateCallback(renderObj) {
+              const text = props.value || element.originalHTML;
+              const opts = { language: props.mode || 'django' };
+              element.innerHTML = hljs.highlight(text, opts).value;
+          }
+    </Script>
     <Style
-        -src="./components/SyntaxHighlighter.css"
+        -src="./components/SyntaxHighlighter/highlight/atom-one-light.css"
     ></Style>
 </Component>
 
