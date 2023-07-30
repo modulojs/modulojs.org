@@ -7,8 +7,25 @@
 <script Configuration -src="https://unpkg.com/showdown/dist/showdown.min.js">
     function getMarkdownData(source) {
         const converter = new showdown.Converter({ metadata: true });
-        const html = converter.makeHtml(source);
+        let html = converter.makeHtml(source);
         const data = converter.getMetadata();
+        /*
+        const params = {
+            left: "<pre><code\\b[^>]*>",
+            right: "</code></pre>",
+            flags: "g"
+        };
+            .replace(new RegExp(params.left, 'gi'), 
+        */
+        html = html
+            .replace(/<pre><code\b[^>]*javascript*[^>]*>/gi, '<x-SyntaxHighlighter mode="javascript">')
+            .replace(/<pre><code\b[^>]*html*[^>]*>/gi, '<x-SyntaxHighlighter mode="html">')
+            .replace(/<pre><code\b[^>]*css*[^>]*>/gi, '<x-SyntaxHighlighter mode="css">')
+            .replace(/<pre><code\b[^>]*bash*[^>]*>/gi, '<x-SyntaxHighlighter mode="bash">')
+            .replace(/<pre><code\b[^>]*modulo*[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
+            .replace(/<pre><code\b[^>]*django*[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
+            .replace(/<pre><code\b[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
+            .replace(/<\/code><\/pre>/gi, '</x-SyntaxHighlighter>');
         data.body = Object.assign(String(html), { safe: true });
         return data;
     }

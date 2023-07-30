@@ -4,9 +4,9 @@ backend:
   branch: main
 media_folder: "static/cms/uploads"
 collections:
-  - label: "Articles"
-    name: "articles"
-    folder: "/articles/"
+  - label: "DevLog"
+    name: "devlog"
+    folder: "/devlog/"
     extension: "html"
     format: "yaml-frontmatter"
     frontmatter_delimiter: [

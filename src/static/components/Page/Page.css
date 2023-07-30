@@ -37,7 +37,7 @@
     padding: 5px;
     background:
         linear-gradient(to right, #00000000 0%, #00000000 25%, white 25.00001%, white 75%, #00000000 75.00001%, #00000000 100%),
-        linear-gradient(to bottom, white 0%, white 49%, black 49.00001%, black 51%, white 51.00001%, white 100%)
+        linear-gradient(to bottom, white 0%, white 49%, black 49.00001%, black 53%, white 53.00001%, white 100%)
     ;
 }
 
@@ -143,6 +143,16 @@
     position: absolute;
     top: 0;
     left: 0;
+}
+
+.articles a {
+    display: block;
+    font-family: monospace;
+}
+
+.article--selected {
+    background: var(--color-fg-semidark);
+    color: white;
 }
 
 /*

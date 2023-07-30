@@ -1,0 +1,53 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage>---
+title: 0.0.50 release
+---
+
+
+## The 0.0.50 release
+
+The main focus of Modulo alpha development has been rewriting the internal API
+used to make custom component parts. This is because the previous internal API
+(from before 0.0.30 or so) had inconsistencies and limitations, and it was
+clearly the absolute central way to extend the framework, and thus very
+important to get correct early on. I'm happy to say that the bulk of the
+internal and CPart API is stable, and the remaining tasks for Modulo alpha
+largely involve documenting, fixing various errors, and likely very few
+remaining actual new features or capabilities.
+
+### New API features
+
+A quick overview of the new API features:
+
+- **register() API**, which is a "plug-in" system, an easy way to attach (or
+  override) classes and functions to the Modulo object
+- **Definitions API**, which is a complete rewrite of the internal loading API
+  to be more transparent and data-oriented for debugging, while producing
+  slimmer and more consistent builds
+- **Config API**, which is a powerful configuration system for both application
+  configuration and 3rd party module configuration
+- **Processor API** which allows for static functions to iterate on
+  definitions, either private to definition classes (as static methods), or as
+  public, re-usable mixins (which is how <code>-src=</code> is implemented, and
+  how new data types can be implemented for the StaticData system)
+- **DOM render phase** which replaces "tag load directives" as the way to
+  modify DOM before the reconciliation process begins.
+
+
+### New user features
+
+All this effort was necessary to implement the following features:
+
+- **Stable builds** with fully bundled self-contained JS, CSS, and HTML (from
+  the browser or CLI)</li>
+- **CPart feature improvements**, including State allowing for stores (globally
+  connected data with global refresh), Style supporting class-based isolation,
+  StaticData's pluggable datatype system</li>
+- **Configuration definition** - A new type of definition tag that lets you add
+  static configuration scripts, for things like one-time set-ups that get run
+  on every page load, or loading and exposing third-party libraries. It also
+  allows via attribute setting to configure Modulo itself, first party
+  libraries, or third party libraries.</li>
+- **Code quality** - Modulo's codebase structure is getting simpler and shorter
+  with these releases, as concepts are reduced into one</li>
+
+
