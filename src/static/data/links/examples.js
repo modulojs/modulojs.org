@@ -1,0 +1,7 @@
+{
+    demoGrid: [
+        {
+            file: "/static/demos/",
+        },
+    ],
+}

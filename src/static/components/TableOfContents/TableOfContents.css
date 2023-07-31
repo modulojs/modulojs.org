@@ -1,0 +1,26 @@
+
+li, ul, ol {
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+
+:host > ul,
+:host > ul > li {
+    margin-left: 30px;
+}
+/*
+li.ginactive > ul::before,
+li.gactive > ul::before {
+    content: ' - ';
+    background: var(--highlight-color);
+    color: white;
+    text-decoration: none;
+}
+*/
+li.ginactive > a::before {
+    content: '+ ';
+}
+

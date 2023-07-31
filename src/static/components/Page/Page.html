@@ -1,11 +1,13 @@
 <head>
     <title>{{ props.pagetitle }}</title>
     <meta charset="utf8" />
-    <!--
-        Since this Component is "vanish-into-document", it's allowed to include
-        loose LINK and SCRIPT tags, which will be interpreted and built,
-        allowing you to more easily integrate existing HTML files here. E.g.:
-    -->
+    <meta charset="utf8" />
+    <meta name="title" content="{{ props.pagetitle }}">
+    <meta name="robots" content="index, follow">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="revisit-after" content="30 days">
+
     <link rel="stylesheet" href="/static/css/site.css" />
 </head>
 <body>
@@ -15,7 +17,7 @@
         </main>
     {% endif %}
 
-    <nav class="page-nav container">
+    <nav class="page-nav container" style="{% if props.navdocs %}position: relative;{% endif %}">
         <ul>
             <div class="logo">
                 <a href="/">
@@ -59,7 +61,13 @@
         </ul>
     </nav>
 
-    <div class="page-container container {% if props.shownews %}articles-container{% endif %}">
+    <div class="page-container container {% if props.shownews %}articles-container{% endif %} 
+        {% if props.navdocs %}page-container--navdocs{% endif %}">
+        {% if props.navdocs %}
+            <nav class="page-navdocs">
+                <x-TableOfContents value="{{ props.navdocs }}"></x-TableOfContents>
+            </nav>
+        {% endif %}
         <main class="page-content">
             {% if props.navbreadcrumb %}
                     {% for page in staticdata.navigation %}
@@ -82,7 +90,7 @@
             <nav class="page-content">
                 <h1>Dev Log</h1>
                 <ul class="articles">
-                    {% for article in staticdata.articles %}
+                    {% for article in devlog.articles %}
                         <li class="{% if article.file == props.navselected %}article--selected{% endif %}">
                             <a href="/{{ article.file }}">
                                 <span style="min-width: 250px; display: inline-block">{{ article.file }}</span>

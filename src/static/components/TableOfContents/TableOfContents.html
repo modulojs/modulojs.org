@@ -1,0 +1,31 @@
+<ul>
+    <h2>Tutorial</h2>
+    <li>
+        <em>Getting Started:</em>
+        {% for page in staticdata.tutorial %}
+            <a href="{{ page.filename }}" title="{{ page.label }}">{{ page.partLabel }}</a>
+        {% endfor %}
+    </li>
+
+    <h2>Documentation</h2>
+    {% for page in staticdata.docs %}
+        <li class="{% if page.sections %}
+                {% if page.active %}gactive{% else %}ginactive{% endif %}
+            {% endif %}"><a href="{{ page.filename }}">{{ page.label }}</a>
+            {% if props.showall %}
+                <ul>
+                {% for section in page.sections %}
+                    <li><a href="{{ page.filename }}#{{ section.hash }}">{{ section.label }}</a>
+                    {% if props.showall %}
+                        {% if section.keywords.length gt 0 %}
+                            <span style="margin-left: 10px; color: #aaa">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>
+                        {% endif %}
+                    {% endif %}
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
