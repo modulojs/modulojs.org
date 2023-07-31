@@ -1,0 +1,193 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage>---
+tutorial: Part 1
+---
+
+The Modulo Tutorial: Part 1
+===========================
+
+> **Prerequisites:** Part 1 and Part 2 of this tutorial requires a prerequisite knowledge of HTML & CSS only. Part 3 requires familiarity with JavaScript. Familiarity with React, Vue, or similar frameworks is helpful, but not required.
+
+Welcome to the Modulo tutorial. By following this short tutorial, you can learn how to use Modulo in your own projects.
+
+### When to use Modulo
+
+Modulo is useful when using plain HTML and CSS is no longer sufficient. It has no dependencies, has no "build process", and does not require experience with JavaScript, terminal applications, or NPM. This means it can be equally easily incorporated into a plain HTML "static site" (e.g. when you assemble HTML, CSS, and other static assets in a directory), or into a "multi-page" web app built with a backend language or MVC framework.
+
+**Ready to dive into Web Component development with Modulo?**
+
+1\. Components
+
+> **JS file alternatives:**
+> 
+> 1.  Directly link to a CDN hosting Modulo.js _(shown here)_
+> 2.  Manually download the Modulo.js file to a JS or asset directory, e.g. `src="/js/Modulo.js"` _(good for offline work)_
+> 3.  Including a pre-rendered "self-bundled" Modulo "build" _(speediest for production, covered in Part 2)_
+
+### Including Modulo
+
+The first step is to include a Modulo script tag in your HTML file. You could either start with an empty file, or open up an existing HTML file, and paste in the following:
+
+&lt;script src="https://unpkg.com/mdu.js"&gt;&lt;/script&gt;
+
+This will only include the JS file, but not activate Modulo. To activate Modulo, we need to add the `Modulo`, attribute to the script tag, and leave some space to indicate that this will (soon) contain Modulo code:
+
+&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;
+
+&lt;/script&gt;
+
+Note that technically, either `modulo` or `Modulo` will work because HTML is case-insensitive; however, the capitalized `Modulo` spelling is recommended for easier reading.
+
+> **Why use "components"?** Have you ever repeated the same HTML, CSS, and/or JavaScript while writing a website or or web app? _Components_ let you store repeated code in one place. Once defined, components can be re-used everywhere, saving developer time and reducing mistakes. Furthermore, within teams, components libraries improve collaboration between developers.
+
+### Defining your first component
+
+Once you have included Modulo and activated it, you can define your first _custom component_. Right now, we'll do that by "embedding" the component definition into the script tag that we used to activate Modulo for simplicity's sake. Later, we'll learn how to split your components into a separate file and then include that file, which is the preferred way.
+
+**Component definitions** start with a "Component" opening tag in the format of `<Component name="HelloWorld">`. Modulo will look for these tags, defining components for each one it encounters. Every component definition must specify a name, conventionally in `UpperCamelCase`. This is just a convention when writing code: Technically HTML tag names are all case insensitive, and so while inspecting the DOM, browsers typically display them in `all-lowercase`, removing any capitalization.
+
+Once defined, you can use a component by referring to it's name as though it were a plain HTML tag. Components can go anywhere that plain HTML tags can go, and can be styled with CSS the same way as well. In other words, creating a component is like creating a brand-new type of HTML tag that can be used anywhere, just like the original HTML tags of `<div>`, `<a>`, etc.
+
+Unlike plain HTML tags, you must use a dash (`-`) when referring to a component. This is a rule of the HTML5 Custom Components standard, which Modulo is based upon. Modulo's default behavior is to prefix custom components with an `x-`. So, if a component is defined like `<Component name="HelloWorld">`, then it can be referenced elsewhere like `<x-HelloWorld></x-HelloWorld>`.
+
+To quickly summarize: Components are reusable bits of HTML, JS, and CSS code, and must be defined within a tag like `<Component name="HelloWorld">`, and then this definition can be embedded in an HTML page within a script tag like `<script Modulo src="https://unpkg.com/mdu.js">`.
+
+**Okay, enough talk, let's actually try this out!**
+
+#### Try it now
+
+1.  Open up an HTML file in your preferred text editor. It's okay to start from scratch, or use an existing project.
+2.  Copy & paste in the following code:
+3.  Ensure that the HTML file is opened in your preferred, modern web browser (such as Firefox or Chrome) as well.
+4.  Refresh your web browser to view the results.
+
+### Adding component "slots"
+
+> **The origin of slots** Slots are a feature of the "shadow DOM", a new-ish feature of web browsers. Modulo replicates the same behavior of these "shadow" slots, making slots even easier to use without JavaScript.
+
+As we explored in the last section, _components_ are "define once, re-use many times" bits of code. Often, it's useful for a component to "wrap around" other HTML, or contain other HTML. For example, a stylized button component might wrap around text, or a stylish "modal dialog" component would wrap around paragraphs and other arbitrary HTML content. You can thus imagine the button or modal in these examples as having "empty spots" or _slots_ where this content would go. That is to say, the component is a sort of "empty picture frame", and the web developer using the component would be able to "slide content" into the frame's empty slot.
+
+_Slots_ allow there to be "empty spots" in your HTML that proceed to get filled by arbitrary content supplied when your component is used. Adding a slot is as simple as including a `<slot></slot>` HTML element in your component's _Template_ definition.
+
+Here's an example that "wraps" a slot inside a div with a CSS class of "picture-frame":
+
+&lt;div class="picture-frame"&gt;
+    &lt;slot&gt;&lt;/slot&gt;
+&lt;/div&gt;
+
+To fill up a _slot_ with HTML content, add the content between the opening and closing tags of your HTML element. Here's an example that might go with the above example:
+
+&lt;x-PictureFrame&gt;
+    &lt;p&gt;My cat:&lt;/p&gt;
+    &lt;img src="./cat.jpg" /&gt;
+&lt;/x-PictureFrame&gt;
+
+#### Try it now
+
+1.  Resume editing the HTML file you were working on in the previous "TRY IT NOW" section.
+2.  Time to add a slot! Let's make our "HelloWorld" component be ready to have a customized greeting. Edit your embedded component to look like this:
+4.  Now, let's fill the slot! Edit your usage to include text or even other HTML between your `x-HelloWorld` opening and closing tags:
+
+2\. Component Parts
+
+The central concept to Modulo is that of _Component Parts_. Because it is so central, saying _Component Parts_ over and over gets tiresome, so in this documentation and the source code it's typically shortened to _CParts_.
+
+> **CParts: The Musical** Think of CParts like the cast and crew of a musical. Each are assigned to a different task—some are more flashy and visible, others being stage-hands working behind the scenes—but they all work together to put on the same show!
+
+All component definitions consist of some number of CParts. Thus, a component definition is really just a collection of CPart definitions. "Under the hood" of your component, each CPart will have a different role to contribute to the functionality of your component.
+
+Let's start with the two most basic CParts:
+
+1.  **Template** \- `<Template>`
+    
+    Templates are where you put any arbitrary HTML code that you want your component to contain. For now, we'll just include some unchanging HTML. Later, we'll learn how to use "templating language" to control what HTML is produced in what circumstance.
+    
+2.  **Style** \- `<Style>`
+    
+    Just like the `<style>` tag in HTML, the **Style** CPart allows us to write CSS for our component. CSS written here will be automatically prefixed so that it will only apply to your component and any HTML generated by the Template CPart.
+    
+
+> **Where to put CSS** Instead of a Style CPart, you can always link a global CSS file the regular way to style your components. However, many developers prefer the simplicity of keeping everything in one place, e.g. the CSS with the component definition that it styles.
+
+Like Component naming, most CParts are technically case-insensitive (e.g. "`<style>`" will work the same as "`<Style>`"). However, it's important you follow the convention of making the CPart names start with a capital letter, such that you can easily distinguish them from plain HTML tags.
+
+Throughout Modulo documentation, there are little code editors, like below. These allow you to immediately practice new concepts learned. For simplicity, the top and bottom of the component definition code is omitted. Instead, these sample code editors only focus on the CPart definitions within.
+
+#### Try it now
+
+Edit the component definition on the left, and click RUN to see the results on the right!
+
+1.  Practice modifying the **Template** CPart (`<Template>`) to see how that affects the output preview on the right
+2.  Practice modifying the **Style** CPart (`<Style>`) to add or modify CSS
+3.  Practice incorporating these CParts into your own components on a real page by copying the code here and pasting it within your component definition (that is, the one that you created in the previous part of this tutorial)
+    
+
+3\. Loading from files
+
+> **Why use library files?** The appeal of using a separate CSS file is sharing style across pages, as the `<link>` tag, which lets multiple HTML files share the same CSS. The same rationale applies here: Components are "write once, use everywhere", so the way we get access to them "everywhere" is by including them into each file that needs to use them. Finally, by putting your components in a separate file, you avoid some awkward HTML syntax issues, since it's impossible to "nest" `&lt;script&gt; tags.
+
+Up until now, we have practiced with a component embedded on the same page that it is used. This is not recommended. Instead, you should put your components in a separate _component library_ HTML file, and then importing them into each HTML file that needs them.
+
+This can be done by simply copying the insides of the `&lt;script Modulo ...` tag, and pasting them into a new file. Then, you must include a special `-src` attribute to specify the new file. See below:
+
+<script Modulo
+    src="https://unpkg.com/mdu.js"
+    -src="/libraries/my_components.html"
+&gt;&lt;/script&gt;
+
+This "4-liner" can now be included in any of your HTML files to import whatever components you have defined in `/libraries/my_components.html`. This allows you to share the same components across multiple pages.
+
+#### Try it now
+
+It's time to "promote" your beginner embedded component into a full-fledged loaded component!
+
+**Warning:** This step of the tutorial, where we load from separate libraries, _might not work_ unless you have a server running. This is because if you just double-click on an HTML file, it opens in the browser with the `file://` protocol, which, as a security precaution, doesn't support loading any subsequent files. Consult your IDE on how to run a development server (e.g. VS Code seems to have a popular 3rd party add-on: [Live Server for VSCode](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)). Consider saving this step for later if you do not have such a server ready.
+
+1.  Optional: Create a new "libraries" directory to house your component library files.
+2.  Create a new file for your component library within your libraries directory (or elsewhere). You could call it, for example, `my-component-lib.html`
+3.  Copy your existing `HelloWorld` component definition from your main HTML file into this new file, and then delete it from your main HTML file. If done correctly, your new component library file (e.g. `my-component-lib.html`) should contain the following text (note the lack of `<script Modulo ...` etc):
+4.  Add a `-src=` attribute to your Modulo script tag, pointing toward a relative path to your new component library file. For example, if you named everything based on the above suggestions, it would look like this:
+5.  Refresh the web browser to view the results. If done correctly, nothing should change. To confirm it's working, try editing your component in the library file and refresh to see the results.
+6.  Now, you can simply "drop in" these 4 lines of `script` tag on multiple HTML pages, and they will be _all you need_ to import and share the same set of components between pages!
+
+**Bonus Challenge:** Try practicing with multiple "main HTML" files sharing the same component library. Also, if you used the example name, consider renaming your component library. Consider naming it something that is relevant to you, e.g. "ecommerce-website-components" or something, whatever you think is a good name based on what you are working on.
+
+### Splitting off larger CParts
+
+A convenient feature of Modulo is the ability to "split off" CParts (individually) into separate files. This allows you to work with dedicated `.html` and `.css` files separately, instead of embedding everything into a HTML file.
+
+In the previous section, `-src=` was used on a `<script Modulo ...` tag to move components into a separate file. Now, we'll see how this same attribute can be used on individual Componnt Parts.
+
+#### Using `-src=`
+
+To "split off" a long CPart into a separate file, begin by cutting out the contents of a CPart, and pasting it in a new file, and then save this new file in the same directory as your component library. Finally, to re-include it, add a `-src=` attribute to CPart, just as we did with the `Modulo` tag. Note the dash (`-`) before it. This is what distinguishes it from an ordinary `src` attribute, which Modulo will ignore. By default, `-src=` is supported by any CPart that uses it's contents, meaning _Template_ and _Style_ are the only two that we've learned so far that support it.
+
+For example, you can split off a _Template_ into it's own separate file, as such:
+
+<Template
+    -src="./my-file-name.html"
+>&lt;/Template&gt;
+
+Similarly, you can split off a _Style_ as well:
+
+<Style
+    -src="./some/other/path.css"
+>&lt;/Style&gt;
+
+The rules for `-src=` relative paths are similar to HTML's rules: Any URI path can be specified, and use a dot (`.`) to specify a path relative to the current HTML file (e.g. the _Component_ library file). The behavior is the exact same as if you had included the text in the same file, meaning this feature is only intended to be used when a component library gets too long and difficult to edit. In that case, conventional usage is to start splitting off larger CParts into their own files, until the HTML library file itself is just tie-ing everything together.
+
+### Part 1: Summary
+
+In this tutorial, we learned what a _Component_ is, and how to define one, about what _CParts_ are, and two important CParts (_Template_, for HTML, and _Style_, for CSS), and finally how to keep our components in a component library and then load that library into different HTML files. At this point, you can already start getting useful results from using Modulo, since even without JavaScript usage we are already defining simple components that can help us re-use HTML code between different pages.
+
+#### Key terms
+
+* **Component** \- A discrete, re-usable bit of code, typically used to show a graphical UI element (eg a button, or a rich-text area). Components can also use other components (eg a form component might contain both of the above as child components).
+* **Component Part**, or **CPart** \- Each component consists of a "bag" or "bundle" of CParts, each CPart being a "pluggable" module that supplies different functionality for that component. Every component is defined as a collection of CParts (e.g. HTML _Template_, or _Style_ tag).
+* **customElement** \- The term used for a custom HTML5 web component, which is the underlying technology that Modulo is a thin wrapper over. They all have dashes (`-`) in the name.
+* **slot** \- A placeholder for content to be inserted when a component is used. Useful for writing components that "wrap around" other content.
+* **-src=** \- A special attribute that allows content in Modulo to be loaded from separate files, making it easier to manage as projects grow.
+
+In the subsequent tutorials we will go deeper: Explore the full capabilities of Templates, allow flexible and composable components with Props CPart, create custom behavior with Script CParts, and finally create forms and interactive, changing components with the State CPart.
+
+[Part 2: Props, Templating, and Building »](/docs/tutorial_part2.html)
+

@@ -3,153 +3,33 @@
   All components necessary for the main pages of the modulo website are defined
   here.
 -->
-
-<Component name="Page" mode="vanish-into-document">
-    <Props
-        pagetitle
-        shownews
-        showtop
-        navdocs
-        navselected
-        navbreadcrumb
-    ></Props>
-    <StaticData
-        -src="./data/links/navigation.js"
-    ></StaticData>
-    <StaticData
-        -name="devlog"
-        -src="./data/links/devlog.js"
-    ></StaticData>
-    <Template
-        -src="./components/Page/Page.html"
-    ></Template>
-    <Style
-        -auto-isolate="vanish"
-        -src="./components/Page/Page.css"
-    ></Style>
-    <Script
-        -src="./components/Page/Page.js"
-    ></Script>
-</Component>
-
-<Component name="HomeSplash">
-    <Props
-        image
-    ></Props>
-    <Template
-        -src="./components/HomeSplash/HomeSplash.html"
-    ></Template>
-    <Style
-        -src="./components/HomeSplash/HomeSplash.css"
-    ></Style>
-    <Script
-        -src="./components/HomeSplash/HomeSplash.js"
-    ></Script>
-</Component>
-
-<Component name="TableOfContents">
-    <Props
-        showall
-        value
-    ></Props>
-    <StaticData
-        -src="./data/links/documentation.js"
-    ></StaticData>
-    <Template
-        -src="./components/TableOfContents/TableOfContents.html"
-    ></Template>
-    <Style
-        -src="./components/TableOfContents/TableOfContents.css"
-    ></Style>
-</Component>
-
-<Component name="ProjectVersion" mode="vanish">
-  <Template>alpha&nbsp;v0.0.54</Template>
-  <!--
-    <Template>alpha&nbsp;v{{ staticdata.version }}</Template>
-    <StaticData -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"></StaticData>
-  -->
-</Component>
-
-<Component name="DemoEditor" rerender="manual">
-    <Props
-        value
-    ></Props>
-    <Template
-        -src="./components/DemoEditor/DemoEditor.html"
-    ></Template>
-    <Script
-        -src="./components/DemoEditor/DemoEditor.js"
-    ></Script>
-    <Style
-        -src="./components/DemoEditor/DemoEditor.css"
-    ></Style>
-</Component>
-
-<Component name="SyntaxEditor" rerender="manual">
-    <Props
-        value
-        name
-        fast
-        spellcheck
-        component
-        debounce-time
-    ></Props>
-    <Template
-        -src="./components/SyntaxEditor/SyntaxEditor.html"
-    ></Template>
-    <State
-        selection-start:=0
-        scroll-top:=0
-        width:=0
-        height:=0
-        value=""
-    ></State>
-    <Script
-        -src="./components/SyntaxEditor/SyntaxEditor.js"
-    ></Script>
-    <Style
-        -src="./components/SyntaxEditor/SyntaxEditor.css"
-    ></Style>
-</Component>
-
-<Component name="TwoPanes" mode="vanish">
-    <Props
-        class
-    ></Props>
-    <Template>
-        <section>
-            <slot name="left" class="pane {{ props.class }}"></slot>
-            <slot name="right" class="pane {{ props.class }}"></slot>
-        </section>
-    </Template>
-    <Style
-        -auto-isolate="vanish"
-        -src="./components/TwoPanes/TwoPanes.css"
-    ></Style>
-</Component>
-
-<Component name="SyntaxHighlighter">
-    <Props
-        value
-        mode
-    ></Props>
-    <Script -src="./components/SyntaxHighlighter/highlight/highlight.min.js">
-          function updateCallback(renderObj) {
-              const text = props.value || element.originalHTML;
-              const opts = { language: props.mode || 'django' };
-              element.innerHTML = hljs.highlight(text, opts).value;
-          }
-    </Script>
-    <Style -src="./components/SyntaxHighlighter/highlight/atom-one-light.css">
-        :host {
-            font-family: monospace;
-            text-align: start;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-            box-sizing: border-box;
-            display: block;
+<script Configuration>
+    // Adds a shortcut of quick-component="html,js,css", for example, for an
+    // Template, Script, and Style component.
+    modulo.register('processor', function quickComponent (modulo, def, value) {
+        console.log('quickComponent processor')
+        const name = def.name;
+        if (!value.push) {
+            value = value.split(','); // comma separated string
         }
-    </Style>
-</Component>
+        const prefix = modulo.config.component.quickPrefix;
+        for (const [ ext, tagName ] of modulo.config.component.quickTypes) {
+            if (value.includes(ext)) {
+                def.Content = (def.Content || '') + `<${ tagName } -src="`;
+                def.Content += `./${ name }/${ name }.${ ext }`;
+                def.Content += `"></${ tagName }>`;
+            }
+        }
+        console.log(def.Content)
+    });
+    modulo.config.component.DefLoaders.unshift('QuickComponent');
+            console.log(modulo.config.component.DefLoaders)
+    modulo.config.component.quickTypes = [
+        [ 'html', 'Template' ],
+        [ 'js', 'Script' ],
+        [ 'json', 'StaticData' ],
+        [ 'css', 'Style' ],
+    ];
+</script>
 
+<Library -src="./components/"></Library>

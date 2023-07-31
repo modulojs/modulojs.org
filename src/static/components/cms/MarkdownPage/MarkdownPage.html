@@ -1,25 +1,51 @@
 {# The template used by Markdown / CMS Content pages #}
-<x-Page
-    pagetitle="{{ page.title }}"
-    shownews="true"
-    navselected="index.html"
-    navbreadcrumb="{{ page.title }}"
->
 
-    <h1 style="font-size: 3rem">{{ page.title }}</h1>
+{% if page.tutorial %}
+    <x-Page
+        pagetitle="Tutorial - {{ page.tutorial }}"
+        navselected="docs/"
+        navbreadcrumb="Tutorial - {{ page.tutorial }}"
+    >
 
-    {% if page.subtitle %}
-        <h2 style="font-weight: bold; color: gray">{{ page.subtitle }}</h2>
-    {% endif %}
+        <h1>Tutorial</h1>
+        <h2 style="font-weight: bold; color: gray">{{ page.tutorial }}</h2>
+        <div class="markdown-body">
+            {{ page.body }}
+        </div>
+    </x-Page>
+{% elif page.devlog %}
+    <x-Page
+        pagetitle="{{ page.title }}"
+        shownews="true"
+        navselected="index.html"
+        navbreadcrumb="{{ page.title }}"
+    >
+        <h1 style="font-size: 3rem">{{ page.title }}</h1>
 
-    {% if page.author %}
-        <p>by <em>{{ page.author }}</em></p>
-        <hr />
-    {% endif %}
+        {% if page.subtitle %}
+            <h2 style="font-weight: bold; color: gray">{{ page.subtitle }}</h2>
+        {% endif %}
 
-    <div class="markdown-body">
-        {# The page.body  property will be the page-body in raw HTML #}
-        {{ page.body }}
-    </div>
+        {% if page.author %}
+            <p>by <em>{{ page.author }}</em></p>
+            <hr />
+        {% endif %}
 
-</x-Page>
+        <div class="markdown-body">
+            {# The page.body  property will be the page-body in raw HTML #}
+            {{ page.body }}
+        </div>
+    </x-Page>
+{% else %}
+    <x-Page
+        pagetitle="{{ page.title }}"
+        navdocs=true
+        navselected="docs/"
+        navbreadcrumb="{{ page.title }}"
+    >
+        <div class="markdown-body">
+            {# The page.body  property will be the page-body in raw HTML #}
+            {{ page.body }}
+        </div>
+    </x-Page>
+{% endif %}

@@ -3,19 +3,19 @@
         {
             label: 'Part 1: Components, CParts, and Loading',
             partLabel: 'Part 1',
-            filename: '/tutorial/part_1.html',
+            filename: '/tutorial/part1.html',
             keywords: ['cdn', 'components', 'cparts', 'template', 'style', 'html & css'],
         },
         {
             label: 'Part 2: Props, Templating, and Building',
             partLabel: 'Part 2',
-            filename: '/docs/part_2.html',
+            filename: '/tutorial/part2.html',
             keywords: ['props', 'template variables', 'template filters', 'modulo console command', 'build', 'hash'],
         },
         {
             label: 'Part 3: State, Directives, and Scripting',
             partLabel: 'Part 3',
-            filename: '/docs/part_3.html',
+            filename: '/tutorial/part3.html',
             keywords: ['state', 'directives', 'data props', 'state.bind', 'data types', 'events', 'basic scripting'],
         },
     ],
