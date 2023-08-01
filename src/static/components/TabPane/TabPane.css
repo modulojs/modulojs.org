@@ -1,0 +1,99 @@
+:host {
+    text-align: left;
+    display: block;
+}
+
+section {
+    min-height: 250px;
+    /*border: 3px solid blue;*/
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 50px 1fr;
+}
+
+.tab-btns {
+    text-align: left;
+    --btn-shadow-dist: 0;
+    display: flex;
+}
+
+@media (max-height: 700px) and (min-width: 992px) {
+    section.height-adjust {
+        height: 170px;
+        min-height: 170px;
+        grid-template-columns: 1fr minmax(auto, 900px) 1fr;
+        grid-template-rows: 1fr;
+        margin-left: -10vw;
+    }
+    .height-adjust .tab-btns button {
+        border-radius: 8px 0 0 8px !important;
+        display: block;
+        width: 100%;
+        text-align: right;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .height-adjust .tab-btns {
+        display: block;
+    }
+}
+
+@media (max-width: 992px) {
+    section {
+        display: block;
+        margin: 0;
+    }
+}
+
+
+
+.btn-tab,
+.tab-btns button {
+    cursor: pointer;
+    box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-fg);
+    color: var(--color-fg);
+    font-weight: bolder;
+    display: inline-block;
+    border: 2px solid var(--color-fg);
+    border-top-width: 4px;
+    margin-bottom: -2px;
+    border-radius: 8px 8px 0 0;
+    background: white;
+    box-shadow: 0 0 0 0 var(--highlight-color);
+    font-size: 1.1rem;
+    transition: box-shadow 0.3s,
+                background 0.15s,
+                border-color 0.2s;
+}
+
+.tab-region {
+    border: 3px solid black;
+    border-bottom-width: 1px;
+    border-top-width: 1px;
+    height: 100%;
+}
+
+.tab-btns button:visited,
+.tab-btns button:active,
+.tab-btns button.selected {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-weight: bold;
+    background: var(--color);
+}
+
+.tab-btns button.selected {
+    border-color: var(--color);
+    background: var(--color);
+    box-shadow: 0 0 0 8px var(--color);
+    color: var(--color-content-bg);
+}
+
+.btn-tab:hover,
+.tab-btns button:hover {
+    border-color: var(--color);
+}
+
+

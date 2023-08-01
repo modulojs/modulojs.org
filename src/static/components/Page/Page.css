@@ -182,20 +182,6 @@
     color: white;
 }
 
-/*
-.cta-btn,
-a.cta-btn {
-    box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-fg-semi);
-    background: var(--color-alt);
-    color: var(--color-fg);
-    font-weight: bolder;
-    padding: 20px;
-    border-radius: 5px;
-    border: 2px solid var(--color-alt);
-    display: inline-block;
-}
-*/
-
 .cta-btn,
 a.cta-btn {
     box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-alt);

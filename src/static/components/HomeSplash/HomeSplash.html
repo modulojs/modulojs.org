@@ -20,8 +20,8 @@
         <li>A &ldquo;no fuss&rdquo; fuss" drop-in for existing web apps or JAMStack static sites</li>
     </ul>
 
-    <div class="demo-container">
-        <div>
+    <x-TabPane hadjust="true">
+        <div tab-title="Hello">
             <x-DemoEditor value='<Template>
     <button @click:=script.countUp>Hello</button>
 </Template>
@@ -34,12 +34,21 @@
     }
 </Script>
             '></x-DemoEditor>
+                </div>
+                <div tab-title="StyleExample">
+            <x-DemoEditor value='<Template>
+            Just style<em> here</em>.
+</Template>
+<Style>em { color: green } </Style>
+            '></x-DemoEditor>
         </div>
+    </x-TabPane>
 
-    </div>
 
 {# NOTE: Cannot put this here, since this includes template syntax! Need to load from separate files... #}
 {% comment %}
+    <div class="demo-container">
+    </div>
     <x-DemoEditor
 value='
 <Template>

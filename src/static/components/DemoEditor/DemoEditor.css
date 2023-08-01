@@ -1,0 +1,71 @@
+.pane-holder {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 1fr var(--divider-width) var(--right-width);
+    grid-template-rows: 1fr;
+}
+
+.pane {
+    display: block;
+    height: 100%;
+    background: var(--color-content-bg);
+}
+
+.toolbar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    border: 1px solid var(--color-fg-semi);
+    border-top: none;
+    border-bottom: none;
+}
+
+
+.toolbar button {
+    cursor: pointer;
+    box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-fg);
+    color: var(--color-fg);
+    font-weight: bolder;
+    display: inline-block;
+    border: 2px solid var(--color-fg);
+    border-top-width: 4px;
+    margin-bottom: -2px;
+    border-radius: 8px !important;
+    background: white;
+    box-shadow: 0 0 0 0 var(--highlight-color);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 1px;
+    text-transform: uppercase;
+    transition: box-shadow 0.3s,
+                background 0.15s,
+                border-color 0.2s;
+}
+
+.toolbar button:visited,
+.toolbar button:active,
+.toolbar button.selected {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-weight: bold;
+    background: var(--color);
+}
+
+.toolbar button.selected {
+    border-color: var(--color);
+    background: var(--color);
+    box-shadow: 0 0 0 8px var(--color);
+    color: var(--color-content-bg);
+}
+
+.toolbar button:hover {
+    border-color: var(--color);
+}
+
+@media (max-width: 992px) {
+    .pane-holder {
+        display: block;
+    }
+}

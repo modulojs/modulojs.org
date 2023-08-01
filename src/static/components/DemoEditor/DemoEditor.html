@@ -1,6 +1,29 @@
 
-<x-SyntaxEditor 
-  style="height: 300px"
-  value="{{ props.value }}"
-></x-SyntaxEditor>
+
+<div class="pane-holder" style="--right-width: {{ state.divider }}px; --divider-width: 40px">
+    <div class="pane pane--left">
+        <x-SyntaxEditor
+            [script.editor]
+            style="height: 100%"
+            value="{{ props.value }}"
+        ></x-SyntaxEditor>
+    </div>
+    <div class="pane pane--divider">
+        <div class="toolbar">
+            <button @click:=script.run>
+                <span alt="Refresh">⟳</span>
+                Run
+            </button>
+        </div>
+    </div>
+    <div class="pane pane--right">
+        <div class="demo-area">
+            {% if not state.demo %}
+                {# For now, just leave blank #}
+            {% else %}
+                {{ state.demo|safe }}
+            {% endif %}
+        </div>
+    </div>
+</div>
 

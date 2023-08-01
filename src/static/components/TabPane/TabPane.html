@@ -1,0 +1,23 @@
+
+<section class="{% if props.hadjust %}height-adjust{% endif %}">
+    <div class="tab-btns">
+        {% for child in script.tabElements %}
+            <button 
+                @click:=script.selectTab
+                payload="{{ child.id }}"
+                class="{% if child.isSelected %}selected{% else %}unselected{% endif %}"
+            >{{ child.tabTitle }}</button>
+        {% endfor %}
+    </div>
+    <div class="tab-region">
+        {% for child in script.tabElements %}
+            {% if child.isSelected %}
+                <div -id="{{ child.id }}" style="height: 100%">
+                    {{ child.innerHTML|safe }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+

@@ -135,6 +135,7 @@ function setStateAndRerender(textarea) {
     if (state.value !== textarea.value) {
         state.value = textarea.value;
         element.value = state.value;
+        console.log('element', element.value);
         element.rerender();
     }
 }

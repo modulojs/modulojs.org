@@ -32,11 +32,8 @@
     ></Script>
 </Component>
 
-<script Configuration>
-  console.log(...modulo.config.component.DefLoaders);
-</script>
-
-<Component name="HomeSplash" -quick-component="html,css,js">
+<!-- Disabled due to loading ordering bug: quick-component="html,css,js" -->
+<Component name="HomeSplash">
     <Props
         image
     ></Props>
@@ -48,6 +45,24 @@
     ></Style>
     <Script
         -src="./HomeSplash/HomeSplash.js"
+    ></Script>
+</Component>
+
+<Component name="TabPane">
+    <Props
+        hadjust
+    ></Props>
+    <Template
+        -src="./TabPane/TabPane.html"
+    ></Template>
+    <Style
+        -src="./TabPane/TabPane.css"
+    ></Style>
+    <State
+        value:=null
+    ></State>
+    <Script
+        -src="./TabPane/TabPane.js"
     ></Script>
 </Component>
 
@@ -75,13 +90,17 @@
   -->
 </Component>
 
-<Component name="DemoEditor" rerender="manual">
+<Component name="DemoEditor">
     <Props
         value
     ></Props>
     <Template
         -src="./DemoEditor/DemoEditor.html"
     ></Template>
+    <State
+        divider:=200
+        demo=""
+    ></State>
     <Script
         -src="./DemoEditor/DemoEditor.js"
     ></Script>
