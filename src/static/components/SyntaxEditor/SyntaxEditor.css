@@ -5,6 +5,7 @@
     min-width: 1rem;
     text-align: start;
     text-size-adjust: 0.5;
+    line-height: 1;
 
     /* Passable for both "lightmode" and "darkmode" type designs */
     --outline-color: #888888EA;
@@ -22,6 +23,7 @@ textarea {
     left: 0;
     text-size-adjust: 0.5;
     font-size: 16px;
+    line-height: 1;
     width: 100%;
     border: none;
     padding: 0;

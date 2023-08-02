@@ -4,7 +4,7 @@ function textMount({ el }){
     // Mounting of the actual <textarea>, which functions as the main
     // "initialized" callback where everything gets set-up and rerendered with
     // the value provided
-    const value = (props.value || '').trim();
+    const value = (element.getAttribute('value') || '').trim();
     const textarea = el;
     element.textarea = textarea;
     textarea.value = value;
@@ -32,7 +32,10 @@ function textMount({ el }){
     }
 }
 
-
+/*
+    Given a base text, merge another text with it, ignoring SIGILs as
+    placeholders.
+*/
 function mergeStrings(baseText, overlayText) {
     let baseIndex = 0;
     let overlayIndex = 0;
@@ -135,7 +138,6 @@ function setStateAndRerender(textarea) {
     if (state.value !== textarea.value) {
         state.value = textarea.value;
         element.value = state.value;
-        console.log('element', element.value);
         element.rerender();
     }
 }

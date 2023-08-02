@@ -1,0 +1,9 @@
+<!-- Use StaticData CPart to include JSON from an API or file -->
+<Template>
+    <strong>Name:</strong> {{ staticdata.name }} <br />
+    <strong>Site:</strong> {{ staticdata.homepage }} <br />
+    <strong>Tags:</strong> {{ staticdata.topics|join }}
+</Template>
+<StaticData
+    -src="https://api.github.com/repos/modulojs/modulo"
+></StaticData>

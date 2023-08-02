@@ -1,12 +1,16 @@
 
 
-<div class="pane-holder" style="--right-width: {{ state.divider }}px; --divider-width: 40px">
+<div class="pane-holder" style="--right-width: {{ state.divider }}px; --divider-width: 45px">
     <div class="pane pane--left">
-        <x-SyntaxEditor
-            [script.editor]
-            style="height: 100%"
-            value="{{ props.value }}"
-        ></x-SyntaxEditor>
+        {% if state.value %}
+            <x-SyntaxEditor
+                [script.editor]
+                style="height: 100%"
+                value="{{ state.value }}"
+            ></x-SyntaxEditor>
+        {% else %}
+            <em>Loading...</em>
+        {% endif %}
     </div>
     <div class="pane pane--divider">
         <div class="toolbar">
@@ -27,3 +31,22 @@
     </div>
 </div>
 
+
+{% comment %}
+            <div style="opacity: 0.5; margin-right: -20px">
+                <button
+                    [state.bind]=click
+                    name="divider"
+                    value="700"
+                >&larr;</button><button
+                    [state.bind]=click
+                    name="divider"
+                    value="400"
+                >=</button><button
+                    [state.bind]=click
+                    name="divider"
+                    value="240"
+                >&rarr;</button>
+                <!--<button>&#x25AC;|&#x25A0;</button>-->
+            </div>
+{% endcomment %}

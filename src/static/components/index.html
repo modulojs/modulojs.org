@@ -13,13 +13,6 @@
         navselected
         navbreadcrumb
     ></Props>
-    <StaticData
-        -src="../data/links/navigation.js"
-    ></StaticData>
-    <StaticData
-        -name="devlog"
-        -src="../data/links/devlog.js"
-    ></StaticData>
     <Template
         -src="./Page/Page.html"
     ></Template>
@@ -30,6 +23,13 @@
     <Script
         -src="./Page/Page.js"
     ></Script>
+    <StaticData
+        -src="../data/links/navigation.js"
+    ></StaticData>
+    <StaticData
+        -name="devlog"
+        -src="../data/links/devlog.js"
+    ></StaticData>
 </Component>
 
 <!-- Disabled due to loading ordering bug: quick-component="html,css,js" -->
@@ -40,12 +40,12 @@
     <Template
         -src="./HomeSplash/HomeSplash.html"
     ></Template>
-    <Style
-        -src="./HomeSplash/HomeSplash.css"
-    ></Style>
     <Script
         -src="./HomeSplash/HomeSplash.js"
     ></Script>
+    <Style
+        -src="./HomeSplash/HomeSplash.css"
+    ></Style>
 </Component>
 
 <Component name="TabPane">
@@ -55,15 +55,16 @@
     <Template
         -src="./TabPane/TabPane.html"
     ></Template>
-    <Style
-        -src="./TabPane/TabPane.css"
-    ></Style>
     <State
         value:=null
+        html:=null
     ></State>
     <Script
         -src="./TabPane/TabPane.js"
     ></Script>
+    <Style
+        -src="./TabPane/TabPane.css"
+    ></Style>
 </Component>
 
 <Component name="TableOfContents">
@@ -71,12 +72,12 @@
         showall
         value
     ></Props>
-    <StaticData
-        -src="../data/links/documentation.js"
-    ></StaticData>
     <Template
         -src="./TableOfContents/TableOfContents.html"
     ></Template>
+    <StaticData
+        -src="../data/links/documentation.js"
+    ></StaticData>
     <Style
         -src="./TableOfContents/TableOfContents.css"
     ></Style>
@@ -93,13 +94,15 @@
 <Component name="DemoEditor">
     <Props
         value
+        src
     ></Props>
     <Template
         -src="./DemoEditor/DemoEditor.html"
     ></Template>
     <State
-        divider:=200
+        divider:=240
         demo=""
+        value=""
     ></State>
     <Script
         -src="./DemoEditor/DemoEditor.js"
@@ -127,6 +130,7 @@
         width:=0
         height:=0
         value=""
+        received-value:=null
     ></State>
     <Script
         -src="./SyntaxEditor/SyntaxEditor.js"
@@ -176,3 +180,11 @@
         -src="./SyntaxHighlighter/custom-scheme.css"
     ></Style>
 </Component>
+
+<!--
+{#<x-ShadowWrapper html="{{ state.demo }}"></x-ShadowWrapper>#}
+<Component name="ShadowWrapper" mode="shadow">
+    <Props html></Props>
+    <Template>{{ props.html|safe }}</Template>
+</Component>
+-->

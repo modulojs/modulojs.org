@@ -15,8 +15,9 @@
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     align-items: center;
+    overflow: auto;
 }
 
 .toolbar {
@@ -24,9 +25,10 @@
     flex-direction: column;
     justify-content: space-around;
     height: 100%;
-    border: 1px solid var(--color-fg-semi);
+    border: 1px dotted var(--color-fg-semi);
     border-top: none;
     border-bottom: none;
+    padding: 2px;
 }
 
 

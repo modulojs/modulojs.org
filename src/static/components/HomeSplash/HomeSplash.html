@@ -10,40 +10,40 @@
             <div class="letter letter-{{ letter }}">{{ letter|lower }}</div>
         {% endfor %}
     </div>
-    <x-ProjectVersion></x-ProjectVersion>
     <h2 style="color: var(--color-fg-semidark)">HTML Web Component Framework</h2>
-    <!--<h2>HTML Web Component Framework</h2>-->
-    <!--<h2>A modular micro-framework for HTML Web Components</h2>-->
     <ul>
         <li>Beginner-friendly features inspired by React, Svelte, and Vue.js</li>
         <li>Only 2000 lines of dependency-free, self-building JavaScript</li>
         <li>A &ldquo;no fuss&rdquo; fuss" drop-in for existing web apps or JAMStack static sites</li>
     </ul>
 
-    <x-TabPane hadjust="true">
-        <div tab-title="Hello">
-            <x-DemoEditor value='<Template>
-    <button @click:=script.countUp>Hello</button>
-</Template>
-<State
-    num:=42
-></State>
-<Script>
-    function countUp() {
-        state.num++;
-    }
-</Script>
-            '></x-DemoEditor>
-                </div>
-                <div tab-title="StyleExample">
-            <x-DemoEditor value='<Template>
-            Just style<em> here</em>.
-</Template>
-<Style>em { color: green } </Style>
-            '></x-DemoEditor>
-        </div>
+    <!--<x-TabPane hadjust="true">-->
+    <x-TabPane>
+        <x tab-title="HelloCount">
+            <x-DemoEditor src="/static/demos/eg/Hello.html"></x-DemoEditor>
+        </x>
+        <x tab-title="SimpleStyle">
+            <x-DemoEditor src="/static/demos/eg/Simple.html"></x-DemoEditor>
+        </x>
+        <x tab-title="ToDo">
+            <x-DemoEditor src="/static/demos/eg/ToDo.html"></x-DemoEditor>
+        </x>
+        <x tab-title="JSON">
+            <x-DemoEditor src="/static/demos/eg/JSON.html"></x-DemoEditor>
+        </x>
+        <x tab-title="Scatter">
+            <x-DemoEditor src="/static/demos/eg/Scatter.html"></x-DemoEditor>
+        </x>
+        <x tab-title="Search">
+            <x-DemoEditor src="/static/demos/eg/Search.html"></x-DemoEditor>
+        </x>
+        <x tab-title="Components">
+            <x-DemoEditor src="/static/demos/eg/Components.html"></x-DemoEditor>
+        </x>
+        <x tab-title="MemoryGame">
+            <x-DemoEditor src="/static/demos/eg/Memory.html"></x-DemoEditor>
+        </x>
     </x-TabPane>
-
 
 {# NOTE: Cannot put this here, since this includes template syntax! Need to load from separate files... #}
 {% comment %}

@@ -11,11 +11,18 @@
     </div>
     <div class="tab-region">
         {% for child in script.tabElements %}
-            {% if child.isSelected %}
-                <div -id="{{ child.id }}" style="height: 100%">
-                    {{ child.innerHTML|safe }}
-                </div>
-            {% endif %}
+            <div style="
+                    {% if child.isSelected %}
+                        display: block;
+                        height: 100%;
+                    {% else %}
+                        display: none;
+                        height: 0;
+                    {% endif %}
+                    width: 100%;
+                ">
+                {{ child.innerHTML|safe }}
+            </div>
         {% endfor %}
     </div>
 </section>

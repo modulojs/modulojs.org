@@ -1,0 +1,11 @@
+<Template>
+    <button @click:=script.countUp>Hello {{ state.num }}</button>
+</Template>
+<State
+    num:=42
+></State>
+<Script>
+    function countUp() {
+        state.num++;
+    }
+</Script>

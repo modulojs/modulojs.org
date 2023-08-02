@@ -27,7 +27,7 @@ hue-6-2: #c18401
 */
 
 .hljs {
-  color: var(--color);
+  color: var(--color-fg);
 }
 
 .hljs-comment,
@@ -43,8 +43,11 @@ hue-6-2: #c18401
   font-weight: bold;
 }
 
+.hljs-keyword {
+  color: #e45649;
+}
+
 .hljs-section,
-.hljs-name,
 .hljs-selector-tag,
 .hljs-deletion,
 .hljs-subst {
@@ -57,31 +60,29 @@ hue-6-2: #c18401
 }
 
 .hljs-name {
-  color: var(--color-fg-semidark);
-  font-weight: normal;
+    color: var(--color-fg-semi);
+    font-weight: lighter;
+    text-decoration: underline;
 }
 
 .hljs-modulo-deftype,
 .hljs-modulo-deftype-attr {
-  color: var(--color);
-  font-weight: bold;
+    color: var(--color);
+    font-weight: normal;
+}
+.hljs-modulo-deftype {
 }
 
 .hljs-modulo-component-tag {
-  color: var(--color-fg);
-  font-weight: bold;
-}
-
-.hljs-modulo-attr-value {
-  background: var(--color-alt);
-  color: var(--color-fg);
-  border-radius: 5px;
+    color: var(--color-fg);
+    font-weight: bold;
 }
 
 .hljs-modulo-attr-value-lit {
-  color: var(--color-fg-semidark);
+  /*color: var(--color-fg-semidark);
+  text-decoration: underline;*/
   font-weight: normal;
-  text-decoration: underline;
+  color: #0184bb;
 }
 
 .hljs-literal {
@@ -97,7 +98,6 @@ hue-6-2: #c18401
   color: #50a14f;
 }
 
-.hljs-attr,
 .hljs-variable,
 .hljs-template-variable,
 .hljs-type,
@@ -108,15 +108,30 @@ hue-6-2: #c18401
   color: #986801;
 }
 
+.hljs-attr {
+  color: var(--color-fg-semidark);
+}
+
 .hljs-symbol,
 .hljs-bullet,
 .hljs-link,
 .hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  background: var(--color-alt);
-  color: var(--color-fg);
+.hljs-selector-id {
+  color: var(--color-fg-semidark);
   font-weight: bold;
+}
+
+
+.hljs-modulo-attr-value {
+  background: var(--color-alt);
+  color: var(--color-fg) !important;
+  font-weight: bold;
+  /*border-radius: 100%;*/
+  border-radius: 2px;
+}
+
+.hljs-title {
+  /* affects both function defs and function invocations, meh */
 }
 
 .hljs-built_in,

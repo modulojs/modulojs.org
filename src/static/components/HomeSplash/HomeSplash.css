@@ -80,7 +80,7 @@ ul {
 
 li {
     font-size: 1.3rem;
-    margin-left: 50px;
+    margin-left: 150px;
     list-style: none;
     margin-bottom: 7px;
 }
@@ -111,7 +111,7 @@ li:hover::before {
     border: black 1px solid;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 992px) {
     li {
         margin: 0;
         margin-bottom: 20px;
@@ -122,3 +122,35 @@ li:hover::before {
     }
 }
 
+@media (max-height: 700px) {
+    h2 {
+        font-size: 1rem;
+        margin: 0;
+    }
+    li {
+        font-size: 1rem;
+        margin-bottom: 0;
+    }
+}
+
+@media (min-height: 700px) {
+    x-TabPane {
+        margin-top: 5vh;
+    }
+}
+
+/*
+@media (min-width: 1150px) {
+    x-TabPane {
+        margin-left: -150px;
+        margin-right: -150px;
+    }
+}
+*/
+
+@media (min-width: 1150px) {
+    x-TabPane {
+        margin-left: -50px;
+        margin-right: -50px;
+    }
+}
