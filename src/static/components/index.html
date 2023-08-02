@@ -161,17 +161,18 @@
           function updateCallback(renderObj) {
               const text = props.value || element.originalHTML;
               const opts = { language: props.mode || 'django' };
-              element.innerHTML = hljs.highlight(text, opts).value;
-          }
+              let html = hljs.highlight(text, opts).value;
+              // Add in colors for Modulo tag names / attributes
+              html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
+              html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
+              html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
+              html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');
+              html = html.replace(/"hljs-string">([A-Za-z])/g, '"hljs-modulo-attr-value">$1');
+              html = html.replace(/"hljs-string">([0-9\[\{])/g, '"hljs-modulo-attr-value-lit">$1');
+              element.innerHTML = html
+         } 
     </Script>
-    <Style -src="./SyntaxHighlighter/highlight/atom-one-light.css">
-        :host {
-            font-family: monospace;
-            text-align: start;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-            box-sizing: border-box;
-            display: block;
-        }
-    </Style>
+    <Style
+        -src="./SyntaxHighlighter/custom-scheme.css"
+    ></Style>
 </Component>
