@@ -1,0 +1,79 @@
+<!--
+    Component definitions for the embedded editor and syntax highlighter are
+    contained here.
+-->
+
+<Component name="DemoEditor">
+    <Props
+        value
+        src
+    ></Props>
+    <Template
+        -src="./DemoEditor/DemoEditor.html"
+    ></Template>
+    <State
+        divider:=240
+        demo=""
+        value=""
+    ></State>
+    <Script
+        -src="./DemoEditor/DemoEditor.js"
+    ></Script>
+    <Style
+        -src="./DemoEditor/DemoEditor.css"
+    ></Style>
+</Component>
+
+<Component name="SyntaxEditor" rerender="manual">
+    <Props
+        value
+        name
+        fast
+        spellcheck
+        component
+        debounce-time
+    ></Props>
+    <Template
+        -src="./SyntaxEditor/SyntaxEditor.html"
+    ></Template>
+    <State
+        selection-start:=0
+        scroll-top:=0
+        width:=0
+        height:=0
+        value=""
+        received-value:=null
+    ></State>
+    <Script
+        -src="./SyntaxEditor/SyntaxEditor.js"
+    ></Script>
+    <Style
+        -src="./SyntaxEditor/SyntaxEditor.css"
+    ></Style>
+</Component>
+
+<Component name="SyntaxHighlighter">
+    <Props
+        value
+        mode
+    ></Props>
+    <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
+          function updateCallback(renderObj) {
+              const text = props.value || element.originalHTML;
+              const opts = { language: props.mode || 'django' };
+              let html = hljs.highlight(text, opts).value;
+              // Add in colors for Modulo tag names / attributes
+              html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
+              html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
+              html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
+              html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');
+              html = html.replace(/"hljs-string">([A-Za-z])/g, '"hljs-modulo-attr-value">$1');
+              html = html.replace(/"hljs-string">([0-9\[\{])/g, '"hljs-modulo-attr-value-lit">$1');
+              element.innerHTML = html
+         } 
+    </Script>
+    <Style
+        -src="./SyntaxHighlighter/custom-scheme.css"
+    ></Style>
+</Component>
+

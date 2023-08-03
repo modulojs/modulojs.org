@@ -1,0 +1,115 @@
+<!--
+    Component definitions for the Modulo website layout and documentation
+    structure are contained here.
+-->
+<Component name="Page" mode="vanish-into-document">
+    <Props
+        pagetitle
+        shownews
+        showtop
+        navdocs
+        navselected
+        navbreadcrumb
+    ></Props>
+    <Template
+        -src="./Page/Page.html"
+    ></Template>
+    <Style
+        -auto-isolate="vanish"
+        -src="./Page/Page.css"
+    ></Style>
+    <Script
+        -src="./Page/Page.js"
+    ></Script>
+    <StaticData
+        -src="../../data/links/navigation.js"
+    ></StaticData>
+    <StaticData
+        -name="devlog"
+        -src="../../data/links/devlog.js"
+    ></StaticData>
+</Component>
+
+<!-- Disabled due to loading ordering bug: quick-component="html,css,js" -->
+<Component name="HomeSplash">
+    <Props
+        image
+    ></Props>
+    <Template
+        -src="./HomeSplash/HomeSplash.html"
+    ></Template>
+    <Script
+        -src="./HomeSplash/HomeSplash.js"
+    ></Script>
+    <Style
+        -src="./HomeSplash/HomeSplash.css"
+    ></Style>
+</Component>
+
+<Component name="TabPane">
+    <Props
+        hadjust
+    ></Props>
+    <Template
+        -src="./TabPane/TabPane.html"
+    ></Template>
+    <State
+        value:=null
+        html:=null
+    ></State>
+    <Script
+        -src="./TabPane/TabPane.js"
+    ></Script>
+    <Style
+        -src="./TabPane/TabPane.css"
+    ></Style>
+</Component>
+
+<Component name="TableOfContents">
+    <Props
+        showall
+        value
+    ></Props>
+    <Template
+        -src="./TableOfContents/TableOfContents.html"
+    ></Template>
+    <StaticData
+        -src="../../data/links/documentation.js"
+    ></StaticData>
+    <Style
+        -src="./TableOfContents/TableOfContents.css"
+    ></Style>
+</Component>
+
+<Component name="ProjectVersion" mode="vanish">
+  <Template>alpha&nbsp;v0.0.54</Template>
+  <!--
+    <Template>alpha&nbsp;v{{ staticdata.version }}</Template>
+    <StaticData -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"></StaticData>
+  -->
+</Component>
+
+<Component name="TwoPanes" mode="vanish">
+    <Props
+        class
+    ></Props>
+    <Template>
+        <section>
+            <slot name="left" class="pane {{ props.class }}"></slot>
+            <slot name="right" class="pane {{ props.class }}"></slot>
+        </section>
+    </Template>
+    <Style
+        -auto-isolate="vanish"
+        -src="./TwoPanes/TwoPanes.css"
+    ></Style>
+</Component>
+
+
+<!--
+{#<x-ShadowWrapper html="{{ state.demo }}"></x-ShadowWrapper>#}
+<Component name="ShadowWrapper" mode="shadow">
+    <Props html></Props>
+    <Template>{{ props.html|safe }}</Template>
+</Component>
+-->
