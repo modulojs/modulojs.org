@@ -5,6 +5,15 @@
     grid-template-rows: 1fr;
 }
 
+.pane-holder--collapsed {
+    display: block;
+}
+
+.pane-holder--collapsed .demo-area {
+    justify-content: center;
+    align-items: center;
+}
+
 .pane {
     display: block;
     height: 100%;

@@ -7,6 +7,7 @@
     <Props
         value
         src
+        collapsed
     ></Props>
     <Template
         -src="./DemoEditor/DemoEditor.html"
@@ -15,6 +16,7 @@
         divider:=240
         demo=""
         value=""
+        show-editor:=null
     ></State>
     <Script
         -src="./DemoEditor/DemoEditor.js"
@@ -74,6 +76,35 @@
     </Script>
     <Style
         -src="./SyntaxHighlighter/custom-scheme.css"
+    ></Style>
+</Component>
+
+
+<Component name="EditorGrid">
+    <Template
+        -src="./EditorGrid/EditorGrid.html"
+    ></Template>
+    <State
+        selected:=null
+    ></State>
+    <StaticData
+        -src="../../data/links/examples.js"
+    ></StaticData>
+    <Script>
+        modulo.register('templateFilter', function getTitle(s) {
+            const parts = s.split('.')[0].split('/');
+            return parts[parts.length - 1];
+        });
+        function showDemo(demoFileName) {
+            state.selected = demoFileName;
+        }
+        function prepareCallback() {
+            const examples = [];
+            return { examples };
+        }
+    </Script>
+    <Style
+        -src="./EditorGrid/EditorGrid.css"
     ></Style>
 </Component>
 

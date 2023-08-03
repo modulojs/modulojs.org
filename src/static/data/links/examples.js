@@ -18,9 +18,9 @@
         {
             file: "/static/demos/eg/Search.html",
         },
-        {
+        /*{
             file: "/static/demos/eg/Components.html",
-        },
+        },*/
         {
             file: "/static/demos/eg/MemoryGame.html",
         },

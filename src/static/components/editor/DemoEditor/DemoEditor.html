@@ -1,25 +1,30 @@
-
-
-<div class="pane-holder" style="--right-width: {{ state.divider }}px; --divider-width: 45px">
-    <div class="pane pane--left">
-        {% if state.value %}
-            <x-SyntaxEditor
-                [script.editor]
-                style="height: 100%"
-                value="{{ state.value }}"
-            ></x-SyntaxEditor>
-        {% else %}
-            <em>Loading...</em>
-        {% endif %}
-    </div>
-    <div class="pane pane--divider">
-        <div class="toolbar">
-            <button @click:=script.run>
-                <span alt="Refresh">⟳</span>
-                Run
-            </button>
+<div
+    class="pane-holder {% if not state.showEditor %}pane-holder--collapsed{% endif %}"
+    style="
+        --right-width: {{ state.divider }}px;
+        --divider-width: 45px
+    ">
+    {% if state.showEditor %}
+        <div class="pane pane--left">
+            {% if state.value %}
+                <x-SyntaxEditor
+                    [script.editor]
+                    style="height: 100%"
+                    value="{{ state.value }}"
+                ></x-SyntaxEditor>
+            {% else %}
+                <em>Loading...</em>
+            {% endif %}
         </div>
-    </div>
+        <div class="pane pane--divider">
+            <div class="toolbar">
+                <button @click:=script.run>
+                    <span alt="Refresh">⟳</span>
+                    Run
+                </button>
+            </div>
+        </div>
+    {% endif %}
     <div class="pane pane--right">
         <div class="demo-area">
             {% if not state.demo %}
@@ -33,20 +38,20 @@
 
 
 {% comment %}
-            <div style="opacity: 0.5; margin-right: -20px">
-                <button
-                    [state.bind]=click
-                    name="divider"
-                    value="700"
-                >&larr;</button><button
-                    [state.bind]=click
-                    name="divider"
-                    value="400"
-                >=</button><button
-                    [state.bind]=click
-                    name="divider"
-                    value="240"
-                >&rarr;</button>
-                <!--<button>&#x25AC;|&#x25A0;</button>-->
-            </div>
+    <div style="opacity: 0.5; margin-right: -20px">
+        <button
+            [state.bind]=click
+            name="divider"
+            value="700"
+        >&larr;</button><button
+            [state.bind]=click
+            name="divider"
+            value="400"
+        >=</button><button
+            [state.bind]=click
+            name="divider"
+            value="240"
+        >&rarr;</button>
+        <!--<button>&#x25AC;|&#x25A0;</button>-->
+    </div>
 {% endcomment %}

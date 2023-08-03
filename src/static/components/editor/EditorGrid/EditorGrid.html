@@ -1,0 +1,25 @@
+{% for example in staticdata.components %}
+    <article>
+        <h3
+            @click:=script.showDemo
+            payload="{{ example.file }}"
+        >{{ example.file|getTitle }}</h3>
+        {% comment %}
+            [state.bind]="click"
+            name="selected"
+            value="{{ example.file }}"
+        {% endcomment %}
+        {% if state.selected == example.file %}
+            <x-DemoEditor
+                src="{{ example.file }}"
+                collapsed:=false
+            ></x-DemoEditor>
+        {% else %}
+            <x-DemoEditor
+                src="{{ example.file }}"
+                collapsed:=true
+            ></x-DemoEditor>
+        {% endif %}
+    </article>
+{% endfor %}
+

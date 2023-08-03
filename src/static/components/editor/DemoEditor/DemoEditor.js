@@ -7,6 +7,9 @@ function editorMount({ el }) {
 }
 
 function prepareCallback() {
+    if (state.showEditor === null) {
+        state.showEditor = !props.collapsed;
+    }
     if (props.value && !state.value) {
         state.value = props.value;
     }
@@ -19,6 +22,9 @@ function prepareCallback() {
             .then(text => {
                 setAttr('value', text); // sets own prop, so SSR friendly
                 stateCPart.propagate('value', text);
+                if (!state.showEditor) {
+                    run(state.value);
+                }
             });
     }
 }
@@ -46,9 +52,9 @@ function getDemo(ns) {
     return `<${ tagName }></${ tagName }>`;
 }
 
-function run() {
+function run(newValue = undefined) {
     const ns = 'demo' + nextId();
-    state.value = element.editor.value;
+    state.value = newValue === undefined ? element.editor.value : newValue;
     const fullText = getCodePrefix(ns) + state.value + getCodeSuffix(ns);
     state.demo = '';
     modulo.loadString(fullText);
