@@ -123,7 +123,7 @@ hue-6-2: #c18401
 
 
 .hljs-modulo-attr-value {
-  background: var(--color-alt);
+  /*background: var(--color-alt);*/
   color: var(--color-fg) !important;
   font-weight: bold;
   /*border-radius: 100%;*/

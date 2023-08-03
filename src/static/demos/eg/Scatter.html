@@ -1,0 +1,54 @@
+<!-- StaticData can be used for data visualization as
+well, as an quick way to bring in data sets. Here we loop
+through data, creating labels that appear when hovering. -->
+<Template>
+    {% for user in staticdata %}
+        <div style="--x: {{ user.address.geo.lng }}px;
+                    --y: {{ user.address.geo.lat }}px;"
+        ></div>
+        <label>{{ user.name }} ({{ user.email }})</label>
+    {% endfor %}
+</Template>
+
+<StaticData
+    -src="https://jsonplaceholder.typicode.com/users"
+></StaticData>
+
+<Style>
+  :host {
+      position: relative;
+      display: block;
+      --size: 101px;
+      width: var(--size);
+      height: var(--size);
+      background-size: 10px 10px;
+      background-image: linear-gradient(to right,
+          rgba(100, 100, 100,.3) 1px, transparent 1px),
+        linear-gradient(to bottom,
+          rgba(100, 100, 100,.3) 1px, transparent 1px);
+  }
+  div {
+      position: absolute;
+      top: calc(var(--y) / 1.5 + var(--size) / 2 + 5px);
+      left: calc(var(--x) / 4.0 + var(--size) / 2 + 5px);
+      height: 10px;
+      width: 10px;
+      border-radius: 10px;
+      border: 1px solid #B90183;
+      background: rgba(255, 255, 255, 0.0);
+  }
+  div:hover {
+      background: #B90183;
+  }
+  label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      opacity: 0;
+      height: 0;
+      font-size: 11px;
+  }
+  div:hover + label {
+      opacity: 1;
+  }
+</Style>

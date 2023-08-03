@@ -1,0 +1,44 @@
+<!-- Modulo can be used with APIs to create interactive apps.
+This book search shows how a Script tag can use an API -->
+<Template>
+  <input [state.bind] name="search" />
+  <button @click:=script.doSearch>Go</button>
+  {% if state.loading %}<em>Loading...</em>{% endif %}
+  <ol>
+    {% for item in state.results %}
+      <li>
+        <img src="{{ item.cover }}" />
+        <strong>{{ item.title }}</strong>
+      </li>
+    {% endfor %}
+  </ol>
+</Template>
+
+<State
+    search="the lord of the rings"
+    loading:=false
+    results:=[]
+></State>
+
+<Script>
+    const OPTS = '&limit=6&fields=title,author_name,cover_i';
+    const COVER ='https://covers.openlibrary.org/b/id/';
+    const API = 'https://openlibrary.org/search.json?q=';
+    function doSearch() {
+        const url = API + '?q=' + state.search + OPTS;
+        state.loading = true;
+        fetch(url)
+            .then(response => response.json())
+            .then(dataBackCallback);
+    }
+
+    function dataBackCallback(data) {
+        for (const item of data.docs) {
+            // For convenience, we prepare the cover URL
+            item.cover = COVER + item.cover_i + '-S.jpg';
+        }
+        state.results = data.docs;
+        state.loading = false;
+        element.rerender();
+    }
+</Script>
