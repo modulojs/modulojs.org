@@ -1,55 +1,95 @@
-<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage>---
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
 tutorial: Part 1
 ---
 
 The Modulo Tutorial: Part 1
 ===========================
 
-> **Prerequisites:** Part 1 and Part 2 of this tutorial requires a prerequisite knowledge of HTML & CSS only. Part 3 requires familiarity with JavaScript. Familiarity with React, Vue, or similar frameworks is helpful, but not required.
+> **Prerequisites:** Part 1 and Part 2 of this tutorial requires a prerequisite
+> knowledge of HTML & CSS only. Part 3 requires familiarity with JavaScript.
+> Familiarity with React, Vue, or similar frameworks is helpful, but not
+> required.
 
-Welcome to the Modulo tutorial. By following this short tutorial, you can learn how to use Modulo in your own projects.
+Welcome to the Modulo tutorial. By following this short tutorial, you can learn
+how to use Modulo in your own projects.
 
 ### When to use Modulo
 
-Modulo is useful when using plain HTML and CSS is no longer sufficient. It has no dependencies, has no "build process", and does not require experience with JavaScript, terminal applications, or NPM. This means it can be equally easily incorporated into a plain HTML "static site" (e.g. when you assemble HTML, CSS, and other static assets in a directory), or into a "multi-page" web app built with a backend language or MVC framework.
+Modulo is useful when using plain HTML and CSS is no longer sufficient. It has
+no dependencies, has no "build process", and does not require experience with
+JavaScript, terminal applications, or NPM. This means it can be equally easily
+incorporated into a plain HTML "static site" (e.g. when you assemble HTML, CSS,
+and other static assets in a directory), or into a "multi-page" web app built
+with a backend language or MVC framework.
 
 **Ready to dive into Web Component development with Modulo?**
 
-1\. Components
+## 1. Components
 
-> **JS file alternatives:**
-> 
-> 1.  Directly link to a CDN hosting Modulo.js _(shown here)_
-> 2.  Manually download the Modulo.js file to a JS or asset directory, e.g. `src="/js/Modulo.js"` _(good for offline work)_
-> 3.  Including a pre-rendered "self-bundled" Modulo "build" _(speediest for production, covered in Part 2)_
+> **JS file alternatives:** 1.  Directly link to a CDN hosting Modulo.js
+> _(shown here)_ 2.  Manually download the Modulo.js file to a JS or asset
+> directory, e.g.  `src="/js/Modulo.js"` _(good for offline work)_ 3.
+> Including a pre-rendered "self-bundled" Modulo "build" _(speediest for
+> production, covered in Part 2)_
 
 ### Including Modulo
 
-The first step is to include a Modulo script tag in your HTML file. You could either start with an empty file, or open up an existing HTML file, and paste in the following:
+The first step is to include a Modulo script tag in your HTML file. You could
+either start with an empty file, or open up an existing HTML file, and paste in
+the following:
 
-&lt;script src="https://unpkg.com/mdu.js"&gt;&lt;/script&gt;
+<code>&lt;script src="https://unpkg.com/mdu.js">&lt;/script></code>
 
-This will only include the JS file, but not activate Modulo. To activate Modulo, we need to add the `Modulo`, attribute to the script tag, and leave some space to indicate that this will (soon) contain Modulo code:
+This will only include the JS file, but not activate Modulo. To activate
+Modulo, we need to add the `Modulo`, attribute to the script tag, and leave
+some space to indicate that this will (soon) contain Modulo code:
 
-&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;
+<code>&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;</code>
 
-&lt;/script&gt;
+<code>&lt;/script&gt;</code>
 
-Note that technically, either `modulo` or `Modulo` will work because HTML is case-insensitive; however, the capitalized `Modulo` spelling is recommended for easier reading.
+Note that technically, either `modulo` or `Modulo` will work because HTML is
+case-insensitive; however, the capitalized `Modulo` spelling is recommended for
+easier reading.
 
-> **Why use "components"?** Have you ever repeated the same HTML, CSS, and/or JavaScript while writing a website or or web app? _Components_ let you store repeated code in one place. Once defined, components can be re-used everywhere, saving developer time and reducing mistakes. Furthermore, within teams, components libraries improve collaboration between developers.
+> **Why use "components"?** Have you ever repeated the same HTML, CSS, and/or
+> JavaScript while writing a website or or web app? _Components_ let you store
+> repeated code in one place. Once defined, components can be re-used
+> everywhere, saving developer time and reducing mistakes. Furthermore, within
+> teams, components libraries improve collaboration between developers.
 
 ### Defining your first component
 
-Once you have included Modulo and activated it, you can define your first _custom component_. Right now, we'll do that by "embedding" the component definition into the script tag that we used to activate Modulo for simplicity's sake. Later, we'll learn how to split your components into a separate file and then include that file, which is the preferred way.
+Once you have included Modulo and activated it, you can define your first
+_custom component_. Right now, we'll do that by "embedding" the component
+definition into the script tag that we used to activate Modulo for simplicity's
+sake. Later, we'll learn how to split your components into a separate file and
+then include that file, which is the preferred way.
 
-**Component definitions** start with a "Component" opening tag in the format of `<Component name="HelloWorld">`. Modulo will look for these tags, defining components for each one it encounters. Every component definition must specify a name, conventionally in `UpperCamelCase`. This is just a convention when writing code: Technically HTML tag names are all case insensitive, and so while inspecting the DOM, browsers typically display them in `all-lowercase`, removing any capitalization.
+**Component definitions** start with a "Component" opening tag in the format of
+`<Component name="HelloWorld">`. Modulo will look for these tags, defining
+components for each one it encounters. Every component definition must specify
+a name, conventionally in `UpperCamelCase`. This is just a convention when
+writing code: Technically HTML tag names are all case insensitive, and so while
+inspecting the DOM, browsers typically display them in `all-lowercase`,
+removing any capitalization.
 
-Once defined, you can use a component by referring to it's name as though it were a plain HTML tag. Components can go anywhere that plain HTML tags can go, and can be styled with CSS the same way as well. In other words, creating a component is like creating a brand-new type of HTML tag that can be used anywhere, just like the original HTML tags of `<div>`, `<a>`, etc.
+Once defined, you can use a component by referring to it's name as though it
+were a plain HTML tag. Components can go anywhere that plain HTML tags can go,
+and can be styled with CSS the same way as well. In other words, creating a
+component is like creating a brand-new type of HTML tag that can be used
+anywhere, just like the original HTML tags of `<div>`, `<a>`, etc.
 
-Unlike plain HTML tags, you must use a dash (`-`) when referring to a component. This is a rule of the HTML5 Custom Components standard, which Modulo is based upon. Modulo's default behavior is to prefix custom components with an `x-`. So, if a component is defined like `<Component name="HelloWorld">`, then it can be referenced elsewhere like `<x-HelloWorld></x-HelloWorld>`.
+Unlike plain HTML tags, you must use a dash (`-`) when referring to a
+component. This is a rule of the HTML5 Custom Components standard, which Modulo
+is based upon. Modulo's default behavior is to prefix custom components with an
+`x-`. So, if a component is defined like `<Component name="HelloWorld">`, then
+it can be referenced elsewhere like `<x-HelloWorld></x-HelloWorld>`.
 
-To quickly summarize: Components are reusable bits of HTML, JS, and CSS code, and must be defined within a tag like `<Component name="HelloWorld">`, and then this definition can be embedded in an HTML page within a script tag like `<script Modulo src="https://unpkg.com/mdu.js">`.
+**To quickly summarize:** Components are reusable bits of HTML, JS, and CSS
+code, and must be defined within a tag like `<Component name="HelloWorld">`,
+and then this definition can be embedded in an HTML page within a script tag
+like: <code>&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;</code>
 
 **Okay, enough talk, let's actually try this out!**
 

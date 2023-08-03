@@ -40,10 +40,11 @@
     <Template -src="./MarkdownPage/MarkdownPage.html"></Template>
     <Script -name="page">
         function prepareCallback(renderObj) {
-            const { originalHTML } = element;
-            // Unescape (fixes issues with using HTML as source file)
-            const source = originalHTML.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
-            return modulo.registry.utils.getMarkdownData(source);
+            let { originalHTML } = element;
+            // Remove any "script type=md" prefixes
+            originalHTML = originalHTML.replace(/^<scri.t(.type=.?md.?)?>/i, '');
+            originalHTML = originalHTML.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+            return modulo.registry.utils.getMarkdownData(originalHTML);
         }
     </Script>
 </Component>

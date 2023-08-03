@@ -7,8 +7,10 @@ function editorMount({ el }) {
 }
 
 function prepareCallback() {
-    if (state.showEditor === null) {
+    if (props.collapsed === true || props.collapsed === false) {
         state.showEditor = !props.collapsed;
+    } else {
+        state.showEditor = true;
     }
     if (props.value && !state.value) {
         state.value = props.value;
