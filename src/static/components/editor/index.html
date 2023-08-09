@@ -60,18 +60,38 @@
         mode
     ></Props>
     <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
-          function updateCallback(renderObj) {
-              const text = props.value || element.originalHTML;
-              const opts = { language: props.mode || 'django' };
-              let html = hljs.highlight(text, opts).value;
-              // Add in colors for Modulo tag names / attributes
-              html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
-              html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
-              html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
-              html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');
-              html = html.replace(/"hljs-string">([A-Za-z])/g, '"hljs-modulo-attr-value">$1');
-              html = html.replace(/"hljs-string">([0-9\[\{])/g, '"hljs-modulo-attr-value-lit">$1');
-              element.innerHTML = html
+        function initializedCallback() {
+            const text = props.value || element.originalHTML;
+            const { mode } = props;
+            if (mode && mode.includes('_')) {
+                const [ modeName, editor ] = mode.split('_');
+                mode = modeName;
+                // TODO: replace self with editor
+                const div = document.createElement('div');
+                const valueAttr = text.replace('"', "&dquo;");
+                div.innerHTML = `<x-SyntaxEditor value="${ valueAttr }"></x-SyntaxEditor>`;
+                element.replaceWith(div.firstChild);
+                element.wasReplaced = true; // prevent update from being called
+            }
+        }
+
+        function updateCallback(renderObj) {
+            if (element.wasReplaced) {
+                return;
+            }
+            const text = props.value || element.originalHTML;
+            // Should never have to encounter a '-'...
+            const language = props.mode ? props.mode.split('_')[0] : 'django';
+            const opts = { language };
+            let html = hljs.highlight(text, opts).value;
+            // Add in colors for Modulo tag names / attributes
+            html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
+            html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
+            html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
+            html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');
+            html = html.replace(/"hljs-string">([A-Za-z])/g, '"hljs-modulo-attr-value">$1');
+            html = html.replace(/"hljs-string">([0-9\[\{])/g, '"hljs-modulo-attr-value-lit">$1');
+            element.innerHTML = html
          } 
     </Script>
     <Style
