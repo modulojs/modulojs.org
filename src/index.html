@@ -14,11 +14,18 @@
     <a name="start"></a>
     <h1>Easy to start</h1>
 
-    <p>Writing your first component takes only <strong>2 steps</strong>,
-    and integrates with nearly any web app or project that uses HTML:</p>
+    <p>Writing your first component takes only <strong>3 steps</strong>. You
+    can follow these steps in your text editor by either 1) creating a new,
+    blank HTML file or 2) opening an HTML file from one of your existing web
+    apps or projects:</p>
     <x-TwoPanes class="highlighted">
         <article slot="left">
-            <h2>Step 1: Include Modulo &amp; define a component:</h2>
+            <h2>Step 1: Define Modulo</h2></h2>
+            <x-SyntaxHighlighter
+                value='<script Modulo src="https://unpkg.com/mdu.js">
+&lt;/script&gt;'></x-SyntaxHighlighter>
+
+            <h2 style="margin-top: 60px">Step 2: Define Component</h2>
             <x-SyntaxHighlighter
                 value='<script Modulo src="https://unpkg.com/mdu.js">
     <Component name="Greet">
@@ -30,7 +37,7 @@
         </article>
 
         <article slot="right">
-            <h2>Step 2: Use like it's regular HTML:</h2>
+            <h2>Step 3: Use Elsewhere</h2>
 <x-SyntaxHighlighter value='<div>
     <x-Greet>Modulo</x-Greet>
     <x-Greet>
@@ -38,6 +45,14 @@
         web component
     </x-Greet>
 &lt;/div&gt;'></x-SyntaxHighlighter>
+
+        <div style="border: 1px solid var(--color); margin-top: 20px; padding: 10px">
+            <h2 style="background: var(--color); color: var(--color-content-bg)">Continue with the tutorial:</h2>
+            <p>
+                <a href="/tutorial/part1.html" class="cta-btn">Start Tutorial &raquo;</a>
+            </p>
+        </div>
+
         </article>
     </x-TwoPanes>
 
@@ -50,35 +65,27 @@
             Modulo basics, starting with HTML and CSS (part 1 and 2), and then
             JavaScript (part 3).
             </p>
-            <p>
-                <a href="/tutorial/part1.html" class="cta-btn">Start Tutorial &raquo;</a>
-            </p>
         </article>
 
         <article slot="right">
-            <h2>Advanced usage: Using NPM to start a new project:</h2>
-            <p>Scaffold a JAMStack project configured with CMS and SSR for
-            building on Netlify and other hosts:</p>
-            <x-SyntaxHighlighter
-                style="padding-left: 20px;"
-                mode="bash"
-                value='# Run in a shell with NPM:
-npm init modulo
-cd new-modulo-app/
-npm run start # https://localhost:3334
+            <h2>Advanced usage</h2>
+            <h3>Using NPM to start a new project:</h2>
+            <p style="text-align:center"><code style="font-size: 1.5rem;">npm init modulo</code></p>
+            <p>Support for: Netlify-style SSR (Server Side Rendering, for fast
+            loads), Decap CMS (for online, graphical "blog"-style editing), and
+            more.</p>
+            <p>Next steps? Read the <code>create-modulo</code> documentation.</p>
 
-# Optional, for Decap CMS to edit articles:
-npm run startcms # (run in separate shell)'></x-SyntaxHighlighter>
+            <h3>Download Modulo.js directly:</h3>
+            <a href="https://unpkg.com/mdu.js" download="Modulo.js" style="font-size: 1.3rem; margin-left: 20px">
+                Modulo.js (<x-ProjectVersion></x-ProjectVersion>)
+                <span alt="Down arrow" style="font-size: 1.3rem">&#x2304;</span>
+            </a>
         </article>
 
     </x-TwoPanes>
 
     <h3 style="text-align: right">
-        Download the one file directly:
-        <a href="https://unpkg.com/mdu.js" download="Modulo.js">
-            Modulo.js (<x-ProjectVersion></x-ProjectVersion>)
-            <span alt="Down arrow">&#x2304;</span>
-        </a>
     </h3>
 
     <a name="whymodulo"></a>
@@ -88,7 +95,7 @@ npm run startcms # (run in separate shell)'></x-SyntaxHighlighter>
         <aside slot="left">
             <h3><span alt="Null set">&#8709;</span></h3>
             <h3>Fewer<br />assumptions</h3>
-            <p><a href="/tutorial/">Get started now &#187;</a></p>
+            <p><a href="/tutorial/part1.html">Get started now &#187;</a></p>
         </aside>
         <article slot="right">
             <p><strong>Zero set-up</strong> - Like the "golden age" of jQuery,

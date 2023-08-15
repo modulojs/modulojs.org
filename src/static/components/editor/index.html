@@ -62,9 +62,9 @@
     <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
         function initializedCallback() {
             const text = props.value || element.originalHTML;
-            const { mode } = props;
+            let { mode } = props;
             if (mode && mode.includes('_')) {
-                const [ modeName, editor ] = mode.split('_');
+                let [ modeName, editor ] = mode.split('_');
                 mode = modeName;
                 // TODO: replace self with editor
                 const div = document.createElement('div');

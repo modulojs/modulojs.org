@@ -23,13 +23,29 @@
         console.log(def.Content)
     });
     modulo.config.component.DefLoaders.unshift('QuickComponent');
-            console.log(modulo.config.component.DefLoaders)
     modulo.config.component.quickTypes = [
         [ 'html', 'Template' ],
         [ 'js', 'Script' ],
         [ 'json', 'StaticData' ],
         [ 'css', 'Style' ],
     ];
+</script>
+
+<script Configuration>
+    // Adds a templateFilter to make it easier to check for the current URL
+
+    // Usage: {% if my.variable|isactive %}nav-active{% endif %}
+    modulo.registry.templateFilters.isactive = function (str) {
+        const loc = window.location.pathname;
+        return loc.split('/').includes(str) || loc.includes(str + '.') || loc.startsWith(str);
+    };
+
+    // Usage: {% if my.variable|islocation %}nav-active{% endif %}
+    modulo.registry.templateFilters.islocation = str => {
+        // Parse as URLs / paths and do normalized comparison (TODO: Handle relative?)
+        const url = window.location.origin + str.trim(); // Combine with origin for complete path
+        return (new URL(window.location.href)).toString() === (new URL(url)).toString();
+    };
 </script>
 
 <!-- Load "layout" and "editor" component libraries, registering both under the

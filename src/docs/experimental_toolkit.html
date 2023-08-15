@@ -1,15 +1,12 @@
+<!DOCTYPE html>
 <script Modulo
-    src="/js/Modulo.js"
-    -src="/libraries/all.html" 
+    src="/static/js/Modulo.js"
+    -src="/static/" 
 ></script>
 
-<mws-Page
-    docbarselected="mdu.html"
-    pagetitle="Modulo Developer Utilities"
-    navbar="docs">
+<x-Page pagetitle="Experimental Toolkit" navselected="docs/" navdocs="y">
 
-<h1>Modulo CLI Toolkit</h1>
-
+<h1>Modulo Toolkit</h1>
 
 <p>There are several goals of building a toolkit or starter kit to go with
 Modulo. The first is to developing better command-line support. One utility
@@ -296,7 +293,7 @@ Example: modulocli ssg --input ./src/ --output ./public/
     </li>
 </ul>
 
-<mws-Section>MDU CPart Library</mws-Section>
+<mws-Section>CPart Library</mws-Section>
 
 <h3>Test suites</h3>
 
@@ -380,4 +377,4 @@ text='
 '></mws-Demo>
 
 
-</mws-Page>
+</x-Page>

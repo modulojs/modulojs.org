@@ -1,24 +1,50 @@
 <ul>
-    <h2>Tutorial</h2>
-    <li>
-        <em>Getting Started:</em>
-        {% for page in staticdata.tutorial %}
-            <a href="{{ page.filename }}" title="{{ page.label }}">{{ page.partLabel }}</a>
-        {% endfor %}
+    {% if props.showall %}
+        <h2>Begin</h2>
+    {% else %}
+        <h1>%</h1>
+    {% endif %}
+    <li class="{% if not props.showall %}button-sidebar{% endif %}">
+        <a href="/docs/#TableOfContents" class="{% if "docs/"|isactive %}button--active{% endif %}">
+            Table of Contents
+        </a>
     </li>
+    {% if props.showall %}
+        {% for page in staticdata.tutorial %}
+            <li>
+                <a href="{{ page.filename }}" title="{{ page.label }}">Tutorial {{ page.partLabel }}: {{ page.label }}</a>
+                <span class="hint">(<em>Topics: {{ page.keywords|join:', ' }}</em>)</span>
+            </li>
+        {% endfor %}
+    {% else %}
 
+        <li class="button-sidebar">
+            Tutorial:<br />
+            {% for page in staticdata.tutorial %}
+                <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
+                        {{ page.partLabel }}
+                </a>
+            {% endfor %}
+        </li>
+    {% endif %}
+</ul>
+
+
+<ul>
     <h2>Documentation</h2>
     {% for page in staticdata.docs %}
-        <li class="{% if page.sections %}
-                {% if page.active %}gactive{% else %}ginactive{% endif %}
+        <li class="{% if not props.showall %}
+                {% if page.sections %}
+                    {% if page.filename|isactive %}gactive{% else %}ginactive{% endif %}
+                {% endif %}
             {% endif %}"><a href="{{ page.filename }}">{{ page.label }}</a>
-            {% if props.showall %}
+            {% if page.filename|isactive|default:props.showall %}
                 <ul>
                 {% for section in page.sections %}
                     <li><a href="{{ page.filename }}#{{ section.hash }}">{{ section.label }}</a>
                     {% if props.showall %}
                         {% if section.keywords.length gt 0 %}
-                            <span style="margin-left: 10px; color: #aaa">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>
+                            <span class="hint">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>
                         {% endif %}
                     {% endif %}
                     </li>

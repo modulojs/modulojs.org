@@ -1,14 +1,12 @@
+<!DOCTYPE html>
 <script Modulo
-    src="/js/Modulo.js"
-    -src="/libraries/all.html" 
+    src="/static/js/Modulo.js"
+    -src="/static/" 
 ></script>
 
-<mws-Page
-    docbarselected="/templating.html"
-    pagetitle="Templating"
-    navbar="docs">
+<x-Page pagetitle="Templating Language" navselected="docs/" navdocs="y">
 
-<h1>Modulo Templating Language</h1>
+<h1>Templating Language</h1>
 
 <p>This document explains the language syntax and functionality of the included
 Modulo template system.</p>
@@ -29,7 +27,7 @@ set for editing Modulo template or library files. Thanks, Django!</p>
 
 
 <div class="InfoBox">
-    <h2>Philosophy</h2>
+    <h2>Approach</h2>
 
     <p>In approach, Modulo's tempting language joins the ranks of the <a
     target="_blank"
@@ -472,4 +470,4 @@ Examine the code below for a concrete example of how this escaping behaves:</p>
     fromlibrary="Templating_Escaping"
 ></mws-Demo>
 
-</mws-Page>
+</x-Page>

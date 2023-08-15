@@ -5,6 +5,7 @@
         pagetitle="Tutorial - {{ page.tutorial }}"
         navselected="docs/"
         navbreadcrumb="Tutorial - {{ page.tutorial }}"
+        navdocs=y
     >
 
         <h1>Tutorial</h1>
@@ -39,9 +40,9 @@
 {% else %}
     <x-Page
         pagetitle="{{ page.title }}"
-        navdocs=true
         navselected="docs/"
         navbreadcrumb="{{ page.title }}"
+        navdocs=y
     >
         <div class="markdown-body">
             {# The page.body  property will be the page-body in raw HTML #}

@@ -11,6 +11,39 @@ Key items left:
       Modulo (so no node_modules)
     - Update package.json to just use `npx http-server` in all cases
     - Update README to reflect that you need to do an `npm run install` before
-      continuing
+      trying to build locally
 
+- Auto gen other ptemplates:
+    - One more thing: Make a script that "downgrades" ptemplates/jamstack-cms into variants.
+    - That way I only maintain jamstack-cms, and auto-reduce to the subsets
+    - Lighterweight:
+        - Remove CMS, reduce to SPA
+    - HTTP linked (file:/// proto friendly):
+        - Substitute all relative paths with unpkg equivalents
+    - Zipped:
+        - These get directly linked to by the main modulojs website for a nice
+          collection of HTTP downloadable zip demos (no NPM needed)
+
+
+YAML in progress:
+
+  - label: "Core Pages"
+    label_singular: "Page"
+    name: "pages"
+    folder: "/."
+    extension: "html"
+    format: "toml-frontmatter"
+    identifier_field: "filename"
+    slug: "{{dirname}}{{filename}}.{{extension}}"
+    summary: "{{fields.src}}"
+    frontmatter_delimiter: [
+        "<!DOCTYPE HTML>\n<script Modulo\n",
+        "></script>",
+    ]
+    create: true
+    delete: true
+    fields:
+      - {label: "Modulo JS Source", name: "src", widget: "string"}
+      - {label: "Component Library", name: "-src", widget: "string"}
+      - {label: "HTML Page Content", name: "body", widget: "code"}
 

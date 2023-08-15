@@ -40,6 +40,7 @@
     text-align: center;
     margin-top: 6rem;
     padding: 5px;
+    margin-right: 10px;
     background:
         linear-gradient(to right, #00000000 0%, #00000000 25%, white 25.00001%, white 75%, #00000000 75.00001%, #00000000 100%),
         linear-gradient(to bottom, white 0%, white 49%, black 49.00001%, black 53%, white 53.00001%, white 100%)

@@ -14,9 +14,10 @@ body {
     font-family: sans-serif;
 }
 
+/* NOTE: This resets EVERY element with tag-level specificity to 1rem
+** border-box. This forces elements to specify font-size. */
 * {
     box-sizing: border-box;
     font-size: 1rem;
 }
-
 

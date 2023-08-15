@@ -1,4 +1,6 @@
 {
+    starterFiles: [
+    ],
     components: [
         {
             file: "/static/demos/eg/Hello.html",
