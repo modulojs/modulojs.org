@@ -25,7 +25,7 @@ function prepareCallback() {
                 setAttr('value', text); // sets own prop, so SSR friendly
                 stateCPart.propagate('value', text);
                 if (!state.showEditor) {
-                    run(state.value);
+                    _run();
                 }
             });
     }
@@ -44,7 +44,7 @@ function getComponentName() {
 
 function getCodePrefix(ns) {
     const cName = getComponentName();
-    return `<Modulo -name="modulo${ ns }">` +
+    return `<Modulo>` +
             `<Component namespace="${ ns }" name="${ cName }" mode="shadow">\n`;
 }
 
@@ -57,22 +57,6 @@ function getDemoCode(ns) {
     return `<${ tagName }></${ tagName }>`;
 }
 
-function copyObjAtDepth(obj, depth = 0) {
-    if (typeof obj !== 'object' && Array.isArray(obj) && obj === null) {
-        return obj; // do not attempt copy
-    }
-    if (depth < 1) {
-        return Object.assign({}, obj); // Simply flat duplicate
-    }
-
-    // Otherwise, loop through recursing one more level
-    const newObj = {};
-    for (const key of Object.keys(obj)) {
-        newObj[key] = copyObjAtDepth(obj[key], depth - 1);
-    }
-    return newObj;
-}
-
 function getSandboxedModulo() {
     // For the DemoEditor, we create a new sandboxed Modulo instance. This
     // prevents definitions from leaking. We have to re-run the modulo source
@@ -81,28 +65,26 @@ function getSandboxedModulo() {
     const sandboxWindow = {}; // Keep "window" as empty object (stop load head)
     (new Function([ 'window' ], modulo_source_code))(sandboxWindow);
     sandboxWindow.document = document; // Patch expected properties of window
-    sandboxWindow.fetch = window.fetch;
-    sandboxWindow.URL = window.URL;
-    const sandbox = sandboxWindow.modulo; // Retrieve new Modulo
-    /*
-    //Object.assign(sandbox, window.modulo); // copy all props
-    sandbox.id = nextId(); // Ensure Modulo keeps gets unique ID
-    sandbox.registry = copyObjAtDepth(sandbox.registry, 1);
-    sandbox.config = copyObjAtDepth(sandbox.config, 1);
-    sandbox.definitions = copyObjAtDepth(sandbox.definitions, 1);
-    sandbox._configSteps = 0;
-    */
-    return sandbox;
+    sandboxWindow.fetch = window.fetch.bind(window);
+    sandboxWindow.URL = function fakeURL (a, b) {
+        b = 'https://fake-modulojs.org'; // Hardcode the "origin" (later may support "src"?)
+        this.href = (new window.URL(a, b)).href;
+    }
+    return sandboxWindow.modulo; // Retrieve new Modulo
 }
 
-function run(newValue = undefined) {
+function run() {
+    state.value = element.editor.value;
+    _run();
+}
+
+function _run() {
     if (!window.moduloSandbox) {
         window.moduloSandbox = getSandboxedModulo();
         window.globalModulo = window.modulo;
-        window.modulo = window.moduloSandbox;
     }
+    window.modulo = window.moduloSandbox;
     const ns = 'demo' + nextId();
-    state.value = newValue === undefined ? element.editor.value : newValue;
     const fullText = getCodePrefix(ns) + state.value + getCodeSuffix(ns);
     state.demo = '';
     window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
@@ -112,5 +94,33 @@ function run(newValue = undefined) {
     window.moduloSandbox.preprocessAndDefine(() => {
         stateCPart.propagate('demo', getDemoCode(ns));
         rerender();
+        window.modulo = window.globalModulo; // Ensure restored
     });
 }
+
+// TODO: Rm below
+/*
+function copyObjAtDepth(obj, depth = 0) {
+    if (typeof obj !== 'object' && Array.isArray(obj) && obj === null) {
+        return obj; // do not attempt copy
+    }
+    if (depth < 1) {
+        return Object.assign({}, obj); // Simply flat duplicate
+    }
+
+    //Object.assign(sandbox, window.modulo); // copy all props
+    sandbox.id = nextId(); // Ensure Modulo keeps gets unique ID
+    sandbox.registry = copyObjAtDepth(sandbox.registry, 1);
+    sandbox.config = copyObjAtDepth(sandbox.config, 1);
+    sandbox.definitions = copyObjAtDepth(sandbox.definitions, 1);
+    sandbox._configSteps = 0;
+    return sandbox;
+    // Otherwise, loop through recursing one more level
+    const newObj = {};
+    for (const key of Object.keys(obj)) {
+        newObj[key] = copyObjAtDepth(obj[key], depth - 1);
+    }
+    return newObj;
+}
+*/
+
