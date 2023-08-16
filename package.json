@@ -8,6 +8,7 @@
         "help": "modulocli help",
         "start": "modulocli srcserve",
         "startcms": "cd src && npx netlify-cms-proxy-server",
+        "clean": "rm -r build/*",
         "build": "modulocli ssg -f -v"
     },
     "license": "CC-BY-SA 4.0",

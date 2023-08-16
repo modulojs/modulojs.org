@@ -54,24 +54,38 @@ function getDemoCode(ns) {
     return `<${ tagName }></${ tagName }>`;
 }
 
-function getSandboxedModulo() {
-    if (!window.moduloSandbox) { // Register modulo as a function
-        window.moduloSandbox = new Modulo();
-        Object.assign(window.moduloSandbox, modulo);
-        modulo.id = window._moduloID; // Ensure Modulo keeps gets unique ID
-        window.moduloSandbox.registry = Object.assign({}, window.moduloSandbox.registry);
-        window.moduloSandbox.config = Object.assign({}, window.moduloSandbox.config);
-        /*
-        element.head = document.createElement('fakehead');
-        element.body = document.createElement('fakebody');
-        element.createElement = document.createElement.bind(document);
-        const fakeWindow = { fetch: window.fetch, document: element };
-        fakeWindow.modulo = new Modulo();
-        const makeModulo = new Function([ 'window', 'modulo', ], modulo_source_code);
-        makeModulo(fakeWindow, null);
-        */
+function copyObjAtDepth(obj, depth = 0) {
+    if (typeof obj !== 'object' && Array.isArray(obj) && obj === null) {
+        return obj; // do not attempt copy
     }
-    return window.moduloSandbox;
+    if (depth < 1) {
+        return Object.assign({}, obj); // Simply flat duplicate
+    }
+
+    // Otherwise, loop through recursing one more level
+    const newObj = {};
+    for (const key of Object.keys(obj)) {
+        newObj[key] = copyObjAtDepth(obj[key], depth - 1);
+    }
+    return newObj;
+}
+
+function getSandboxedModulo() {
+    // For the DemoEditor, we create a new sandboxed Modulo instance. This
+    // prevents definitions from leaking. We have to re-run the modulo source
+    // code because built / optimized versions of this JS (e.g., window.Modulo
+    // in prod) may skip inclusion of dev-related utilities, symbol names, etc.
+    const sandboxWindow = {}; // Keep "window" as an empty object
+    const makeModulo = new Function([ 'window' ], modulo_source_code);
+    makeModulo(sandboxWindow);
+    sandboxWindow.document = document; // Patch expected properties of window
+    sandboxWindow.fetch = window.fetch;
+    const moduloSandbox = sandboxWindow.modulo; // Retrieve new Modulo
+    Object.assign(moduloSandbox, window.modulo); // copy all props
+    moduloSandbox.id = ++window._moduloID; // Ensure Modulo keeps gets unique ID
+    moduloSandbox.registry = copyObjAtDepth(moduloSandbox.registry, 1);
+    moduloSandbox.config = copyObjAtDepth(moduloSandbox.config, 1);
+    return moduloSandbox;
 }
 
 function run(newValue = undefined) {
@@ -79,12 +93,14 @@ function run(newValue = undefined) {
     state.value = newValue === undefined ? element.editor.value : newValue;
     const fullText = getCodePrefix(ns) + state.value + getCodeSuffix(ns);
     state.demo = '';
-    const sandbox = getSandboxedModulo();
-    sandbox.loadString(fullText); // Load the string, and when finished, apply
+    if (!window.moduloSandbox) {
+        window.moduloSandbox = getSandboxedModulo();
+    }
+    window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
     // TODO: Refactor when Script isolation mode overhaul
     const stateCPart = element.cparts.state;
     const rerender = element.rerender.bind(element);
-    sandbox.preprocessAndDefine(() => {
+    window.moduloSandbox.preprocessAndDefine(() => {
         stateCPart.propagate('demo', getDemoCode(ns));
         rerender();
     });
