@@ -1,4 +1,12 @@
-/* Copyright 2023 modulojs.org michaelb | Use in compliance with LGPL 2.1 */
+// Copyright 2023 MichaelB | https://modulojs.org | LGPLv3
+// Modulo LGPLv3 NOTICE: Any direct modifications to the Modulo.js source code
+// must be LGPL or compatible. It is acceptable to distribute dissimilarly
+// licensed code built with the Modulo framework bundled in the same file for
+// efficiency instead of "linking", as long as this notice and license remains
+// intact with the Modulo.js source code itself and any direct modifications.
+if (typeof window === "undefined") { // Node.js environment
+    var window = {};
+}
 window.ModuloPrevious = window.Modulo;
 window.moduloPrevious = window.modulo;
 window.Modulo = class Modulo {
@@ -40,6 +48,42 @@ window.Modulo = class Modulo {
         }
         return inst;
     }
+
+    /*
+    // TODO: Dead code, finish / delete
+    getInjections() {
+        return {
+            modulo: this,
+        };
+    }
+
+    use(pathOrPaths, extra) {
+        const paths = Array.isArray(pathOrPaths) ? pathOrPaths : [ pathOrPaths ];
+        const results = [];
+        const injections = Object.assign({}, this.getInjections(), extra);
+        for (const path of paths) {
+            const reg = path.includes('.') ? this.registry : this.modules[path];
+            const cls = this.registry.utils.get(reg);
+            const defaults = this.config[cls.name] || { dependencies: [] };
+            results.push(this._inject(cls, dependencies, injections));
+        }
+        return results;
+    }
+
+    _inject(cls, dependencies, injections) {
+        return (...args) => cls(...dependencies.map(s => injections[s]), ...args);
+        if (cls.name[0].toLowerCase() === cls.name[0]) { // e.g. function foobar
+        } // Starts with a capital letter, lets extend -- e.g. class FooBar
+        return class extends cls {
+            constructor(...args) {
+                super(...dependencies.map(s => injections[s]), ...args);
+                Object.apply(this, obj || injections);
+                this.constructedCallback();
+            }
+            constructedCallback() {}
+        };
+    }
+    */
 
     instanceParts(def, extra, parts = {}) {
         // Loop through all children, instancing each class with configuration
@@ -135,7 +179,7 @@ window.Modulo = class Modulo {
 }
 
 // TODO: Move to conf
-Modulo.INVALID_WORDS = new Set((`
+window.Modulo.INVALID_WORDS = new Set((`
     break case catch class const continue debugger default delete do else enum
     export extends finally for if implements import in instanceof interface new
     null package private protected public return static super switch throw try
@@ -145,7 +189,7 @@ Modulo.INVALID_WORDS = new Set((`
 // TODO: Condense window.moduloBuild into window.modulo as well, gets "hydrated"
 //window.modulo = Object.assign(new Modulo(), window.modulo || {});
 // Create a new modulo instance to be the global default instance
-window.modulo = new Modulo();
+window.modulo = new window.Modulo();
 if (typeof modulo === "undefined" || modulo.id !== window.modulo.id) {
     var modulo = window.modulo; // TODO: RM when global modulo is cleaned up
 }
@@ -161,12 +205,12 @@ window.modulo.registry.registryCallbacks = {
         window.m[cls.name] = () => cls(modulo); // Attach shortcut to global "m"
     },
     processors(modulo, cls) {
-        modulo.registry.processors[cls.name.toLowerCase()] = cls;
+        modulo.registry.processors[cls.name.toLowerCase()] = cls; // Alias lower
     },
     core(modulo, cls) { // Global / core class getting registered
         const lowerName = cls.name[0].toLowerCase() + cls.name.slice(1);
         modulo[lowerName] = new cls(modulo);
-        modulo.assets = modulo.assetManager;
+        modulo.assets = modulo.assetManager; // TODO Rm
     },
 };
 
@@ -237,7 +281,7 @@ modulo.register('core', class ValueResolver {
         if (!/^[a-z]/i.test(key) || Modulo.INVALID_WORDS.has(key)) { // XXX global ref
             return JSON.parse(key); // Not a valid identifier, try JSON
         }
-        return modulo.registry.utils.get(ctxObj, key); // Drill down to value
+        return modulo.registry.utils.get(ctxObj, key); // Drill down to value // XXX global modulo
     }
 
     set(obj, keyPath, val) {
@@ -398,8 +442,9 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
     // Mount the element, optionally "merging" in the modulo-original-html attr
     cls.prototype.parsedCallback = function parsedCallback() {
         const htmlOriginal = this.getAttribute('modulo-original-html');
+        // TODO: Shouldn't this logic be hasAttribute? (to match logic below)
         const original = ((!htmlOriginal || htmlOriginal === '') ? this :
-                          modulo.registry.utils.makeDiv(htmlOriginal));
+                          this.modulo.registry.utils.makeDiv(htmlOriginal));
         this.cparts.component._lifecycle([ 'initialized' ]);
         this.rerender(original); // render and re-mount it's own childNodes
         if (this.hasAttribute('modulo-original-html')) {
@@ -410,6 +455,7 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
         }
         this.isMounted = true;
     };
+
     cls.prototype.initRenderObj = initRenderObj;
     // TODO: Possibly remove the following aliases (for fewer code paths):
     cls.prototype.rerender = function (original = null) {
@@ -609,7 +655,7 @@ modulo.register('coreDef', class Component {
                 }
             }
         }
-        this.reconciler = new this.modulo.registry.engines.Reconciler(this, opts);
+        this.reconciler = new this.modulo.registry.engines.Reconciler(this.modulo, opts);
         this.resolver = new this.modulo.registry.core.ValueResolver(this.modulo);
     }
 
@@ -713,7 +759,7 @@ modulo.register('coreDef', class Component {
             el.dataProps = {};
             el.dataPropsAttributeNames = {};
         }
-        const resolver = new modulo.registry.core.ValueResolver(// TODO: Global modulo
+        const resolver = new this.modulo.registry.core.ValueResolver(// OLD TODO: Global modulo
                       this.element && this.element.getCurrentRenderObj());
         resolver.set(el.dataProps, attrName + ':', value);
         el.dataPropsAttributeNames[rawName] = attrName;
@@ -799,7 +845,7 @@ modulo.register('util', function get(obj, key) {
 });
 
 modulo.register('util', function set(obj, keyPath, val) {
-    return new modulo.registry.core.ValueResolver(modulo).set(obj, keyPath, val); // TODO: Global modulo
+    return new window.modulo.registry.core.ValueResolver(modulo).set(obj, keyPath, val); // OLD TODO: Global modulo
 });
 
 modulo.register('util', function getParentDefPath(modulo, def) {
@@ -1631,7 +1677,7 @@ modulo.register('engine', class Reconciler {
         this.tagTransforms = opts.tagTransforms;
         this.directiveShortcuts = opts.directiveShortcuts || [];
         if (this.directiveShortcuts.length === 0) { // XXX horrible HACK
-            this.directiveShortcuts = modulo.config.reconciler.directiveShortcuts; // TODO global modulo
+            this.directiveShortcuts = this.modulo.config.reconciler.directiveShortcuts; // OLD TODO global modulo
         }
         this.patch = this.pushPatch;
         this.patches = [];
@@ -1655,7 +1701,7 @@ modulo.register('engine', class Reconciler {
         }
 
         // There are directives... time to resolve them
-        const { cleanWord, stripWord } = modulo.registry.utils; // TODO global modulo
+        const { cleanWord, stripWord } = this.modulo.registry.utils; // old TODO global modulo
         const arr = [];
         const attrName = stripWord((name.match(/\][^\]]+$/) || [ '' ])[0]);
         for (const directiveName of name.split(']').map(cleanWord)) {
@@ -1669,7 +1715,7 @@ modulo.register('engine', class Reconciler {
 
     loadString(rivalHTML, tagTransforms) {
         this.patches = [];
-        const rival = modulo.registry.utils.makeDiv(rivalHTML);
+        const rival = this.modulo.registry.utils.makeDiv(rivalHTML);
         const transforms = Object.assign({}, this.tagTransforms, tagTransforms);
         this.applyLoadDirectives(rival, transforms);
         return rival;
@@ -1691,7 +1737,7 @@ modulo.register('engine', class Reconciler {
             const newTag = tagTransforms[node.tagName.toLowerCase()];
             //console.log('this is tagTransforms', tagTransforms);
             if (newTag) {
-                modulo.registry.utils.transformTag(node, newTag);
+                this.modulo.registry.utils.transformTag(node, newTag);
             }
             ///////
 
@@ -1737,7 +1783,7 @@ modulo.register('engine', class Reconciler {
 
     reconcileChildren(childParent, rivalParent) {
         // Nonstandard nomenclature: "The rival" is the node we wish to match
-        const cursor = new modulo.registry.engines.DOMCursor(childParent, rivalParent);
+        const cursor = new this.modulo.registry.engines.DOMCursor(childParent, rivalParent);
         while (cursor.hasNext()) {
             const [ child, rival ] = cursor.next();
             const needReplace = child && rival && (
@@ -1935,7 +1981,7 @@ if (typeof window.document !== 'undefined') {
         modulo.loadFromDOM(window.document.body, null, true); // Load new tags
         modulo.preprocessAndDefine(modulo.registry.utils.showDevMenu);
     });
-} else if (typeof exports !== 'undefined') { // Node.js / silo'ed script
-    exports = { Modulo, modulo };
+} else if (typeof module !== 'undefined') { // Node.js
+    module.exports = { Modulo, modulo, window };
 }
 /*-{-% endif %-}-*/

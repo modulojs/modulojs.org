@@ -32,6 +32,9 @@ function prepareCallback() {
 }
 
 function nextId() {
+    if (window._moduloID < 10000) { // Always reset to 10,0000 
+        window._moduloID = 10000;
+    }
     return ++window._moduloID; // assign next modulo ID
 }
 
@@ -75,27 +78,33 @@ function getSandboxedModulo() {
     // prevents definitions from leaking. We have to re-run the modulo source
     // code because built / optimized versions of this JS (e.g., window.Modulo
     // in prod) may skip inclusion of dev-related utilities, symbol names, etc.
-    const sandboxWindow = {}; // Keep "window" as an empty object
-    const makeModulo = new Function([ 'window' ], modulo_source_code);
-    makeModulo(sandboxWindow);
+    const sandboxWindow = {}; // Keep "window" as empty object (stop load head)
+    (new Function([ 'window' ], modulo_source_code))(sandboxWindow);
     sandboxWindow.document = document; // Patch expected properties of window
     sandboxWindow.fetch = window.fetch;
-    const moduloSandbox = sandboxWindow.modulo; // Retrieve new Modulo
-    Object.assign(moduloSandbox, window.modulo); // copy all props
-    moduloSandbox.id = ++window._moduloID; // Ensure Modulo keeps gets unique ID
-    moduloSandbox.registry = copyObjAtDepth(moduloSandbox.registry, 1);
-    moduloSandbox.config = copyObjAtDepth(moduloSandbox.config, 1);
-    return moduloSandbox;
+    sandboxWindow.URL = window.URL;
+    const sandbox = sandboxWindow.modulo; // Retrieve new Modulo
+    /*
+    //Object.assign(sandbox, window.modulo); // copy all props
+    sandbox.id = nextId(); // Ensure Modulo keeps gets unique ID
+    sandbox.registry = copyObjAtDepth(sandbox.registry, 1);
+    sandbox.config = copyObjAtDepth(sandbox.config, 1);
+    sandbox.definitions = copyObjAtDepth(sandbox.definitions, 1);
+    sandbox._configSteps = 0;
+    */
+    return sandbox;
 }
 
 function run(newValue = undefined) {
+    if (!window.moduloSandbox) {
+        window.moduloSandbox = getSandboxedModulo();
+        window.globalModulo = window.modulo;
+        window.modulo = window.moduloSandbox;
+    }
     const ns = 'demo' + nextId();
     state.value = newValue === undefined ? element.editor.value : newValue;
     const fullText = getCodePrefix(ns) + state.value + getCodeSuffix(ns);
     state.demo = '';
-    if (!window.moduloSandbox) {
-        window.moduloSandbox = getSandboxedModulo();
-    }
     window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
     // TODO: Refactor when Script isolation mode overhaul
     const stateCPart = element.cparts.state;
