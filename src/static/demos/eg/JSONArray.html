@@ -1,0 +1,13 @@
+<!-- Use StaticData CPart to include JSON from an API or file.
+You can use it for arrays as well. Note that it is "bundled"
+as static data in with JS, so it does not refresh. -->
+<Template>
+  {% for post in staticdata %}
+    <p>{% if post.completed %}&starf;{% else %}&star;{% endif %}
+        {{ post.title|truncate:15 }}</p>
+  {% endfor %}
+</Template>
+<StaticData
+    -src="https://jsonplaceholder.typicode.com/todos"
+></StaticData>
+

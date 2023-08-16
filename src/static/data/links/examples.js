@@ -64,16 +64,49 @@
             file: "/static/demos/eg/JSON.html",
         },
         {
+            file: "/static/demos/eg/JSONArray.html",
+        },
+        {
+            file: "/static/demos/eg/GitHubAPI.html",
+        },
+        {
+            file: "/static/demos/eg/ColorSelector.html",
+        },
+        {
+            file: "/static/demos/eg/DateNumberPicker.html",
+        },
+        {
+            file: "/static/demos/eg/PrimeSieve.html",
+        },
+        {
             file: "/static/demos/eg/Scatter.html",
+        },
+        {
+            file: "/static/demos/eg/FlexibleForm.html",
+        },
+        {
+            file: "/static/demos/eg/FlexibleFormWithAPI.html",
+        },
+        {
+            file: "/static/demos/eg/Components.html",
+        },
+        {
+            file: "/static/demos/eg/OscillatingGraph.html",
         },
         {
             file: "/static/demos/eg/Search.html",
         },
-        /*{
-            file: "/static/demos/eg/Components.html",
-        },*/
+        {
+            file: "/static/demos/eg/SearchBox.html",
+        },
+        {
+            file: "/static/demos/eg/WorldMap.html",
+        },
         {
             file: "/static/demos/eg/MemoryGame.html",
+        },
+        {
+            file: "/static/demos/eg/ConwayGameOfLife.html",
         },
     ],
 }
