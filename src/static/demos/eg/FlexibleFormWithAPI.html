@@ -1,0 +1,78 @@
+<!-- Combining the code from the previous exercise, we can interact with
+APIs. Here we use a Typicode's placeholder API to make posts -->
+<Template>
+    <form>
+        {% for field in state.fields %}
+            <div class="field-pair">
+                <label for="{{ field }}_{{ component.id }}">
+                    <strong>{{ field|capfirst }}:</strong>
+                </label>
+                <input
+                    [state.bind]
+                    type='{% if state|get:field|type == "number" %}number{% else %}text{% endif %}'
+                    name="{{ field }}"
+                    id="{{ field }}_{{ component.id }}"
+                />
+            </div>
+        {% endfor %}
+        <button @click:=script.submit>Post comment</button>
+        <hr />
+
+        {% for post in state.posts|reversed %}
+            <p>
+                {{ post.userId }}:
+                <strong>{{ post.title|truncate:15 }}</strong>
+                {{ post.body|truncate:18 }}
+            </p>
+        {% endfor %}
+    </form>
+</Template>
+
+<State
+    user:=1337
+    topic="On the treatment of Thracian gladiators"
+    comment="So, like, Romans claim to be all about virtue, but do you know what I think? I think they stink."
+    fields:='["user", "topic", "comment"]'
+    posts:='[]'
+></State>
+
+<Script>
+    const URL = 'https://jsonplaceholder.typicode.com/posts';
+    const fakedPosts = [];
+    const headers = [];
+
+    function initializedCallback() {
+        refresh(); // Refresh on first load
+    }
+
+    function refresh() {
+        fetch(URL).then(r => r.json()).then(data => {
+            // Since Typicode API doesn't save it's POST
+            // data, we'll have manually fake it here
+            state.posts = data.concat(fakedPosts);
+            element.rerender();
+        });
+    }
+
+    function submit() {
+        // Rename the state variables to be what the API suggests
+        const postData = {
+              userId: state.user,
+              title: state.topic,
+              body: state.comment,
+        };
+        state.topic = ''; // clear the comment & topic text
+        state.comment = '';
+        fakedPosts.push(postData); // Required for refresh()
+
+        // Send the POST request with fetch, then refresh after
+        const opts = {
+            method: 'POST',
+            body: JSON.stringify(postData),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' },
+        };
+        fetch(URL, opts).then(r => r.json()).then(refresh);
+    }
+</Script>
+
+

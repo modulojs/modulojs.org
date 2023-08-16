@@ -1,0 +1,19 @@
+<Template>
+<!-- Once defined, Modulo web components can be mixed with HTML.
+DemoModal and DemoChart are already defined. Try using below! -->
+
+<x-DemoModal button="Show data" title="Further information">
+    <h2>Example chart:</h2>
+    <x-DemoChart data:='[50, 13, 100]' ></x-DemoChart>
+</x-DemoModal>
+
+<x-DemoChart
+    data:='[1, 2, 3, 5, 8]'
+></x-DemoChart>
+
+<x-DemoModal button="Bio: Nicholas Cage" title="Biography">
+    <p>Prolific and varied Hollywood actor</p>
+    <img src="//i.imgur.com/hJwIMx7.png" style="width: 200px">
+</x-DemoModal>
+
+</Template>

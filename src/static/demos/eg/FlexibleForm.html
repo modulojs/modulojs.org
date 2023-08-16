@@ -1,0 +1,30 @@
+<!-- Here, we have a form that's easy to update. If this gets used more
+than a couple times, it could be turned into a reusable component where
+the "ordering" and initial values get set via Props. -->
+<Template>
+    <form>
+        {% for field in state.fields %}
+            <div class="field-pair">
+                <label for="{{ field }}_{{ component.id }}">
+                    <strong>{{ field|capfirst }}:</strong>
+                </label>
+                <input
+                    [state.bind]
+                    type="{% if state|get:field|type == 'string' %}text{% else %}checkbox{% endif %}"
+                    name="{{ field }}"
+                    id="{{ field }}_{{ component.id }}"
+                />
+            </div>
+        {% endfor %}
+    </form>
+</Template>
+
+<State
+    name="Spartacus"
+    topic="On the treatment of Thracian gladiators"
+    subscribe:=true
+    private:=false
+    comment="So, like, Romans claim to be all about virtue, but do you know what I think? I think they stink."
+    fields:='["name", "topic", "comment", "private", "subscribe"]'
+></State>
+

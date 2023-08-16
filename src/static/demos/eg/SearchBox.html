@@ -1,0 +1,115 @@
+<!-- A "type as you go" search box implementation,
+an example of more complicated HTML and JS behavior -->
+<Template>
+<p>Type a book name for "search as you type"
+(e.g. try &ldquo;the lord of the rings&rdquo;)</p>
+
+<input [state.bind] name="search"
+  @keyup:=script.typingCallback />
+
+<div class="results {% if state.search.length gt 0 %}
+                      visible {% endif %}">
+  <div class="results-container">
+    {% if state.loading %}
+      <img src="{{ staticdata.gif }}" alt="loading" />
+    {% else %}
+      {% for result in state.results %}
+        <div class="result">
+          <img
+            src="{{ staticdata.cover|add:result.cover_i }}-S.jpg"
+          /> <label>{{ result.title }}</label>
+        </div>
+      {% empty %}
+        <p>No books found.</p>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+</Template>
+
+<State
+    search=""
+    results:=[]
+    loading:=false
+></State>
+
+<!-- Puting long URLs down here to declutter -->
+<StaticData -data-type="js">
+{
+  apiBase: 'https://openlibrary.org/search.json',
+  cover: 'https://covers.openlibrary.org/b/id/',
+  gif: 'https://cdnjs.cloudflare.com/ajax/libs/' +
+    'semantic-ui/0.16.1/images/loader-large.gif'
+}
+</StaticData>
+
+<Script>
+    function typingCallback() {
+        state.loading = true;
+        const search = `q=${state.search}`;
+        const opts = 'limit=6&fields=title,author_name,cover_i';
+        const url = `${staticdata.apiBase}?${search}&${opts}`;
+        _globalDebounce(() => {
+            fetch(url)
+                .then(response => response.json())
+                .then(dataBackCallback);
+        });
+    }
+
+    function dataBackCallback(data) {
+        state.results = data.docs;
+        state.loading = false;
+        element.rerender();
+    }
+
+    let _globalDebounceTimeout = null;
+    function _globalDebounce(func) {
+        if (_globalDebounceTimeout) {
+            clearTimeout(_globalDebounceTimeout);
+        }
+        _globalDebounceTimeout = setTimeout(func, 500);
+    }
+</Script>
+
+<Style>
+    input {
+        width: 100%;
+    }
+    .results-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .results-container > img { margin-top 30px; }
+    .results {
+        position: absolute;
+        height: 0;
+        width: 0;
+        overflow: hidden;
+        display: block;
+        border: 2px solid #B90183;
+        border-radius: 0 0 20px 20px;
+        transition: height 0.2s;
+        z-index: 20;
+        background: white;
+    }
+    .results.visible {
+        height: 200px;
+        width: 200px;
+    }
+    .result {
+        padding: 10px;
+        width: 80px;
+        position: relative;
+    }
+    .result label {
+        position: absolute;
+        width: 80px;
+        background: rgba(255, 255, 255, 0.5);
+        font-size: 0.7rem;
+        top: 0;
+        left: 0;
+    }
+</Style>
+
+

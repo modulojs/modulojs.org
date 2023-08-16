@@ -1,0 +1,59 @@
+<Template>
+    <p>ISO: <tt>{{ state.year }}-{{ state.month }}-{{ state.day }}</tt></p>
+    {% for part in state.ordering %}
+        <label>
+            {{ state|get:part }}
+            <div>
+                <button @click:=script.next payload="{{ part }}">&uarr;</button>
+                <button @click:=script.previous payload="{{ part }}">&darr;</button>
+            </div>
+        </label>
+    {% endfor %}
+</Template>
+
+<State
+    day:=1
+    month:=1
+    year:=2022
+    ordering:='["year", "month", "day"]'
+></State>
+
+<Script>
+    function isValid({ year, month, day }) {
+        month--; // Months are zero indexed
+        // Use the JavaScript date object to check validity:
+        const d = new Date(year, month, day);
+        return d.getMonth() === month && d.getDate() === day && d.getFullYear() === year;
+    }
+    function next(part) {
+        state[part]++;
+        if (!isValid(state)) { // undo if not valid
+            state[part]--;
+        }
+    }
+    function previous(part) {
+        state[part]--;
+        if (!isValid(state)) { // undo if not valid
+            state[part]++;
+        }
+    }
+</Script>
+
+<Style>
+    :host {
+        border: 1px solid black;
+        padding: 10px;
+        margin: 10px;
+        margin-left: 0;
+        display: flex;
+        flex-wrap: wrap;
+        font-weight: bold;
+    }
+    div {
+        float: right;
+    }
+    label {
+        display: block;
+        width: 100%;
+    }
+</Style>

@@ -1,0 +1,64 @@
+<!-- Demos mouseover, template filters, template control flow,
+     and static script exports -->
+<Template>
+  <div class="grid">
+    {% for i in script.exports.range %}
+      <div @mouseover:=script.setNum
+        class="
+            {# If-statements to check divisibility in template: #}
+            {% if state.number == i %}number{% endif %}
+            {% if state.number lt i %}hidden{% else %}
+              {% if state.number|divisibleby:i %}whole{% endif %}
+            {% endif %}
+        ">{{ i }}</div>
+    {% endfor %}
+  </div>
+</Template>
+
+<State
+    number:=64
+></State>
+
+<Script>
+    // Getting big a range of numbers in JS. Use "script.exports"
+    // to export this as a one-time global constant.
+    // (Hint: Curious how it calculates prime? See CSS!)
+    script.exports.range = 
+        Array.from({length: 63}, (x, i) => i + 2);
+    function setNum(payload, ev) {
+        state.number = Number(ev.target.textContent);
+    }
+</Script>
+
+<Style>
+.grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    color: #ccc;
+    font-weight: bold;
+    width: 100%;
+    margin: -5px;
+}
+.grid > div {
+    border: 1px solid #ccc;
+    cursor: crosshair;
+    transition: 0.2s;
+}
+div.whole {
+    color: white;
+    background: #B90183;
+}
+div.hidden {
+    background: #ccc;
+    color: #ccc;
+}
+
+/* Color green and add asterisk */
+div.number { background: green; }
+div.number::after { content: "*"; }
+/* Check for whole factors (an adjacent div.whole).
+   If found, then hide asterisk and green */
+div.whole ~ div.number { background: #B90183; }
+div.whole ~ div.number::after { opacity: 0; }
+</Style>
+

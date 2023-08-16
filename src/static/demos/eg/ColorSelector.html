@@ -1,0 +1,22 @@
+<Template>
+    <div style="float: right">
+        <p><label>Hue:<br />
+            <input [state.bind] name="hue" type="range" min="0" max="359" step="1" />
+        </label></p>
+        <p><label>Saturation: <br />
+            <input [state.bind] name="sat" type="range" min="0" max="100" step="1" />
+            </label></p>
+        <p><label>Luminosity:<br />
+            <input [state.bind] name="lum" type="range" min="0" max="100" step="1" />
+            </label></p>
+    </div>
+    <div style="
+        width: 80px; height: 80px;
+        background: hsl({{ state.hue }}, {{ state.sat }}%, {{ state.lum }}%)">
+    </div>
+</Template>
+<State
+    hue:=130
+    sat:=50
+    lum:=50
+></State>

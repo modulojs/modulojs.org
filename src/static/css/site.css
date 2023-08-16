@@ -1,5 +1,21 @@
 /* You can put site-wide settings here. These will never be prefixed and
    instead included verbatim. Component styles will be listed after. */
+:root {
+    --footer-height: 100px;
+    --navbar-height: 100px;
+    --btn-shadow-dist: 4px;
+    --btn-shadow-dist-neg: -4px;
+    --color-fg-semilight: #00000044;
+    --color-fg-semi: #00000088;
+    --color-fg-semidark: #000000DD;
+    --color: #B90183;
+    --color-alt: #a2e4b8;
+    --color-outline: #111;
+    --color-content-bg: white;
+    --color-fg: black;
+
+}
+
 
 html {
     line-height: 1.15;
@@ -7,11 +23,21 @@ html {
     font-weight: 400;
     font-family: sans-serif;
     -webkit-text-size-adjust: 100%;
+    color: var(--color-fg);
+    background-color: var(--color-content-bg);
 }
 
 body {
     margin: 0;
     font-family: sans-serif;
+}
+
+body.dark-mode {
+    --color-fg: #ccc;
+    --color-fg-semidark: #ffffffDD;
+    --color-fg-semi: #ffffff88;
+    --color-content-bg: black;
+    --color-fg-semilight: #ffffff44;
 }
 
 /* NOTE: This resets EVERY element with tag-level specificity to 1rem
@@ -20,4 +46,3 @@ body {
     box-sizing: border-box;
     font-size: 1rem;
 }
-

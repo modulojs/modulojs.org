@@ -1,0 +1,86 @@
+<Template>
+
+    <!-- Note that even with custom components, core properties like "style"
+        are available, making CSS variables a handy way of specifying style
+        overrides. -->
+    <x-DemoChart
+        data:=state.data
+        animated:=true
+        style="
+            --align: center;
+            --speed: {{ state.anim }};
+        "
+    ></x-DemoChart>
+
+    <p>
+        {% if not state.playing %}
+            <button @click:=script.play alt="Play">&#x25B6;  tick: {{ state.tick }}</button>
+        {% else %}
+            <button @click:=script.pause alt="Pause">&#x2016;  tick: {{ state.tick }}</button>
+        {% endif %}
+    </p>
+
+    {% for name in script.exports.properties %}
+        <label>{{ name|capfirst }}:
+            <input [state.bind]
+                name="{{ name }}"
+                type="range"
+                min="1" max="20" step="1" />
+        </label>
+    {% endfor %}
+</Template>
+
+<State
+    playing:=false
+    speed:=10
+    easing="linear"
+    align="flex-end"
+    tick:=1
+    width:=10
+    anim:=10
+    speed:=10
+    pulse:=1
+    offset:=1
+    data:=[]
+></State>
+<Script>
+    let timeout = null;
+    script.exports.properties = ["anim", "speed", "width", "pulse"];//, "offset"];
+    function play() {
+        state.playing = true;
+        nextTick();
+    }
+    function pause() {
+        state.playing = false;
+    }
+    function setEasing(payload) {
+        state.easing = payload;
+    }
+
+    function nextTick() {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        const el = element;
+        timeout = setTimeout(() => {
+            el.rerender();
+        }, 2000 / state.speed);
+    }
+
+    function updateCallback() {
+        if (state.playing) {
+            while (state.data.length <= state.width) {
+                state.tick++;
+                state.data.push(Math.sin(state.tick / state.pulse) + 1); // add to right
+            }
+            state.data.shift(); // remove one from left
+            nextTick();
+        }
+    }
+</Script>
+<Style>
+    input {
+        width: 50px;
+    }
+</Style>
+
