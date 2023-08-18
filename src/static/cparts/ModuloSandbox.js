@@ -1,6 +1,14 @@
 modulo.config.modulosandbox = {
     Src: '/static/js/Modulo.js',
     Directives: [ 'editorMount' ],
+    SourceCodeSuffix: `
+        const originalRerender = modulo.registry.coreDefs.Component.prototype.rerender;
+        modulo.registry.coreDefs.Component.prototype.rerender = function (...args) {
+            window.modulo = window.moduloSandbox;
+            originalRerender.apply(this, args);
+            window.modulo = window.globalModulo; // Ensure restored
+        };
+    `,
 };
 
 modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
@@ -61,7 +69,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     save() {
         const state = this.element.cparts.state.data;
         state.value = this.element.editor.value;
-        const fullText = toEmbed(state.value, this.getComponentName());
+        const fullText = this.toEmbed(state.value, this.getComponentName());
         this.modulo.registry.utils.saveFileAs(this.getComponentName() + '.html', fullText);
     }
 
@@ -99,10 +107,10 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             window.moduloSandbox = this.getSandboxedModulo();
             window.globalModulo = window.modulo;
         }
-        window.modulo = window.moduloSandbox;
         const ns = 'demo' + this.nextId();
         const fullText = this.getCodePrefix(ns) + state.value + this.getCodeSuffix(ns);
         this.element.cparts.state.data.demo = '';
+        window.modulo = window.moduloSandbox;
         window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
         window.moduloSandbox.preprocessAndDefine(() => {
             this.element.cparts.state.propagate('demo', this.getDemoCode(ns));
@@ -156,7 +164,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             b = 'https://fake-modulojs.org'; // Hardcode the "origin" (later may support "src"?)
             this.href = (new window.URL(a, b)).href;
         };
-        const moduloSourceCode = this.conf.Content;
+        const moduloSourceCode = this.conf.Content + this.conf.SourceCodeSuffix;
         (new Function([ 'window' ], moduloSourceCode))(sandboxWindow); // Run Modulo
         return sandboxWindow.modulo; // Retrieve new Modulo
     }

@@ -6,8 +6,8 @@
     "homepage": "https://modulojs.org/",
     "scripts": {
         "help": "modulocli help",
-        "start": "modulocli srcserve",
-        "startcms": "cd src && npx netlify-cms-proxy-server",
+        "start": "npm exec -y http-server -- -p 3334 -e html src/",
+        "startcms": "cd src && npm exec -y netlify-cms-proxy-server",
         "clean": "rm -r build/*",
         "build": "modulocli ssg -f -v"
     },
