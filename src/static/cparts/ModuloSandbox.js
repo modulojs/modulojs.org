@@ -4,6 +4,10 @@ modulo.config.modulosandbox = {
     SourceCodeSuffix: `
         const originalRerender = modulo.registry.coreDefs.Component.prototype.rerender;
         modulo.registry.coreDefs.Component.prototype.rerender = function (...args) {
+            /*if (this.element.hasAttribute('modulo-original-html')) {
+                this.element.removeAttribute('modulo-original-html');
+                return;
+            }*/
             window.modulo = window.moduloSandbox;
             originalRerender.apply(this, args);
             window.modulo = window.globalModulo; // Ensure restored
@@ -41,16 +45,26 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         if (props.value && !state.value) {
             state.value = props.value;
         }
+        if (this.element.hasAttribute('value-from-src') && !state.value) {
+            state.value = this.element.getAttribute('value-from-src');
+        }
         if (props.src && !state.value) {
             window.fetch(props.src)
                 .then(response => response.text())
                 .then(text => {
-                    this.element.setAttribute('value', text);
+                    this.element.setAttribute('value-from-src', text);
                     this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
                         this._run();
                     }
                 });
+        }
+    }
+
+    renderCallback(renderObj) {
+        if (this.element.getAttribute('modulo-original-html')) {
+            renderObj.component.innerHTML = null; // Disable rerender on first load
+            this.element.removeAttribute('modulo-original-html');
         }
     }
 
