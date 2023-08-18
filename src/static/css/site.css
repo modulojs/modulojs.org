@@ -5,6 +5,7 @@
     --navbar-height: 100px;
     --btn-shadow-dist: 4px;
     --btn-shadow-dist-neg: -4px;
+    --color-fg-light: #00000011;
     --color-fg-semilight: #00000044;
     --color-fg-semi: #00000088;
     --color-fg-semidark: #000000DD;
@@ -12,6 +13,7 @@
     --color-alt: #a2e4b8;
     --color-outline: #111;
     --color-content-bg: white;
+    --color-bg: white;
     --color-fg: black;
 
 }

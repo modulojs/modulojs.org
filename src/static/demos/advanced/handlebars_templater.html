@@ -1,0 +1,87 @@
+<!--
+    This example shows how the templating engine ("Templater") can be swapped
+    out for your own. In this case, we write an adapter for the Handlebars
+    templating language. This will incorporate Modulo's built-in filters as
+    what Handlebars calls "Helpers". Furthermore, even any custom filters you
+    may import will get incorporated as Helpers.
+
+    Use this as a guide for creating your own Templater adaptors to register
+    whatever templating engines are useful to your project!
+-->
+<script src="https://unpkg.com/mdu.js@0.0.19/src/Modulo.js"></script>
+<template Modulo>
+    <script Configuration -src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js">
+        // Using the -src attribute, we load Handlebars to be private within
+        // this "Configuration" tag (and not pollute the global namespace).
+
+        // Extend the built-in Templater to insert our own code
+        class HandlebarsTemplater extends modulo.registry.engines.Templater {
+            compile(text) {
+                // Followed Handlebar's documentation for precompiling:
+                // https://handlebarsjs.com/api-reference/compilation.html
+                const code = 'return ' + Handlebars.precompile(text);
+                this.stack = []; // ensure stack is set (as it gets referenced)
+                return code;
+            }
+
+            render(renderObj) {
+                if (!this.handlebarsTemplate) {
+                    const spec = this.renderFunc(); // "Rehydrate" spec
+                    this.handlebarsTemplate = Handlebars.template(spec);
+                    this.hbOptions = { helpers: this.filters };
+                }
+                const templateCtx = Object.assign({ renderObj }, renderObj);
+                return this.handlebarsTemplate(templateCtx, this.hbOptions);
+            }
+        }
+
+        // Important: Be sure to "register" the engine so it can be referenced
+        // below. Note that "Configuration" scripts run before anything else.
+        modulo.register('engine', HandlebarsTemplater);
+    </script>
+
+    <Component name="ExampleComponent">
+        <Props
+            txt
+        ></Props>
+
+        <!-- This Template engine is configured to use Handlebars to render.
+        This means Modulo's template-tag syntax is not available, but instead
+        only follows Handlebars logic and syntax. Other than that, it behaves
+        the same: props, state, scripts, etc. are available, and filters are
+        registered as Handlebars "helpers" -->
+        <Template engine="HandlebarsTemplater">
+            <div>Props work: {{props.txt}}</div>
+
+            {{#unless (first state.data)}}
+                <em>First item of data is falsy</em>
+            {{/unless}}
+
+            <h2>Roles:</h2>
+            {{#each state.people}}
+                <p>{{upper this}}</p>
+            {{/each}}
+        </Template>
+        <State
+            data:='[ null, true, false ]'
+            people:='[
+                "Ah Sahm",
+                "Mai Ling",
+                "Young Jun"
+            ]'
+        ></State>
+        <Style>
+            p {
+                border-bottom: 2px dashed tomato;
+                font-size: 30px;
+            }
+        </Style>
+    </Component>
+</template>
+
+<h1>Custom Template Engine: Handlebars.js Demo</h1>
+
+<hr />
+<!-- Finally, instantiate our Handlebars-based component -->
+<x-ExampleComponent txt="Hello"></x-ExampleComponent>
+

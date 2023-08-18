@@ -7,7 +7,17 @@
 <x-Page pagetitle="Examples" navselected="examples/">
 
 
-    <h1>Examples</h1>
+    <h2>Examples Page: Table of Contents</h2>
+    <ol>
+        <li><a href="#demogrid">Demo Grid</a></li>
+        <li><a href="#startingtemplate">Starting Template</a></li>
+        <li><a href="#advancedusage">Advanced Usage</a></li>
+        <!--<li><a href="showcase">Showcase: Modulo in the Wild</a></li> -->
+    </ol>
+
+
+    <a name="demogrid"></a>
+    <h1>Demo Grid</h1>
     <p><strong>Demo grid:</strong> Look below for a grid demonstrating a wide
     variety of things you can do with Modulo components. Click on a title to
     reveal the source code, and allow in-line editing and experimentation.</p>
@@ -15,6 +25,7 @@
     <x-EditorGrid></x-EditorGrid>
 
 
+    <a name="startingtemplate"></a>
     <h1>Starting Template</h1>
     <p>Starting a new project, or looking for a bigger example of an entire
     website? Download or use the following starter templates for examples on
@@ -22,8 +33,9 @@
 
     <!--<a href="https://unpkg.com/create-modulo@0.0.32/build/quick-pages/index.html">Demo</a>-->
 
-    <x-ExampleList></x-ExampleList>
+    <x-ExampleList list="starterTemplates"></x-ExampleList>
 
+    <a name="advancedusage"></a>
     <h1>Advanced Usage</h1>
 
     <p><strong>Experimental:</strong> The following demos show off some of the
@@ -32,5 +44,15 @@
     that could change before the Modulo <em>beta</em>, use another version of
     Modulo and haven't been updated yet, or require a bit more polish before
     they become fully recommended.</p>
+
+    <x-ExampleList list="advanced"></x-ExampleList>
+
+    <!--
+    <a href="showcase"></a>
+    <h1>Showcase: Modulo in the Wild</h1>
+    <p>While still a new framework, it's still quite usable for static site
+    generation, and more. Here are a few of the websites that use Modulo:</p>
+    <x-ExampleList list="showcase"></x-ExampleList>
+    -->
 
 </x-Page>

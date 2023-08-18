@@ -1,6 +1,6 @@
 
-<section>
-{% for example in staticdata.starterTemplates %}
+<section class="{% if props.list == "advanced" %}narrow-grid{% endif %}">
+{% for example in staticdata|get:props.list %}
     <article>
         <div class="image-div">
         {% if example.image %}
@@ -9,10 +9,17 @@
               <img src="/static/images/example-projects/{{ example.image }}" alt="Screenshot of {{ example.title }}" />
             </label>
         {% endif %}
+        {% if props.list == "starterTemplates" %}
             <a href="https://unpkg.com/create-modulo@{{ staticdata.createModuloVersion }}/build/{{ example.file }}" download="{{ example.file }}" class="toolbar-btn">
                 {{ example.file }}
                 <span alt="Down arrow" style="font-size: 1.3rem">&#x2304;</span>
             </a>
+        {% else %}
+            <a href="/static/demos/editor.html?file={{ example.file }}" class="toolbar-btn">
+                Try
+                <span alt="Pencil and arrow edit icon" style="font-size: 1.3rem">&#x270E;&#x21D2;</span>
+            </a>
+        {% endif %}
         </div>
         <div>
             <h3>{{ example.title }}</h3>
@@ -20,22 +27,27 @@
             <p><strong>Ready to go:</strong>{% for item in example.supports %}
               <span style="margin-left: 3px; display: inline-block">✓ {{ item }}</span>{% endfor %}</p>
             {% endif %}
-            {% if example.requires %}
-                <p style="font-size: 0.9rem;" title="
-                    A local static server is required for developing using this
-                    template. If you have NPM, then you can use npx http-server.
-                    Otherwise, search how to get a 'local static server' running.
-                ">
-                    REQUIRES {{ example.requires|upper }}*
-                </p>
-            {% else%}
-                <p style="font-size: 0.9rem;" title="
-                    No extra requirements: You only need a code editor to get
-                    started! If you don't have a code editor, consider
-                    downloading a free one such as VSCode, good on any OS.
-                "
-                >NO REQUIREMENTS</p>
-                <p></p>
+            {% if props.list == "starterTemplates" %}
+                {% if example.requires %}
+                    <p style="font-size: 0.9rem;" title="
+                        A local static server is required for developing using this
+                        template. If you have NPM, then you can use npx http-server.
+                        Otherwise, search how to get a 'local static server' running.
+                    ">
+                        REQUIRES {{ example.requires|upper }}*
+                    </p>
+                {% else%}
+                    <p style="font-size: 0.9rem;" title="
+                        No extra requirements: You only need a code editor to get
+                        started! If you don't have a code editor, consider
+                        downloading a free one such as VSCode, good on any OS.
+                    "
+                    >NO REQUIREMENTS</p>
+                    <p></p>
+                {% endif %}
+            {% endif %}
+            {% if example.description %}
+              <p>{{ example.description }}</p>
             {% endif %}
         </div>
     </article>

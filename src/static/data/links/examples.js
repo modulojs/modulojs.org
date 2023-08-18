@@ -1,5 +1,5 @@
 {
-    createModuloVersion: "0.0.32", // Update to change the version the .zip files are linked to
+    createModuloVersion: "0.0.34", // Update to change the version the .zip files are linked to
     starterTemplates: [
         {
             title: "JAMStack (Static Site with Markdown and CMS)",
@@ -50,6 +50,45 @@
             image: "jamstack.png",
         },
     ],
+
+    advanced: [
+        {
+            title: "Global Store",
+            file: "/static/demos/advanced/global_store.html",
+            description: "Use '-store' to let components share state and trigger refreshes",
+        },
+        {
+            title: "Custom CPart for APIs",
+            file: "/static/demos/advanced/custom_cpart_for_api.html",
+            description: "A typical use of custom CParts is to abstract away APIs.",
+        },
+        {
+            title: "Custom CPart for legacy frontend",
+            file: "/static/demos/advanced/custom_cpart_for_jquery_fittext.html",
+            description: "Modulo is useful as a glue to integrate with legacy libraries (in this case, FitText.js).",
+        },
+        {
+            title: "Handlebars Templating",
+            file: "/static/demos/advanced/handlebars_templater.html",
+            description: "Demonstrates integrating Modulo with a custom Template engine (in this case, Handlebars)",
+        },
+        {
+            title: "JSX Templating",
+            file: "/static/demos/advanced/jsx_template.html",
+            description: "Demonstrates using Babel JS and a custom Template CPart to enable React-style JSX syntax in Modulo.",
+        },
+        {
+            title: "Test Suite Example",
+            file: "/static/demos/advanced/testsuite_example.html",
+            description: "Demonstrates creating a TestSuite (Mostly Undocumented) ",
+        },
+        {
+            title: "Modulo Synth with Tone.js",
+            file: "/static/demos/advanced/tone_example.html",
+            description: "A fully functional baseline synthesizer, with a simple step sequencer and ASDR.",
+        },
+    ],
+
     components: [
         {
             file: "/static/demos/eg/Hello.html",
@@ -94,6 +133,12 @@
             file: "/static/demos/eg/OscillatingGraph.html",
         },
         {
+            file: "/static/demos/usedby/DemoModal.html",
+        },
+        {
+            file: "/static/demos/usedby/DemoChart.html",
+        },
+        {
             file: "/static/demos/eg/Search.html",
         },
         {
@@ -109,4 +154,5 @@
             file: "/static/demos/eg/ConwayGameOfLife.html",
         },
     ],
+
 }
