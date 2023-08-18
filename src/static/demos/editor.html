@@ -17,7 +17,19 @@
         margin: 0;
         padding: 0;
     }
-</style>
 
+    /* Slight tweak to fix graphical issue: */
+    .menu-wrapper .tab-holder {
+        display: none;
+    }
+    .menu-wrapper.menu-wrapper--visible .tab-holder {
+        display: block;
+    }
+    /* Fix Btn styling / alignment */
+    .menu-button-holder x-Btn {
+        height: 50px !important;
+        padding-top: 10px !important;
+    }
+</style>
 <x-ModuloEditor></x-ModuloEditor>
 

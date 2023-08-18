@@ -42,28 +42,56 @@
     border-top: none;
     border-bottom: none;
     padding: 2px;
+    transition: background-color 0.2s;
+    transition: background-color 0.8s;
+}
+
+.toolbar:hover {
+    background-color: var(--color-alt);
+}
+
+/* First and last buttons are hidden by default */
+.toolbar > button:first-child,
+.toolbar > button:last-child {
+    opacity: 0;
 }
 
 
+.toolbar:hover > button:first-child,
+.toolbar:hover > button:last-child {
+    opacity: 1.0;
+}
+
+/* Whenever you hover a button always max opacity */
+.toolbar:hover > button:hover {
+    opacity: 1.0;
+}
+
 .toolbar button {
     cursor: pointer;
-    box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-fg);
     color: var(--color-fg);
     font-weight: bolder;
     display: inline-block;
     border: 2px solid var(--color-fg);
-    border-top-width: 4px;
+    border-bottom-width: 4px;
     margin-bottom: -2px;
-    border-radius: 8px !important;
-    background: white;
-    box-shadow: 0 0 0 0 var(--highlight-color);
-    font-size: 0.8rem;
+    border-radius: 1px 3px 1px 3px;
+    background: var(--color-bg);
+    font-size: 0.7rem;
     text-align: center;
-    padding: 1px;
+    padding: 8px 1px 8px 1px;
     text-transform: uppercase;
+    box-shadow: 1px 1px 0 var(--color-fg);
     transition: box-shadow 0.3s,
+                opacity 0.15s 0.5s,
                 background 0.15s,
                 border-color 0.2s;
+}
+
+.toolbar button span {
+    font-weight: lighter;
+    font-size: 1.5rem;
+    line-height: 1;
 }
 
 .toolbar button:visited,
@@ -80,7 +108,7 @@
     border-color: var(--color);
     background: var(--color);
     box-shadow: 0 0 0 8px var(--color);
-    color: var(--color-content-bg);
+    color: var(--color-bg);
 }
 
 .toolbar button:hover {
@@ -90,5 +118,14 @@
 @media (max-width: 992px) {
     .pane-holder {
         display: block;
+    }
+
+    .toolbar {
+        flex-direction: row;
+    }
+
+    .toolbar button {
+        opacity: 1 !important;
+        padding: 10px; /* add padding, make it easier to press */
     }
 }

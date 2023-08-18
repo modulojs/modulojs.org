@@ -18,10 +18,9 @@
         </div>
         <div class="pane pane--divider">
             <div class="toolbar">
-                <button @click:=script.run>
-                    <span alt="Refresh">⟳</span>
-                    Run
-                </button>
+                <button @click:=script.open><span alt="Pencil edit icon">&#10000;</span> Open</button>
+                <button @click:=script.run><span alt="Refresh arrow in circle">&#x27F3;</span> Run</button>
+                <button @click:=script.save><span alt="Download arrow downward">&#10515;</span> Save</button>
             </div>
         </div>
     {% endif %}

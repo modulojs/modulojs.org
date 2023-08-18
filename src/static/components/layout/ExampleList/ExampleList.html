@@ -11,8 +11,8 @@
         {% endif %}
         {% if props.list == "starterTemplates" %}
             <a href="https://unpkg.com/create-modulo@{{ staticdata.createModuloVersion }}/build/{{ example.file }}" download="{{ example.file }}" class="toolbar-btn">
+                <span alt="Down arrow" style="font-size: 1.3rem">&#10515;</span>
                 {{ example.file }}
-                <span alt="Down arrow" style="font-size: 1.3rem">&#x2304;</span>
             </a>
         {% else %}
             <a href="/static/demos/editor.html?file={{ example.file }}" class="toolbar-btn">
