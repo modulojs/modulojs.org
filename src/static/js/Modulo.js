@@ -49,42 +49,6 @@ window.Modulo = class Modulo {
         return inst;
     }
 
-    /*
-    // TODO: Dead code, finish / delete
-    getInjections() {
-        return {
-            modulo: this,
-        };
-    }
-
-    use(pathOrPaths, extra) {
-        const paths = Array.isArray(pathOrPaths) ? pathOrPaths : [ pathOrPaths ];
-        const results = [];
-        const injections = Object.assign({}, this.getInjections(), extra);
-        for (const path of paths) {
-            const reg = path.includes('.') ? this.registry : this.modules[path];
-            const cls = this.registry.utils.get(reg);
-            const defaults = this.config[cls.name] || { dependencies: [] };
-            results.push(this._inject(cls, dependencies, injections));
-        }
-        return results;
-    }
-
-    _inject(cls, dependencies, injections) {
-        return (...args) => cls(...dependencies.map(s => injections[s]), ...args);
-        if (cls.name[0].toLowerCase() === cls.name[0]) { // e.g. function foobar
-        } // Starts with a capital letter, lets extend -- e.g. class FooBar
-        return class extends cls {
-            constructor(...args) {
-                super(...dependencies.map(s => injections[s]), ...args);
-                Object.apply(this, obj || injections);
-                this.constructedCallback();
-            }
-            constructedCallback() {}
-        };
-    }
-    */
-
     instanceParts(def, extra, parts = {}) {
         // Loop through all children, instancing each class with configuration
         const allNames = [ def.DefinitionName ].concat(def.ChildrenNames);
@@ -102,7 +66,7 @@ window.Modulo = class Modulo {
                     continue; // Skip if obj has not registered callback
                 }
                 const result = obj[methodName].call(obj, renderObj);
-                if (result) {
+                if (result) { // TODO: Change to (result !== undefined) and test
                     renderObj[obj.conf.RenderObj || obj.conf.Name] = result;
                 }
             }
@@ -379,6 +343,11 @@ modulo.register('processor', function src (modulo, def, value) {
     modulo.fetchQueue.fetch(def.Source).then(text => {
         def.Content = (text || '') + (def.Content || '');
     });
+});
+
+modulo.register('processor', function srcSync (modulo, def, value) {
+    modulo.registry.processors.src(modulo, def, value);
+    return true; // Only difference is return "true" for "wait"
 });
 
 modulo.register('processor', function defTarget (modulo, def, value) {
@@ -1382,7 +1351,7 @@ modulo.register('cpart', class StaticData {
 
 modulo.register('coreDef', class Configuration { }, {
     DefTarget: 'config',
-    DefBuilders: [ 'Content|Code', 'DefinitionName|MainRequire' ],
+    DefLoaders: [ 'DefTarget', 'DefinedAs', 'Src|SrcSync', 'Content|Code', 'DefinitionName|MainRequire' ],
 });
 
 modulo.register('cpart', class Script {
