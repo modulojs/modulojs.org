@@ -965,7 +965,7 @@ modulo.register('core', class FetchQueue {
 modulo.register('cpart', class Props {
     initializedCallback(renderObj) {
         const props = {};
-        const { resolveDataProp } = modulo.registry.utils;
+        const { resolveDataProp } = this.modulo.registry.utils;
         for (const [ propName, def ] of Object.entries(this.attrs)) {
             props[propName] = resolveDataProp(propName, this.element, def);
             // TODO: Implement type-checked, and required

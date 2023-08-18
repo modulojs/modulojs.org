@@ -1,5 +1,9 @@
-modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
+modulo.config.modulosandbox = {
+    Src: '/static/js/Modulo.js',
+    Directives: [ 'editorMount' ],
+};
 
+modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     editorMount({ el }) {
         const state = this.element.cparts.state.data;
         this.element.editor = el;
@@ -9,9 +13,18 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         this.run(); // Ensure rerun on editor mount
     }
 
+    initializedCallback() {
+        return {
+            open: this.open.bind(this),
+            run: this.run.bind(this),
+            save: this.save.bind(this),
+            editorMount: this.editorMount.bind(this),
+        }
+    }
+
     prepareCallback() {
         const state = this.element.cparts.state.data;
-        const props = this.element.cparts.props.data;
+        const props = this.element.cparts.props.initializedCallback();
         if (props.collapsed === true || props.collapsed === false) {
             state.showEditor = !props.collapsed;
         } else {
@@ -21,16 +34,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             state.value = props.value;
         }
         if (props.src && !state.value) {
-            // TODO: Refactor when Script isolation mode overhaul
-            const stateCPart = element.cparts.state;
-            const setAttr = element.setAttribute.bind(element);
             window.fetch(props.src)
                 .then(response => response.text())
                 .then(text => {
-                    setAttr('value', text); // sets own prop, so SSR friendly
-                    stateCPart.propagate('value', text);
+                    this.element.setAttribute('value', text);
+                    this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
-                        _run();
+                        this._run();
                     }
                 });
         }
@@ -43,14 +53,16 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     run() {
-        state.value = element.editor.value;
-        _run();
+        const state = this.element.cparts.state.data;
+        state.value = this.element.editor.value;
+        this._run();
     }
 
     save() {
-        state.value = element.editor.value;
-        const fullText = toEmbed(state.value, getComponentName());
-        modulo.registry.utils.saveFileAs(getComponentName() + '.html', fullText);
+        const state = this.element.cparts.state.data;
+        state.value = this.element.editor.value;
+        const fullText = toEmbed(state.value, this.getComponentName());
+        this.modulo.registry.utils.saveFileAs(this.getComponentName() + '.html', fullText);
     }
 
     toEmbed(text, selected) {
@@ -82,17 +94,18 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     _run() {
+        const state = this.element.cparts.state.data;
         if (!window.moduloSandbox) {
             window.moduloSandbox = this.getSandboxedModulo();
             window.globalModulo = window.modulo;
         }
         window.modulo = window.moduloSandbox;
-        const ns = 'demo' + nextId();
+        const ns = 'demo' + this.nextId();
         const fullText = this.getCodePrefix(ns) + state.value + this.getCodeSuffix(ns);
         this.element.cparts.state.data.demo = '';
         window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
         window.moduloSandbox.preprocessAndDefine(() => {
-            this.element.cparts.state.propagate('demo', getDemoCode(ns));
+            this.element.cparts.state.propagate('demo', this.getDemoCode(ns));
             this.element.rerender();
             window.modulo = window.globalModulo; // Ensure restored
         });
@@ -106,6 +119,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     getComponentName() {
+        const props = this.element.cparts.props.initializedCallback();
         if (props.src) {
             const filename = props.src.split('/').pop();
             const bareName = filename.split('.').shift();
@@ -116,7 +130,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     getCodePrefix(ns) {
-        const cName = getComponentName();
+        const cName = this.getComponentName();
         return `<Modulo>` +
                 `<Component namespace="${ ns }" name="${ cName }" mode="shadow">\n`;
     }
@@ -126,7 +140,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     getDemoCode(ns) {
-        const tagName = ns + '-' + getComponentName();
+        const tagName = ns + '-' + this.getComponentName();
         return `<${ tagName }></${ tagName }>`;
     }
 
@@ -142,10 +156,10 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             b = 'https://fake-modulojs.org'; // Hardcode the "origin" (later may support "src"?)
             this.href = (new window.URL(a, b)).href;
         };
-        (new Function([ 'window' ], modulo_source_code))(sandboxWindow); // Run Modulo
+        const moduloSourceCode = this.conf.Content;
+        (new Function([ 'window' ], moduloSourceCode))(sandboxWindow); // Run Modulo
         return sandboxWindow.modulo; // Retrieve new Modulo
     }
 }
-
 
 modulo.register('cpart', modulo.registry.cparts.ModuloSandbox);
