@@ -17,7 +17,8 @@
         </main>
     {% endif %}
 
-    <nav class="page-nav container" style="{% if props.navdocs %}position: relative;{% endif %}">
+    <nav class="page-nav container {% if props.showtop %}page-nav--splash{% endif %}"
+            style="{% if props.navdocs %}position: relative;{% endif %}">
         <ul>
             <div class="logo">
                 <a href="/">

@@ -19,8 +19,8 @@ section {
 
 @media (max-height: 700px) and (min-width: 992px) {
     section.height-adjust {
-        height: 170px;
-        min-height: 170px;
+        height: 240px;
+        min-height: 240px;
         grid-template-columns: 1fr minmax(auto, 100%) 1fr;
         grid-template-rows: 1fr;
     }
@@ -42,6 +42,13 @@ section {
     section {
         display: block;
         margin: 0;
+    }
+    .tab-btns {
+        flex-wrap: wrap;
+        background: var(--color-fg-light);
+    }
+    .tab-btns > * {
+        margin-right: 2px;
     }
 }
 

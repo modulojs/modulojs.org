@@ -108,6 +108,7 @@
 .page-nav-link:active {
 }
 
+
 .page-container--navdocs {
     display: grid;
     grid-template-columns: 1fr 300px minmax(auto, 1368px) 1fr;
@@ -230,5 +231,11 @@ a.cta-btn:active {
 @media (max-width: 576px) {
     .page-nav-right {
         display: none;
+    }
+}
+
+@media (max-height: 700px) {
+    .page-nav--splash {
+        display: relative;
     }
 }

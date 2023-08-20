@@ -2,7 +2,9 @@
     class="pane-holder {% if not state.showEditor %}pane-holder--collapsed{% endif %}"
     style="
         --right-width: {{ state.divider }}px;
-        --divider-width: 45px
+        --divider-width: 45px;
+        --divider-height: 35px;
+        --demo-height: 120px;
     ">
     {% if state.showEditor %}
         <div class="pane pane--left">

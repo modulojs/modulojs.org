@@ -1,8 +1,12 @@
 {
     articles: [
         {
+            file: "devlog/2023-08.html",
+            title: "new website & starter templates",
+        },
+        {
             file: "devlog/2023-05.html",
-            title: "stable builds with the 0.0.50 release",
+            title: "stable builds",
         },
         {
             file: "devlog/2022-12.html",

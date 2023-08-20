@@ -406,17 +406,31 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
         this.originalHTML = null;
         this.originalChildren = [];
         this.cparts = modulo.instanceParts(def, { element: this });
+        this._activeReconciler = modulo._activeReconciler;
+    };
+
+    cls.prototype.connectedCallback = function connectedCallback () {
+        if (this._activeReconciler) { // If being reconciled, postpone
+            this._activeReconciler.patch(this, 'weak-parsedCallback');
+        } else {
+            //window.setTimeout(() => this.parsedCallback(), 0)
+            setTimeout(() => this.parsedCallback(), 0); // Otherwise, trigger immediately
+        }
     };
 
     // Mount the element, optionally "merging" in the modulo-original-html attr
     cls.prototype.parsedCallback = function parsedCallback() {
+        if (this.isMounted) {
+            console.log('skipping duped parsedCallback');
+            return;
+        }
         const htmlOriginal = this.getAttribute('modulo-original-html');
         // TODO: Shouldn't this logic be hasAttribute? (to match logic below)
-        const original = ((!htmlOriginal || htmlOriginal === '') ? this :
-                          this.modulo.registry.utils.makeDiv(htmlOriginal));
+        const original = !this.hasAttribute('modulo-original-html') ? this :
+                          this.modulo.registry.utils.makeDiv(htmlOriginal);
         this.cparts.component._lifecycle([ 'initialized' ]);
-        this.rerender(original); // render and re-mount it's own childNodes
-        if (this.hasAttribute('modulo-original-html')) {
+        this.cparts.component.rerender(original); // render + mount childNodes
+        if (this.hasAttribute('modulo-original-html')) { // Trigger first Mounts
             const { reconciler } = this.cparts.component;
             reconciler.patch = reconciler.applyPatch; // Apply immediately
             reconciler.patchAndDescendants(this, 'Mount'); // Trigger "Mount"
@@ -428,7 +442,13 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
     cls.prototype.initRenderObj = initRenderObj;
     // TODO: Possibly remove the following aliases (for fewer code paths):
     cls.prototype.rerender = function (original = null) {
-        this.cparts.component.rerender(original);
+        if (this.isMounted) {
+            this.cparts.component.rerender(original);
+        } else {
+            this.isMounted = true;
+            this.parsedCallback();
+            this.parsedCallback = () => {}; // Prevent double mounts
+        }
     };
     cls.prototype.getCurrentRenderObj = function () {
         return this.cparts.component.getCurrentRenderObj();
@@ -564,7 +584,7 @@ modulo.register('coreDef', class Component {
             const def = modulo.definitions['${ def.DefinitionName }'];
             class ${ className } extends ${ value } {
                 constructor() { super(); this.init(); }
-                connectedCallback() { window.setTimeout(() => this.parsedCallback(), 0); }
+                /*connectedCallback() { window.setTimeout(() => this.parsedCallback(), 0); }*/
             }
             modulo.registry.utils.initComponentClass(modulo, def, ${ className });
             window.customElements.define(def.TagName, ${ className });
@@ -635,8 +655,10 @@ modulo.register('coreDef', class Component {
 
     domCallback(renderObj) {
         let { root, innerHTML, innerDOM } = renderObj.component;
-        if (innerHTML && !innerDOM) {
+        if (innerHTML && !innerDOM) { // TODO: change to innerHTML !== null && !innerDOM
+            this.modulo._activeReconciler = this.reconciler;
             innerDOM = this.reconciler.loadString(innerHTML, this.localNameMap);
+            this.modulo._activeReconciler = null;
         }
         return { root, innerHTML, innerDOM };
     }
@@ -1747,7 +1769,9 @@ modulo.register('engine', class Reconciler {
     }
 
     applyPatches(patches) {
-        patches.forEach(patch => this.applyPatch.apply(this, patch));
+        for (const patch of patches) { // Simply loop through given iterable
+            this.applyPatch(patch[0], patch[1], patch[2], patch[3]);
+        }
     }
 
     reconcileChildren(childParent, rivalParent) {
@@ -1788,6 +1812,10 @@ modulo.register('engine', class Reconciler {
                         // console.log('Skipping ignored node');
                     } else if (child.isModulo) { // is a Modulo component
                         // TODO: Possibly add directive resolution context to rival / child.originalChildren?
+                        /*if (child.isMounted) { // Trigger re-render if mounted
+                            this.patch(child, 'rerender', rival);
+                        } else { // Otherwise, trigger "parsedCallback"
+                        }*/
                         this.patch(child, 'rerender', rival);
                     } else if (!this.shouldNotDescend) {
                         cursor.saveToStack();
@@ -1810,6 +1838,13 @@ modulo.register('engine', class Reconciler {
         } else if (method.startsWith('directive-')) {
             method = method.substr('directive-'.length); // TODO: RM prefix (or generalizze)
             node[method].call(node, arg); // invoke directive method
+        } else if (method.startsWith('weak-')) {
+            method = method.substr('weak-'.length);
+            if (document.body.contains(node)) {
+                node[method].call(node, arg);
+            } else {
+                console.log("noop node was not in document");
+            }
         } else {
             node[method].call(node, arg); // invoke method
         }

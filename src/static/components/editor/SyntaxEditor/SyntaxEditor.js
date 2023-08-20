@@ -32,6 +32,14 @@ function textMount({ el }){
     }
 }
 
+function renderCallback(renderObj) {
+    if (element.hasAttribute('modulo-original-html')) {
+        element.removeAttribute('modulo-original-html');
+        renderObj.component.innerHTML = null; // lock if original HTML was set
+    }
+}
+
+
 /*
     Given a base text, merge another text with it, ignoring SIGILs as
     placeholders.

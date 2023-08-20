@@ -63,8 +63,14 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
 
     renderCallback(renderObj) {
         if (this.element.getAttribute('modulo-original-html')) {
-            renderObj.component.innerHTML = null; // Disable rerender on first load
+            this.isLocked = true;
             this.element.removeAttribute('modulo-original-html');
+        }
+        if (this.isLocked) {
+            renderObj.component.innerHTML = null; // Disable rerender 
+            setTimeout(() => {
+                this.isLocked = false;
+            }, 1000); // Unlock after 1 second
         }
     }
 

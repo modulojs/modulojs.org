@@ -72,13 +72,11 @@
                     fragment: 'templatetags',
                     keywords: [ 'if', 'elif', 'else', 'endif', 'for', 'empty', 'endfor', 'operators', 'in', 'not in', 'is', 'is not', 'lt', 'gt', 'comparison', 'control-flow', ],
                 },
-
                 {
                     label: 'Built-in Filters',
                     fragment: 'filters',
                     keywords: [ 'add', 'allow', 'capfirst', 'concat', 'default', 'divisibleby', 'escapejs', 'first', 'join', 'json', 'last', 'length', 'lower', 'number', 'pluralize', 'subtract', 'truncate', 'renderas', 'reversed', 'upper', ],
                 },
-
             ],
         },
 
@@ -91,37 +89,31 @@
                     fragment: 'props',
                     keywords: ['accessing props', 'defining props', 'setting props', 'using props'],
                 },
-
                 {
                     label: 'Script',
                     fragment: 'script',
                     keywords: ['javascript', 'events', 'computed properties', 'static execution', 'custom lifecycle methods', 'script callback execution context', 'script exports'],
                 },
-
                 {
                     label: 'State',
                     fragment: 'state',
                     keywords: ['state definition', 'state data types', 'json', 'state variables', 'state.bind directive'],
                 },
-
                 {
                     label: 'StaticData',
                     fragment: 'staticdata',
                     keywords: ['loading API', 'loading json', 'transform function', 'bundling data'],
                 },
-
                 {
                     label: 'Style',
                     fragment: 'style',
                     keywords: ['CSS', 'styling', ':host', 'shadowDOM'],
                 },
-
                 {
                     label: 'Template',
                     fragment: 'template',
                     keywords: ['custom template', 'templating engine'],
                 },
-
             ],
         },
 
@@ -134,33 +126,24 @@
                     fragment: 'artifact',
                     keywords: ['bundle', 'build', 'custom builds'],
                 },
-
                 {
                     label: 'Component',
                     fragment: 'component',
                     keywords: ['name', 'innerHTML', 'patches', 'reconciliation', 'rendering mode', 'manual rerender', 'shadow', 'vanish', 'vanish-into-document', 'component.event', 'component.slot', 'component.dataProp'],
                 },
-
                 {
                     label: 'Configuration',
                     fragment: 'configuration',
                     keywords: ['config', 'loading', 'unpkg', 'npm', 'dependency', 'registering helpers', 'registering custom cparts'],
                 },
-
-                {
-                    label: 'Library',
-                    fragment: 'library',
-                    keywords: ['src', 'namespace'],
-                },
-
                 {
                     label: 'Modulo',
                     fragment: 'modulo',
                     keywords: ['starting', 'mounting', 'custom loading', 'custom mounting'],
                 },
-
             ],
         },
+
         {
             label: 'Lifecycle',
             filename: '/docs/lifecycle.html',
@@ -170,15 +153,14 @@
                     fragment: 'global',
                     keywords: ['constructor', 'initialized', 'prepare', 'render', 'reconcile', 'update', 'event', 'eventCleanup'],
                 },
-
                 {
                     label: 'Lifecycle callbacks',
                     fragment: 'callbacks',
                     keywords: ['hooking into lifecycle', 'callbacks', 'script tag callbacks', 'renderobj', 'dependency injection', 'middleware'],
                 },
-
             ],
         },
+
         {
             label: 'Directives',
             filename: '/docs/directives.html',
@@ -188,19 +170,16 @@
                     fragment: 'directives',
                     keywords: ['built-in directives', 'directive shortcuts', 'custom directives'],
                 },
-
                 {
                     label: 'Built-in directives',
                     fragment: 'builtin',
                     keywords: [ '[component.dataProp]', ':=', 'prop:=', 'JSON primitive', 'data-prop', 'assignment', '[component.event]', '@click', '@...:=', '[component.slot]', '[state.bind]', ],
                 },
-
                 {
                     label: 'Custom directives',
                     fragment: 'custom',
                     keywords: [ 'refs', 'accessing dom', 'escape hatch', 'Mount callbacks', 'Unmount callbacks', 'template variables vs directives', 'script-tag custom directives', 'custom shortcuts', ],
                 },
-
             ],
         },
     ],

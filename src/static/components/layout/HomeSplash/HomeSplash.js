@@ -1,6 +1,3 @@
-
-
-
 let animTimeout = null;
 let wasTop = null;
 function checkForScrollAnimation() {

@@ -131,6 +131,9 @@ li:hover::before {
         font-size: 1rem;
         margin-bottom: 0;
     }
+    .top-splash { 
+        height: auto;
+    }
 }
 
 @media (min-height: 700px) {

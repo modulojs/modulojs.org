@@ -23,11 +23,6 @@
 .demo-area {
     height: 100%;
     width: 100%;
-    /*
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    */
     overflow: auto;
     background: var(--color-fg-light);
     padding: 15px;
@@ -117,15 +112,36 @@
 
 @media (max-width: 992px) {
     .pane-holder {
-        display: block;
+        min-height: 350px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr var(--divider-height) var(--demo-height);
     }
 
     .toolbar {
         flex-direction: row;
+        border: 1px dotted var(--color-fg-semi);
+        border-left: none;
+        border-right: none;
+        padding: 0;
     }
 
     .toolbar button {
         opacity: 1 !important;
-        padding: 10px; /* add padding, make it easier to press */
+        padding: 1px 30px 1px 30px; /* add padding, make it easier to press */
+        font-size: 1rem;
+        color: var(--color-fg-semidark);
     }
 }
+
+
+@media (max-width: 576px) {
+    .page-nav-right {
+        display: none;
+    }
+
+    .toolbar button {
+        padding: 1px 5px 1px 5px; /* add padding, make it easier to press */
+        font-size: 0.9rem;
+    }
+}
+

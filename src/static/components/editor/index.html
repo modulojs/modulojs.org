@@ -60,6 +60,7 @@
     <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
         function initializedCallback() {
             const text = props.value || element.originalHTML;
+            //console.log('inititalized callback!', text.length, text.substr(0, 20));
             let { mode } = props;
             if (mode && mode.includes('_')) {
                 let [ modeName, editor ] = mode.split('_');
@@ -77,6 +78,12 @@
             if (element.wasReplaced) {
                 return;
             }
+            /*
+            if (element.hasAttribute('modulo-original-html')) {
+                element.removeAttribute('modulo-original-html');
+                return; // lock if original HTML was set
+            }
+            */
             const text = props.value || element.originalHTML;
             // Should never have to encounter a '-'...
             const language = props.mode ? props.mode.split('_')[0] : 'django';

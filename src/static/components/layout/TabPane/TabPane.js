@@ -3,6 +3,10 @@ function selectTab(payload) {
 }
 
 function prepareCallback() {
+    if (element.getAttribute('modulo-original-html')) {
+        element.cparts.template.renderFunc = () => {};
+        return { tabElements: [] };
+    }
     const tabElements = [];
     for (const child of element.originalChildren) {
         if (!child.hasAttribute || !child.hasAttribute('tab-title')) {
@@ -24,6 +28,12 @@ function prepareCallback() {
         }
     }
     return { tabElements };
+}
+
+function renderCallback(renderObj) {
+    if (element.hasAttribute('modulo-original-html')) {
+        renderObj.component.innerHTML = null;
+    }
 }
 
 function updateCallback() {
