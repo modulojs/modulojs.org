@@ -1,13 +1,15 @@
 modulo.config.modulosandbox = {
-    Src: '/static/js/Modulo.js',
+    Src: '/static/js/Modulo.js', // Load "Modulo.js" as .Content conf
     Directives: [ 'editorMount' ],
     SourceCodeSuffix: `
         const originalRerender = modulo.registry.coreDefs.Component.prototype.rerender;
         modulo.registry.coreDefs.Component.prototype.rerender = function (...args) {
-            /*if (this.element.hasAttribute('modulo-original-html')) {
+            /*
+            if (this.element.hasAttribute('modulo-original-html')) {
                 this.element.removeAttribute('modulo-original-html');
                 return;
-            }*/
+            }
+            */
             window.modulo = window.moduloSandbox;
             originalRerender.apply(this, args);
             window.modulo = window.globalModulo; // Ensure restored
@@ -34,6 +36,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         }
     }
 
+    updateCallback() {
+        // TODO: Hack, should look for cleaner solution:
+        if (!this.element.editor && this.element.querySelector('x-SyntaxEditor')) {
+            this.editorMount({ el: this.element.querySelector('x-SyntaxEditor') });
+        }
+    }
+
     prepareCallback() {
         const state = this.element.cparts.state.data;
         const props = this.element.cparts.props.initializedCallback();
@@ -45,14 +54,14 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         if (props.value && !state.value) {
             state.value = props.value;
         }
-        if (this.element.hasAttribute('value-from-src') && !state.value) {
-            state.value = this.element.getAttribute('value-from-src');
+        if (this.element.hasAttribute('modulo-value') && !state.value) {
+            state.value = this.element.getAttribute('modulo-value');
         }
         if (props.src && !state.value) {
             window.fetch(props.src)
                 .then(response => response.text())
                 .then(text => {
-                    this.element.setAttribute('value-from-src', text);
+                    this.element.setAttribute('modulo-value', text);
                     this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
                         this._run();
@@ -62,6 +71,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     renderCallback(renderObj) {
+        /*
         if (this.element.getAttribute('modulo-original-html')) {
             this.isLocked = true;
             this.element.removeAttribute('modulo-original-html');
@@ -72,6 +82,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
                 this.isLocked = false;
             }, 1000); // Unlock after 1 second
         }
+        */
     }
 
     open() {
@@ -113,12 +124,16 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         const fn = (selected || 'example').replace(/[^a-zA-Z0-9_\.-]/g, '_') + '.html';
         const path = ('/home/demo/' + fn);
         localStorage.setItem(LS_PREFIX + path, fullText);
+        window.location.href = '/static/demos/editor.html?ls=' + path;
+        // Skip transition, since it messes with "Back"
+        /*
         document.body.style.cursor = "wait";
         document.body.style.transition = 'opacity 0.5s';
         document.body.style.opacity = 0.01;
         setTimeout(() => {
             window.location.href = '/static/demos/editor.html?ls=' + path;
         }, 500);
+        */
     }
 
     _run() {
@@ -184,6 +199,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             b = 'https://fake-modulojs.org'; // Hardcode the "origin" (later may support "src"?)
             this.href = (new window.URL(a, b)).href;
         };
+        sandboxWindow.setTimeout = window.setTimeout.bind(window);
         const moduloSourceCode = this.conf.Content + this.conf.SourceCodeSuffix;
         (new Function([ 'window' ], moduloSourceCode))(sandboxWindow); // Run Modulo
         return sandboxWindow.modulo; // Retrieve new Modulo

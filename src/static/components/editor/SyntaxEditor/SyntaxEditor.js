@@ -1,10 +1,17 @@
 const SIGIL = String.fromCharCode(160); // NBSP (non-breaking space)
 
+function initializedCallback() {
+    // Bring in state.value if this gets called before stateChangedCallback is ready
+    if (element.value) {
+        state.value = element.value;
+    }
+}
+
 function textMount({ el }){
     // Mounting of the actual <textarea>, which functions as the main
     // "initialized" callback where everything gets set-up and rerendered with
     // the value provided
-    const value = (element.getAttribute('value') || '').trim();
+    const value = (element.getAttribute('value') || state.value || '').trim();
     const textarea = el;
     element.textarea = textarea;
     textarea.value = value;
@@ -130,11 +137,13 @@ function updateDimensions() {
     if (!textarea) {
         return;
     }
-    const { scrollTop, clientWidth, clientHeight } = textarea;
-    if (state.scrollTop !== scrollTop ||
+    const { scrollLeft, scrollTop, clientWidth, clientHeight } = textarea;
+    if (state.scrollLeft !== scrollLeft ||
+        state.scrollTop !== scrollTop ||
             state.width !== clientWidth ||
             state.height !== clientHeight) {
         state.scrollTop = scrollTop;
+        state.scrollLeft = scrollLeft;
         state.width = clientWidth;
         state.height = clientHeight;
         element.rerender();

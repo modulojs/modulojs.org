@@ -33,7 +33,6 @@ textarea {
     font-family: monospace;
     text-align: start;
     resize: none;
-    white-space: pre-wrap;
     overflow-wrap: break-word;
     box-sizing: border-box;
     position: relative;

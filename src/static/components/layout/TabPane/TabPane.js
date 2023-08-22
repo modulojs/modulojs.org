@@ -3,10 +3,6 @@ function selectTab(payload) {
 }
 
 function prepareCallback() {
-    if (element.getAttribute('modulo-original-html')) {
-        element.cparts.template.renderFunc = () => {};
-        return { tabElements: [] };
-    }
     const tabElements = [];
     for (const child of element.originalChildren) {
         if (!child.hasAttribute || !child.hasAttribute('tab-title')) {
@@ -21,18 +17,18 @@ function prepareCallback() {
         if (state.value === null) { // First iteration, no tab selected
             state.value = child.id; // Set first tab as default
         }
-
-        if (state.value === child.id) {
+        if (Number(state.value) === Number(child.id)) { // This tab is selected
             child.isSelected = true;
-            state.html = child.innerHTML;
         }
     }
     return { tabElements };
 }
 
 function renderCallback(renderObj) {
-    if (element.hasAttribute('modulo-original-html')) {
+    if (!element.isMounted && element.hasAttribute('modulo-mount-html')) {
+        // TabPane render callback, preventing rerender
         renderObj.component.innerHTML = null;
+        element.removeAttribute('modulo-mount-html')
     }
 }
 

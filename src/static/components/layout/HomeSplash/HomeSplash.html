@@ -43,31 +43,5 @@
             <x-DemoEditor src="/static/demos/eg/MemoryGame.html"></x-DemoEditor>
         </x>
     </x-TabPane>
-
-{# NOTE: Cannot put this here, since this includes template syntax! Need to load from separate files... #}
-{% comment %}
-    <div class="demo-container">
-    </div>
-    <x-DemoEditor
-value='
-<Template>
-    <button @click:=script.countUp>Hello {{ state.num }}</button>
-</Template>
-<State
-    num:=42
-></State>
-<Script>
-    function countUp() {
-        state.num++;
-    }
-</Script>
-'></x-DemoEditor>
-{% endcomment %}
-    <!--
-    <x-Demo
-        fromlibrary="Hello,Simple,ToDo,JSON,Scatter,Search,Components,Memory"
-        demotype="minipreview"
-    ></x-Demo>
-    -->
 </div>
 

@@ -17,10 +17,15 @@ section {
     display: flex;
 }
 
+section.height-adjust .demo-area {
+    max-height: 230px; /* Force everything to be smaller */
+}
+
 @media (max-height: 700px) and (min-width: 992px) {
     section.height-adjust {
-        height: 240px;
-        min-height: 240px;
+        height: 234px;
+        max-height: 234px;
+        min-height: 234px;
         grid-template-columns: 1fr minmax(auto, 100%) 1fr;
         grid-template-rows: 1fr;
     }
