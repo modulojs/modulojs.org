@@ -4,7 +4,7 @@
         {% for child in script.tabElements %}
             <button 
                 @click:=script.selectTab
-                payload="{{ child.id }}"
+                payload="{{ child.tabKey }}"
                 class="{% if child.isSelected %}selected{% else %}unselected{% endif %}"
             >{{ child.tabTitle }}</button>
         {% endfor %}
@@ -12,15 +12,15 @@
     <div class="tab-region">
         {% for child in script.tabElements %}
             <div style="
-                    {% if child.isSelected %}
-                        display: block;
-                        height: 100%;
-                    {% else %}
-                        display: none;
-                        height: 0;
-                    {% endif %}
+                    {% if child.isSelected %} display: block; height: 100%;
+                    {% else %} display: none; height: 0; {% endif %}
                     width: 100%;
-                ">
+                "
+                class="
+                    {% if child.isSelected %}tab-region-inner--selected
+                    {% else %}tab-region-inner--unselected{% endif %}
+                "
+                >
                 {{ child.innerHTML|safe }}
             </div>
         {% endfor %}

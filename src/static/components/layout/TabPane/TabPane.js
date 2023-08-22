@@ -11,29 +11,27 @@ function prepareCallback() {
         child.tabTitle = child.getAttribute('tab-title');
         tabElements.push(child); // Valid tab, include in list
         child.isSelected = false;
-        if (!child.id) { // First mount, no ids set
-            child.id = ++window._moduloID;
+        if (!child.tabKey) { // First mount, no ids set
+            child.tabKey = child.getAttribute('tab-title').toLowerCase(); // assume is unique
         }
         if (state.value === null) { // First iteration, no tab selected
-            state.value = child.id; // Set first tab as default
+            state.value = child.tabKey; // Set first tab as default
         }
-        if (Number(state.value) === Number(child.id)) { // This tab is selected
+        if (state.value === child.tabKey) { // This tab is selected
             child.isSelected = true;
         }
     }
     return { tabElements };
 }
 
-function renderCallback(renderObj) {
-    if (!element.isMounted && element.hasAttribute('modulo-mount-html')) {
-        // TabPane render callback, preventing rerender
-        renderObj.component.innerHTML = null;
-        element.removeAttribute('modulo-mount-html')
-    }
+function updateCallback() {
+    setTimeout(() => {
+        const editor = element.querySelector('.tab-region-inner--selected x-DemoEditor');
+        const sandbox = editor && editor.cparts && editor.cparts.modulosandbox;
+        if (sandbox) {
+            sandbox.forceActivate();
+        }
+    }, 10);
 }
 
-function updateCallback() {
-    if (props.hadjust) {
-        //console.log(element.clientHeight);
-    }
-}
+

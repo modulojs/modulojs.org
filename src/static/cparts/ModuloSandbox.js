@@ -70,21 +70,6 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         }
     }
 
-    renderCallback(renderObj) {
-        /*
-        if (this.element.getAttribute('modulo-original-html')) {
-            this.isLocked = true;
-            this.element.removeAttribute('modulo-original-html');
-        }
-        if (this.isLocked) {
-            renderObj.component.innerHTML = null; // Disable rerender 
-            setTimeout(() => {
-                this.isLocked = false;
-            }, 1000); // Unlock after 1 second
-        }
-        */
-    }
-
     open() {
         this.element.cparts.state.data.value = this.element.editor.value;
         const fullText = this.toEmbed(this.element.cparts.state.data.value, this.getComponentName());
@@ -94,6 +79,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     run() {
         const state = this.element.cparts.state.data;
         state.value = this.element.editor.value;
+        this.hasRun = true;
         this._run();
     }
 
@@ -172,10 +158,37 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         }
     }
 
+    buildCallback() {
+        const props = this.element.cparts.props.initializedCallback();
+        const demoArea = this.element.querySelector('.demo-area');
+        let preview = '';
+        if (props.preview) {
+            preview = props.preview;
+        }
+        if (demoArea && preview) {
+            demoArea.innerHTML = preview;
+        }
+    }
+
+    forceActivate() {
+        // TODO: Hacky thing about ordering of mounting, should find more elegant solution
+        if (this.forceActivated) {
+            return;
+        }
+        this.forceActivated = true;
+        const state = this.element.cparts.state.data;
+        if (this.element.hasAttribute('modulo-value') && !state.value) {
+            state.value = this.element.getAttribute('modulo-value');
+        }
+        this._run();
+    }
+
     getCodePrefix(ns) {
+        const props = this.element.cparts.props.initializedCallback();
         const cName = this.getComponentName();
+        const modeStr = props.regularMode ? '' : ' mode="shadow"';
         return `<Modulo>` +
-                `<Component namespace="${ ns }" name="${ cName }" mode="shadow">\n`;
+                `<Component namespace="${ ns }" name="${ cName }" ${ modeStr }>\n`;
     }
 
     getCodeSuffix(ns) {

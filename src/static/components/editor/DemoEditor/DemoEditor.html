@@ -30,6 +30,9 @@
         <div class="demo-area">
             {% if not state.demo %}
                 {# For now, just leave blank #}
+                {% if props.preview %}
+                    {{ props.preview|safe }}
+                {% endif %}
             {% else %}
                 {{ state.demo|safe }}
             {% endif %}
