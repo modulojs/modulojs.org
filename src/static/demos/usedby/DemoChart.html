@@ -2,12 +2,14 @@
     data
     animated
 ></Props>
+
 <Template>
-    <div class="chart-container
-    {% if props.animated %}animated{% endif %}">
+    <div class="chart-container {% if props.animated %}animated{% endif %}">
         {% for percent in script.percent %}
-            <div style="height: {{ percent }}px; width: {{ script.width }}px">
-            </div>
+            <div style="
+                height: {{ percent }}px;
+                width: {{ script.width }}px;
+            "></div>
         {% endfor %}
     </div>
     {% if not props.animated %}
@@ -21,6 +23,7 @@
     function prepareCallback() {
         const data = props.data || [];
         const max = Math.max(...data);
+        // Scale to 0, uncomment the following to make it scale to the lowest
         const min = 0;// Math.min(...props.data),
         return {
             percent: data.map(item => ((item - min) / max) * 100),

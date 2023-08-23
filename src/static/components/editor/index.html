@@ -8,8 +8,8 @@
         value
         src
         preview
-        regular-mode
         collapsed
+        includes
     ></Props>
     <Template
         -src="./DemoEditor/DemoEditor.html"
@@ -19,6 +19,7 @@
         demo=""
         value=""
         show-editor:=null
+        is-fetching:=null
     ></State>
     <ModuloSandbox></ModuloSandbox>
     <Style

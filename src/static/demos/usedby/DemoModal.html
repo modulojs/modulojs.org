@@ -4,14 +4,26 @@
 ></Props>
 
 <Template>
-    <button @click:=script.show>{{ props.button }}</button>
-    <div class="modal-backdrop"
+    <button @click:=script.show>
+        {{ props.button|default:"Show Modal" }}
+    </button>
+    <div
+        class="modal-backdrop"
         @click:=script.hide
-        style="display: {% if state.visible %}block{% else %}none{% endif %}">
-    </div>
-    <div class="modal-body" style="
-    {% if state.visible %} top: 100px; {% else %} top: -900px; {% endif %}">
-        <h2>{{ props.title }} <button @click:=script.hide>&times;</button></h2>
+        style="display: {% if state.visible %}block{% else %}none{% endif %}"
+    ></div>
+    <div
+        role="dialog"
+        aria-label="{{ props.title }}"
+        aria-modal="true"
+        class="modal-body" 
+        style="
+            {% if state.visible %}top: 100px;{% else %}top: -900px;{% endif %}
+        ">
+        <h2>
+            {{ props.title|default:"Modal Dialog" }}
+            <button @click:=script.hide>&times;</button>
+        </h2>
         <slot></slot>
     </div>
 </Template>
@@ -19,7 +31,6 @@
 <State
     visible:=false
 ></State>
-
 
 <Script>
     function show() {

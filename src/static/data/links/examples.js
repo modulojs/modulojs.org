@@ -91,10 +91,10 @@
 
     components: [
         {
-            file: "/static/demos/eg/Hello.html",
+            file: "/static/demos/eg/HelloCount.html",
         },
         {
-            file: "/static/demos/eg/Simple.html",
+            file: "/static/demos/eg/SimpleStyle.html",
         },
         {
             file: "/static/demos/eg/ToDo.html",
@@ -128,9 +128,11 @@
         },
         {
             file: "/static/demos/eg/Components.html",
+            includes: "/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html",
         },
         {
             file: "/static/demos/eg/OscillatingGraph.html",
+            includes: "/static/demos/usedby/DemoChart.html",
         },
         {
             file: "/static/demos/usedby/DemoModal.html",
@@ -146,6 +148,7 @@
         },
         {
             file: "/static/demos/eg/WorldMap.html",
+            includes: "/static/demos/usedby/DemoModal.html",
         },
         {
             file: "/static/demos/eg/MemoryGame.html",

@@ -12,11 +12,13 @@
         {% if state.selected == example.file %}
             <x-DemoEditor
                 src="{{ example.file }}"
+                includes="{{ example.includes|default:'' }}"
                 collapsed:=false
             ></x-DemoEditor>
         {% else %}
             <x-DemoEditor
                 src="{{ example.file }}"
+                includes="{{ example.includes|default:'' }}"
                 collapsed:=true
             ></x-DemoEditor>
         {% endif %}

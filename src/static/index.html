@@ -51,12 +51,16 @@
 <!-- Brings in ModuloSandbox CPart -->
 <script Configuration -src="./cparts/ModuloSandbox.js"></script>
 
-<!-- Register a couple global "demo" components. These are not used for the
+<!-- Register a "demo" components. These are not used for the
 site itself, but are just registered globally here for convenience: We use them
 to demonstrate features about using pre-defined components. -->
-<Component name="DemoModal" -src="/static/demos/usedby/DemoModal.html" mode="shadow"></Component>
-<Component name="DemoChart" -src="/static/demos/usedby/DemoChart.html" mode="shadow"></Component>
-<Component name="ExampleBtn" -src="/static/demos/usedby/ExampleBtn.html" mode="shadow"></Component>
+<Component namespace="x" name="ExampleBtn" -src="/static/demos/usedby/ExampleBtn.html" mode="shadow"></Component>
+
+<!-- NOTE: These are no longer needed, since they get included on-the-fly by the Demo component -->
+<!--
+<Component namespace="x" name="DemoModal" -src="/static/demos/usedby/DemoModal.html" mode="shadow"></Component>
+<Component namespace="x" name="DemoChart" -src="/static/demos/usedby/DemoChart.html" mode="shadow"></Component>
+-->
 
 <!-- Load "layout" and "editor" component libraries, registering both under the
 "x-" default prefix -->

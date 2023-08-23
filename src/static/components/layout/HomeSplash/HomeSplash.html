@@ -20,12 +20,12 @@
     <x-TabPane hadjust="true">
         <x tab-title="HelloCount">
             <x-DemoEditor
-              src="/static/demos/eg/Hello.html"
+              src="/static/demos/eg/HelloCount.html"
               preview="<button style='font-size: 13.3px; font-weight: 400'>Hello 42</button>"
             ></x-DemoEditor>
         </x>
         <x tab-title="SimpleStyle">
-            <x-DemoEditor src="/static/demos/eg/Simple.html"></x-DemoEditor>
+            <x-DemoEditor src="/static/demos/eg/SimpleStyle.html"></x-DemoEditor>
         </x>
         <x tab-title="ToDo">
             <x-DemoEditor src="/static/demos/eg/ToDo.html"></x-DemoEditor>
@@ -40,7 +40,10 @@
             <x-DemoEditor src="/static/demos/eg/Search.html"></x-DemoEditor>
         </x>
         <x tab-title="Components">
-            <x-DemoEditor src="/static/demos/eg/Components.html"></x-DemoEditor>
+            <x-DemoEditor
+                src="/static/demos/eg/Components.html"
+                includes="/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html"
+            ></x-DemoEditor>
         </x>
         <x tab-title="MemoryGame">
             <x-DemoEditor src="/static/demos/eg/MemoryGame.html"></x-DemoEditor>

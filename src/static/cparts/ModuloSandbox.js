@@ -1,15 +1,15 @@
+/* Note: This CPart is a work in progress, and will eventually be split between
+** a Script in DemoEditor that handles the UI, which in turn uses a general
+** purpose "ModuloSandbox" CPart that handles the hard stuff. Right now, it's
+** just all jammed in here. */
+
 modulo.config.modulosandbox = {
     Src: '/static/js/Modulo.js', // Load "Modulo.js" as .Content conf
     Directives: [ 'editorMount' ],
     SourceCodeSuffix: `
+        // A little hack to ensure stays (mostly) sandboxed
         const originalRerender = modulo.registry.coreDefs.Component.prototype.rerender;
         modulo.registry.coreDefs.Component.prototype.rerender = function (...args) {
-            /*
-            if (this.element.hasAttribute('modulo-original-html')) {
-                this.element.removeAttribute('modulo-original-html');
-                return;
-            }
-            */
             window.modulo = window.moduloSandbox;
             originalRerender.apply(this, args);
             window.modulo = window.globalModulo; // Ensure restored
@@ -57,10 +57,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         if (this.element.hasAttribute('modulo-value') && !state.value) {
             state.value = this.element.getAttribute('modulo-value');
         }
-        if (props.src && !state.value) {
+        if (props.src && !state.value && state.isFetching === null) {
+            state.isFetching = true;
             window.fetch(props.src)
                 .then(response => response.text())
                 .then(text => {
+                    state.value = text;
+                    state.isFetching = false;
                     this.element.setAttribute('modulo-value', text);
                     this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
@@ -91,17 +94,25 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     toEmbed(text, selected) {
-        const indentText = ('\n' + text.trim()).replace(/\n/g, '\n    ');
+        const props = this.element.cparts.props.initializedCallback();
+        let includeStr = this.getCodeIncludes(props.includes);
+        //const codeText = this.getCodeContent(text);
+        const codeText = text; // Use the raw text for the embed, since we don't need demo=...
+        const indentText = ('\n' + codeText.trim()).replace(/\n/g, '\n    ');
+        if (includeStr) {
+            includeStr = ('\n' + includeStr.trim()).replace(/\n/g, '\n  ');
+            includeStr = includeStr.replace(new RegExp("/static/", "g"), "https://modulojs.org/static/");
+            includeStr = includeStr.replace(new RegExp(' mode="shadow"', "g"), "");
+            includeStr = includeStr.replace(new RegExp(' namespace="[^"]+"', "g"), "");
+        }
         const componentName = selected || 'Demo';
-        let dependency = '';
-        /* if () { dependency = '//modulojs.org/libraries/globalExamples.html'; } */
-        const usage = `<p>Example usage:</p><hr />\n<x-${componentName}></x-${componentName}>`;
-        const fullText = '<!DOCTYPE html>\n<template Modulo>\n' +
-                          (dependency ? `  <Library -src="${ dependency }"></Library>\n` : '') +
+        const fullText = `<!DOCTYPE html>\n<template Modulo>${ includeStr }\n` +
                           `  <Component name="${ componentName }">` + indentText + '\n' +
                           '  </Component>\n' +
                           '</template>\n' +
-                          '<script src="https://unpkg.com/mdu.js"></script>\n' + usage;
+                          '<script src="https://unpkg.com/mdu.js"></script>\n' +
+                          '<p>Example usage:</p><hr />\n' +
+                          `<x-${componentName}></x-${componentName}>`;
         return fullText;
     }
 
@@ -129,11 +140,23 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             window.globalModulo = window.modulo;
         }
         const ns = 'demo' + this.nextId();
-        const fullText = this.getCodePrefix(ns) + state.value + this.getCodeSuffix(ns);
+
+        const fullText = this.getCodePrefix(ns) + this.getCodeContent(state.value) + this.getCodeSuffix(ns);
+        // NOTE: Currently, the ability to use includes for _run() is DEACTIVATED. It only affects toEmbed
+        //const fullText = this.getCodePrefix(ns) + state.value + this.getCodeSuffix(ns);
+
         this.element.cparts.state.data.demo = '';
         window.modulo = window.moduloSandbox;
+        /*
+        window._infiniteCount = window._infiniteCount || 1;
+        if (++window._infiniteCount > 5) {
+            console.count('muting after 500');
+            return;
+        }
+        */
         window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
         window.moduloSandbox.preprocessAndDefine(() => {
+            window.modulo = window.moduloSandbox;
             this.element.cparts.state.propagate('demo', this.getDemoCode(ns));
             this.element.rerender();
             window.modulo = window.globalModulo; // Ensure restored
@@ -141,18 +164,17 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     nextId() {
-        if (window._moduloID < 10000) { // Always reset to 10,0000 
-            window._moduloID = 10000;
+        if (window._moduloID < 1000) { // Always reset to 1000 
+            window._moduloID = 1000;
         }
         return ++window._moduloID; // assign next modulo ID
     }
 
-    getComponentName() {
+    getComponentName(src = false) {
         const props = this.element.cparts.props.initializedCallback();
-        if (props.src) {
-            const filename = props.src.split('/').pop();
-            const bareName = filename.split('.').shift();
-            return bareName;
+        src = src || props.src;
+        if (src) {
+            return src.split('/').pop().split('.').shift();
         } else {
             return 'Demo';
         }
@@ -186,9 +208,53 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     getCodePrefix(ns) {
         const props = this.element.cparts.props.initializedCallback();
         const cName = this.getComponentName();
-        const modeStr = props.regularMode ? '' : ' mode="shadow"';
-        return `<Modulo>` +
-                `<Component namespace="${ ns }" name="${ cName }" ${ modeStr }>\n`;
+        //const modeStr = props.regularMode ? '' : ' mode="shadow"';
+        let modeStr = ' mode="shadow"';
+        if ((props.includes || '').trim() && props.includes !== 'undefined') {
+            modeStr = '';
+        }
+        const includeStr = this.getCodeIncludes(props.includes);
+        return `<Modulo>${ includeStr }` +
+                `<Component namespace="${ ns }" name="${ cName }"${ modeStr }>\n`;
+    }
+
+    getCodeIncludes(includeStr) {
+        includeStr = (includeStr || '').trim();
+        if (!includeStr) {
+            return '';
+        }
+        if (includeStr.startsWith('<')) {
+            // Assumed to be modulo code, use as is
+            return includeStr;
+        }
+        this.includesNameMap = {};
+        let s = '';
+        // Assumed to be src= includes
+        for (const src of includeStr.split(',')) {
+            const cName = this.getComponentName(src);
+            const ns = 'demo' + this.nextId();
+            s += `<Component namespace="${ ns }" name="${ cName }" `;
+            s += `-src="${ src }" mode="shadow"></Component>\n`;
+            const key = `x-${ cName }`.toUpperCase(); // Case insensitive
+            this.includesNameMap[key] = `${ ns }-${ cName }`;
+        }
+        return s;
+    }
+
+    getCodeContent(componentStr) {
+        if (!this.includesNameMap || Object.keys(this.includesNameMap).length < 1) {
+            return componentStr; // No op
+        }
+        // Need to hard-code name substitutions, until private namespace
+        // feature is finished and documented:
+        let tags = Object.keys(this.includesNameMap).join('|').toLowerCase();
+        const regexp = new RegExp('<(\\s*/?\\s*)(' + tags + ')([^a-zA-Z-])', 'ig');
+        componentStr = componentStr.replace(regexp, (match, m1, m2, m3) => {
+            const newTag = this.includesNameMap[m2.toUpperCase()]; // </x-TagName to
+            return `<${ m1 }${ newTag }${ m3 }`; // </demo123-TagName
+        });
+        this.includesNameMap = null; // clear so it can't be reused by accident
+        return componentStr;
     }
 
     getCodeSuffix(ns) {
@@ -211,10 +277,12 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         sandboxWindow.URL = function fakeURL (a, b) {
             b = 'https://fake-modulojs.org'; // Hardcode the "origin" (later may support "src"?)
             this.href = (new window.URL(a, b)).href;
+            this.href = this.href.replace(b, ''); // Force make relative
         };
         sandboxWindow.setTimeout = window.setTimeout.bind(window);
         const moduloSourceCode = this.conf.Content + this.conf.SourceCodeSuffix;
         (new Function([ 'window' ], moduloSourceCode))(sandboxWindow); // Run Modulo
+        this.sandboxWindow = sandboxWindow;
         return sandboxWindow.modulo; // Retrieve new Modulo
     }
 }
