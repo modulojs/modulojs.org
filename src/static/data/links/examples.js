@@ -130,10 +130,10 @@
             file: "/static/demos/eg/Components.html",
             includes: "/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html",
         },
-        {
+        /*{
             file: "/static/demos/eg/OscillatingGraph.html",
             includes: "/static/demos/usedby/DemoChart.html",
-        },
+        },*/
         {
             file: "/static/demos/usedby/DemoModal.html",
         },

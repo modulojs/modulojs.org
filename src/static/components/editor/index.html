@@ -60,6 +60,7 @@
     <Props
         value
         mode
+        fix
     ></Props>
     <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
         function initializedCallback() {
@@ -69,7 +70,6 @@
             if (mode && mode.includes('_')) {
                 let [ modeName, editor ] = mode.split('_');
                 mode = modeName;
-                // TODO: replace self with editor
                 const div = document.createElement('div');
                 const valueAttr = text.replace('"', "&dquo;");
                 div.innerHTML = `<x-SyntaxEditor value="${ valueAttr }"></x-SyntaxEditor>`;
@@ -88,7 +88,14 @@
                 return; // lock if original HTML was set
             }
             */
-            const text = props.value || element.originalHTML;
+            let text = props.value || element.originalHTML;
+            // Undo exceccive HTML encoding
+            if (props.fix === 'html_encoding') {
+                text = text
+                  .replace(/&gt;/gi, '>')
+                  .replace(/&lt;/gi, '<');
+                text = text.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>')
+            }
             // Should never have to encounter a '-'...
             const language = props.mode ? props.mode.split('_')[0] : 'django';
             const opts = { language };
@@ -120,12 +127,21 @@
         -src="../../data/links/examples.js"
     ></StaticData>
     <Script>
-        modulo.register('templateFilter', function getTitle(s) {
+    	function getTitle(s) {
             const parts = s.split('.')[0].split('/');
             return parts[parts.length - 1];
-        });
+        }
+        modulo.register('templateFilter', getTitle);
         function showDemo(demoFileName) {
             state.selected = demoFileName;
+            setTimeout(() => {
+                // Stupid hack to force it to run
+            	const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
+                const synEditor = editor.querySelector('x-SyntaxEditor');
+                editor.cparts.modulosandbox.editor = synEditor;
+                editor.cparts.modulosandbox.run();
+            	editor.cparts.modulosandbox.updateCallback(); // Hack to cause it to rerender / fix issue after display
+            }, 0);
         }
         function prepareCallback() {
             const examples = [];

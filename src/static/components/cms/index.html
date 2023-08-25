@@ -19,15 +19,16 @@
         };
             .replace(new RegExp(params.left, 'gi'), 
         */
+        const t = '<x-SyntaxHighlighter fix="html_encoding" ';
         html = html
-            .replace(/<pre><code\b[^>]*javascript*[^>]*>/gi, '<x-SyntaxHighlighter mode="javascript">')
-            .replace(/<pre><code\b[^>]*html*[^>]*>/gi, '<x-SyntaxHighlighter mode="html">')
-            .replace(/<pre><code\b[^>]*css*[^>]*>/gi, '<x-SyntaxHighlighter mode="css">')
-            .replace(/<pre><code\b[^>]*bash*[^>]*>/gi, '<x-SyntaxHighlighter mode="bash">')
-            .replace(/<pre><code\b[^>]*modulo_editor*[^>]*>/gi, '<x-SyntaxHighlighter mode="modulo_editor">')
-            .replace(/<pre><code\b[^>]*modulo*[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
-            .replace(/<pre><code\b[^>]*django*[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
-            .replace(/<pre><code\b[^>]*>/gi, '<x-SyntaxHighlighter mode="django">')
+            .replace(/<pre><code\b[^>]*javascript*[^>]*>/gi, t + 'mode="javascript">')
+            .replace(/<pre><code\b[^>]*html*[^>]*>/gi, t + 'mode="html">')
+            .replace(/<pre><code\b[^>]*css*[^>]*>/gi, t + 'mode="css">')
+            .replace(/<pre><code\b[^>]*bash*[^>]*>/gi, t + 'mode="bash">')
+            .replace(/<pre><code\b[^>]*modulo_demo*[^>]*>/gi, t + 'mode="django_demo">')
+            .replace(/<pre><code\b[^>]*modulo*[^>]*>/gi, t + 'mode="django">')
+            .replace(/<pre><code\b[^>]*django*[^>]*>/gi, t + 'mode="django">')
+            .replace(/<pre><code\b[^>]*>/gi, t + 'mode="django">')
             .replace(/<\/code><\/pre>/gi, '</x-SyntaxHighlighter>');
         data.body = Object.assign(String(html), { safe: true });
         return data;

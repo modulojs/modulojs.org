@@ -14,12 +14,14 @@
                 src="{{ example.file }}"
                 includes="{{ example.includes|default:'' }}"
                 collapsed:=false
+                id="de_for_{{ example.file|getTitle }}"
             ></x-DemoEditor>
         {% else %}
             <x-DemoEditor
                 src="{{ example.file }}"
                 includes="{{ example.includes|default:'' }}"
                 collapsed:=true
+                id="de_for_{{ example.file|getTitle }}"
             ></x-DemoEditor>
         {% endif %}
     </article>

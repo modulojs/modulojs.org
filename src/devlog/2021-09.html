@@ -32,6 +32,65 @@ massive recipe book of hundreds of examples, ranging from API usage to common
 UI tasks. For an example, skim (no need to actually thoroughly read) the
 following "excerpt" of the imaginary "Fish" documentation:
 
+
+```html
+<!-- Fish Framework - Documentation -->
+
+<!-- BEGINNER EXAMPLE: BUTTON -->
+<!-- Look how easy it is to make a button that counts: -->
+<button
+        onClick='Fish(this, "count", this.state.count++)'
+        x-state='{"count": 3}'>
+    <p>I ate {count} delicious herrings</p>
+</button>
+
+<!-- Okay, lets break it down:
+        - By using the x-state directive, the core directive of Fish (see
+          Chapter 2 on directives and how to create your own), we can set the
+          initial state of an element.
+        - What is state? An object that you can mutate to affect how your
+          elements are displayed. Use it to store data from the DB, or
+          elsewhere.
+        - ... snip ...
+-->
+
+<!-- ADVANCED EXAMPLE: API -->
+<!-- Lets see another example of state, this time with API: -->
+<div x-state='{"search": ""}'>
+    <p>Information about account found: Their name is {name}</p>
+    <input onChange='Fish(this.parentNode, "search", this.value)'
+        placholder="Type in a GitHub username..."
+    />
+    <button onClick='
+        fetch(`https://api.github.com/users/${this.parentNode.state.search}`)
+            .then(response => response.json())
+            .then(({name}) => Fish(this.parentNode, "name", name))
+        '>Search GitHub</button>
+</div>
+
+<!-- Okay, lets break it down:
+        - In this example, you can see how ........... (- snip -) -->
+
+
+
+<!-- UI TOOLKIT EXAMPLE: ACCORDIAN TOGGLE -->
+<!-- Or, look how you can make toggle accordians elements just by using .... -->
+<nav x-state='{}'>
+    <li onClick='Fish(this.parentNode, "info_class", "visible")'>
+        Show Info
+    </li>
+    <li onClick='Fish(this.parentNode, "contact_class", "visible")'>
+        Show Contact
+    </li>
+    <li onClick='Fish(this.parentNode, "blog_class", "visible")'>
+        Show Blog
+    </li>
+    <div class="{info_active}">Hi, this is info about my website...</div>
+    <div class="{contact_class}">I live in Antarctica and write free software...</div>
+    <div class="{blog_class}">Thoughts on fish: Why fish is actually...</div>
+</nav>
+```
+
 Now this is looking more and more like a complete framework! The missing
 ingredient was documentation and examples. In fact, that was even more
 important than the original code: The original code could be anything, just

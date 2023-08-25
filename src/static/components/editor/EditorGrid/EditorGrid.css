@@ -1,6 +1,7 @@
 :host {
     display: flex;
     flex-wrap: wrap;
+    --editor-height: 238px;
 }
 
 article {
@@ -50,9 +51,18 @@ h3:hover > span {
     opacity: 1;
 }
 
+/* Force the height of the pane-holder to prevent overflow */
+x-DemoEditor .pane-holder {
+    height: var(--editor-height);
+    min-height: var(--editor-height);
+    grid-template-rows: var(--editor-height);
+}
+
 @media (min-width: 992px) {
     :host {
         margin-left: -50px;
         margin-right: -50px;
     }
 }
+
+

@@ -13,7 +13,7 @@
         {% endfor %}
     </div>
     {% if not props.animated %}
-        {% for value in props.data %}
+        {% for value in script.data %}
             <label style="width: {{ script.width }}px">{{ value }}</label>
         {% endfor %}
     {% endif %}
@@ -21,13 +21,18 @@
 
 <Script>
     function prepareCallback() {
-        const data = props.data || [];
+        let data = props.data || [];
+        if (data.length === 0) {
+            //  Use default data, for demo:
+            data = [ 35, 20, 15, 100 ];
+        }
         const max = Math.max(...data);
         // Scale to 0, uncomment the following to make it scale to the lowest
         const min = 0;// Math.min(...props.data),
         return {
             percent: data.map(item => ((item - min) / max) * 100),
             width: Math.floor(100 / data.length),
+            data: data,
         }
     }
 </Script>

@@ -36,21 +36,20 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         }
     }
 
-    updateCallback() {
-        // TODO: Hack, should look for cleaner solution:
-        if (!this.element.editor && this.element.querySelector('x-SyntaxEditor')) {
-            this.editorMount({ el: this.element.querySelector('x-SyntaxEditor') });
-        }
-    }
-
     prepareCallback() {
+        /*if ((this.element.getAttribute('src') || '').includes('HelloCount')) {
+            console.log('init cb', this.element);
+        }*/
         const state = this.element.cparts.state.data;
         const props = this.element.cparts.props.initializedCallback();
+        let oldShowEditor = state.showEditor;
         if (props.collapsed === true || props.collapsed === false) {
             state.showEditor = !props.collapsed;
         } else {
             state.showEditor = true;
         }
+
+
         if (props.value && !state.value) {
             state.value = props.value;
         }
@@ -70,6 +69,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
                         this._run();
                     }
                 });
+        }
+    }
+
+    updateCallback() {
+        // TODO: Hack, should look for cleaner solution:
+        if (!this.element.editor && this.element.querySelector('x-SyntaxEditor')) {
+            this.editorMount({ el: this.element.querySelector('x-SyntaxEditor') });
         }
     }
 
@@ -142,8 +148,6 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         const ns = 'demo' + this.nextId();
 
         const fullText = this.getCodePrefix(ns) + this.getCodeContent(state.value) + this.getCodeSuffix(ns);
-        // NOTE: Currently, the ability to use includes for _run() is DEACTIVATED. It only affects toEmbed
-        //const fullText = this.getCodePrefix(ns) + state.value + this.getCodeSuffix(ns);
 
         this.element.cparts.state.data.demo = '';
         window.modulo = window.moduloSandbox;

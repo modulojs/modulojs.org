@@ -22,8 +22,11 @@ article {
 }
 
 section.narrow-grid article {
-    grid-template-columns: 100px 1fr;
-    min-height: 200px;
+    grid-template-columns: 1fr 100px;
+    min-height: 100px;
+}
+section.narrow-grid article > :last-child {
+    order: -1; /* reverse order */
 }
 
 div.image-div {
@@ -31,6 +34,11 @@ div.image-div {
     padding: 3px;
     border-right: 3px solid var(--color-fg-semi);
     padding-top: 15px;
+}
+
+section.narrow-grid div.image-div {
+    border: none;
+    border-left: 3px solid var(--color-fg-semi);
 }
 
 h3 {
