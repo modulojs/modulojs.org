@@ -7,30 +7,66 @@ Templating Language
 
 This document explains the language syntax and functionality of the included Modulo template system.
 
-Modulo's templating language is designed to be fairly versatile in capabilities, while still feel comfortable to those only used to working with HTML. If you have any exposure to other similar template languages, such as Django (Python), Shopify's Liquid (Ruby), Hugo (Go), Jinja2 (Python), Nunjucks (JavaScript), or Twig (PHP), you should feel right at home with Modulo's templates. In fact, Modulo's templating was modeled so closely on Django's, that much of this documentation was [heavily inspired by Django's own documentation](https://docs.djangoproject.com/en/4.0/ref/templates/language/). This also means that most text editors already can highlight Modulo template code: Just configure your editor to syntax highlight _Django HTML templates_, and you'll be all set for editing Modulo template or library files. Thanks, Django!
+Modulo's templating language is designed to be fairly versatile in
+capabilities, while still feel comfortable to those only used to working with
+HTML. If you have any exposure to other similar template languages, such as
+Django (Python), Shopify's Liquid (Ruby), Hugo (Go), Jinja2 (Python), Nunjucks
+(JavaScript), or Twig (PHP), you should feel right at home with Modulo's
+templates. In fact, Modulo's templating was modeled so closely on Django's,
+that much of this documentation was [heavily inspired by Django's own
+documentation](https://docs.djangoproject.com/en/4.0/ref/templates/language/).
+This also means that most text editors already can highlight Modulo template
+code: Just configure your editor to syntax highlight _Django HTML templates_,
+and you'll be all set for editing Modulo template or library files. Thanks,
+Django!
 
 
-> **Approach**
-> In approach, Modulo's tempting language joins the ranks of the ["Djangolike"](https://i5ar.medium.com/template-languages-a7b362971cbc) templating languages: Intentionally limited, and resembling markup more than programming code. If you're used to languages which permit mixing programming code directly with DOM elements, such as with React or Svelte, you'll want to bear in mind that the Modulo template system is not simply JavaScript embedded into HTML. This is by design: the template system is meant to express presentation, not program logic.
+##### Approach
 
-> The Modulo template system provides "tags" which function similarly to some programming constructs—an if tag for boolean tests, a for tag for looping, etc.—but the template system will not execute arbitrary JavaScript expressions. Only the tags, filters and syntax listed here is supported by default (although you can add your own extensions to the template language as needed).
+In approach, Modulo's tempting language joins the ranks of the
+["Djangolike"](https://i5ar.medium.com/template-languages-a7b362971cbc)
+templating languages: Intentionally limited, and resembling markup more than
+programming code. If you're used to languages which permit mixing programming
+code directly with DOM elements, such as with React or Svelte, you'll want to
+bear in mind that the Modulo template system is not simply JavaScript embedded
+into HTML. This is by design: the template system is meant to express
+presentation, not program logic.
 
-> Why use a text-based template instead of an XML-based one (like React's JSX), or an attribute DOM-based one (like Vue, Angular, or Riot)? The same reason behind the MVC paradigm: "To separate internal representations of information from the ways information is presented to and accepted from the user". Supporting pure-text output enforces this clear wall of separation between presentation and business logic. Furthermore, this will be more familiar to backend developers more familiar with string-based templating in general (such as Ruby, Python, or PHP developers).
+The Modulo template system provides "tags" which function similarly to some
+programming constructs—an if tag for boolean tests, a for tag for looping,
+etc.—but the template system will not execute arbitrary JavaScript expressions.
+Only the tags, filters and syntax listed here is supported by default (although
+you can add your own extensions to the template language as needed).
+
+Why use a text-based template instead of an XML-based one (like React's JSX),
+or an attribute DOM-based one (like Vue, Angular, or Riot)? The same reason
+behind the MVC paradigm: "To separate internal representations of information
+from the ways information is presented to and accepted from the user".
+Supporting pure-text output enforces this clear wall of separation between
+presentation and business logic. Furthermore, this will be more familiar to
+backend developers more familiar with string-based templating in general
+(such as Ruby, Python, or PHP developers).
+
+----
 
 
-Templates
+# Templates
 
-A "template" is the text within a Template CPart. Most Components defined within Modulo will also define a Template CPart in order to render their contents.
+A "template" is the text within a Template CPart. Most Components defined
+within Modulo will also define a Template CPart in order to render their
+contents.
 
-A template contains variables, which get replaced with values when the template is evaluated, and tags, which control the logic of the template.
+A template contains variables, which get replaced with values when the template
+is evaluated, and tags, which control the logic of the template.
 
-Below is a minimal template that illustrates a few basics. Each element will be explained later in this document.
+Below is a minimal template that illustrates a few basics. Each element will be
+explained later in this document.
 
-```modulo_demo
+```
 <Template>
 <p>There are <em>{{ state.count }}
   {{ state.count|pluralize:"articles,article" }}</em>
-  on {{ script.exports.title }}.</p>
+  on {{ script.title }}.</p>
 
 {# Show the articles #}
 {% for article in state.articles %}
@@ -52,15 +88,26 @@ Below is a minimal template that illustrates a few basics. Each element will be 
        "tease": "Why constructing JS is risky business."}
     ]'
 ></State>
+
 <Script>
-    script.exports.title = "ModuloNews";
-/Script
+    function prepareCallback() {
+        return {
+            title: "Modulo News",
+        }
+    }
+/Script>
 ```
 
 
-Variables
+# Variables
 
-Variables look like this: `{{ variable }}`. When the template engine encounters a variable, it evaluates that variable and replaces it with the result. Variable names consist of any combination of alphanumeric characters and the underscore ("_") but may not start with an underscore, and may not be a number. The dot (".") also appears in variable sections, although that has a different meaning, as indicated below. Importantly, you cannot have spaces or punctuation characters in variable names.
+Variables look like this: `{{ variable }}`. When the template engine encounters
+a variable, it evaluates that variable and replaces it with the result.
+Variable names consist of any combination of alphanumeric characters and the
+underscore ("_") but may not start with an underscore, and may not be a number.
+The dot (".") also appears in variable sections, although that has a different
+meaning, as indicated below. Importantly, you cannot have spaces or punctuation
+characters in variable names.
 
 ### The dot (.)
 
@@ -83,7 +130,7 @@ Variables come from the component's `renderObj` that is produced in the `prepare
 If you want to create computed variables (like in Vue.js), you can create a custom `prepare` lifecycle callback in your Script CPart tag as follows. Examine the following example:
 
 
-```modulo_demo
+```
 <Template>
     <input name="perc" [state.bind] />% of
     <input name="total" [state.bind] />
@@ -100,7 +147,7 @@ If you want to create computed variables (like in Vue.js), you can create a cust
         const calcResult = (state.perc / 100) * state.total;
         return { calcResult };
     }
-/Script
+/Script>
 
 <Style>
     input { display: inline; width: 25px }
@@ -124,7 +171,7 @@ We'll go over template-tags later, but some template-tags can add variables into
 Note how `athlete` declares a new variable, which can be reused in `{{ athlete.name }}`. For more on for-loops, see the [built-in template-tag reference.](/docs/template_reference.html#tags)
 
 
-```modulo_demo
+```
 {% for athlete in state.athletes %}
     <p>{{ athlete.name }}</p>
 {% endfor %}
@@ -164,10 +211,10 @@ Again, these are just a few examples; see the [built-in filter reference](/docs/
 See below for an example of registering a custom filter:
 
 
-```modulo_demo
+```
 <Template>
-    A: {{ state.a|aspercent }}<br />
-    B: {{ state.b|aspercent }}
+    A: {{ state.a|percent:state.total }}<br />
+    B: {{ state.b|percent:state.total }}
 </Template>
 
 <State
@@ -181,10 +228,10 @@ See below for an example of registering a custom filter:
     	const number = (value / 100) * arg;
         return  `${ number }% of ${ arg }`;
     });
-/Script
+/Script>
 ```
 
-## Tags
+# Tags
 
 Tags look like this: `{% tag %}` (except with the word "tag" replaced with something else). Tags can be more complex than variables: Some create text in the output, some control flow by performing loops or logic, and some load external information into the template to be used by later variables.
 
@@ -192,7 +239,8 @@ Most built-in tags require beginning and ending tags, in the format of: `{% tag
 
 Modulo ships with several built-in template-tags. You can read all about them in the [built-in template-tag reference](/docs/templating-reference.html#filters).
 
-# Common Template-Tags
+
+## Common Template-Tags
 
 Here are a couple commonly used template-tags:
 
@@ -232,11 +280,44 @@ You can also use filters and various operators in the if tag:
 
 ### Final notes on tags
 
-The most important difference between template tags and template filters are that template tags are interpreted at "compile-time" (when the template is first loaded or when you are building a JavaScript build or bundle), while filters are interpreted at "render-time" (when the component is outputting it's HTML into the DOM). This means that mistakes with template tags might stop the component from rendering at all (mistakes such as syntax typo or a buggy third-party template tag), while mistakes with filters may only be detected when it tries using it, and could even be overlooked if the filter doesn't get used, e.g. it's only within an if statement that you haven't tested.
+The most important difference between template tags and template filters are
+that template tags are interpreted at "compile-time" (when the template is
+first loaded or when you are building a JavaScript build or bundle), while
+filters are interpreted at "render-time" (when the component is outputting it's
+HTML into the DOM). This means that mistakes with template tags might stop the
+component from rendering at all (mistakes such as syntax typo or a buggy
+third-party template tag), while mistakes with filters may only be detected
+when it tries using it, and could even be overlooked if the filter doesn't get
+used, e.g. it's only within an if statement that you haven't tested.
 
-Also, while the above examples work, be aware that some template filters return strings, so mathematical comparisons using filters will generally not work as you expect. `|length` is an exception. You can use `|number` in other cases.
 
-Finally, just like filters, you can also create your own custom template tags; see [Templating Reference](/docs/templating-reference.html).
+### Custom tags
+
+Just like filters, you can also create your own custom template tags.  Custom
+tags are more difficult to write, since they are run during build time (not
+during "run time", like filters). That means they need to *generate* the
+JavaScript code that *does what you want*, as opposed to *do what you want
+directly*.
+
+```
+<Template>
+    {% for value of state.data %}
+        {% console_logger value %}
+    {% endfor %}
+</Template>
+
+<State
+    data:='[3, 10, 42]'
+></State>
+
+<Script>
+    modulo.register('templateTag', function console_logger (text, templateCPart) {
+        // Simply return "console.log" code to show the variable given
+        return `console.log(CTX.${ text.trim() });`,
+    });
+/Script>
+```
+
 
 # Comments
 
@@ -259,9 +340,23 @@ Examples of both are below:
 
 # Debugging
 
-Modulo templates generate JavaScript code which mirrors the logic found in the template. Like all generated code in Modulo, it gets appended to the `<head>` as a `<script>` tag. When inspecting the resulting JavaScript code, note the JavaScript comments to each line indicating the Templating text that corresponds, so if a Modulo template is behaving unexpectedly, you can examine the actual code getting generated.
+Modulo templates generate JavaScript code which mirrors the logic found in the
+template. Like all generated code in Modulo, it gets appended to the `<head>`
+as a `<script>` tag. When inspecting the resulting JavaScript code, note the
+JavaScript comments to each line indicating the Templating text that
+corresponds, so if a Modulo template is behaving unexpectedly, you can examine
+the actual code getting generated.
 
-Modulo templates also come equipped with the `{% debugger %}` template tag. This will insert a `debugger;` JavaScript statement. This "freezes" your app in time. After halting execution at the given statement, your browser's Developer Tools will allow you to inspect the values of local variables in the generated Template code itself. Note that the `CTX` variable refers to the Template render context (which, in the case of Modulo components, refers to the `renderObj`, or the object that has `script`, `state` etc. properties generated by component parts). This is typically what you'll want to poke around on to figure out why something is broken. Example below, with a comment hinting at a story as to why the debugger was used:
+Modulo templates also come equipped with the `{% debugger %}` template tag.
+This will insert a `debugger;` JavaScript statement. This "freezes" your app in
+time. After halting execution at the given statement, your browser's Developer
+Tools will allow you to inspect the values of local variables in the generated
+Template code itself. Note that the `CTX` variable refers to the Template
+render context (which, in the case of Modulo components, refers to the
+`renderObj`, or the object that has `script`, `state` etc. properties generated
+by component parts). This is typically what you'll want to poke around on to
+figure out why something is broken. Example below, with a comment hinting at a
+story as to why the debugger was used:
 
 ```
 {% for item in state.data %}
@@ -284,7 +379,9 @@ By default in Modulo, every template automatically escapes the output of every v
 
 ## Why escape
 
-When generating HTML from templates, there's always a risk that a variable will include characters that affect the resulting HTML. For example, consider this template fragment:
+When generating HTML from templates, there's always a risk that a variable will
+include characters that affect the resulting HTML. For example, consider this
+template fragment:
 
 ```
 <p>Hello, {{ state.name }}</p>

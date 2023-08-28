@@ -25,7 +25,7 @@ The rationale for this ordering is to put _Props_ and _Template_ first since the
 
 Typically, you will not need to have more than one of the same type of CPart in a given component. However, in some cases for particular CParts it might make sense, such as to mix in multiple _Styles_ into a single _Component_. In the case of duplicate CParts of the same type, often the behavior is that "whoever gets the last word in wins", or the configuration specified by the final CPart takes precedence (although this depends on the CPart in question).
 
-Props
+# Props
 
 > **Read-only** Props are read-only within a component, and only be set by the parent component. If the values change, the component re-renders with the new values. They are only supposed to be information being _passed to_ the component, which means they can't be changed internally. For internal, mutable data, use [State](#state) instead.
 
@@ -40,7 +40,7 @@ Props contributes it's received values to the renderObj. Examples:
 1.  Prop set like: `<x-Btn design="round">` will be accessible on the renderObj like `renderObj.props.design`, and in the Script or Template CParts like `props.design`.
 2.  Prop set like: `<x-Chart data:='["a", "b"]'>` will be accessible on the renderObj like `renderObj.props.data` (with individual items accessed with code that ends with "`.data[0]`"), and in the Script or Template CParts like `props.data`.
 
-Script
+# Script
 
 > **Custom vs Script CPart** \- The general rule of thumb is that _Script_ tags are for custom, component-specific behavior, or to fill in gaps in stitching together other CParts, while writing Custom CParts is for interfacing with async, APIs, or any time that a Script CPart gets too cumbersome. Modulo's philosophy is to allow separation of work between _component development_ (HTML, CSS, templating, and high-level behavior), and _CPart development_ (complex JavaScript and APIs).
 
@@ -581,7 +581,7 @@ Every time a Component renders, the Template will render using the _renderObj_ a
 ## Usage example:
 
 
-```
+```modulo_demo
 <Template>
 <p>There are <em>{{ state.count }}
   {{ state.count|pluralize:"articles,article" }}</em>.</p>

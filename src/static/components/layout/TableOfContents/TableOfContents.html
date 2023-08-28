@@ -41,7 +41,7 @@
             {% if page.filename|isactive|default:props.showall %}
                 <ul>
                 {% for section in page.sections %}
-                    <li><a href="{{ page.filename }}#{{ section.hash }}">{{ section.label }}</a>
+                    <li><a href="{{ page.filename }}#{{ section.fragment }}">{{ section.label }}</a>
                     {% if props.showall %}
                         {% if section.keywords.length gt 0 %}
                             <span class="hint">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>

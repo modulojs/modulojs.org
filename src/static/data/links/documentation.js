@@ -69,12 +69,12 @@
             sections: [
                 {
                     label: 'Built-in Template Tags',
-                    fragment: 'templatetags',
+                    fragment: 'builtintemplatetags',
                     keywords: [ 'if', 'elif', 'else', 'endif', 'for', 'empty', 'endfor', 'operators', 'in', 'not in', 'is', 'is not', 'lt', 'gt', 'comparison', 'control-flow', ],
                 },
                 {
                     label: 'Built-in Filters',
-                    fragment: 'filters',
+                    fragment: 'builtinfilters',
                     keywords: [ 'add', 'allow', 'capfirst', 'concat', 'default', 'divisibleby', 'escapejs', 'first', 'join', 'json', 'last', 'length', 'lower', 'number', 'pluralize', 'subtract', 'truncate', 'renderas', 'reversed', 'upper', ],
                 },
             ],
