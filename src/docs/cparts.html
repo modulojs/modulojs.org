@@ -168,11 +168,11 @@ See below for an example of defining a custom `prepareCallback` in order to "hoo
     // Less frequently used than prepare, you can hook into these as well
     function renderCallback() {
         // A "renderCallback" can do any by-hand HTML generation needed
-        component.innerHTML = `<p>Welcome: ${state.name}</p>`;
+        // component.innerHTML = `<p>Welcome: ${state.name}</p>`;
     }
     function updateCallback() {
         // A "updateCallback" can do any by-hand DOM updates needed
-        element.querySelector("p").onclick = () => alert("example");
+        // element.querySelector("p").onclick = () => alert("example");
     }
 /Script>
 ```
@@ -273,7 +273,7 @@ Less frequently used is the ability to attach the script to a certain lifecycle 
 /Script>
 <Script lifecycle="update">
     // Similarly "update" Script can be useful for any direct DOM manipulation.
-    element.querySelector("ul").style.color = "green";
+    // element.querySelector("ul").style.color = "green";
     // $(element).each(function() ... ) // ...or for a jQuery integration
 /Script>
 ```

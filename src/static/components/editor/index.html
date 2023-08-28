@@ -71,7 +71,8 @@
                 let [ modeName, editor ] = mode.split('_');
                 mode = modeName;
                 // Clean up to prevent double encoding:
-                const valueAttr = text.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+                let valueAttr = text.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+                valueAttr = valueAttr.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>');
                 const e = document.createElement('x-DemoEditor');
                 e.setAttribute('value', valueAttr);
                 e.setAttribute('class', element.getAttribute('class')); // copy class attr
