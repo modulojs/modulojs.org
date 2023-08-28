@@ -6,7 +6,11 @@ _Directives_ are one of the core features of Modulo. It allows for callbacks to 
 
 # Directives
 
-Every directive has a name. Every directive is specified as an attribute on the DOM element that you wish to gain access to, by enclosing the name in square brackets. For example, the _State_ CPart has the directive named `bind`, making the full attribute be `[state.bind]`. Some directives have shortcut names. For example, `[component.event]` can be shortened to only a single at-sign, `@`.
+Every directive has a name. Every directive is specified as an attribute on the
+DOM element that you wish to gain access to, by enclosing the name in square
+brackets. For example, the _State_ CPart has the directive named `bind`, making
+the full attribute be `[state.bind]`. Some directives have shortcut names. For
+example, `[component.event]` can be shortened to only a single at-sign, `@`.
 
 Directives also have callback functions. Just like lifecycle callbacks, a
 directive callback name is created by suffixing a string to the end of the name
@@ -25,12 +29,26 @@ DOM after rendering.
 # Built-in directives
 
 * `[component.dataProp]` (_shortcut:_ suffix `:`) \- Attach data to a DOM element's `.dataProp` object, which can be used to directly pass `renderObj` values as _Props_ or events
-    * Symbols: `ev:=script.gotClicked`, `data:=state.dataArray`, `blogs:=props.blogArray` etc - Data-props can attach any values that are exposed in the `renderObj` by any CPart in your component. Use JavaScript reference notation, e.g. `state.objdata.prop1` would access something like `<State objdata:='{"prop1": "my data"}'>`
-    * Primitives: `arr:=[]`, `obj:={}` `boo:=true`, `num:=3`, etc - The data-prop can also be used to attach any data in JSON format (whatever "JSON.parse" can parse).
-* `[component.event]` (_shortcut:_ prefix `@`) \- Attach event listeners to DOM elements, and remove them when the DOM elements are removed. (For jQuery users, this is used for similar purposes as "live" (delegated) events, but is faster.)
-    * `payload=...` \- By assigning to the "payload" property, either with a regular HTML attribute or a `:=` data-prop, you can provide extra arguments to events.
-    * `click.payload=...`, `mouseover.payload=...`, etc - If you have multiple events attached, you can attach separate payloads by prefixing the "payload" attribute with the name of the event followed by a dot.
-* `[state.bind]` \- Two-way binding with _State_ data, with the key determined by the `name=` property of whatever it is attached to.
+    * Symbols: `ev:=script.gotClicked`, `data:=state.dataArray`,
+      `blogs:=props.blogArray` etc - Data-props can attach any values that are
+      exposed in the `renderObj` by any CPart in your component. Use JavaScript
+      reference notation, e.g. `state.objdata.prop1` would access something
+      like `<State objdata:='{"prop1": "my data"}'>`
+    * Primitives: `arr:=[]`, `obj:={}` `boo:=true`, `num:=3`, etc - The
+      data-prop can also be used to attach any data in JSON format (whatever
+      "JSON.parse" can parse).
+* `[component.event]` (_shortcut:_ prefix `@`) \- Attach event listeners to DOM
+  elements, and remove them when the DOM elements are removed. (For jQuery
+  users, this is used for similar purposes as "live" (delegated) events, but is
+  faster.)
+    * `payload=...` \- By assigning to the "payload" property, either with a
+      regular HTML attribute or a `:=` data-prop, you can provide extra
+      arguments to events.
+    * `click.payload=...`, `mouseover.payload=...`, etc - If you have multiple
+      events attached, you can attach separate payloads by prefixing the
+      "payload" attribute with the name of the event followed by a dot.
+* `[state.bind]` \- Two-way binding with _State_ data, with the key determined
+  by the `name=` property of whatever it is attached to.
 
 Important directive facts: Directives are discovered during the `reconcile` lifecycle phase when DOM reconciliation is occurring, and invoked during the `update` phase. Note that they are independent of the _Template_ CPart: You can have a component that has no _Template_ but still may employ directives, e.g. if it generates HTML contents some other way.
 

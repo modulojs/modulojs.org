@@ -30,6 +30,9 @@
             .replace(/<pre><code\b[^>]*django*[^>]*>/gi, t + 'mode="django">')
             .replace(/<pre><code\b[^>]*>/gi, t + 'mode="django">')
             .replace(/<\/code><\/pre>/gi, '</x-SyntaxHighlighter>');
+        // Fix double HTML encoding bug
+        html = html.replace(/&amp;nbsp;/gi, '&nbsp;');
+        html = html.replace(/&amp;apos;/gi, '&apos;');
         data.body = Object.assign(String(html), { safe: true });
         return data;
     }

@@ -146,8 +146,8 @@ of valid options are below:
   the element will be attached to the regular DOM, as the element itself. This
   means that CSS stylesheets attached the normal way (e.g. with a "link" tag)
   will affect the contents of this component. *Style* CParts are, however,
-  automatically scoped to the component, so a selector like `p&nbsp;{...}` will
-  get prefixed like `x-MyComp&nbsp;p&nbsp;{...}` when CSS files are being
+  automatically scoped to the component, so a selector like `p {...}` will
+  get prefixed like `x-MyComp {...}` when CSS files are being
   generated from *Style* CParts. Keep in mind the normal CSS rules will still
   apply, meaning that auto-scoped "p" tag will also affect children,
   grandchildren, etc of sub-components (unless those are "shadow" based).

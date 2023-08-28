@@ -73,7 +73,19 @@ The most common use of a _Script_ CPart is to specify custom JS code that is eit
 
 #### Using within embedded component definitions
 
-Problems arise when attempting to include a _Script_ CPart within an embedded Component `<script Modulo>` definition, e.g. one that is being defined within the script tag of the same HTML file that it is being used on. This is because the `/Script>` tag will end up closing off the outer `script` tag early, due to HTML syntax. The ideal solution is to simply move the component to a separate library file, included with `-src=` syntax, since that is preferred in general, and solves other issues as well (e.g. templating instructions in HTML tags). However, if you simply must include a _Script_ tag in an embedded component definition you can write `<def Script>` as the opening tag, and `</cpart>` as the closing tag. See the following:
+Problems arise when attempting to include a _Script_ CPart within an embedded
+Component `<script Modulo>` definition, e.g. one that is being defined within
+the script tag of the same HTML file that it is being used on. This is because
+the `<` `/Script>` tag will end up closing off the outer `<script>` tag early,
+due to HTML syntax. The reason is that `</` `script>` is a special syntax that
+automatically closes the outer tag, and also HTML cannot distinguish capital
+(the `<Script>` CPart) vs lowercase (the outer `<script>` tag). The ideal
+solution is to simply move the component to a separate library file, included
+with `-src=` syntax, since that is preferred in general, and solves other
+issues as well (e.g. templating instructions in HTML tags).  However, if you
+simply must include a _Script_ tag in an embedded component definition you can
+write `<def Script>` as the opening tag, and `</cpart>` as the closing tag. See
+the following:
 
 
 ```
@@ -125,7 +137,10 @@ The most common purpose of a Script CPart is to add custom behavior when certain
 /Script>
 ```
 
-In this, the _Script_ CPart defines a function named `countUp`. The `@click:=` attribute on the button utilizes directives to attach a "click event" to the button, such that when a user clicks on that button it will invoke the `countUp` function.
+In this, the _Script_ CPart defines a function named `countUp`. The `@click:=`
+attribute on the button utilizes directives to attach a "click event" to the
+button, such that when a user clicks on that button it will invoke the
+`countUp` function.
 
 From within event callbacks, the _Script_ CPart exposes the current renderObj as variables. So, `state` by itself is equivalent to `renderObj.state`. This enables us to directly modify the state by simply doing `state.count++`. By default, components rerender after every event, so after the event the component will rerender and visually reflect the state changes.
 
@@ -194,7 +209,8 @@ See below for an example of defining a custom `prepareCallback` in order to "hoo
 
 ### Defining directive callbacks
 
-You can also create "custom directives" from within the Script tag. Read more about this in the section on [Directives](/docs/directives.html)
+You can also create "custom directives" from within the Script tag. Read more
+about this in the section on [Directives](/docs/directives.html)
 
 ### Execution context
 
@@ -202,21 +218,50 @@ You can also create "custom directives" from within the Script tag. Read more ab
 
 By default, the `factory` phase is when the code in the script tag itself gets executed. That is, it is executed exactly once while the component class is being prepared, before anything is yet even mounted on the document. This means that that any loose variables defined will be "static", or shared between all instances of that component.
 
-**Static execution _Script_ tags will only correctly isolate synchronous code.** It is thus recommended to keep your _Script_ tag to only contain synchronous code, that is, no async callbacks. This is an intentional limitation, as _Script_ tags are intended for _synchronously_ patching together behavior around potentially _asynchronous_ CParts. There is also a potential for a bug: If there are multiple instances of the same component on the same page, with async callbacks ready at the same time, it can cause the wrong state, props or other variables or CParts to get mixed up and go to the wrong component. Asynchronous coding should be thus moved to a custom CPart, that is then used in the script tag in a declarative, synchronous manner. The CPart API gives you low-level access, and makes no assumptions about using a synchronous or asynchronous coding style.
+**Static execution _Script_ tags will only correctly isolate synchronous
+code.** It is thus recommended to keep your _Script_ tag to only contain
+synchronous code, that is, no async callbacks. This is an intentional
+limitation, as _Script_ tags are intended for _synchronously_ patching together
+behavior around potentially _asynchronous_ CParts. There is also a potential
+for a bug: If there are multiple instances of the same component on the same
+page, with async callbacks ready at the same time, it can cause the wrong
+state, props or other variables or CParts to get mixed up and go to the wrong
+component. Asynchronous coding should be thus moved to a custom CPart, that is
+then used in the script tag in a declarative, synchronous manner. The CPart API
+gives you low-level access, and makes no assumptions about using a synchronous
+or asynchronous coding style.
 
-That said, Modulo is intended to be useful as a glue language and it's common to find asynchronous snippets that you might want to quickly integrate into an existing component. Read on for a few ways to bend this rule in order to better integrate third party code.
+That said, Modulo is intended to be useful as a glue language and it's common
+to find asynchronous snippets that you might want to quickly integrate into an
+existing component. Read on for a few ways to bend this rule in order to better
+integrate third party code.
 
 #### Lifecycle execution context
 
 ##### Per component: `lifecycle="initialized"`
 
-Setting `lifecycle="initialized"` behaves very similarly to the "static" execution context (the default): For both, functions defined there will be available to be attached to events, and you can define Callback and Mount and Unmount functions. However, there is one important difference: It will execute _each and every time_ an instance of the component first mounts on the page. That is, it will run everything in that script tag once per component use. This keeps all the data in the script tag private to that component, allowing for asynchronous code.
+Setting `lifecycle="initialized"` behaves very similarly to the "static"
+execution context (the default): For both, functions defined there will be
+available to be attached to events, and you can define Callback and Mount and
+Unmount functions. However, there is one important difference: It will execute
+_each and every time_ an instance of the component first mounts on the page.
+That is, it will run everything in that script tag once per component use. This
+keeps all the data in the script tag private to that component, allowing for
+asynchronous code.
 
-It also allows use of the private variables as a sort of state. That is not recommended usage, but might be useful for integrating with other JavaScript state or store management systems.
+It also allows use of the private variables as a sort of state. That is not
+recommended usage, but might be useful for integrating with other JavaScript
+state or store management systems.
 
 ##### Per rerender: `lifecycle="prepare"`, `lifecycle="render"`, `lifecycle="reconcile"`, and `lifecycle="update"`
 
-Less frequently used is the ability to attach the script to a certain lifecycle method. This is sometimes useful when you really want to only hook into a single method with some quick glue code that you want to reload with every rerender. This might also be useful if you are porting from or integrating with another framework that has a more "render-function" oriented structure (e.g. perhaps Svelte or hook-based React could be thought that way), or a more "update-DOM-directly" oriented structure (e.g. jQuery and similar).
+Less frequently used is the ability to attach the script to a certain lifecycle
+method. This is sometimes useful when you really want to only hook into a
+single method with some quick glue code that you want to reload with every
+rerender. This might also be useful if you are porting from or integrating with
+another framework that has a more "render-function" oriented structure (e.g.
+perhaps Svelte or hook-based React could be thought that way), or a more
+"update-DOM-directly" oriented structure (e.g. jQuery and similar).
 
 
 
@@ -282,8 +327,25 @@ Less frequently used is the ability to attach the script to a certain lifecycle 
 
 The Script CPart "exports" a variety of properties to the `renderObj`, all of which should be considered "read-only".
 
-* `script.someFunctionName` for functions declared like `function someFunctionName` \- In addition to "exports", the script tag will also make available all functions that you have declared using the "old-school" named-function style syntax. This is what allows attaching events to be so simple: Simply define a named-function in your script tag (e.g. `function doStuff(payload, ev) { ...`), and then it can be referenced elsewhere (e.g. in the template with: `@click:=script.doStuff` template with a click event like: It will ignore any "arrow functions" (`() => {}`), or any other anonymous functions (e.g. functions declared like `const myFunc = function () { ...` will also be ignored). That's not to say you can't declare your functions like this: However, you should only do so if you do not want them to be automatically exported.
-* `script.exports` \- This gives you fine-grained control, allowing you to export arbitrary static variables, functions, or data. This is useful for building up static data structures to be shared between all instances of this component, which can then be accessed in the template. This _should not_ be used as a store or state variable (use the _Store_ CPart for that). Also, it should not be used for simply storing static data that requires no further code or manipulation (use the _StaticData_ CPart for this). For example:
+* `script.someFunctionName` for functions declared like
+  `function someFunctionName` \- In addition to "exports", the script tag will
+  also make available all functions that you have declared using the
+  "old-school" named-function style syntax. This is what allows attaching
+  events to be so simple: Simply define a named-function in your script tag
+  (e.g.  `function doStuff(payload, ev) { ...`), and then it can be referenced
+  elsewhere (e.g. in the template with: `@click:=script.doStuff` template with
+  a click event like: It will ignore any "arrow functions" (`() => {}`), or any
+  other anonymous functions (e.g. functions declared like
+  `const myFunc = function () { ...` will also be ignored). That's not to say
+  you can't declare your functions like this: However, you should only do so if
+  you do not want them to be automatically exported.
+* `script.exports` \- This gives you fine-grained control, allowing you to
+  export arbitrary static variables, functions, or data. This is useful for
+  building up static data structures to be shared between all instances of this
+  component, which can then be accessed in the template. This _should not_ be
+  used as a store or state variable (use the _Store_ CPart for that). Also, it
+  should not be used for simply storing static data that requires no further
+  code or manipulation (use the _StaticData_ CPart for this). For example:
 
 ```
 <Template>

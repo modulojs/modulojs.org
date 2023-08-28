@@ -90,17 +90,31 @@ JavaScript. They cannot be used in an embedded script tag, since the *Script*
 CPart does not support it.
 
 * `event` \- Triggers when an event is about to happen.
-* `eventCleanup` \- Triggers after an event happened. A common pattern is to use this and the previous to figure out what has "changed" due to the event, and respond accordingly.
+* `eventCleanup` \- Triggers after an event happened. A common pattern is to
+  use this and the previous to figure out what has "changed" due to the event,
+  and respond accordingly.
 
 # Lifecycle Callbacks
 
-The purpose of _lifecycle phases_ is the _lifecycle methods_ or callback functions that "hook into" each phase and run during them.
+The purpose of _lifecycle phases_ is the _lifecycle methods_ or callback
+functions that "hook into" each phase and run during them.
 
-You can get the name for a _lifecycle method_ by simply suffixing the name of the phase with the word `Callback`. For example, `prepare` thus becomes `function prepareCallback() {...`. Every CPart has the ability to hook into lifecycle methods by defining a method with an expected name. This is useful for CPart developers to implement the actual behavior and functionality of a CPart. In fact, most of CPart code is just hooking into these different methods!
+You can get the name for a _lifecycle method_ by simply suffixing the name of
+the phase with the word `Callback`. For example, `prepare` thus becomes
+`function prepareCallback() {`. Every CPart has the ability to hook into
+lifecycle methods by defining a method with an expected name. This is useful
+for CPart developers to implement the actual behavior and functionality of a
+CPart. In fact, most of CPart code is just hooking into these different
+methods!
 
-The _Script_ CPart also exposes this interface to component developers. This is so that you can write custom code in each component to execute during any one of the phases. Note that you cannot hook into the global phases (e.g., prebuild, define, factory) this way, since those need to happen before your script tag is even ready.
+The _Script_ CPart also exposes this interface to component developers. This is
+so that you can write custom code in each component to execute during any one
+of the phases. Note that you cannot hook into the global phases (e.g.,
+prebuild, define, factory) this way, since those need to happen before your
+script tag is even ready.
 
-Directives also have callback functions, [covered in a the directive section](/docs/directives.html).
+Directives also have callback functions, [covered in a the directive
+section](/docs/directives.html).
 
 
 ### renderObj
