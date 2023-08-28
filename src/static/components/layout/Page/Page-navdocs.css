@@ -1,8 +1,193 @@
 
-.page-container--navdocs .page-content p {
+/* Default markdown style */
+.markdown-body {
+    border: 1px solid black;
+    padding: 30px;
+    margin: 10px;
+    position: relative;
+    text-align: justify;
+}
+
+/* But for content pages with navdocs, change the style */
+.page-container--navdocs .page-content .markdown-body {
+    border: none;
+    margin: 0;
+    text-align: left;
+}
+
+
+.page-container--navdocs .page-content p,
+.page-container--navdocs .page-content li,
+.page-container--navdocs .page-content h1,
+.page-container--navdocs .page-content h2,
+.page-container--navdocs .page-content h3,
+.page-container--navdocs .page-content h4,
+.page-container--navdocs .page-content h5,
+.page-container--navdocs .page-content h6 {
     line-height: 1.5;
-    margin-bottom: 3rem;
+    margin-bottom: 15px;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.page-container--navdocs .page-content h1,
+.page-container--navdocs .page-content h2 {
+    margin-top: 100px;
+}
+
+.page-container--navdocs .page-content h3,
+.page-container--navdocs .page-content h4,
+.page-container--navdocs .page-content h5,
+.page-container--navdocs .page-content h6 {
+    margin-top: 40px;
+}
+
+.page-container--navdocs .page-content h5 {
+    border-left: 5px solid var(--color);
+    padding-left: 10px;
+    background: var(--color-fg-semilight);
+    color: var(--color-fg);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.page-container--navdocs .page-content h5 em {
+    text-transform: none;
+    margin-left: 10px;
+    font-weight: 400;
+}
+
+.page-container--navdocs .page-content hr {
+    background: var(--color-fg-semilight);
+    height: 8px;
+    margin: 5px;
+    border: none;
+    border-left: 5px solid var(--color);
+}
+
+.page-container--navdocs .page-content p > *,
+.page-container--navdocs .page-content li > * {
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Last paragraphs shouldn't leave space */
+.page-container--navdocs .page-content p:last-child {
+    margin-bottom: 5px;
+}
+
+.page-container--navdocs .page-content h1 {
+    font-size: 2.5rem;
+}
+.page-container--navdocs .page-content h2 {
+    font-size: 2.0rem;
+}
+.page-container--navdocs .page-content h3 {
+    font-size: 1.5rem;
+}
+.page-container--navdocs .page-content h4 {
+    font-size: 1.3rem;
+}
+.page-container--navdocs .page-content h5 {
+    font-size: 1.0rem;
+    font-variant: uppercase;
+}
+.page-container--navdocs .page-content h6 {
+    font-size: 0.9rem;
+    font-variant: uppercase;
+}
+
+.date-stamp {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    margin: 0;
+    padding: 10px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.markdown-body blockquote {
+    max-width: 33%;
+    float: right;
+    border: 1px solid var(--color-fg-semi);
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    line-height: 1.1;
+    font-size: 0.98rem;
+}
+
+.markdown-body h1 ~ blockquote,
+.markdown-body h2 ~ blockquote {
+    margin-top: 100px; /* Ensure asides are lined up with headers */
+}
+.markdown-body h3 ~ blockquote,
+.markdown-body h4 ~ blockquote,
+.markdown-body h5 ~ blockquote,
+.markdown-body h6 ~ blockquote {
+    margin-top: 40px; /* Ensure asides are lined up with headers */
+}
+
+.markdown-body blockquote > p > strong:first-child {
+    color: var(--color-fg-semidark);
+    display: inline-block;
+    border-left: 5px solid var(--color-fg-semi);
+    padding-left: 11px;
+    left: -16px;
+    margin-right: 5px;
+    position: relative;
+}
+.markdown-body blockquote p,
+.markdown-body blockquote p > * {
+    font-size: 0.95rem;
+    line-height: 1.1;
+}
+
+.markdown-body > x-SyntaxHighlighter,
+.markdown-body > x-DemoEditor,
+.markdown-body li > x-SyntaxHighlighter {
+    border: 1px solid var(--color-fg-semi);
+    border-radius: 10px;
+    margin: 10px;
+    display: block;
+    padding: 3px;
+}
+
+.markdown-body > x-SyntaxHighlighter,
+.markdown-body li > x-SyntaxHighlighter {
+    display: inline-block;
+    padding: 10px;
+}
+
+@media (max-width: 992px) {
+    .markdown-body blockquote {
+        max-width: none;
+        float: none;
+        clear: both;
+    }
 }
 
 
 
+@media (min-width: 1870px) {
+    .page-container--navdocs {
+        display: grid;
+        /* display off-center, 5x margin on right compared to left */
+        grid-template-columns: 1fr 300px minmax(auto, 1368px) 5fr;
+    }
+    .markdown-body blockquote {
+        position: absolute;
+        float: none;
+        width: 320px;
+        right: -295px;
+    }
+}
+@media (min-width: 2700px) { /* why not */
+    .page-container--navdocs {
+        /* display off-center, 2x margin on right compared to left */
+        grid-template-columns: 1fr 300px minmax(auto, 1368px) 2fr;
+    }
+}

@@ -28,6 +28,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     initializedCallback() {
+        this.hasRun = false;
         return {
             open: this.open.bind(this),
             run: this.run.bind(this),
@@ -42,7 +43,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         }*/
         const state = this.element.cparts.state.data;
         const props = this.element.cparts.props.initializedCallback();
-        let oldShowEditor = state.showEditor;
+        //let oldShowEditor = state.showEditor;
         if (props.collapsed === true || props.collapsed === false) {
             state.showEditor = !props.collapsed;
         } else {
@@ -73,9 +74,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
     }
 
     updateCallback() {
+        const state = this.element.cparts.state.data;
         // TODO: Hack, should look for cleaner solution:
         if (!this.element.editor && this.element.querySelector('x-SyntaxEditor')) {
             this.editorMount({ el: this.element.querySelector('x-SyntaxEditor') });
+        }
+        if (!this.hasRun && !this.element.querySelector('x-SyntaxEditor') && state.value) {
+            this.run();
         }
     }
 
@@ -87,7 +92,9 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
 
     run() {
         const state = this.element.cparts.state.data;
-        state.value = this.element.editor.value;
+        if (state.showEditor) {
+            state.value = this.element.editor.value;
+        }
         this.hasRun = true;
         this._run();
     }
@@ -141,9 +148,11 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
 
     _run() {
         const state = this.element.cparts.state.data;
+        if (!window.globalModulo) {
+            window.globalModulo = window.modulo;
+        }
         if (!window.moduloSandbox) {
             window.moduloSandbox = this.getSandboxedModulo();
-            window.globalModulo = window.modulo;
         }
         const ns = 'demo' + this.nextId();
 
@@ -276,6 +285,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         // code because built / optimized versions of this JS (e.g., window.Modulo
         // in prod) may skip inclusion of dev-related utilities, symbol names, etc.
         const sandboxWindow = {}; // Overriding window "sandboxes" modulo
+        sandboxWindow.globalModulo = window.modulo; // add "trap door"
         sandboxWindow.document = document; // Patch expected properties of window
         sandboxWindow.fetch = window.fetch.bind(window);
         sandboxWindow.URL = function fakeURL (a, b) {

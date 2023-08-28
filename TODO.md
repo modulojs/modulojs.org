@@ -1,49 +1,76 @@
+Blocking
+---------------------------
 
-Key items left:
+- Docs
+    - Docs examples and snippets are messed up
+    - Docs need updating / comb through
 
-- Fix jamstack SSG template:
-    - Allow `script` tag to preserve whitespace, plus any other enhancements
-    - Make sure meta tag info etc is correct
-    - Add /build to gitignore
-    - Maybe: Include github hooks as an example
-- Fix create-modulo script:
-    - Don't install anything by default (even express) - only fetch latest
-      Modulo (so no node_modules)
-    - Update package.json to just use `npx http-server` in all cases
-    - Update README to reflect that you need to do an `npm run install` before
-      trying to build locally
+- Tutorial
+    - TUTORIAL 1 - Ramping Up
+        - HTML & CSS prereq, no need for li
+        - How to start with a blank file and build from there
+        - Part 1: Getting Started - starting with a CDN, Components, Re-use,
+          and Slots
+        - Part 2: CParts - Props, Style, and Templating
+            - Show how to use "isolate" to only target what is immediately
+              rendered
+            - Introduce the concept of "template tags" and "template filters"
+            - Show use of "if" to have optional parts
+        - Part 3: Reactive Forms - Directives, Data Types, and Binding
+            - Show use of state
+    - TUTORIAL 2: Building Apps with Modulo
+        - libraries, building, etc, and also what is now the beginning
+            and end of Part3 - e.g. how to include JS / Script tag
+        - Try to finish just some parts for now?
+        - (?) Part 1: Data and Advanced Templating
+            - Show use of for loop
+            - Show use of StaticData
+        - (?) Part 2: Building, Quick Pages Templates, and Launching
+        - (?) Part 3: Libraries - Start a dev server, show 
 
-- Auto gen other ptemplates:
-    - One more thing: Make a script that "downgrades" ptemplates/jamstack-cms into variants.
-    - That way I only maintain jamstack-cms, and auto-reduce to the subsets
-    - Lighterweight:
-        - Remove CMS, reduce to SPA
-    - HTTP linked (file:/// proto friendly):
-        - Substitute all relative paths with unpkg equivalents
-    - Zipped:
-        - These get directly linked to by the main modulojs website for a nice
-          collection of HTTP downloadable zip demos (no NPM needed)
 
+
+- Project Templates
+    - Quick Pages
+        - Change to flat 5 or 3 page structure
+        - Add in config.js (config logo etc, allows adding JS / extensions) and
+          site.css (allows CSS variables)
+    - All: Walk through each step again
+
+- Examples
+    - Replace or fix World Map example
+
+
+Low prio
+----------------------
+
+- Article Idea:
+    - Library / Framework development as "DSL-lite" (Which could lead to:
+      Modulo as the basis for DSLs - if we can make "DSL-lite" / library / fw
+      development easier, we have more robust codebases!)
+
+misc
+----------------------
 
 YAML in progress:
 
-  - label: "Core Pages"
-    label_singular: "Page"
-    name: "pages"
-    folder: "/."
-    extension: "html"
-    format: "toml-frontmatter"
-    identifier_field: "filename"
-    slug: "{{dirname}}{{filename}}.{{extension}}"
-    summary: "{{fields.src}}"
-    frontmatter_delimiter: [
-        "<!DOCTYPE HTML>\n<script Modulo\n",
-        "></script>",
-    ]
-    create: true
-    delete: true
-    fields:
-      - {label: "Modulo JS Source", name: "src", widget: "string"}
-      - {label: "Component Library", name: "-src", widget: "string"}
-      - {label: "HTML Page Content", name: "body", widget: "code"}
+    - label: "Core Pages"
+        label_singular: "Page"
+        name: "pages"
+        folder: "/."
+        extension: "html"
+        format: "toml-frontmatter"
+        identifier_field: "filename"
+        slug: "{{dirname}}{{filename}}.{{extension}}"
+        summary: "{{fields.src}}"
+        frontmatter_delimiter: [
+            "<!DOCTYPE HTML>\n<script Modulo\n",
+            "></script>",
+        ]
+        create: true
+        delete: true
+        fields:
+        - {label: "Modulo JS Source", name: "src", widget: "string"}
+        - {label: "Component Library", name: "-src", widget: "string"}
+        - {label: "HTML Page Content", name: "body", widget: "code"}
 

@@ -70,10 +70,21 @@
             if (mode && mode.includes('_')) {
                 let [ modeName, editor ] = mode.split('_');
                 mode = modeName;
-                const div = document.createElement('div');
-                const valueAttr = text.replace('"', "&dquo;");
-                div.innerHTML = `<x-SyntaxEditor value="${ valueAttr }"></x-SyntaxEditor>`;
-                element.replaceWith(div.firstChild);
+                // Clean up to prevent double encoding:
+                const valueAttr = text.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
+                const e = document.createElement('x-DemoEditor');
+                e.setAttribute('value', valueAttr);
+                e.setAttribute('class', element.getAttribute('class')); // copy class attr
+                if (valueAttr.includes('<x-ExampleBtn')) {
+                    // auto include button
+                    e.setAttribute('includes', "/static/demos/usedby/ExampleBtn.html");
+                }
+                element.replaceWith(e);
+                setTimeout(() => { // messy hack to force it to run + rerender
+                    const syneditor = e.querySelector('x-SyntaxEditor');
+                    e.cparts.modulosandbox.editor = syneditor;
+                    e.cparts.modulosandbox.run();
+                }, 0);
                 element.wasReplaced = true; // prevent update from being called
             }
         }
@@ -94,7 +105,7 @@
                 text = text
                   .replace(/&gt;/gi, '>')
                   .replace(/&lt;/gi, '<');
-                text = text.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>')
+                text = text.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>');
             }
             // Should never have to encounter a '-'...
             const language = props.mode ? props.mode.split('_')[0] : 'django';
@@ -135,17 +146,34 @@
         function showDemo(demoFileName) {
             state.selected = demoFileName;
             setTimeout(() => {
-                // Stupid hack to force it to run
+                // Messy hack to force it to run + rerender
             	const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
                 const synEditor = editor.querySelector('x-SyntaxEditor');
                 editor.cparts.modulosandbox.editor = synEditor;
                 editor.cparts.modulosandbox.run();
-            	editor.cparts.modulosandbox.updateCallback(); // Hack to cause it to rerender / fix issue after display
             }, 0);
         }
         function prepareCallback() {
             const examples = [];
             return { examples };
+        }
+
+        function updateCallback() {
+            for (const editor of element.querySelectorAll('x-DemoEditor')) {
+                /*
+                setTimeout(() => { // Stupid hack to force it to run
+                    const synEditor = editor.querySelector('x-SyntaxEditor');
+                    if (!editor.cparts.modulosandbox.hasRun) {
+                        editor.cparts.modulosandbox.run();
+                    }
+                }, 0);
+                */
+                /*
+                editor.cparts.modulosandbox.editor = synEditor;
+                editor.cparts.modulosandbox.run();
+            	editor.cparts.modulosandbox.updateCallback(); // Hack to cause it to rerender / fix issue after display
+                */
+            }
         }
     </Script>
     <Style

@@ -5,13 +5,23 @@ title: Templating Reference
 Templating Reference
 ====================
 
-Modulo's templating language comes with a standard library of filters and template-tags, modeled to be similar to the behavior of Django's templating language library. Although in general Django's has more features, some Django templates might work as Modulo templates with a few tweaks. In fact, there's such large overlap that some of this very documentation was [copied and arranged just like Django's own](https://docs.djangoproject.com/en/4.2/ref/templates/language/), to be instantly more familiar to developers. Thanks, Django!
+Modulo's templating language comes with a standard library of filters and
+template-tags, modeled to be similar to the behavior of Django's templating
+language library. Although in general Django's has more features, some Django
+templates might work as Modulo templates with a few tweaks. In fact, there's
+such large overlap that some of this very documentation was [copied and
+arranged just like Django's
+own](https://docs.djangoproject.com/en/4.2/ref/templates/language/), to be
+instantly more familiar to developers. Thanks, Django!
 
-Built-in Template Tags
+# Built-in Template Tags
 
 ### comment
 
-Used specifically for commenting out blocks of Templating code. Ignores everything between `{% comment %}` and `{% endcomment %}`. An optional note may be inserted in the first tag. This can be useful to document why the code was commented out or disabled. You should avoid nesting comment tags.
+Used specifically for commenting out blocks of Templating code. Ignores
+everything between `{% comment %}` and `{% endcomment %}`. An optional note may
+be inserted in the first tag. This can be useful to document why the code was
+commented out or disabled. You should avoid nesting comment tags.
 
 
 ```modulo_demo
@@ -406,9 +416,18 @@ Adds the argument to the value. Example:
 
 #### allow
 
-> **Input validation?** It's not recommended to use this for security (do in backend instead) or for front-end validation of user inputs (use `pattern=` instead).
 
-Given an "allowed list" of comma separated strings, only permit values that exist exactly the "allowed list". If the value does not exist within the allowed list, it will produce an empty string (`""`). The fact that empty strings are "falsy" means you can chain together this filter with the default filter in order to provide a fallback as well, which is demonstrated in the third example. Examples:
+Given an "allowed list" of comma separated strings, only permit values that
+exist exactly the "allowed list". If the value does not exist within the
+allowed list, it will produce an empty string (`""`). The fact that empty
+strings are "falsy" means you can chain together this filter with the default
+filter in order to provide a fallback as well, which is demonstrated in the
+third example. Examples:
+
+*Note:* You should not use this for input validation for security purposes (use
+the backend instead, since any frontend code can be altered by users) or input
+validation, for which you use should `pattern=` instead since it's built in to
+HTML.
 
 ```modulo_demo
 <Template>
@@ -673,7 +692,7 @@ Note that the child template will be isolated or "sandboxed" to _only_ have acce
 ```modulo_demo
 <Template -name="trow">
     <div><strong>{{ name }}</strong></div>
-    <div><em>{{ type }}</em>/div>
+    <div><em>{{ type }}</em></div>
     <div><tt>{{ level }}</tt></div>
 </Template>
 <Template>
