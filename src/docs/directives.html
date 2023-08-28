@@ -2,22 +2,27 @@
 title: Directives
 ---
 
-Directives
-==========
-
 _Directives_ are one of the core features of Modulo. It allows for callbacks to be triggered when a particular DOM element is "mounted" or first appears in the DOM. It allows for your custom code to access references to DOM nodes created after rendering.
 
-Introduction to directives
+# Directives
 
 Every directive has a name. Every directive is specified as an attribute on the DOM element that you wish to gain access to, by enclosing the name in square brackets. For example, the _State_ CPart has the directive named `bind`, making the full attribute be `[state.bind]`. Some directives have shortcut names. For example, `[component.event]` can be shortened to only a single at-sign, `@`.
 
-Directives also have callback functions. Just like lifecycle callbacks, a directive callback name is created by suffixing a string to the end of the name of the directive. Unlike lifecycle callback functions, directive callback functions end with `Mount` and `Unmount`.
+Directives also have callback functions. Just like lifecycle callbacks, a
+directive callback name is created by suffixing a string to the end of the name
+of the directive. Unlike lifecycle callback functions, directive callback
+functions end with `Mount` and `Unmount`.
 
 ### Built-in directives vs custom directives
 
-Modulo ships with a total of 3 built-in directives, defined by the built-in _CParts_ (1 from _State_ and 2 from _Component_). Typically, the built-in directives are all you need. However, just like with lifecycle functions, the _Script_ CPart also exposes the directive interface to component developers. This is so that you can create custom directives in a component to access the DOM after rendering.
+Modulo ships with a total of 3 built-in directives, defined by the built-in
+_CParts_ (1 from _State_ and 2 from _Component_). Typically, the built-in
+directives are all you need. However, just like with lifecycle functions, the
+_Script_ CPart also exposes the directive interface to component developers.
+This is so that you can create custom directives in a component to access the
+DOM after rendering.
 
-Built-in directives
+# Built-in directives
 
 * `[component.dataProp]` (_shortcut:_ suffix `:`) \- Attach data to a DOM element's `.dataProp` object, which can be used to directly pass `renderObj` values as _Props_ or events
     * Symbols: `ev:=script.gotClicked`, `data:=state.dataArray`, `blogs:=props.blogArray` etc - Data-props can attach any values that are exposed in the `renderObj` by any CPart in your component. Use JavaScript reference notation, e.g. `state.objdata.prop1` would access something like `<State objdata:='{"prop1": "my data"}'>`
@@ -29,7 +34,7 @@ Built-in directives
 
 Important directive facts: Directives are discovered during the `reconcile` lifecycle phase when DOM reconciliation is occurring, and invoked during the `update` phase. Note that they are independent of the _Template_ CPart: You can have a component that has no _Template_ but still may employ directives, e.g. if it generates HTML contents some other way.
 
-Custom directives
+# Custom directives
 
 > **Custom directives are like "refs"** \- Directives have the same uses as Refs in [React](https://reactjs.org/docs/refs-and-the-dom.html): “Managing focus, text selection, or media playback, triggering imperative animations, or integrating with third-party DOM libraries.”
 
@@ -37,9 +42,52 @@ Custom directives are used for direct access to the DOM. They are invoked when a
 
 ### Registering Mount callback
 
-Custom directives can be easily registered in _Script_ CParts simply by defining a function with a certain name. For example, for a directive called `myinput` directive, you can create a function called `function myinputMount(opts) {`. Similarly, If you want to register custom code when an element leaves the screen, such as to clean up references, you can register an Unmount callback: `function myinputUnmount(opts) {`.
+Custom directives can be easily registered in _Script_ CParts simply by
+defining a function with a certain name. For example, for a directive called
+`myinput` directive, you can create a function like such:
 
-A full, working example is below, which uses a custom directive to focus on an input when a button is clicked:
+```javascript
+function myinputMount(opts) {
+  // ...
+}
+```
+
+Similarly, If you want to register custom code when an element leaves the
+screen, such as to clean up references, you can register an Unmount callback:
+
+```javascript
+function myinputUnmount(opts) {
+  // ...
+}
+```
+
+##### Example 1: Mount variables
+
+For a simple example that shows the variables avaialble:
+
+```modulo_demo
+<Template>
+    <div [script.myinput]myattr="my value"></div>
+</Template>
+
+<Script>
+    function myinputMount(opts) {
+        const { el, attrName, value } = opts;
+        // Uncomment below to see console logs:
+        /*
+        console.log("element mounted:", el);
+        console.log("with attribute:", attrName);
+        console.log("and value:", value);
+        */
+    }
+/Script>
+```
+
+
+##### Example 2: Storing Ref
+
+A full, working example is below, which uses a custom directive to focus on an
+input when a button is clicked:
 
 **Example custom directives:**
 
@@ -68,6 +116,8 @@ A full, working example is below, which uses a custom directive to focus on an i
     }
 /Script>
 ```
+
+-------
 
 ### Multiple directives
 

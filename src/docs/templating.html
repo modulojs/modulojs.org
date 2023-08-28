@@ -62,11 +62,11 @@ is evaluated, and tags, which control the logic of the template.
 Below is a minimal template that illustrates a few basics. Each element will be
 explained later in this document.
 
-```
+```modulo_demo
 <Template>
+<h1>{{ script.title }}</h1>
 <p>There are <em>{{ state.count }}
-  {{ state.count|pluralize:"articles,article" }}</em>
-  on {{ script.title }}.</p>
+  {{ state.count|pluralize:"articles,article" }}.</em></p>
 
 {# Show the articles #}
 {% for article in state.articles %}
@@ -130,7 +130,7 @@ Variables come from the component's `renderObj` that is produced in the `prepare
 If you want to create computed variables (like in Vue.js), you can create a custom `prepare` lifecycle callback in your Script CPart tag as follows. Examine the following example:
 
 
-```
+```modulo_demo
 <Template>
     <input name="perc" [state.bind] />% of
     <input name="total" [state.bind] />
@@ -211,7 +211,7 @@ Again, these are just a few examples; see the [built-in filter reference](/docs/
 See below for an example of registering a custom filter:
 
 
-```
+```modulo_demo
 <Template>
     A: {{ state.a|percent:state.total }}<br />
     B: {{ state.b|percent:state.total }}
@@ -297,25 +297,28 @@ Just like filters, you can also create your own custom template tags.  Custom
 tags are more difficult to write, since they are run during build time (not
 during "run time", like filters). That means they need to *generate* the
 JavaScript code that *does what you want*, as opposed to *do what you want
-directly*.
+directly*. To register a template tag, be sure to register it at the top level,
+since it will be needed during build time:
 
 ```
-<Template>
-    {% for value of state.data %}
-        {% console_logger value %}
-    {% endfor %}
-</Template>
-
-<State
-    data:='[3, 10, 42]'
-></State>
-
-<Script>
+<script Configuration>
     modulo.register('templateTag', function console_logger (text, templateCPart) {
         // Simply return "console.log" code to show the variable given
         return `console.log(CTX.${ text.trim() });`,
     });
-/Script>
+/script>
+
+<Component>
+    <Template>
+        {% for value of state.data %}
+            {% console_logger value %}
+        {% endfor %}
+    </Template>
+
+    <State
+        data:='[3, 10, 42]'
+    ></State>
+</Component>
 ```
 
 

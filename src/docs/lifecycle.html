@@ -2,52 +2,97 @@
 title: Lifecycle
 ---
 
-Lifecycle
-=========
 
-Every Modulo Component goes through a certain "lifecycle". Here's an analogy: If CParts are the stage-hands and actors who put on a play, then the "lifecycle" is the pre-described arrangement of each "act", intermission, and so on, such that every CPart stage-hand "jumps in" at the right moment to do it's job and set up for the next act.
+Every Modulo Component goes through a certain "lifecycle". Here's an analogy:
+If CParts are the stage-hands and actors who put on a play, then the
+"lifecycle" is the pre-described arrangement of each "act", intermission, and
+so on, such that every CPart stage-hand "jumps in" at the right moment to do
+it's job and set up for the next act.
 
-Global lifecycle
+# Component lifecycle
 
-Every _Component_ that you define triggers a certain set of lifecycle phases. The lifecycle phases that a Modulo _Component_ progresses through can be categorized into a few groups. One way to think of these phases is that typically, the "output" of a previous lifecycle phase in a group is the "input" of the next phase. As an example, `prepare` figures out the template variables, `render` causes the template to actually perform the render based on the variables in the previous phase, and `update` updates the HTML of the element based on the rendered output of the previous phase.
-
-Component lifecycle
-
-### Factory
-
-The factory phase happen _once per Component definition_. It will happen even if the component is never used or instantiated anywhere, but only defined. This `factory` thus happens during the `define` global phase of Modulo, and is invoked to prepare the Component definition.
-
-* `factory` \- Happens while a component is getting defined. This happens after the `prebuild` and `define` phases, but before the component is used. Unlike the `prebuild` and `define` phases, `factory` happens after the page loads, and thus has no restrictions on what it does or generate. (E.g. it's output does _not_ need to be serializeable, since it will be run after built JS files as well).
-
-### Construction and initialization lifecycle
-
-Several methods are triggered when a component is mounted on the page. Note that for most components, you'll want to only use *initializedCallback*, unless you want to customize any aspects of how the component hydrates from a built version of the page. 
+Every _Component_ that you define triggers a certain set of lifecycle phases.
+The lifecycle phases that a Modulo _Component_ progresses through can be
+categorized into a few groups. One way to think of these phases is that
+typically, the "output" of a previous lifecycle phase in a group is the "input"
+of the next phase. As an example, `prepare` figures out the template variables,
+`render` causes the template to actually perform the render based on the
+variables in the previous phase, and `update` updates the HTML of the element
+based on the rendered output of the previous phase.
 
 
-* _constructor()_ \- While technically not a lifecycle method, the constructor() method will be invoked when creating an instance of the CPart class. This happens _before_ the Component's HTML Element is guaranteed to be fully loaded on the DOM, and _before_ injected properties (e.g. ".conf", ".modulo", ".element") properties are set on the CPart instance.
-* `constructed` \- Also technically not a lifecycle method, but this will be called _before_ the Component's HTML Element is fully parsed, but _after_ injected properties (e.g. ".conf", ".modulo", ".element") properties are set on the CPart instance.
-* `mount` \- The first "regular" lifecycle method. The *Component* class will use this phase for hydrating content from a SSR'ed version of the page. This is useful to hook in code to activate before any further DOM modifications happen, but after the HTML Element and it's contents are fully parsed.
-* `mountRender` \- The *Component* will use this callback to "take . Useful if you want to hook in code right before the _prepare_ of the first rerender (described below), and maybe adding code to cancel the first rerender.
-* `initialized` \- Happens once per instance, every time a component is fully mounted (i.e. used) on a page, but before the first render. Useful for fetching or setting up initial data on a component, as all the component will be fully ready for use at this point.
 
-### Rendering lifecycle
+## Mount Lifecycle
 
-All of 5 these lifecycle phases trigger in the following sequence every time a component renders. This including the first time, every manual rerender (e.g. invoking `element.rerender()`), and ever automatic rerender (e.g. after events or state manipulation). These will phases even trigger if you don't have a _Template_ CPart defined (although without a _Template_ there will be nothing to render, _per se_).
+Several methods are triggered when a component is mounted on the page. Note
+that for most components, you'll want to only use *initializedCallback*, unless
+you want to customize any aspects of how the component hydrates from a built
+version of the page. 
 
-* `prepare` \- Gather data needed before rendering (e.g. gather variables for template). Return values from here to have "computed variables" within the Template and Script code.
-* `render` \- The Template CPart will use this phase to to render HTML code from the template specified (by setting `renderObj.component.innerHTML`
-* `dom` \- A DOM fragment is constructed for comparison during the reconcile phase
-* `reconcile` \- The Component CPart will compare the new rendered DOM fragment to the document's actual DOM, and generates a "patch-set" or array of operations necessary to reconcile the DOM to the new HTML (by setting `renderObj.component.patches`)
-* `update` \- Finally, the Component will apply the patch-set generated in the previous step, actually modifying the DOM and invoking any directive callbacks specified
 
-### Directives that invoke lifecycle methods
+* _constructor()_ \- While technically not a lifecycle method, the
+  constructor() method will be invoked when creating an instance of the CPart
+  class. This happens _before_ the Component's HTML Element is guaranteed to be
+  fully loaded on the DOM, and _before_ injected properties (e.g. ".conf",
+  ".modulo", ".element") properties are set on the CPart instance.
+* `constructed` \- Also technically not a lifecycle method, but this will be
+  called _before_ the Component's HTML Element is fully parsed, but _after_
+  injected properties (e.g. ".conf", ".modulo", ".element") properties are set
+  on the CPart instance.
+* `mount` \- The first "regular" lifecycle method. The *Component* class will
+  use this phase for hydrating content from a SSR'ed version of the page. This
+  is useful to hook in code to activate before any further DOM modifications
+  happen, but after the HTML Element and it's contents are fully parsed.
+* `mountRender` \- The *Component* will use this callback to "take . Useful if
+  you want to hook in code right before the _prepare_ of the first rerender
+  (described below), and maybe adding code to cancel the first rerender.
+* `initialized` \- Happens once per instance, every time a component is fully
+  mounted (i.e. used) on a page, but before the first render. Useful for
+  fetching or setting up initial data on a component, as all the component will
+  be fully ready for use at this point.
 
-Directives can can cause lifecycle phases as well. With the built-in CParts, there is only one directive that will trigger any lifecycle phases: The `event` directive (e.g. `@click`). More information on directives is [covered in the Directives section](/docs/directives.html).
+## Render Lifecycle
+
+All of 5 these lifecycle phases trigger in the following sequence every time a
+component renders. This including the first time, every manual rerender (e.g.
+invoking `element.rerender()`), and ever automatic rerender (e.g. after events
+or state manipulation). These will phases even trigger if you don't have a
+_Template_ CPart defined (although without a _Template_ there will be nothing
+to render, _per se_).
+
+* `prepare` \- Gather data needed before rendering (e.g. gather variables for
+  template). Return values from here to have "computed variables" within the
+  Template and Script code.
+* `render` \- The Template CPart will use this phase to to render HTML code
+  from the template specified (by setting `renderObj.component.innerHTML`
+* `dom` \- A DOM fragment is constructed for comparison during the reconcile
+  phase. Usefuly for doing direct DOM modification, but before directives are
+  activated (e.g. to do a `setAttribute('data:=', '{"a": 3}')` and expect the
+  `dataProp` to be in effect).
+* `reconcile` \- The Component CPart will compare the new rendered DOM fragment
+  to the document's actual DOM, and generates a "patch-set" or array of
+  operations necessary to reconcile the DOM to the new HTML (by setting
+  `renderObj.component.patches`)
+* `update` \- Finally, the Component will apply the patch-set generated in the
+  previous step, actually modifying the DOM and invoking any directive
+  callbacks specified
+
+
+## Directives
+
+Directives can can cause lifecycle phases as well. With the built-in CParts,
+there is only one directive that will trigger any lifecycle phases: The `event`
+directive (e.g. `@click`). More information on directives is [covered in the
+Directives section](/docs/directives.html).
+
+**Note:** These are ONLY available for full-fledged Component Parts written in
+JavaScript. They cannot be used in an embedded script tag, since the *Script*
+CPart does not support it.
 
 * `event` \- Triggers when an event is about to happen.
 * `eventCleanup` \- Triggers after an event happened. A common pattern is to use this and the previous to figure out what has "changed" due to the event, and respond accordingly.
 
-## Lifecycle Callbacks
+# Lifecycle Callbacks
 
 The purpose of _lifecycle phases_ is the _lifecycle methods_ or callback functions that "hook into" each phase and run during them.
 
@@ -57,56 +102,6 @@ The _Script_ CPart also exposes this interface to component developers. This is 
 
 Directives also have callback functions, [covered in a the directive section](/docs/directives.html).
 
-**Try it out below:**
-
-
-```modulo_demo
-<Template>
-Hello <strong>Modulo</strong> World!
-<button @click:=script.gotClicked>Click me to generate an event (Open your browser's dev console to see messages...)</button>
-</Template>
-
-
-<Script>
-    function eventCallback() {
-        console.log("eventCallback: An event happened");
-    }
-
-    function eventCleanupCallback() {
-        console.log("eventCleanupCallback: After the event");
-    }
-
-    function gotClicked() {
-        console.log("(the button got clicked)");
-    }
-/Script>
-
-
-<!-- To see even more callback console.logs, uncomment below: -->
-<!--
-<Script>
-    function initializedCallback() {
-        console.log("initalizedCallback: Got mounted");
-    }
-
-    function prepareCallback() {
-        console.log("prepareCallback: Starting to render");
-    }
-
-    function renderCallback() {
-        console.log("renderCallback: Rendering!");
-    }
-
-    function reconcileCallback() {
-        console.log("reconcileCallback: Reconciling the DOM!");
-    }
-
-    function updateCallback() {
-        console.log("updateCallback: Applying patches");
-    }
-/Script>
--->
-```
 
 ### renderObj
 
@@ -120,13 +115,26 @@ So far in this document, we covered how lifecycle methods are central to CParts,
 
 The renderObj goes through 3 phases. The first is during set-up, the second during component factory initialization, and the third happens every time a component rerenders.
 
-1.  `loadObj` \- This is the version created during the `load` phase, and is typically just the text and attributes of the component definition with any pre-processing done. Unlike the other objects, `loadObj` _can only_ contain plain or JSON-friendly data types.
-2.  `baseRenderObj` \- The `loadObj` is copied to the `baseRenderObj`, which is the result of the `factory` phase. This might have more dependencies injected, e.g. the template CPart at this point will have compiled the template code a JS function.
-3.  `renderObj` \- This is the one that component developers are more likely to encounter. During first render, and every time a `.rerender()` method is called, `renderObj` is duplicated from the `baseRenderObj`, and then gets passed around through the `prepare`, `render`, `reconcile`, and `update` phases.
+1.  `initRenderObj` \- This is the version created during the `initialized`
+phase
+2.  `renderObj` \- This is the one that component developers are more likely to
+encounter. During first render, and every time a `.rerender()` method is
+called, `renderObj` is duplicated from the `initRenderObj`, and then gets
+passed around through the `prepare` / `render` /  etc phases.
 
-Typically, unless developing new CParts, you will have little need to directly interact with the `renderObj`. You already implicitly use it in several cases. For example, whenever you access variables in the _Script_ CPart, the `state` variable is in fact shorthand for `element.renderObj.state`, or whenever you access [variables in the template](/docs/templating.html#variables) _CPart_ (e.g., `props.text` is shorthand for `element.renderObj.props.text`). So, if you are a component developer and not a CPart developer, and you find yourself thinking that it doesn't make a lot of sense why you'd need to access or modify the `renderObj` explicitly... You probably don't!
+Typically, unless developing new CParts, you will have little need to directly
+interact with the `renderObj`, but instead will use implicitly just about
+everywhere.  For example, whenever you access variables in the _Script_ CPart,
+the `state` variable is in fact shorthand for `element.renderObj.state`, or
+whenever you access [variables in the
+template](/docs/templating.html#variables) _CPart_ (e.g., `props.text` is
+shorthand for `element.renderObj.props.text`). So, if you are a component
+developer and not a CPart developer, and you find yourself thinking that it
+doesn't make a lot of sense why you'd need to access or modify the `renderObj`
+explicitly... You probably don't!
 
-Nevertheless, use the following example to examine the output of the following example to see what information is available or modified at each step:
+Nevertheless, use the following example to examine the output of the following
+example to see what information is available or modified at each step:
 
 
 ```modulo_demo
