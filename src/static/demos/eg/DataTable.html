@@ -1,0 +1,17 @@
+<!-- Another example of StaticData being used, this time with
+     multiple templates to import data for table use -->
+<Template>
+    {% for holiday in staticdata %}
+        {{ holiday|renderas:table_row }}
+    {% endfor %}
+</Template>
+
+<Template -name="table_row">
+    <td>{{ date }}</td>
+    <td>{{ name }}</td>
+    <td>{% if localName != name %}{{ localName }}{% endif %}</td>
+</Template>
+
+<StaticData
+    -src="https://date.nager.at/api/v2/publicholidays/2023/BR"
+></StaticData>

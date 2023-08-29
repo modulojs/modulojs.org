@@ -1,12 +1,12 @@
 <!-- Modulo supports importing CSV data directly for use -->
 <Template>
     {% for row in staticdata %}
-        <div>{{ row.0 }}</div>
+        <div>{{ row }}</div>
     {% endfor %}
 </Template>
 
 <StaticData
-    -src="https://pkgstore.datahub.io/core/co2-fossil-global/global/archive/09015539c2fc32bb3c4afead7df461b5/global.csv"
+    -src="/static/data/eg/c02.csv"
 ></StaticData>
 
 

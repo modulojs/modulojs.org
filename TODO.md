@@ -1,9 +1,19 @@
+
+Final list
+---------------------------
+- Swap out Highlight.js for one that can handle Django + CSS
+- Finish news article of website launch
+- Fix / Replace World Map Demo
+- Quick pages flat structure + config.js + site.css
+- Tutorial 2 and Tutorial 3
+- Table of Contents:
+    - Update keywords descriptions
+
+
 Blocking
 ---------------------------
 
-- Docs
-    - Docs examples and snippets are messed up
-    - Docs need updating / comb through
+
 
 - Tutorial
     - TUTORIAL 1 - Ramping Up

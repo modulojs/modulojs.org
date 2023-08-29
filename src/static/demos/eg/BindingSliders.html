@@ -1,0 +1,42 @@
+<Template>
+    <input [state.bind] name="width" type="range" min="1" max="130" />
+    <input [state.bind] name="height" type="range" min="1" max="130" />
+    <div style="
+        width: {{ state.width }}px;
+        height: {{ state.height }}px;
+    "></div>
+    <p>{{ state.width }}x{{ state.height }}</p>
+</Template>
+
+<State
+    width:=50
+    height:=50
+></State>
+
+<Style>
+    :host {
+        position: relative;
+        display: block;
+        margin: 20px;
+    }
+    div {
+        background: black;
+        text-align: center;
+    }
+    p {
+      text-align: right;
+    }
+    input {
+        width: 135px;
+        position: absolute;
+    }
+    input[name=width] {
+        top: -10px;
+        left: -5px;
+    }
+    input[name=height] {
+        left: -40%;
+        top: 60px;
+        transform: rotate(90deg);
+    }
+</Style>

@@ -105,8 +105,16 @@
         {
             file: "/static/demos/eg/JSONArray.html",
         },
+        /*
+        {
+            file: "/static/demos/eg/DataTable.html",
+        },
+        */
         {
             file: "/static/demos/eg/GitHubAPI.html",
+        },
+        {
+            file: "/static/demos/eg/BindingSliders.html",
         },
         {
             file: "/static/demos/eg/ColorSelector.html",
@@ -121,6 +129,9 @@
             file: "/static/demos/eg/Scatter.html",
         },
         {
+            file: "/static/demos/eg/WorldMap.html",
+        },
+        {
             file: "/static/demos/eg/FlexibleForm.html",
         },
         {
@@ -130,10 +141,14 @@
             file: "/static/demos/eg/Components.html",
             includes: "/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html",
         },
-        /*{
+        {
+            file: "/static/demos/eg/ComponentsLoop.html",
+            includes: "/static/demos/usedby/DemoModal.html",
+        },
+        {
             file: "/static/demos/eg/OscillatingGraph.html",
             includes: "/static/demos/usedby/DemoChart.html",
-        },*/
+        },
         {
             file: "/static/demos/usedby/DemoModal.html",
         },
@@ -144,11 +159,10 @@
             file: "/static/demos/eg/Search.html",
         },
         {
-            file: "/static/demos/eg/SearchBox.html",
+            file: "/static/demos/eg/MarkdownPreview.html",
         },
         {
-            file: "/static/demos/eg/WorldMap.html",
-            includes: "/static/demos/usedby/DemoModal.html",
+            file: "/static/demos/eg/SearchBox.html",
         },
         {
             file: "/static/demos/eg/MemoryGame.html",

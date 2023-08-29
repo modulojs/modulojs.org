@@ -1,19 +1,20 @@
 <!-- Another example of StaticData being used to visualize data, this example
-     places API data onto a world map, and provides a slide down modal for
+     places API data onto a world map, and provides a radio interface for
      each user that shows more information about that user -->
 <Template>
     {% for user in staticdata %}
-        <div style="top: {{ user.address.geo.lng|number|add:180|multiply:100|dividedinto:360 }}%;
-                    left: {{ user.address.geo.lat|number|add:90|multiply:100|dividedinto:180 }}%;">
-            <x-DemoModal button="{{ user.id }}" title="{{ user.name }}">
-                {% for key, value in user %}
-                    <dl>
-                        <dt>{{ key|capfirst }}</dt>
-                        <dd>{% if value|type == "object" %}{{ value|json }}{% else %}{{ value }}{% endif %}</dd>
-                    </dl>
-                {% endfor %}
-            </x-DemoModal>
-        </div>
+        <input 
+            name="location"
+            type="radio"
+            value="{{ user.id }}"
+            style="top: {{ user.address.geo.lng|number|add:180|multiply:100|dividedinto:360 }}%;
+                   left: {{ user.address.geo.lat|number|add:90|multiply:100|dividedinto:180 }}%;"
+        />
+        <aside>
+            {{ user.company.name }}
+            <hr />
+            {{ user.company.bs }}
+        </aside>
     {% endfor %}
 </Template>
 
@@ -23,39 +24,41 @@
 
 <Style>
   :host {
-      position: relative;
-      display: block;
-      width: 160px;
-      height: 80px;
-      border: 1px solid gray;
-      background-size: 160px 85px;
       background-image: url('https://i.imgur.com/jsOnZz0.png');
   }
-  div {
+  :host, aside {
+      background-size: 160px 85px;
+      position: relative;
+      width: 160px;
+      display: block;
+      height: 80px;
+      border: 1px solid gray;
+      box-shadow:
+        0     5px 5px                #00000033,
+        0     5px  5px         inset #00000011;
+  }
+  input {
       position: absolute;
-      height: 7px;
-      width: 7px;
-      border-radius: 5px;
-      background: #B90183;
   }
-  div > x-DemoModal {
+  aside {
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Japanese_Paper_Art_Series_%283047082048%29.jpg/128px-Japanese_Paper_Art_Series_%283047082048%29.jpg');
+      box-sizing: border-box;
+      width: 0;
+      position: absolute;
+      top: 80px;
+      padding: 10px;
+      overflow: hidden;
       opacity: 0;
-      z-index: 50;
-  }
-  div:hover > x-DemoModal{
-      opacity: 1.0;
-  }
-  .modal-body {
-      height: 400px;
-      overflow: auto;
-  }
-  dt {
+      font-size: 0.9rem;
+      font-variant: uppercase;
       font-weight: 800;
+      transition: 
+        opacity 0.1s,
+        width 0.3s;
   }
-  dd {
-      max-width: 300px;
-      overflow: auto;
-      font-family: monospace;
+  input:checked + aside {
+      opacity: 1;
+      width: 160px;
   }
 </Style>
 

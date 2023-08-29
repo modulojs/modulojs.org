@@ -1,0 +1,24 @@
+<Template>
+<!-- Modulo web components can be mixed with Templating for quick ways to
+explore large data sets -->
+{% for dataItem in staticdata %}
+    <x-DemoModal button="{{ dataItem.username }}" title="{{ dataItem.name }}">
+        {% for key, value in dataItem %}
+            <dl> {# Format data based on type #}
+                <dt>{{ key|capfirst }}</dt>
+                <dd>
+                    {% if value|type == "object" %}
+                        {{ value|json }}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </dd>
+            </dl>
+        {% endfor %}
+    </x-DemoModal>
+{% endfor %}
+</Template>
+
+<StaticData
+    -src="https://jsonplaceholder.typicode.com/users"
+></StaticData>

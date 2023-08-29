@@ -3,7 +3,7 @@
         are available, making CSS variables a handy way of specifying style
         overrides. -->
     <x-DemoChart
-        data:=state.data
+        data:='{{ state.data|json }}'
         animated:=true
         style="
             --align: center;
@@ -79,10 +79,3 @@
         }
     }
 </Script>
-
-<Style>
-    input {
-        width: 50px;
-    }
-</Style>
-

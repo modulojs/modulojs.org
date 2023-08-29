@@ -3,6 +3,19 @@
         <h2>Begin</h2>
     {% else %}
         <h1>%</h1>
+        {% comment %}
+        <li class="button-sidebar">
+                <a href="#">
+                        Start
+                </a>
+                <a href="#">
+                        Docs
+                </a>
+                <a href="#">
+                        Examples
+                </a>
+        </li>
+        {% endcomment %}
     {% endif %}
     <li class="{% if not props.showall %}button-sidebar{% endif %}">
         <a href="/docs/#TableOfContents" class="{% if "docs/"|isactive %}button--active{% endif %}">
@@ -17,7 +30,6 @@
             </li>
         {% endfor %}
     {% else %}
-
         <li class="button-sidebar">
             Tutorial:<br />
             {% for page in staticdata.tutorial %}

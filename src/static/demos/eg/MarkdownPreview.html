@@ -1,0 +1,27 @@
+<Template>
+    <textarea [state.bind] name="text"></textarea>
+    <div>{{ script.html|safe }}</div>
+</Template>
+
+<State
+text="### Markdown
+Using `-src` to *quickly* add a **markdown parser**"
+></State>
+
+<Script -src="https://unpkg.com/snarkdown">
+    const { snarkdown } = this; // (this === window)
+    function prepareCallback() {
+        return { // Every rerender, convert markdown to HTML
+            html: snarkdown(state.text),
+        };
+    }
+</Script>
+
+<Style>
+  textarea, div {
+      border: none;
+      width: 95%;
+      padding: 2%;
+      min-height: 80px;
+  }
+</Style>

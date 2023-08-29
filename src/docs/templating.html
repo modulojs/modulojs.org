@@ -70,7 +70,7 @@ explained later in this document.
 
 {# Show the articles #}
 {% for article in state.articles %}
-    <h4 style="color: blue">{{ article.headline|upper }}</h4>
+    <h4 style="color: tomato">{{ article.headline|upper }}</h4>
     {% if article.tease %}
       <p>{{ article.tease|truncate:30 }}</p>
     {% endif %}
