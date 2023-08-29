@@ -3,19 +3,6 @@
         <h2>Begin</h2>
     {% else %}
         <h1>%</h1>
-        {% comment %}
-        <li class="button-sidebar">
-                <a href="#">
-                        Start
-                </a>
-                <a href="#">
-                        Docs
-                </a>
-                <a href="#">
-                        Examples
-                </a>
-        </li>
-        {% endcomment %}
     {% endif %}
     <li class="{% if not props.showall %}button-sidebar{% endif %}">
         <a href="/docs/#TableOfContents" class="{% if "docs/"|isactive %}button--active{% endif %}">
@@ -23,15 +10,21 @@
         </a>
     </li>
     {% if props.showall %}
-        {% for page in staticdata.tutorial %}
-            <li>
-                <a href="{{ page.filename }}" title="{{ page.label }}">Tutorial {{ page.partLabel }}: {{ page.label }}</a>
-                <span class="hint">(<em>Topics: {{ page.keywords|join:', ' }}</em>)</span>
-            </li>
-        {% endfor %}
+        <li>Tutorial: 
+            <span style="font-size: 0.8rem;">{{ staticdata.tutorial|get:0|get:"tutorialName"|upper }}</span><br />
+            <ul>
+            {% for page in staticdata.tutorial %}
+                <li>
+                    <a href="{{ page.filename }}" title="{{ page.label }}">{{ page.partLabel }}: {{ page.label }}</a>
+                    <span class="hint">(<em>Topics: {{ page.keywords|join:', ' }}</em>)</span>
+                </li>
+            {% endfor %}
+            </ul>
+        </li>
     {% else %}
         <li class="button-sidebar">
-            Tutorial:<br />
+            Tutorial: <br />
+            <span style="font-size: 0.8rem;">{{ staticdata.tutorial|get:0|get:"tutorialName"|upper }}</span><br />
             {% for page in staticdata.tutorial %}
                 <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
                         {{ page.partLabel }}

@@ -1,3 +1,27 @@
+.page-container--navdocs {
+    display: grid;
+    grid-template-columns: 1fr 280px minmax(auto, 1368px) 1fr;
+}
+
+.page-container--navdocs > * {
+    grid-column: 3;
+}
+
+.page-navdocs {
+    grid-column: 2;
+    padding: 2px;
+    padding-left: 0;
+    margin: 10px;
+    margin-left: 4px;
+    border: 1px solid black;
+    position: relative;
+}
+
+.page-navdocs > :first-child {
+    position: sticky;
+    top: 5px;
+}
+
 
 /* Default markdown style */
 .markdown-body {
@@ -168,6 +192,9 @@
         float: none;
         clear: both;
     }
+    .page-container--navdocs {
+        display: block;
+    }
 }
 
 
@@ -185,6 +212,7 @@
         right: -295px;
     }
 }
+
 @media (min-width: 2700px) { /* why not */
     .page-container--navdocs {
         /* display off-center, 2x margin on right compared to left */

@@ -1,26 +1,69 @@
 {
     tutorial: [
         {
-            label: 'Components, CParts, and Loading',
+            label: 'Components and Their Parts',
+            tutorialName: 'Ramping Up with Modulo',
             partLabel: 'Part 1',
             filename: '/tutorial/part1.html',
-            keywords: ['cdn', 'components', 'cparts', 'template', 'style', 'html & css'],
+            keywords: ['component', 'component part', 'cparts', 'customElement', 'Template', 'Props', 'template variable'],
         },
         {
-            label: 'Props, Templating, and Building',
+            label: 'Template Filters, Template Tags, and State',
+            tutorialName: 'Ramping Up with Modulo',
             partLabel: 'Part 2',
             filename: '/tutorial/part2.html',
-            keywords: ['props', 'template variables', 'template filters', 'modulo console command', 'build', 'hash'],
+            keywords: [ 'template filters', 'template tags', 'default', 'allow', 'if', '==', 'is', 'elseif', 'elif', 'endif', 'state' ],
         },
         {
-            label: 'State, Directives, and Scripting',
+            label: 'Directives, Binding, and Data Types',
+            tutorialName: 'Ramping Up with Modulo',
             partLabel: 'Part 3',
             filename: '/tutorial/part3.html',
-            keywords: ['state', 'directives', 'data props', 'state.bind', 'data types', 'events', 'basic scripting'],
+            keywords: [ 'directives', 'binding inputs', 'state.bind', 'json', 'string', 'number', 'array', 'object' ],
         },
     ],
 
     docs: [
+        {
+            label: 'Component Parts',
+            filename: '/docs/cparts.html',
+            sections: [
+                {
+                    label: 'Props',
+                    fragment: 'props',
+                    keywords: ['accessing props', 'defining props', 'setting props', 'using props'],
+                },
+                {
+                    label: 'Script',
+                    fragment: 'script',
+                    keywords: ['javascript', 'events', 'computed properties',
+                    'static execution', 'custom lifecycle methods',
+                    'script callback execution context', 'script exports'],
+                },
+                {
+                    label: 'State',
+                    fragment: 'state',
+                    keywords: ['state definition', 'state data types', 'json',
+                    'state variables', 'state.bind directive'],
+                },
+                {
+                    label: 'StaticData',
+                    fragment: 'staticdata',
+                    keywords: ['loading API', 'loading json',
+                    'transform function', 'bundling data'],
+                },
+                {
+                    label: 'Style',
+                    fragment: 'style',
+                    keywords: ['CSS', 'styling', ':host', 'shadowDOM'],
+                },
+                {
+                    label: 'Template',
+                    fragment: 'template',
+                    keywords: ['custom template', 'templating engine'],
+                },
+            ],
+        },
         {
             label: 'Templating',
             filename: '/docs/templating.html',
@@ -38,12 +81,12 @@
                 {
                     label: 'Filters',
                     fragment: 'filters',
-                    keywords: ['filter syntax', 'example filters'],
+                    keywords: ['filter syntax', 'example use of filters', 'custom template filters'],
                 },
                 {
                     label: 'Tags',
                     fragment: 'tags',
-                    keywords: ['template-tag syntax', 'example use of templatetags'],
+                    keywords: ['template-tag syntax', 'example use of templatetags', 'custom template tags'],
                 },
                 {
                     label: 'Comments',
@@ -70,55 +113,23 @@
                 {
                     label: 'Built-in Template Tags',
                     fragment: 'builtintemplatetags',
-                    keywords: [ 'if', 'elif', 'else', 'endif', 'for', 'empty', 'endfor', 'operators', 'in', 'not in', 'is', 'is not', 'lt', 'gt', 'comparison', 'control-flow', ],
+                    keywords: [ 'if', 'elseif', 'elif', 'else', 'endif', 'for',
+                    'empty', 'endfor', 'operators', 'in', 'not in', 'is',
+                    'is not', 'lt', 'gt', 'comparison', 'control-flow', ],
                 },
                 {
                     label: 'Built-in Filters',
                     fragment: 'builtinfilters',
-                    keywords: [ 'add', 'allow', 'capfirst', 'concat', 'default', 'divisibleby', 'escapejs', 'first', 'join', 'json', 'last', 'length', 'lower', 'number', 'pluralize', 'subtract', 'truncate', 'renderas', 'reversed', 'upper', ],
+                    keywords: [ 'add', 'allow', 'capfirst', 'concat',
+                    'default', 'divisibleby', 'escapejs', 'first', 'join',
+                    'json', 'last', 'length', 'lower', 'number', 'pluralize',
+                    'subtract', 'truncate', 'renderas', 'reversed', 'upper', ],
                 },
             ],
         },
 
         {
-            label: 'Component Parts',
-            filename: '/docs/cparts.html',
-            sections: [
-                {
-                    label: 'Props',
-                    fragment: 'props',
-                    keywords: ['accessing props', 'defining props', 'setting props', 'using props'],
-                },
-                {
-                    label: 'Script',
-                    fragment: 'script',
-                    keywords: ['javascript', 'events', 'computed properties', 'static execution', 'custom lifecycle methods', 'script callback execution context', 'script exports'],
-                },
-                {
-                    label: 'State',
-                    fragment: 'state',
-                    keywords: ['state definition', 'state data types', 'json', 'state variables', 'state.bind directive'],
-                },
-                {
-                    label: 'StaticData',
-                    fragment: 'staticdata',
-                    keywords: ['loading API', 'loading json', 'transform function', 'bundling data'],
-                },
-                {
-                    label: 'Style',
-                    fragment: 'style',
-                    keywords: ['CSS', 'styling', ':host', 'shadowDOM'],
-                },
-                {
-                    label: 'Template',
-                    fragment: 'template',
-                    keywords: ['custom template', 'templating engine'],
-                },
-            ],
-        },
-
-        {
-            label: 'Core',
+            label: 'Core Definitions',
             filename: '/docs/core.html',
             sections: [
                 {
@@ -129,12 +140,16 @@
                 {
                     label: 'Component',
                     fragment: 'component',
-                    keywords: ['name', 'innerHTML', 'patches', 'reconciliation', 'rendering mode', 'manual rerender', 'shadow', 'vanish', 'vanish-into-document', 'component.event', 'component.slot', 'component.dataProp'],
+                    keywords: ['name', 'innerHTML', 'patches',
+                    'reconciliation', 'rendering mode', 'manual rerender',
+                    'shadow', 'vanish', 'vanish-into-document',
+                    'component.event', 'component.slot', 'component.dataProp'],
                 },
                 {
                     label: 'Configuration',
                     fragment: 'configuration',
-                    keywords: ['config', 'loading', 'unpkg', 'npm', 'dependency', 'registering helpers', 'registering custom cparts'],
+                    keywords: ['config', 'loading', 'unpkg', 'npm',
+                    'dependency', 'registering helpers','registering custom cparts'],
                 },
                 {
                     label: 'Modulo',
@@ -151,12 +166,13 @@
                 {
                     label: 'Component lifecycle',
                     fragment: 'global',
-                    keywords: ['constructor', 'initialized', 'prepare', 'render', 'reconcile', 'update', 'event', 'eventCleanup'],
+                    keywords: ['constructor', 'constructed', 'mount', 'mountRender', 'initialized', 'prepare',
+                               'render', 'dom', 'reconcile', 'update', 'directive lifecycles', 'event', 'eventCleanup'],
                 },
                 {
                     label: 'Lifecycle callbacks',
                     fragment: 'callbacks',
-                    keywords: ['hooking into lifecycle', 'callbacks', 'script tag callbacks', 'renderobj', 'dependency injection', 'middleware'],
+                    keywords: ['hooking into lifecycle', 'callbacks', 'script tag callbacks', 'renderObj', 'initRenderObj' ],
                 },
             ],
         },
@@ -182,5 +198,6 @@
                 },
             ],
         },
+
     ],
 }

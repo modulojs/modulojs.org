@@ -109,29 +109,6 @@
 }
 
 
-.page-container--navdocs {
-    display: grid;
-    grid-template-columns: 1fr 300px minmax(auto, 1368px) 1fr;
-}
-
-.page-container--navdocs > * {
-    grid-column: 3;
-}
-
-.page-navdocs {
-    grid-column: 2;
-    padding: 10px;
-    padding-left: 0;
-    margin: 10px;
-    border: 1px solid black;
-    position: relative;
-}
-
-.page-navdocs > :first-child {
-    position: sticky;
-    top: 5px;
-}
-
 .page-footer {
     height: var(--footer-height);
     text-align: center;
