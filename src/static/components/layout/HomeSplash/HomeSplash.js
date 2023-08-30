@@ -1,5 +1,6 @@
 let animTimeout = null;
 let wasTop = null;
+const delay = 170; // matches top & left of HomeSplash.css - 0.170
 function checkForScrollAnimation() {
     // Needs refactor
     const title = element.querySelector('h1 > span'); // get h1 title
@@ -45,7 +46,7 @@ function checkForScrollAnimation() {
             title.style.opacity = '1.0';
             navLogo.style.opacity = '0.0';
         }
-    }, 150);
+    }, delay);
 }
 
 let debounce = 20; // slight debounce

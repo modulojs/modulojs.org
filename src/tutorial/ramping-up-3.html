@@ -2,12 +2,85 @@
 tutorial: Part 3
 ---
 
-**Work in progress!**
 
-In Part 3 of this tutorial, we'll start
-allows individual components to store, modify, and link together data, and
-Script, which allows custom JavaScript with complex behaviors. Prerequisites:
-HTML, CSS, and Part 1 & 2.
+In Part 3 of this tutorial, we'll start exploring code that permits individual
+components to store, modify, and link together data, allowing for complex
+behaviors. 
+
+We'll learn how to use Template Tags, to optionally include, or duplicate parts
+of our HTML templates for data or properties.  We'll learn how to use
+StaticData, that lets us import JSON or CSV file types, or APIs that use these
+types, into our Modulo components, so that we can use template tags to explore
+3rd party data.
+
+Before we get to these more powerful features of Modulo, we'll need to first
+explore Data Props, and how they enable different JavaScript data types.
+
+# Data Props
+
+> **Other Directives** - All directives are "provided" by a CPart. That is,
+> including CParts in your component definition may "enable" more directives in
+> your HTML. Data-prop (`[component.dataProp]` or `:=`), for example, is a
+> built-in feature of the _Component_, which means it's always available.
+> Directives are not the main focus of this tutorial.  To learn more, including
+> how to author your own directives using JavaScript, [see
+> _Directives_](/docs/directives.html). However, for the purpose of this
+> tutorial we will have no need to use directives outside of the built-in
+> directives that come with Modulo.
+
+Before we go any deeper into Template Tags or _StaticData_, we need to explore
+"data props", and before that, we need to review _directives_. The term
+_directives_ in Modulo refers to special attributes that you add to HTML to add
+extra functionality.. You can recognize a _directive_ by spotting certain
+special characters in the attribute name. We've seen one in the previous
+tutorial section, `[state.bind]`. For example, `<input [state.bind] />` is an
+`input` HTML tag with a `[state.bind]` directive. Some directives will have a
+square-bracket syntax (e.g. `[ ]`), while others might use other special
+characters to set them apart from "normal" attributes (e.g.  `:=` syntax we'll
+learn next). While re-rendering, Modulo scans the resulting DOM to set-up or
+"mount" any directives it encounters.
+
+Directives are useful for a variety of tasks, ranging connecting CParts to each
+other, to more complicated modifications to DOM elements.  ).
+
+## The dataProp directive `:=`
+
+We'll learn one more directive next: _data prop_  or `:=` syntax
+
+> **Why don't we use "strings" for numbers?** Using strings of digits (i.e. in
+> quotes) instead of the numbers themselves means that things like arithmetic
+> won't work as intended. Example: If state variable `count="1"`, then
+> `state.count + 10` will result in `"110"` instead of the desired `11`, since
+> it's a string of digits, so `"1" + "10" = "110"`
+
+Typically, when we add attributes to anything, whether it is a CPart or even
+just in regular HTML, the attribute value can only be a string. This means when
+we did `<State count="1" ... >` previously, we made a mistake: The `count`
+variable didn't get assigned to `1` the _Number_, but rather `"1"` the
+_String_. To fix it, we do the following:
+
+    <State
+        count:=1
+        color="blue"
+    >&lt;/State&gt;
+
+This is called a _data prop_ directive. You can identify a _data prop_
+directive (`:=`), by spotting an attribute name that is suffixed with a colon
+right before the equal sign, like this: `attributeName:=value`.
+
+
+### Final notes on Data Props
+
+-  Keep in mind that _data props_ directives are not the same as the _Props_
+   CPart. They are, however, related, in that the _Props_ CPart looks for both
+   regular attributes and data props: You can in fact set any _Props_
+   attributes with the `:=` syntax, for data other than Strings.
+-  _Data props_ support any JSON literal type. Technically, _data props_ values
+   can have double quotes just like normal String-based attributes.  However,
+   as a stylistic convention, you may omit the double quotes for any one-word
+   value, and should use only single quotes for complex types, such as
+   JSON-formatted Arrays or Objects. See below for stylistic examples of data
+   props with different types:
 
 
 
@@ -97,78 +170,7 @@ changes the if statement.
 creations.
 
 
-# Directives
-
-A _directive_ is a type of HTML attribute. You can recognize _directive_ by
-spotting certain special characters in the attribute name. For example, `<input
-[state.bind] />` is an `input` HTML tag with a `[state.bind]` directive. Some
-directives will have a square-bracket syntax (e.g. `[ ]`), while others might
-use other special characters to set them apart from "normal" attributes (e.g.
-`@` or `:`). While re-rendering, Modulo scans the resulting DOM to set-up or
-"mount" any directives it encounters.
-
-Directives are useful for a variety of tasks, ranging connecting CParts to each
-other, to more complicated modifications to DOM elements. We'll learn two
-directives next: _data prop_ and _state.bind_.
-
-### Data prop directive (:=)
-
-> **Why don't we use "strings" for numbers?** Using strings of digits (i.e. in
-> quotes) instead of the numbers themselves means that things like arithmetic
-> won't work as intended. Example: If state variable `count="1"`, then
-> `state.count + 10` will result in `"110"` instead of the desired `11`, since
-> it's a string of digits, so `"1" + "10" = "110"`
-
-Typically, when we add attributes to anything, whether it is a CPart or even
-just in regular HTML, the attribute value can only be a string. This means when
-we did `<State count="1" ... >` previously, we made a mistake: The `count`
-variable didn't get assigned to `1` the _Number_, but rather `"1"` the
-_String_. To fix it, we do the following:
-
-    <State
-        count:=1
-        color="blue"
-    >&lt;/State&gt;
-
-This is called a _data prop_ directive. You can identify a _data prop_
-directive (`:=`), by spotting an attribute name that is suffixed with a colon
-right before the equal sign, like this: `attributeName:=value`.
-
-The term _directives_ in Modulo refers to special attributes that you add to
-HTML to add extra functionality. We'll explore more directives in this section,
-but to learn more on _directives_ in general, including how to author your own
-directives, [see the section on _Lifecycle &
-Directives_](/docs/directives.html). However, most component developers will
-have no need to use directives outside of the built-in directives that come
-with Modulo, one of which we'll explore next: `[state.bind]`
-
-### Final notes on directives
-
-1.  If you are still scratching your head over the use of `[state.bind]` but
-are familiar with vanilla JS, it's all about reducing the need to "manually
-reach" into the DOM. It simplifies code like this `var inputData =
-document.getElementsByName('myinput')[0].value` (or the similar
-`$('[name=myinput]').val()` in jQuery), with more readable code like
-`state.myinput`, and similarly untangles code for validation, API requests,
-etc.
-2.  Where do these "directives" come from? All directives are "provided" by a
-CPart. That is, including CParts in your component definition may "enable" more
-directives in your HTML. Data-prop is a built-in feature of _Components_, which
-means it's always available (technically, the `:=` syntax is in fact syntactic
-sugar for it's full name, `[component.dataProp]`).
-    
-3.  Keep in mind that _data props_ directives are not the same as the _Props_
-CPart. They are, however, related, in that the _Props_ CPart looks for both
-regular attributes and data props: You can in fact set any _Props_ attributes
-with the `:=` syntax, for data other than Strings.
-4.  _Data props_ support any JSON literal type. Technically, _data props_
-values can have double quotes just like normal String-based attributes.
-However, as a stylistic convention, you may omit the double quotes for any
-one-word value, and should use only single quotes for complex types, such as
-JSON-formatted Arrays or Objects. See below for stylistic examples of data
-props with different types:
-
-## 3\. Script
+# Bonus - Script
 
 While Modulo is designed to be useful even without JavaScript, sometimes you
 just need access to that extra power of custom JavaScript code. Using
@@ -181,9 +183,11 @@ To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
 contained within once, immediately upon loading the component. See this
 example:
 
-    &lt;Script&gt;
-        console.log("Hello JavaScript world!");
-    &lt;/Script&gt;
+```html
+<Script>
+    console.log("Hello JavaScript world!");
+/Script>
+```
 
 In this above example, the _Script_ CPart will execute that JS code once, as
 soon as it's loaded, causing the "console.log" to log that message to the web
@@ -195,7 +199,7 @@ Generally speaking, it's always desirable to put components in a separate file,
 as was demonstrated in _Part 1_ with the `-src=` style attribute. This becomes
 even more necessary if you want to use a _Script_ CPart. This is because of a
 limitation with HTML: It does not support "nested" script tags. This means that
-the `</Script>` tag will end up closing off the outer `script` tag early and
+the `&lt;/Script>` tag will end up closing off the outer `script` tag early and
 "interrupting" your component definition.
 
 However, there is an alternative syntax to still allow a _Script_ CPart
@@ -225,11 +229,11 @@ separate file!
 Typically, it's more useful to execute code when a user performs an action. To
 do this, we must place the "console.log" into a function:
 
-    &lt;Script&gt;
+    <Script>
         function sayHello() {
             console.log("Hello JavaScript world!");
         }
-    &lt;/Script&gt;
+    /Script>
 
 Then, attach a "click" event directive to a HTML tag, such as, for example, a
 button element:
@@ -239,7 +243,21 @@ button element:
 Now, whenever a user clicks on the button, it will run the "sayHello" function,
 logging the text into the JavaScript console.
 
-#### Try it now
+
+
+##### Try it now
+
+```modulo_demo
+<Template>
+    <button @click:="script.doLog">console.log a message</button>
+</Template>
+<Script>
+    console.log("COMPONENT GOT LOADED!");
+    function doLog() {
+        console.log("Hello Modulo Scripting World!");
+    }
+/Script>
+```
 
 1.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
 `Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
@@ -259,6 +277,8 @@ then attaching it to a new button (or the existing button).
 the curious: [MDN has a list of all
 events](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing))
 
+------
+
 ### Interacting with state
 
 The _Script_ CPart is like the _Template_ CPart in one way: You get variables
@@ -276,15 +296,30 @@ to increment a variable is `num++`, and for state data it can be:
 that you are listening to. With that in mind, examine the code of the Hello
 button:
 
+
+```modulo_demo
+<Template>
+    <button @click:="script.doCountup">Hello {{ state.num }}</button>
+</Template>
+<State
+    count:=42
+></State>
+<Script>
+    function doCountup() {
+        state.num++;
+    }
+/Script>
+```
+
 By clicking on the button, it will increment the state value. Since the
 component will rerender after the click, it will then change the DOM to show
 the new number.
 
 With the power of JavaScript, you can do all manner of things with the Script
-tag. The [Example page](/demos/) has all sorts of examples of more complicated
-apps and applications. The typical use of a Script tag, thus, is to create
-custom logic that manipulates or "puppets" the state, which in turn is what
-controls the rendering of the component's HTML code by the Template CPart.
+tag. The [Examples page](/examples/) has all sorts of examples of more
+complicated apps and applications. The typical use of a Script tag, thus, is to
+create custom logic that manipulates or "puppets" the state, which in turn is
+what controls the rendering of the component's HTML code by the Template CPart.
 
 Keep in mind that the Script CPart is intended to be limited. Serious
 JavaScript development should be split into separate JS files, or defined as
@@ -292,7 +327,7 @@ custom CParts. Thus, think of the Script CPart as more "filling in the gaps"
 between CParts, which should do most of the heavy lifting (e.g. asynchronous
 code, complicated API calls or data transformation, etc).
 
-#### Key terms
+##### Key terms
 
 * **Directive** \- A special type of HTML attribute that "hooks in"
   functionality to otherwise plain HTML elements. Three built-in directives
@@ -301,9 +336,14 @@ code, complicated API calls or data transformation, etc).
       values such as functions and/or primitive JavaScript data types in JSON
       syntax
     * `@click` \- attach event listener to element
+* **Template tag** \- A more advanced type of Template code that lets us repeat
+  or optionally include other templat code based on data contained in state,
+  props, or from a static data CPart
 * **Script** \- CPart that enables embedding of arbitrary JavaScript code, and
   allowing for easy access to CPart interface, and exposing JS functions to be
   attached as events
+
+-----
 
 #### Next step
 

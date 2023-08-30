@@ -8,18 +8,18 @@
             keywords: ['component', 'component part', 'cparts', 'customElement', 'Template', 'Props', 'template variable'],
         },
         {
-            label: 'Template Filters, Template Tags, and State',
+            label: 'State, Binding, and Template Filters',
             tutorialName: 'Ramping Up with Modulo',
             partLabel: 'Part 2',
             filename: '/tutorial/ramping-up-2.html',
-            keywords: [ 'template filters', 'template tags', 'default', 'allow', 'if', '==', 'is', 'elseif', 'elif', 'endif', 'state' ],
+            keywords: [ 'state', 'directives', 'binding inputs', 'state.bind', 'template filters', 'default', 'allow' ],
         },
         {
-            label: 'Directives, Binding, and Data Types',
+            label: 'Data Types, Template Tags, and StaticData',
             tutorialName: 'Ramping Up with Modulo',
             partLabel: 'Part 3',
             filename: '/tutorial/ramping-up-3.html',
-            keywords: [ 'directives', 'binding inputs', 'state.bind', 'json', 'string', 'number', 'array', 'object' ],
+            keywords: [ 'string', 'number', 'array', 'object', 'template tags', 'if', '==', 'is', 'else', 'endif', 'for', 'endfor', 'staticdata', 'json', 'API', 'CSV' ],
         },
     ],
 

@@ -40,8 +40,8 @@ h1 span.ext {
     height: 80px;
     z-index: 2;
     transition:
-        top 0.12s,
-        left 0.12s;
+        top 0.17s,
+        left 0.17s;
 }
 
 .flying-letters .letter {
