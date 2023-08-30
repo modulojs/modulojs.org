@@ -1,254 +1,7 @@
 <!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
-tutorial: Part 2
+tutorial: WIP - Part 4 - 6
 ---
 
-**Work in progress!**
-
-
-
-In Part 2 of this tutorial, we'll explore three more features: Customizing with
-Props, substituting with Template variables, and finally building your finished
-project into a single faster-loading file. Prerequisites: HTML, CSS, and Part
-1.
-
-1\. Props
-
-In the previous section, we were mostly concerned with _defining components_.
-Recall that components are defined once, but can be used many times. The
-purpose of _Props_ is to allow more flexibility in that second step: _Props_
-CPart defines the _properties_ that can be customized about a component each
-time it is reused. We already know that "slots" can be used to customize
-components with extra content, which is a good start. However, what if we
-wanted even more options for users to customize the components, such as by
-using HTML properties? Thus, to start our discussion of _Props_ we'll first get
-more practice reusing components.
-
-### Other people's components
-
-Before we learn how to use the _Props_ CPart itself, let's first get acquainted
-with a concept we haven't done before: Reusing components that were coded by
-someone else! In a realistic scenario of an organization building a web app,
-it's likely that most of the components you will be using won't actually be
-written by you personally, but instead by someone else on some sort of internal
-"component library" team. Similarly, even if working by yourself, you'll need
-to learn how to component libraries written by others so you can use components
-already defined for you to accomplish common tasks. Don't reinvent the wheel!
-
-In this next activity, we'll practice reusing components.
-
-#### Try it now
-
-Context: The `<x-ExampleBtn>` button component has already been defined for
-you. It was defined to accept two so-called _"props"_: `label`, and `shape`.
-We'll cover how it was defined to use a _Props_ CPart later on. For now, we'll
-practice only with using the `x-ExampleBtn`.
-
-1.  Examine the code below. Examine the preview on the right. Do you see how
-the code in turn uses the `x-ExampleBtn` in two locations, with a different
-shape and label each? We can call each of these a _component instance_. Each
-component instance can receive different or customized _props_ attributes.
-2.  Note the `label="..."` prop attribute that is on each `x-ExampleBtn`. Test
-it out by editing the contents of this attribute on one or both of the buttons
-and click RUN to see the result on the right.
-3.  Note the `shape="..."` prop that is on each button. It's impossible to have
-known this without reading the CSS of `x-ExampleBtn`, but it accepts either
-"square" or "round". Try changing one to the other and see the results.
-
-**Comprehension Challenge 1:** Based on the patterns you see here, add a third
-button to this example that is round and contains the word "Hello".
-
-**Comprehension Challenge 2:** See if you can think up what props might be
-attached to different types of widgets, e.g. a "modal pop-up" widget might
-specify the title, or an Open Street Map widget might specify latitude and
-longitude for the map being displayed. What would a text input need? What about
-a tabbed navigation interface? How about a component that shows a chess board
-with pieces in a specified setup?
-
-> **Why use Props?** Components are "write once, use everywhere". That is to
-> say, you only need to define a component once to use it throughout your
-> pages. The advantages of "write once, use everywhere" are clear: By writing
-> "DRY" (non-repetitive) code, you can make changes to the single component
-> definition and see those changes take effect wherever that component might be
-> used. However, sometimes you want each instance of a component to have
-> different content or modified behavior. This is where _Props_ come into play:
-> They allow you to customize differences in content or behavior between
-> multiple uses of the same component.
-
-### Defining props
-
-Let's "peel back the layers" and examine out how this ExampleBtn was written.
-
-In order for a component to be able to "receive" props when it is reused, we
-must define a _Props_ CPart, which is conventionally placed as the first thing
-in a component definition. _Props_ CParts are defined somewhat like previous
-CParts, except they have no contents and are just an opening tag with
-attributes, followed by a closing tag. A _Props_ CPart might look like this:
-
-    &lt;Props name device frequency&gt;&lt;/Props&gt;
-
-The recommended style for Modulo code is to add a newline after each prop name
-for easier reading. HTML syntax doesn't care either way, so the above might be
-improved for readability if it were written as follows:
-
-    <Props
-        name
-        device
-        frequency
-    >&lt;/Props&gt;
-
-Once you have defined which props you expect a component to receive by using
-the _Props_ CPart, you can then reference the values of those props elsewhere
-within the component: Either in the _Template_ CPart (what we'll cover next),
-or in the _Script_ CPart (covered later).
-
-2\. Templating
-
-> **Can I use props in CSS?**
-> 
-> No. Note that the _Style_ CPart intentionally does not support template
-> substitution, or any such "live" modification whatsoever. If you want to
-> directly insert props as CSS values, this should be done in the template by
-> using an inline `style=` attribute. For more complicated CSS transformations,
-> consider setting CSS variables on the `style=` attribute that are then used
-> by the _Style_ CPart, by using the `var()` CSS function.
-
-Our discussion of props gives us a chance to explore the _Template_ CPart a
-little bit deeper. Previously, we have only used a _Template_ CPart to display
-static, unchanging HTML. That's quite limiting. The typical purpose of
-"templating" or "a templating language" is to allow customization,
-substitution, and transformation of HTML content. Templating isn't unique to
-web development: If you've used template files with word processors such
-Microsoft Word, or email templates within marketing or sales software, you'll
-know that with templating you can include placeholders where we want to insert
-data or values, in order to personalize each instance.
-
-#### Using props within a template
-
-Within a _Template_ CPart, we can insert data or values using a special
-"placeholder" syntax that is as follows: `{{ myVariableName }}`. We can also
-use a dot (".") in this syntax to access properties. Thus, you will see this
-placeholder syntax more often used like this: `{{ props.device }}`. So,
-combining this information with the 3 props that we have above, we can create a
-template that has 3 placeholders that get filled in with specific data when the
-component gets reused. Examine the below code and try to guess at what it might
-do:
-
-    &lt;Template&gt;
-        Hi {{ props.name }}, your {{ props.device }} is at {{ props.frequency }}hz.
-    &lt;/Template&gt;
-
-In this case, if we were to use our component with the attributes `name="Tux"`,
-`device="Radio"` and `frequency="2600"`, then the following text would be
-rendered: `Hi Tux, your Radio is at 2600hz.`
-
-The "Modulo templating language" was modeled after Django, Jinja2, or Liquid,
-and thus is quite powerful, being capable of much than the simple substitutions
-we're learning here. We'll learn more features later.
-
-#### Combining props with template HTML
-
-In the previous example, we showed how text can be rendered using
-substitutions. Next let's see how such substitutions can be used to generate
-more complex HTML code.
-
-Examine the following component definition. This component definition is the
-same definition for the `x-ExampleBtn` that was referenced in the previous
-challenge (with the exception of some CSS being omitted for simplicity):
-
-At this point, we can finally begin to understand the `<x-ExampleBtn>`
-component that we were using previously. In this case, the value of the
-`label="Example Button"` prop gets inserted as the text content of the button
-element, and the `shape="round"` prop value gets inserted in the `class=`
-attribute of the button element. Thus, if the shape prop receives the value of
-"round", the button gets the CSS class of `.my-btn__round`, and similarly if it
-received the value of "square", it'd get the class `.my-btn__square`. These CSS
-classes, as you may have guessed, are what controls the look of the button,
-either giving it rounded edges or a more rectangular, towering look.
-
-#### Try it now
-
-Okay, let's take this new concept and apply it to our previous HelloWorld
-component. Go back to the project you were working on previously, and follow
-these steps to practice adding props to your component:
-
-1.  Examine your `HelloWorld` component definition. Near the top, just below
-the "<component..." opening tag, add a _Props_ CPart, just like the examples
-before.
-2.  Experiment with specifying props. For example, to keep building this
-tutorial app, give it the props of `goal` and `amount`.
-3.  If done correctly, your component definition will start something like
-this:
-4.  Update the template to now use these props somewhere. For the tutorial
-example, we'll be building a little "clicker" that will count up to a number
-(the "goal") by an increment amount (the "amount"). So, for now, let's just
-display the goal prop and amount prop:
-6.  Refresh the web browser to view the results. Assuming you still have the
-component displaying somewhere on your page, if done correctly, you will see
-your component update to reflect the changes you made to your template,
-possibly something like "Goal: " and "Amount: ".
-7.  **Comprehension question: Why doesn't it show any text after "Goal:" and
-"Amount:"?**
-8.  Answer: If you are seeing blanks, it's probably because you are not passing
-in the Props that are required.
-9.  To fix this, we need to specify the props in the location where we are
-_reusing_ or actually displaying the component on the page. This is done by
-adding attributes with the names "goal" and "amount" to the component tag
-instances.
-10. If you have made a lot of changes since _Part 1_ of this tutorial or did
-not follow the naming suggestions, your code may end looking different than
-this. However, if that's not the case, your code might end up looking like
-this:
-
-**Bonus Challenge:** Read ahead about _template filters_, and try using those
-here.
-
-### Template filters
-
-The Modulo templating language has two more big features: _filters_ (for
-formatting values), and _template-tags_ (for control-flow). We'll briefly
-introduce _filters_ now, but for a more thorough introduction to the Modulo
-templating language, you should [read the Templating
-section](/docs/templating.html).
-
-Template _filters_ format or otherwise transform template variables. The
-template filter syntax consists of taking a template variable and adding a
-vertical bar followed the name of a filter (e.g. `varName|filterName`). The
-following example will transform the text contained in the `props.name`
-template variable to make it all uppercase:
-
-    Hello {{ props.name|upper }}
-
-Some filters can also take extra modifiers or options. This is called the
-template filter _argument_. Do you recall how our previous ExampleBtn component
-only supported either "round" or "square" as CSS classes? In this next example,
-we are going to use the `|allow` template filter to ensure that only "round" or
-"square" are permitted:
-
-    &lt;button class="my-btn my-btn__{{ props.shape|allow:"round,square" }}"&gt;
-        (... snip ...)
-    &lt;/button&gt;
-
-Note how the argument is separated from the filter with a colon: The general
-syntax is `varName|filterName:"argument"`. Thus, the `|allow:"round,square"`
-filter instructs Modulo to _only_ output the property of `props.shape` if it
-exactly matches the text "round" or "square".
-
-You can do more than this with filters: You can string together the dozens of
-available filters for more powerful combinations, and by using JavaScript
-script tags (covered in Part 3) you can easily author your own. The full
-[Templating Reference](/docs/templating-reference.html) has examples of all
-filters available.
-
-### Template tags
-
-In addition to filters, the Modulo templating language also support powerful
-"template tags", which allow for more complicated custom behavior. This
-includes the "if" template-tag, which allows for conditional rendering (e.g.
-"only show the submit button if a form is filled correctly"), and the "for"
-template-tag, which allows for HTML to be repeated for each item of some given
-data (e.g. "every blog post get's it's own `<li>` element"). The full
-[Templating Reference](/docs/templating-reference.html) has examples of the
-different template tags available.
 
 3\. Build
 
@@ -522,50 +275,56 @@ components.
 For example, see below for a complete page showing including a bundle in a
 hypothetical existing PHP project:
 
-### Part 2: Summary
 
-In this tutorial, we learned how to specify props as attributes to use and
-configure other people's components and how to define the _Props_ CPart which
-allows our components to be configured via attributes when used. We learned how
-to use Modulo's templating language to include variables and format values
-using filters, and finally wrapped up with trying Modulo's self-building
-feature.
+### Adding component "slots"
 
-#### Key terms
+-----------------
 
-* **Props** \- A CPart used to specify attributes, that the user of a component
-  can use to configure that Component
-* **Template variable** and **template filter** \- Modulo's Templating language
-  can include template variables (e.g. `{{ props.name }}`) mixed in with the
-  HTML, and possibly modified or reformatted by attaching template filters
-  (e.g. `{{ props.name|upper }}`)
-* **Library** \- Allows grouping of Components into library files that can be
-  "siloed" under a certain component namespace or configuration.
-* **namespace** \- The prefix that replaces the default "x" and goes before the
-  name of a component to form the complete component name, e.g. namespace
-  `maps` joins with `<Component name="India">` to form a `<maps-India>`
-  component.
-* **build** \- Combining all your JS and CSS together into a single file that
-  loads faster, and pre-render the HTML so there's no flicker.
-* **hash** \- These unique IDs identify each JS and CSS file that is generated
-  by Modulo.
 
-#### Next step
+> **The origin of slots** Slots are a feature of the "shadow DOM", a new-ish
+> feature of web browsers. Modulo replicates the same behavior of these
+> "shadow" slots, making slots even easier to use without JavaScript.
 
-At this point, you've learned enough to be dangerous! If you intend to mostly
-use Modulo as a template developer, refactoring HTML into template-based web
-components, then you are all ready to get going. Feel free to try using Modulo
-to refactor your HTML, and be sure to test on all target browsers (Modulo is
-still under development, after all), and then finally use the self-packing
-feature to include HTML/CSS/JS that loads quickly. To improve your template
-development skills, you might want to skip learning about Script CParts (Part
-3), and instead read deeper on the capabilities of the [Modulo templating
-language](/docs/templating.html), which you can use to build more complicated
-re-usable HTML.
+As we explored in the last section, _components_ are "define once, re-use many
+times" bits of code. Often, it's useful for a component to "wrap around" other
+HTML, or contain other HTML. For example, a stylized button component might
+wrap around text, or a stylish "modal dialog" component would wrap around
+paragraphs and other arbitrary HTML content. You can thus imagine the button or
+modal in these examples as having "empty spots" or _slots_ where this content
+would go. That is to say, the component is a sort of "empty picture frame", and
+the web developer using the component would be able to "slide content" into the
+frame's empty slot.
 
-However, if you are at least a little familiar with JavaScript and/or
-React-style SPA frameworks, and want to learn how to make more complex,
-interactive applications using State and Script, then get going with [Part 3:
-State, Directives, and Scripting](/docs/tutorial_part3.html)
+_Slots_ allow there to be "empty spots" in your HTML that proceed to get filled
+by arbitrary content supplied when your component is used. Adding a slot is as
+simple as including a `<slot></slot>` HTML element in your component's
+_Template_ definition.
 
-[Part 3: State, Directives, and Scripting »](/tutorial/part3.html)
+Here's an example that "wraps" a slot inside a div with a CSS class of
+"picture-frame":
+
+```html
+<div class="picture-frame">
+    <slot></slot>
+</div>
+```
+
+To fill up a _slot_ with HTML content, add the content between the opening and
+closing tags of your HTML element. Here's an example that might go with the
+above example:
+
+```html
+<x-PictureFrame>
+    <p>My cat:</p>
+    <img src="./cat.jpg" />
+</x-PictureFrame>
+```
+
+##### Try it now
+
+1.  Resume editing the HTML file you were working on in the previous "TRY IT
+NOW" section.
+2.  Time to add a slot! Let's make our "HelloWorld" component be ready to have
+a customized greeting. Edit your embedded component to look like this:
+4.  Now, let's fill the slot! Edit your usage to include text or even other
+HTML between your `x-HelloWorld` opening and closing tags:

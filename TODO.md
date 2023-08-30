@@ -4,10 +4,10 @@ Final list
 
 - (DONE) Fix / Replace World Map Demo
 - (DONE) Tutorial 1
-- Tutorial 2
+- (INP) Tutorial 2
 - Tutorial 3
-- Finish news article of website launch
-- Table of Contents - update keywords descriptions, tutorial name
+- (DONE) Finish news article of website launch
+- (DONE) Table of Contents - update keywords descriptions, tutorial name
 
 
 Nice to haves

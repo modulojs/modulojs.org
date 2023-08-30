@@ -76,9 +76,15 @@
                 const e = document.createElement('x-DemoEditor');
                 e.setAttribute('value', valueAttr);
                 e.setAttribute('class', element.getAttribute('class')); // copy class attr
+                // TODO: Hack, make this search through the examples data structure to generate auto-include
                 if (valueAttr.includes('<x-ExampleBtn')) {
-                    // auto include button
                     e.setAttribute('includes', "/static/demos/usedby/ExampleBtn.html");
+                }
+                if (valueAttr.includes('<x-MemoryGame')) {
+                    e.setAttribute('includes', "/static/demos/eg/MemoryGame.html");
+                }
+                if (valueAttr.includes('<x-HelloCount')) {
+                    e.setAttribute('includes', "/static/demos/eg/HelloCount.html");
                 }
                 element.replaceWith(e);
                 setTimeout(() => { // messy hack to force it to run + rerender

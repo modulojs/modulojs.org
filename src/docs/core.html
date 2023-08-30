@@ -258,7 +258,7 @@ variables are discarded.
     modulo.config.domloader.topLevelTags.push("library");
     modulo.config.domloader.topLevelTags.push("component");
     var myVar = "stuff"; // Note: not global
-/script
+/script>
 ```
 
 
@@ -271,7 +271,7 @@ HTML Templates:
 ```
 <script Configuration -src="https://unpkg.com/snarkdown">
     modulo.register("templateFilter", snarkdown);
-/script
+/script>
 <Component name="HelloWorld">
     <Template>
         <textarea [state.bind] name="text"></textarea>
@@ -413,6 +413,6 @@ component libraries:
 <script Modulo
     src="//unpkg.com/mdu.js"
     -src="/static/"
->/script
+>/script>
 ```
 

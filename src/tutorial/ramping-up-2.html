@@ -1,0 +1,541 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+tutorial: Part 2
+---
+
+
+In Part 2 of this tutorial, we'll explore three more features: the State CPart,
+Binding State Data, and finally Template Filters.
+
+
+# State
+
+So far, our components have been static and unchanging. They can't do a lot.
+They might be useful for refactoring HTML into more D.R.Y., reusable components,
+but not much more than that. They can't validate form data, use APIs, or form
+complete applications. In fact, they can't have any sort of _interaction_
+whatsoever, or any _dynamic_ or changing content.
+
+## Examining a game's usage of State
+
+Let's put on our "Holmes-style" detective hats and get out our detective
+magnifying glasses, we're about to go sleuthing! Examine the usage of this
+`<x-MemoryGame>` component, written with Modulo as well and demoed on the
+homepage:
+
+```modulo_demo
+<Template>
+
+    <h3>Memory game time!</h3>
+
+    <hr />
+    <x-MemoryGame></x-MemoryGame>
+    <hr />
+
+</Template>
+```
+
+
+This demo component is doing much more than what we have covered in the
+tutorial so far. It is changing, or _mutating_ based on user interaction.  This
+is no longer a simple, static component, but a _dynamic_ component.
+
+We can deduce two things about this memory game component. Deduction
+One: It used a _State_ CPart. We know that it used a _State_ CPart because it
+changes or mutates. Without a _State_ CPart, a component cannot "change state",
+or mutate or have dynamic content, and instead will be rendered the same way
+every time (that is, assuming it has the same _Props_). In other words, if a
+component needs to have dynamic content or change over time, then a _State_
+CPart is necessary to store this dynamic content.
+
+Now on to Deduction Two: It used a _Script_ CPart. Script CParts allow for
+complicated interactions and new behavior to be developed. Unfortunately,
+anything as complicated as this game logic requires a background in JavaScript
+to accomplish, meaning we will not cover the behavior in this tutorial.
+However, if you are familiar with JavaScript, feel free to examine the [demo
+source code on the examples page](/examples/) to see how it works yourself!
+
+
+## Examining a private counter's usage of State
+
+State allows each component instance to store data. Each component instance has
+a separate state from every other instance. Instead of using the complex
+`x-MemoryGame` example from before, examine the behavior of the following
+`x-HelloCount` counting buttons, which increment whenever clicked:
+
+
+
+```modulo_demo
+<Template>
+
+    <h3>Counting time!</h3>
+
+    <hr />
+    <x-HelloCount></x-HelloCount>
+    <hr />
+    <x-HelloCount></x-HelloCount>
+    <hr />
+    <x-HelloCount></x-HelloCount>
+    <hr />
+
+</Template>
+```
+
+
+Once again, we can determine that state is being used, as the text on the
+button changes when that button is clicked. Furthermore, this demonstrates how
+state is not shared: Each button is a totally separate instance that keeps
+track of it's own separate number.
+
+So far, in our sleuthing, we've accumulated three "CPart facts": Two "_State_
+facts" and one "_Script_ fact":
+
+1. **_State Fact:_ Used to make components change** - A *State* CPart is needed if
+our component is mutable, or has dynamic, changing data or behavior
+2. **_State Fact:_ Private** - Each *State* is private to each component instance
+(that is, they keep individual and separate copies of their state data)
+3. **_Script Fact:_ Used for complex behavior** - A *Script* CPart is needed to add complex
+custom behavior (that is, behavior beyond the core Modulo behavior coded in
+custom JavaScript, and also beyond the scope of this *Ramping Up* tutorial)
+
+
+Let's "peel back the layers" and examine out how these "stateful" or dynamic
+components were written.
+
+
+## State Variables
+
+> **What are variables?** If you are new to coding, you can think of the
+> concept of *variables* as being like "buckets for data", or "blanks that can
+> be filled in". They allow us to "give a name" to refer to data, allowing for
+> more generic code and templates to be written. That is, the same code can
+> have different results if the variables change.
+
+Before we can modify data or content, we must first learn how to first
+create *State* and *State variables*, which is what we'll learn now.
+To add one or more *State variables* to our component, we must define a
+_State_ CPart. _State_ CParts are defined much like _Props_, except that
+instead of just listing the attribute names, initial values must be provided as
+defaults. A _State_ CPart might look like this:
+
+    <State
+        count="1"
+        color="blue"
+    ></State>
+
+Here we are defining two _state variables_: `count`, which we initialize to
+equal `"1"`, and `color`, which we initialize to equal `blue`. We can then use
+the state variables in our _Template_, in a similar way to how we did with
+_Props_:
+
+    <Template>
+        <p style="color: {{ state.color }}">
+            You have {{ state.count }} bananas.
+        </p>
+    </Template>
+
+##### Try it now
+
+1.  Practice modifying the **State** CPart (`<State>`) below and re-running to
+see how that affects the output.
+
+2.  Practice incorporating these CParts into your own components on a real page
+by copying the code here and pasting it within your component definition (that
+is, the one that you created in the _Part 1_ of this tutorial)
+
+
+```modulo_demo
+<State
+    name="Nonsense"
+    verb="toot"
+    noun="kazoo"
+    count="one hundred"
+    animal="duck"
+></State>
+
+<Template>
+<p>A Very Silly Story:</p><pre>
+Professor {{ state.name }}
+who had over
+{{ state.count }} degrees in
+{{ state.noun }}-{{ state.verb }}ing from
+{{ state.name }} University,
+travelled to
+{{ state.name }} City,
+a magical land
+filled with talking
+{{ state.animal }}s, in order
+to teach {{ state.count }}
+{{ state.animal }}s how
+to {{ state.verb }} a {{ state.noun }}.
+</pre>
+</Template>
+
+<Style>
+    :host {
+        font-size: 0.8rem;
+    }
+</Style>
+```
+
+------
+
+# State Binding
+
+So far, we can manually change state in the source code, but our app is still
+not interactive, since the actual users (that is, non-coders) cannot change the
+state.  This is where "binding" comes into play, where user input is "bound" to
+state, such that users of your app  can also modify state variables while using
+your app.
+
+To "bind", we'll need to use a _directive_. A _directive_ is a type of HTML
+attribute. You can recognize _directive_ by spotting certain special characters
+in the attribute name. For example, `<input [state.bind] />` is an `input` HTML
+tag with a `[state.bind]` directive. Directives are useful for a variety of
+tasks, ranging connecting CParts to each other, to more complicated
+modifications to DOM elements. For now, we'll only care about one important
+directive: _state.bind_.
+
+## The [state.bind] directive
+
+> **State and predictability** The purpose of _State_ is to separate out
+> everything that changes about a component into it's own isolated data
+> structure. It should be the case that for a well-written component, if
+> anything changes visually, that "visual" change should always start with
+> changing state. There should never be a "mismatch", or a way for visual
+> changes to occur without state changes. If such a thing were possible, it
+> would imply a component that is non-deterministic, or renders unpredictably.
+> In other words, given a particular state (and props), a component should be
+> predictable or deterministic in that it renders the same way every time.
+
+State comes with a directive that helps "bind" it to form data. What does this
+mean? You can attach a `[state.bind]` directive to any `<input>`, and the
+_State_ CPart will "sync up" the input with the state after every keystroke.
+The binding is "two-way", or it goes in both directions: The input gets the
+initial state value, and if the state ever changes, the input will be updated
+to reflect that, and if the input ever changes, the state gets updated.
+
+It's best practice to bind all of your form inputs that are in components to
+state variables. This is because in order to get the benefits of separating out
+state, _all_ visual changes, including something as simple as typing a single
+character in an input, should be reflected in state changes.
+
+To bind an input to state, use something like the following:
+
+
+    <Template>
+        <input [state.bind] name="subject" />
+    </Template>
+    <State
+        subject="Testing message..."
+    ></State>
+
+
+##### Try it now
+
+1.  Try modifying the "subject" input box in the preview below. Do you see how
+it "quickly reacts" or re-renders the subject text as you type? This is the
+power of "binding" inputs to state.
+
+```modulo_demo
+<Template>
+    <p>SUBJECT: {{ state.subject }}</p>
+    <input [state.bind] name="subject" />
+</Template>
+<State
+    subject="Testing message..."
+></State>
+```
+
+-----
+
+
+## Multiple binds
+
+
+State allows for multiple inputs to be bound in the same form.  It's important
+that you always include a "name" attribute when binding. This should contain
+the name of the _State_ variable to be kept in sync with that input.
+
+State also allows binding of different inputs for different data types. For
+example, you can use `type="color"` for a color picker, or `type="range"` for a
+range slider. For the full range of input types, consider [MDN's "The HTML5
+input types" Guide in their *Learn Web Development*
+series](https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types)
+
+
+    <Template>
+        <input [state.bind] name="subject" />
+        <textarea [state.bind] name="body"></textarea>
+        <input [state.bind] name="accent" type="color" />
+    </Template>
+    <State
+        subject="Testing message..."
+        body="Welcome to my blog"
+        accent="#ff3300"
+    ></State>
+
+
+##### Try it now
+
+1.  Examine the below code. See how it uses different types for different
+inputs for a "reactive" font selector / customizer?
+
+```modulo_demo
+<Template>
+    <input [state.bind] name="text" />
+    <input [state.bind] name="color" type="color" />
+    <input [state.bind] name="size"
+            type="range" min="12" max="28" step="2" />
+    <hr />
+    <h5 style="
+            font-size: {{ state.size }}px;
+            color: {{ state.color }};
+        ">
+        {{ state.text }}
+    </h5>
+</Template>
+<State
+    size="24"
+    color="#333030"
+    text="Format This Message!"
+></State>
+```
+
+
+2.  Now, examine the demo below. This demo takes the lessons learned in the
+previous two demos and combines them into a silly story generator. Do you see
+how the 5 different form fields are each bound to state, so that when they are
+changed, it "reacts" and re-renders the story at once?
+
+
+```modulo_demo
+<Template>
+<label>Name: <input [state.bind] name="name" /></label>
+<label>Verb: <input [state.bind] name="verb" /></label>
+<label>Noun: <input [state.bind] name="noun" /></label>
+<label>Count: <input [state.bind] name="count" /></label>
+<label>Animal: <input [state.bind] name="animal" /></label>
+<p>A Very Silly Story:</p><pre>
+Professor {{ state.name }}
+who had over
+{{ state.count }} degrees in
+{{ state.noun }}-{{ state.verb }}ing from
+{{ state.name }} University,
+travelled to
+{{ state.name }} City,
+a magical land
+filled with talking
+{{ state.animal }}s, in order
+to teach {{ state.count }}
+{{ state.animal }}s how
+to {{ state.verb }} a {{ state.noun }}.
+</pre>
+</Template>
+
+<State
+    name="Nonsense"
+    verb="toot"
+    noun="kazoo"
+    count="one hundred"
+    animal="duck"
+></State>
+
+<Style>
+    :host {
+        font-size: 0.8rem;
+    }
+    input {
+        width: 50%;
+        border: none;
+    }
+    label {
+        display: block;
+        border: 2px solid gray;
+        padding: 2px;
+        margin: 2px;
+    }
+</Style>
+```
+
+
+3. Practice modifying the demo to add a new variables and input.
+
+4. Extra: Rewrite the demo to feature a silly story of your own!
+
+
+##### Comprehension Questions
+
+
+*Background:* Earlier jQuery-style JS frameworks were more concerned with
+manipulating the DOM directly. Now, the modern approach is to combine
+templating and/or DOM building tools (e.g. JSX, virtual DOM) with "state
+management" (e.g. Redux, useState).  Modulo closely follows this modern
+approach, where the "moving parts" of the application are put into state, and
+then by changing state, the component re-displays itself, showing the new data.
+
+* **Why have state?** What benefits does it have? Why not just modify DOM
+  directly whenever you want to using JavaScript?
+
+* **Why keep State separate for each individual component?** Why is state
+  private, instead of shared across all components?
+
+* **Why use State binding?** Why do we "bind" state to inputs? Why not use
+  JavaScript to get the value?
+
+*Answer:* This is due to perceived flaws with the original approach of direct
+DOM manipulation: Pretty soon as an app grows, you get a big tangled mess of
+different code reaching in different spots. Frontend frameworks clearly needed
+an "MVC Model"-like structure to "keep stuff separate".
+
+This "detangles" the spaghetti mess of DOM manipulation: Instead of one button
+inserting stuff over here, and one input reaching in and sending data over
+there, the "state" creates a single "choke-point" that keeps data "flowing" in
+one direction. No matter what you want changed, you do one thing: _Change state
+and rerender_!
+
+This also allows for quickly developing "reactive" forms. Furthermore, using
+Modulo in particular, it allows for declarative programming of reactive forms
+without use of JavaScript.
+
+If you are still scratching your head over the use of `[state.bind]` but are
+familiar with vanilla JS, it's all about reducing the need to "manually reach"
+into the DOM. It simplifies code like this `var inputData =
+document.getElementsByName('myinput')[0].value` (or the similar
+`$('[name=myinput]').val()` in jQuery), with more readable code like
+`state.myinput`, and similarly untangles code for validation, API requests,
+etc.
+
+
+------
+
+
+
+# Template Filters
+
+> **Built-in Filters and Custom Filters** - Modulo comes with many filters
+> pre-installed: Read [Templating Reference - Built-In
+> Filters](/docs/templating-reference.html#builtinfilters) for examples of all
+> filters available. Utilizing JavaScript, you can also define custom filters.
+> Read [Templating - Filters](/docs/templating.html#filters) for more
+> information.
+
+The Modulo templating language has two core features: _filters_ (for formatting
+values), and _template-tags_ (for control-flow). We will learn the first of
+these now.
+
+## Template Filters
+
+Template _filters_ "format" or otherwise transform template variables. The
+template filter syntax consists of taking a template variable and adding a
+vertical bar followed the name of a filter (e.g. `varName|filterName`). The
+following example will transform the text contained in the `props.name`
+template variable to make it all uppercase:
+
+    Hello {{ props.name|upper }}
+
+Some filters can also take extra modifiers or options. This is called the
+template filter _argument_. Do you recall how our previous `x-ExampleBtn`
+component only supported either "round" or "square" as CSS classes? In this
+next snippet, see how the `|allow` template filter ensures that only "round" or
+"square" are permitted:
+
+
+    <button class="my-btn my-btn__{{ props.shape|allow:"round,square" }}">
+        (... snip ...)
+    </button>
+
+
+Note how the argument is separated from the filter with a colon: The general
+syntax is `varName|filterName:"argument"`. Thus, the `|allow:"round,square"`
+filter instructs Modulo to _only_ output the property of `props.shape` if it
+exactly matches the text "round" or "square".
+
+
+##### Try It Now
+
+```modulo_demo
+<Template>
+
+<div>
+    <label>Username:
+        <input [state.bind] name="username" /></label>
+    <label>Color ("green" or "blue"):
+        <input [state.bind] name="color" /></label>
+    <label>Opacity: <input [state.bind]
+        name="opacity"
+        type="number" min="0" max="1" step="0.1" /></label>
+
+    <h5 style="
+            opacity: {{ state.opacity }};
+            color: {{ state.color|allow:'green,blue'|default:'red' }};
+        ">
+        {{ state.username|lower }}
+    </h5>
+</div>
+
+</Template>
+
+<State
+    opacity="0.5"
+    color="blue"
+    username="Testing_Username"
+></State>
+```
+
+1.  Try modifying the "Username" input box in the preview above. Do you see how
+it "quickly reacts" or re-renders the username text in lower-case as you type?
+2.  Try also adjusting the "Opacity" input to see how it updates the
+transparency of the text, and the "Color" input, which only supports "blue" or
+"green" (anything else turns red).
+3.  Examine the code in the _Template_ CPart. Examine each input, and how it
+uses the `[state.bind]` directive to keep it in-sync with state. The
+`name="username"`, `name="color"`, and `name="opacity"` attributes are what the
+State CPart uses to figure out which state variable should be "linked".
+4.  Now, practice the link in "the other way": That is, see how _State_
+populates the inputs' values. You can do this by changing the initial values of
+_State_ and then re-running the program. See how by changing the initial values
+of _State_ it will also update the initial values of the linked inputs?
+
+
+
+Clarification: The other attributes, (e.g. `name`, along with `type`, `max`,
+`min`, and `step`), are _not_ Modulo directives, but are instead plain HTML
+attributes. The State CPart reuses `name`, but will ignore the others.
+
+**Further practice:** Practice incorporating these CParts into your own
+components on a real page by copying the code here and pasting it within your
+component definition (that is, the one that you created in the _Part 1_ of this
+tutorial)
+
+----
+
+
+### Part 2: Summary
+
+In this section, we learned how to know when to use Modulo's State feature
+(when there is changing data or appearances), and how to use it. We learned how
+to use `[state.bind]` directive to an input.  We learned how to use Modulo's
+templating language to include variables and format values using filters.
+
+#### Key terms
+
+* **State** \- A CPart used to include changing data, which is used to render
+  the HTML of the component
+* **Directive** \- A special type of HTML attribute that "hooks in"
+  functionality to otherwise plain HTML elements. One built-in directive
+  includes:
+    * `[state.bind]` \- two-way binds inputs to state variables, so modifying
+      the input modifies the variable, and vice-versa
+* **Template variable** and **template filter** \- Modulo's Templating language
+  can include template variables (e.g. `{{ props.name }}`) mixed in with the
+  HTML, and possibly modified or reformatted by attaching template filters
+  (e.g. `{{ props.name|upper }}`)
+
+#### Next step
+
+At this point, you've learned enough to be dangerous! In the next step, you'll
+learn more advanced features: How to add static or API data, how to assemble
+more complicated data as "data props", and finally a tiny peak into scripting,
+for those curious about JavaScript.
+
+[Part 3: Template Tags, StaticData, Data Props, and a peak into JavaScript »](/tutorial/ramping-up-3.html)

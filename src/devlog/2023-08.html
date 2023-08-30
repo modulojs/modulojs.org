@@ -1,19 +1,188 @@
 <!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
 title: New Website
-devlog: 2023-05
+devlog: 2023-08
 ---
+
+
+I'm happy to announce several huge updates for the Modulo project, making the
+Modulo project far more welcoming to newcomers! I created a brand new starter
+template and project structure based on the most useful patterns I've
+developed while using Modulo over the last few months in production. I used then
+used that new starter template to start a brand new website for the Modulo
+project itself, so that [ModuloJS.org](https://modulojs.org/) itself has a
+clear and clean codebase. Read on for specifics about the exciting new stuff
+that's I've released.
 
 
 ## New Starter Templates
 
-TODO
+One main focus over the last few months is collecting the wisdom and techniques
+I've accumulated into a collection of high quality starter templates. These
+contain all the features that most people want for a large variety of websites:
+Multiple pages, a contact form example, a blog example, and a multi-user GUI
+CMS to edit the blog. This is now the default when you do `npm install modulo`.
+I also started on a set of "Quick Pages" ZIP files that can be downloaded that
+don't need `npm` installed at all, but instead are designed to function entirely
+over the `file://` protocol.
+
+### Decap GUI CMS
+
+![Screenshot of Decap CMS GUI](https://modulojs.org/static/images/example-projects/jamstack-cms.png)
+
+Earlier this year, [Netlify CMS became Decap
+CMS](https://www.netlify.com/blog/netlify-cms-to-become-decap-cms/), no doubt a
+some sort of pun on it being "headless". Whatever you call it, it's a fantastic
+JavaScript based Content Management System, allowing for people used to
+WordPress or other graphical CMS's to jump right in and be productive. Decap
+allows for local editing with a GUI, which can be good in some team situations
+for content developers and designers to maintain Markdown and data files
+directly via a GUI. In the new `create-modulo` JAMStack template, Decap will be
+installed by default.
+
+More importantly, Decap can be configured to use GitHub or another service as a
+3rd party authenticator, which allows for online editing of a Git repo from a
+user-friendly GUI. Given that Modulo is intended to satisfy each team member
+and help teams come together, Decap is a natural choice since it allows the
+more experienced developers to continue editing Markdown, JSON, and code files
+tracked via git using the tools they prefer, while non-technical team members
+can be make editing and git commits editing Markdown and media files via the
+GUI, which will merge seamlessly with the normal git workflow. Everybody gets
+to use the tools that are best for their jobs, while keeping everything in one
+repo, and avoiding *any* in-house DB usage or app server usage (still "100%
+staticly generated frontend").
+
+### "Quick Pages" Templates
+
+*Quick Pages* templates are distributed from the EXAMPLES page and don't need
+`npm` installed at all, but instead are designed to function entirely over the
+`file://` protocol. This means that they cna be edited with just the default
+browser, file browser, text editor, etc, even on platforms that are notoriously
+difficult for development (e.g. Windows), and don't need a file server or any
+terminal usage.
+
+They are designed especially for beginner HTML and CSS developers wanting to
+just "quickly" put together a website with some degree of control over the end
+result. By downloading this template, a user can actually assemble a simple
+site which can be uploaded via drag and drop to a host such as Netlify that
+will prebuild it before sending. Since these files will be pre-built just like
+anything else, in the end, website users will be none the wiser that the site
+was developed over the `file://` protocol!
+
+
+### Markdown-HTML
+
+*Markdown-HTML* is a sort of miniature "dual file format" that is as portable
+as HTML and as easy-to-edit as Markdown, by being both simultaneously. Read on
+for an explanation and example.
+
+While developing other websites using Modulo, I developed a handy technique to
+make a file which is simultaneously both a stand-alone HTML page and a valid
+Markdown document. They function as an HTML file, since these Markdown-HTML
+files can be "double clicked on" and opened with the browser's `file://`
+protocol, just like any other HTML file saved with the "SAVE" feature on this
+site (discussed in the next section). 
+
+When opened in the browser, the user sees only the final rendered page (not the
+markdown source), complete with the markdown converted into HTML, and any
+templating, CSS, custom code, etc applied. When opened with a text editor,
+these files resemble Markdown files, as long as you ignore the first line. This
+means that true novice coders, who are only comfortable using text editors but
+not comfortable with HTML or CSS, can edit these files as long as they don't
+touch the first line. 
+
+Furthermore, graphical Markdown editors (notably Decap), can be configured to
+accept a custom "frontmatter" deliminator. That means if you configure them to
+accept that long HTML string as the frontmatter deliminator, it will hide it
+from the user and editing the file will be like any other markdown file. This
+allows for properly configured GUI Markdown editors to open up and
+transparently edit these Markdown-HTML files as well, while enforcing that the
+"magic" words at the top that make it an HTML file as well remain.
+
+For an example of such a file, [see the source code for this very page
+itself](https://github.com/modulojs/modulojs.org/blob/main/src/devlog/2023-08.html)
+
+I've also excerpted the beginning below. It is displayed "word-wrapping" so you
+can see the first line in it's entirity. As long as you don't edit the first
+line, the file will act like HTML but be editable like Markdown!
+
+#### The first line
+
+```
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/">/script><cms-MarkdownPage><script type=md>---
+```
+
+#### The rest of the file
+
+```
+title: New Website
+devlog: 2023-08
+---
+
+I'm happy to announce a huge update, making the Modulo website and project far
+more welcoming to newcomers! I created a brand new starter template and project
+structure based on the most useful patterns I've discovered while using Modulo
+over the last few months in production, and then used that new starter template
+to start a brand new website for the Modulo project itself, so that
+[ModuloJS.org](https://modulojs.org/) itself has a  clear and clean codebase.
+
+## New Starter Templates
+
+[...]
+```
 
 
 
 ## New Website
 
-TODO
+Using this new template, I developed  a brand new website for Modulo with much
+improved documentation and coding standards.
 
-## New Website Launch
+### Save feature
 
-TODO
+Now, each demo has a "SAVE" button that lets you save as a stand-alone HTML
+file whatever example you were working on. These HTML files act like "exe's":
+They can be shared with others and will open by double clicking. They are also
+very simple and short in terms of code, allowing for you to continue working on
+the component from the comforts of your text editor. This short boilerplate is
+thanks to Modulo's focus on "ramp up", which brings us to the next section.
+
+
+### New, improved tutorial: Ramping Up with Modulo
+
+The tutorial has been largely rewritten around the concept of "ramping up" from
+plain HTML and CSS development. This will make it even more broadly accessible,
+and be a useful tutorial for experienced developers and serious novice learners
+alike. Check it out here: [Ramping Up with Modulo Tutorial - Part
+1](/tutorial/ramping-up-1.html)
+
+### Code editor written in Modulo
+
+The new code editor that replaces CodeMirror is now written in Modulo! This
+means the Modulo site has even fewer dependencies: It now only uses third party
+JavaScript for syntax highlighting and markdown parsing, and Pupeteer for the
+build step.
+
+
+### Better organized docs
+
+While keeping this mostly the same, I combined the START and ABOUT pages into
+one page that gives starting instructions and a project over view at once. This
+allowed me to put a big old "EXAMPLES" link on the navbar, making it easy to
+find fun examples to try. I also put some effort into fully rewriting the CSS
+for the docs so they work well on Mobile and wide screen types, and no longer have
+horizontal scroll issues or editors not flowing correctly.
+
+### Markdown-driven documentation
+
+Based on the new "Markdown-HTML dual file format" I describe above, I converted
+all of the documentation on this site to use Markdown, frontmatter, fenced code
+blocks, etc, instead of the hodge-podge of hard-to-maintain HTML and Modulo
+tags.
+
+### Animated logo
+
+Last but not least, the obvious, main reason I updated the site is to add the
+logo that animates on the home page when you scroll. Priorities!
+
+
+

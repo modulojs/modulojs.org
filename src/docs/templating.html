@@ -181,15 +181,25 @@ Note how `athlete` declares a new variable, which can be reused in `{{ athlete.n
 
 You can modify variables for display by using filters.
 
-Filters look like this: `{{ name|lower }}`. This displays the value of the `{{ name }}` variable after being filtered through the lower filter, which converts text to lowercase. Use a pipe (|) to apply a filter.
+Filters look like this: `{{ name|lower }}`. This displays the value of the `{{
+name }}` variable after being filtered through the lower filter, which converts
+text to lowercase. Use a pipe (|) to apply a filter.
 
-Filters can be "chained." The output of one filter is applied to the next. This chaining feature can be applied, like in `{{ state.color|allow:"red,blue"|default:"green" }}`, which is a way to conditionally allow for only certain strings to be in `state.color`, while providing a default if none were specified.
+Filters can be "chained." The output of one filter is applied to the next. This
+chaining feature can be applied to combine behavior of two or more filters. For
+example, using a filter chain like
+`{{ state.color|allow:"red,blue"|default:"green" }}` is a way to conditionally
+allow for only certain strings to be in `state.color`, while providing a
+default if none were specified.
 
-Some filters take arguments. A filter argument looks like this: `{{ state.bio|truncate:30 }}`. This will display the first 30 characters of the bio variable, possibly appending an ellipsis if its full length exceeds that.
+Some filters take arguments. A filter argument looks like this: `{{
+state.bio|truncate:30 }}`. This will display the first 30 characters of the bio
+variable, possibly appending an ellipsis if its full length exceeds that.
 
-Filter arguments that contain spaces must be quoted; for example, to join a list with commas and spaces you'd use `{{ state.list|join:", " }}`.
+Filter arguments that contain spaces must be quoted; for example, to join a
+list with commas and spaces you'd use `{{ state.list|join:", " }}`.
 
-Modulo's templating language provides several dozen built-in template filters.
+Modulo's templating language provides many built-in template filters.
 You can read all about them in the [built-in filter
 reference](/docs/templating-reference.html#filters).
 
