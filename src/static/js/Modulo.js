@@ -240,7 +240,7 @@ modulo.register('core', class ValueResolver {
         if (!/^[a-z]/i.test(key) || Modulo.INVALID_WORDS.has(key)) { // XXX global ref
             return JSON.parse(key); // Not a valid identifier, try JSON
         }
-        return modulo.registry.utils.get(ctxObj, key); // Drill down to value // XXX global modulo
+        return window.modulo.registry.utils.get(ctxObj, key); // Drill down
     }
 
     set(obj, keyPath, val) {
@@ -431,13 +431,10 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
 });
 
 modulo.register('util', function makeStore (modulo, def) {
-    const isLower = key => key[0].toLowerCase() === key[0];
-    const data = modulo.registry.utils.keyFilter(def, isLower);
-    return {
-        boundElements: {},
-        subscribers: [],
-        data: JSON.parse(JSON.stringify(data)),
-    };
+    const isLower = key => key[0].toLowerCase() === key[0]; // skip "-prefixed"
+    let data = modulo.registry.utils.keyFilter(def, isLower); // Get defaults
+    data = JSON.parse(JSON.stringify(data)); // Deep copy to ensure primitives
+    return { data, boundElements: {}, subscribers: [] };
 });
 
 modulo.register('processor', function mainRequire (modulo, conf, value) {
@@ -855,7 +852,7 @@ modulo.register('util', function get(obj, key) {
 });
 
 modulo.register('util', function set(obj, keyPath, val) {
-    return new window.modulo.registry.core.ValueResolver(modulo).set(obj, keyPath, val); // OLD TODO: Global modulo
+    return new window.modulo.registry.core.ValueResolver(window.modulo).set(obj, keyPath, val);
 });
 
 modulo.register('util', function getParentDefPath(modulo, def) {
@@ -1474,6 +1471,7 @@ modulo.register('cpart', class State {
         const store = this.conf.Store ? this.modulo.stores[this.conf.Store]
                 : this.modulo.registry.utils.makeStore(this.modulo, this.conf);
         store.subscribers.push(Object.assign(this, store));
+        this.types = { range: Number, number: Number, checkbox: (val, el) => el.checked };
         return store.data; // TODO: Possibly, push ALL sibling CParts with stateChangedCallback
     }
 
@@ -1522,15 +1520,17 @@ modulo.register('cpart', class State {
 
     propagate(name, val, originalEl = null) {
         const elems = (this.boundElements[name] || []).map(row => row[0]);
+        const typeConv = this.types[ originalEl ? originalEl.type : null ];
+        val = typeConv ? typeConv(val, originalEl) : val; // Apply conversion
         for (const el of this.subscribers.concat(elems)) {
             if (originalEl && el === originalEl) {
-                continue; // don't propagate to self
+                continue; // don't propagate to originalEl (avoid infinite loop)
             }
-            if (el.stateChangedCallback) {
+            if (el.stateChangedCallback) { // A callback was found, use instead
                 el.stateChangedCallback(name, val, originalEl);
-            } else if (el.type === 'checkbox') {
-                el.checked = !!val; // ensure is bool
-            } else {
+            } else if (el.type === 'checkbox') { // Check input use ".checkbox"
+                el.checked = !!val;
+            } else { // Normal inputs use ".value"
                 el.value = val;
             }
         }
@@ -1538,7 +1538,8 @@ modulo.register('cpart', class State {
 
     eventCleanupCallback() {
         for (const name of Object.keys(this.data)) {
-            this.modulo.assert(name in this._oldData, `There is no "state.${name}"`);
+            this.modulo.assert(!this.conf.AllowNew && name in this._oldData,
+                `State variable "${ name }" is undeclared (no "-allow-new")`);
             if (this.data[name] !== this._oldData[name]) {
                 this.propagate(name, this.data[name], this);
             }

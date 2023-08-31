@@ -10,7 +10,7 @@ modulo.config.modulosandbox = {
         // A little hack to ensure stays (mostly) sandboxed
         const originalRerender = modulo.registry.coreDefs.Component.prototype.rerender;
         modulo.registry.coreDefs.Component.prototype.rerender = function (...args) {
-            window.modulo = window.moduloSandbox;
+            window.modulo = window.sandboxModulo;
             originalRerender.apply(this, args);
             window.modulo = window.globalModulo; // Ensure restored
         };
@@ -151,15 +151,14 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         if (!window.globalModulo) {
             window.globalModulo = window.modulo;
         }
-        if (!window.moduloSandbox) {
-            window.moduloSandbox = this.getSandboxedModulo();
+        if (!window.sandboxModulo) {
+            window.sandboxModulo = this.getSandboxedModulo();
         }
         const ns = 'demo' + this.nextId();
 
         const fullText = this.getCodePrefix(ns) + this.getCodeContent(state.value) + this.getCodeSuffix(ns);
 
         this.element.cparts.state.data.demo = '';
-        window.modulo = window.moduloSandbox;
         /*
         window._infiniteCount = window._infiniteCount || 1;
         if (++window._infiniteCount > 5) {
@@ -167,9 +166,10 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             return;
         }
         */
-        window.moduloSandbox.loadString(fullText); // Load the string, and when finished, apply
-        window.moduloSandbox.preprocessAndDefine(() => {
-            window.modulo = window.moduloSandbox;
+        window.modulo = window.sandboxModulo;
+        window.sandboxModulo.loadString(fullText); // Load the string, and when finished, apply
+        window.sandboxModulo.preprocessAndDefine(() => {
+            window.modulo = window.sandboxModulo;
             this.element.cparts.state.propagate('demo', this.getDemoCode(ns));
             this.element.rerender();
             window.modulo = window.globalModulo; // Ensure restored
@@ -286,6 +286,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         // in prod) may skip inclusion of dev-related utilities, symbol names, etc.
         const sandboxWindow = {}; // Overriding window "sandboxes" modulo
         sandboxWindow.globalModulo = window.modulo; // add "trap door"
+        sandboxWindow.sandboxModulo = window.modulo; // add temporary trap door to prevent undefineds
         sandboxWindow.document = document; // Patch expected properties of window
         sandboxWindow.fetch = window.fetch.bind(window);
         sandboxWindow.URL = function fakeURL (a, b) {
@@ -297,6 +298,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         const moduloSourceCode = this.conf.Content + this.conf.SourceCodeSuffix;
         (new Function([ 'window' ], moduloSourceCode))(sandboxWindow); // Run Modulo
         this.sandboxWindow = sandboxWindow;
+        sandboxWindow.sandboxModulo = sandboxWindow.modulo; // Fix trap door
         return sandboxWindow.modulo; // Retrieve new Modulo
     }
 }

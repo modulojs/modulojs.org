@@ -5,9 +5,10 @@ Final list
 - (DONE) Fix / Replace World Map Demo
 - (DONE) Tutorial 1
 - (INP) Tutorial 2
-- Tutorial 3
+- (INP) Tutorial 3
 - (DONE) Finish news article of website launch
 - (DONE) Table of Contents - update keywords descriptions, tutorial name
+
 
 
 Nice to haves
@@ -19,30 +20,6 @@ Nice to haves
 Blocking
 ---------------------------
 
-- Tutorial
-    - TUTORIAL 1 - Ramping Up
-        - HTML & CSS prereq, no need for li
-        - How to start with a blank file and build from there
-        - Part 1: Getting Started - starting with a CDN, Components, Re-use,
-          and Slots
-        - Part 2: CParts - Props, Style, and Templating
-            - Show how to use "isolate" to only target what is immediately
-              rendered
-            - Introduce the concept of "template tags" and "template filters"
-            - Show use of "if" to have optional parts
-        - Part 3: Reactive Forms - Directives, Data Types, and Binding
-            - Show use of state
-    - TUTORIAL 2: Building Apps with Modulo
-        - libraries, building, etc, and also what is now the beginning
-            and end of Part3 - e.g. how to include JS / Script tag
-        - Try to finish just some parts for now?
-        - (?) Part 1: Data and Advanced Templating
-            - Show use of for loop
-            - Show use of StaticData
-        - (?) Part 2: Building, Quick Pages Templates, and Launching
-        - (?) Part 3: Libraries - Start a dev server, show 
-
-
 
 - Project Templates
     - Quick Pages
@@ -51,8 +28,6 @@ Blocking
           site.css (allows CSS variables)
     - All: Walk through each step again
 
-- Examples
-    - Replace or fix World Map example
 
 
 Low prio
@@ -88,3 +63,4 @@ YAML in progress:
         - {label: "Component Library", name: "-src", widget: "string"}
         - {label: "HTML Page Content", name: "body", widget: "code"}
 
+        groupby: (s, arg) => Array.from(new Set(s.map(i => i[arg]))).map(value => s.filter(i => i[arg] === value),
