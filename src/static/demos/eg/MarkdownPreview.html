@@ -1,3 +1,6 @@
+<!-- This component generates a "type-as-you-go" Markdown
+preview. It uses -src= as a quick way to bring in the
+needed NPM dependency from the unpkg CDN. -->
 <Template>
     <textarea [state.bind] name="text"></textarea>
     <div>{{ script.html|safe }}</div>

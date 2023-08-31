@@ -7,28 +7,32 @@
     <button @click:=script.setup click.payload=16>4x4</button>
     <button @click:=script.setup click.payload=36>6x6</button>
 {% else %}
-    <div class="board {% if state.cards.length > 16 %}
-        hard{% endif %}">
+    <div class="board
+        {% if state.cards.length > 16 %}hard{% endif %}">
     {# Loop through each card in the "deck" (state.cards) #}
     {% for card in state.cards %}
-        <div
-            @click:=script.flip
-            click.payload="{{ card.id }}"
-            class="card {% if card.id in state.revealed %}
-                flipped{% endif %}"
-            style="{% if state.win %}
-                {# The cascading effect uses ids as offsets #}
+        {# Use "key=" to speed up DOM reconciler #}
+        <div key="c{{ card.id }}"
+            class="card
+            {% if card.id in state.revealed %}
+                flipped
+            {% endif %}
+            "
+            style="
+            {% if state.win %}
                 animation: flipping 0.5s infinite alternate;
                 animation-delay: {{ card.id }}.{{ card.id }}s;
-            {% endif %}"
-            >
+            {% endif %}
+            "
+            @click:=script.flip
+            click.payload="{{ card.id }}">
             {% if card.id in state.revealed %}
                 {{ card.symbol }}
             {% endif %}
         </div>
     {% endfor %}
     </div>
-    <p style="{% if state.failed %}
+    <p style="{% if state.failedflip %}
                 color: red{% endif %}">
         {{ state.message }}</p>
 {% endif %}
@@ -39,8 +43,8 @@
     win:=false
     cards:=[]
     revealed:=[]
-    last:=null
-    failed:=null
+    lastflipped:=null
+    failedflip:=null
 ></State>
 
 <Script>
@@ -62,28 +66,28 @@ function setup(payload) {
 function failedFlipCallback() {
     // Remove both from revealed array & set to null
     state.revealed = state.revealed.filter(
-            id => id !== state.failed
-                    && id !== state.last);
-    state.failed = null;
-    state.last = null;
+            id => id !== state.failedflip
+                    && id !== state.lastflipped);
+    state.failedflip = null;
+    state.lastflipped = null;
     state.message = "";
     element.rerender();
 }
 
 function flip(id) {
-    if (state.failed !== null) {
+    if (state.failedflip !== null) {
         return;
     }
     id = Number(id);
     if (state.revealed.includes(id)) {
         return; // double click
-    } else if (state.last === null) {
-        state.last = id;
+    } else if (state.lastflipped === null) {
+        state.lastflipped = id;
         state.revealed.push(id);
     } else {
         state.revealed.push(id);
         const {symbol} = state.cards[id];
-        const lastCard = state.cards[state.last];
+        const lastCard = state.cards[state.lastflipped];
         if (symbol === lastCard.symbol) {
             // Successful match! Check for win.
             const {revealed, cards} = state;
@@ -93,10 +97,10 @@ function flip(id) {
             } else {
                 state.message = "Nice match!";
             }
-            state.last = null;
+            state.lastflipped = null;
         } else {
             state.message = "No match.";
-            state.failed = id;
+            state.failedflip = id;
             setTimeout(failedFlipCallback, 1000);
         }
     }

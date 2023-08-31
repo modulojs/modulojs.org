@@ -68,6 +68,86 @@ This is called a _data prop_ directive. You can identify a _data prop_
 directive (`:=`), by spotting an attribute name that is suffixed with a colon
 right before the equal sign, like this: `attributeName:=value`.
 
+## The many types of data you'll see
+
+Modulo uses the same data types as JavaScript and the JSON file format, which
+Modulo uses extensively. The remainder of this section will highlight the most
+useful types for new Modulo developers:
+
+### Strings & Numbers
+
+String is the default. If you don't use `:=` it will be a plain old string. That refers
+to a "string of characters", and is used for generic text.
+
+If you use the `:=` syntax followed by a number, like `:=10` or `:=32.4`, you
+create a value of the Number type.  This is useful for numeric data that you want to do
+calculations on.
+
+Examples of both are below:
+
+```
+<State
+    stringval="Hello world!"
+    another="
+        Strings can be more
+        than one line.
+    "
+    count:=1
+    debt:=-2
+    x:=912.3
+    y:=123.234
+></State>
+```
+
+### Array
+
+> **Iterables** - There are some types of data that are called "iterable". That
+> means you can "iterate" over them, or repeat code for them. A good rule of
+> thumb is if the data in question is "plural". Plural data is iterable. For
+> example, if you want to show a single profile picture, that's not plural. If
+> you want to show every profile picture (whether that is 0 or 100), that
+> matches a search result, that is "plural", and that is when we want to use an
+> iterable.
+
+Arrays are the most important type of "container type" in JavaScript, that is,
+a type that can contain other types. Next in the tutorial we'll cover how to
+use Arrays to duplicate template code across data, but for now let's start with
+the syntax. In this case, we'll make an *Array of Numbers* and an *Array of
+Strings*, called `dataset` and `cities` respectively:
+
+```
+<State
+    dataset:='[ 103, 32, 15, 100 ]'
+    cities:='[ "Berkeley", "Porto Alegre" ]'
+></State>
+```
+
+### Arrays of Objects
+
+When we access real-world data, whether those are blog articles in a publishing
+site, or a data items in a dashboard, they often "arrive formatted" as what's
+called a JSON array of objects.
+
+This is a much more complicated data format. We'll encounter it again in a
+moment, when we start using StaticData. For now, scan the following format
+containing some imaginary "traffic rating" about two train stations:
+
+```
+<State
+    stations:='[
+        {
+            "name": "Embarcadero Station - San Francisco",
+            "trafficRating": 1353
+        },
+        {
+            "name": "19th Street Station - Oakland",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+```
+
+
 
 ### Final notes on Data Props
 
@@ -75,12 +155,66 @@ right before the equal sign, like this: `attributeName:=value`.
    CPart. They are, however, related, in that the _Props_ CPart looks for both
    regular attributes and data props: You can in fact set any _Props_
    attributes with the `:=` syntax, for data other than Strings.
+-  There are a few more types as well: `null`, `true`, `false`, which are
+   simple types used to "flag" items, or set a property "on and off", or for
+   placeholder values
 -  _Data props_ support any JSON literal type. Technically, _data props_ values
    can have double quotes just like normal String-based attributes.  However,
    as a stylistic convention, you may omit the double quotes for any one-word
    value, and should use only single quotes for complex types, such as
    JSON-formatted Arrays or Objects. See below for stylistic examples of data
    props with different types:
+
+
+##### Try It Now
+
+1. Examine the code below, and it's output.
+
+```modulo_demo
+<Template>
+    Adding strings: {{ state.a|add:state.b }}<br />
+    Adding numbers: {{ state.d|add:state.e }}
+</Template>
+<State
+    a="10"
+    b="20"
+    d:=10
+    e:=20
+></State>
+```
+
+2. Numbers can actually "do math", as opposed to strings that you'd only
+combine end-to-end, but not "do math". For example, `5 + 5 = 10` in Number
+arithmetic, while `"5" + "5" = "55"` in string arithmetic. Knowing that, do you
+see how the code above shows the important difference between Numbers and
+Strings?
+
+3. Let's see how we can use filters to "poke" at an Array. Examine the next bit
+of code. Do you see how you can access individual items in an Array using the
+`|get` filter?
+
+```modulo_demo
+<Template>
+    {{ state.items|get:3 }}
+    <p>Items separated by a dash: {{ state.items|join:"-" }}</p>
+    <p>Items in JSON format: {{ state.items|json }}</p>
+</Template>
+<State
+    items:='[ "toothbrush", "umbrella", "my bag", "laptop", "charger" ]'
+></State>
+```
+
+##### Exploration Questions
+
+* **Why do you think `|get:3` produces "laptop"?** Answer: Modulo  starts
+  counting the "index" of Arrays at "index number 0". This is the same behavior
+  as JavaScript.
+
+* **What is the purpose of JSON format?** JSON is a standard file format that
+  Modulo can read in. Any (strictly) JSON formatted data structure can be
+  inserted in a Modulo dataProp, e.g. `dataprop:='{"Hello": "World"}'`
+
+-----------
 
 
 
@@ -121,7 +255,6 @@ For example, here are a few:
     {% endif %}
 
 
-
 ## The if-tag
 
 One of the most useful template tags you will use is the if tag, written like
@@ -137,8 +270,16 @@ See below for two examples of using the "if" tag:
     <hr />
     {% if props.link %}
         <a href="{{ props.link }}">Read more...</a>
+    {% else %}
+        <em>(No link provided)</em>
     {% endif %}
 
+
+Note that there are two other tags in the mix. These a related to the `if` tag,
+and will only show up after the `if` tag. The first is the `{% endif %}` tag.
+This is required, since it shows Modulo what you want the `if` tag to
+conditionally include. The second is the `{% else %}` tag. This is optional.
+You do not need to include this for all examples.
 
 
 ##### Try It Now
@@ -170,7 +311,15 @@ changes the if statement.
 creations.
 
 
+-----------
+
+
+
 # Bonus - Script
+
+Just to round out this tutorial, let's peak at the last, most important
+Component Part: Script. If you are a total newbie when it comes to JavaScript,
+this section might make less sense - feel free to skip over.
 
 While Modulo is designed to be useful even without JavaScript, sometimes you
 just need access to that extra power of custom JavaScript code. Using
@@ -302,7 +451,7 @@ button:
     <button @click:="script.doCountup">Hello {{ state.num }}</button>
 </Template>
 <State
-    count:=42
+    num:=42
 ></State>
 <Script>
     function doCountup() {
