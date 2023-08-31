@@ -7,6 +7,10 @@ In Part 3 of this tutorial, we'll start exploring code that permits individual
 components to store, modify, and link together data, allowing for complex
 behaviors. 
 
+This is a challenging section! If you are new to JavaScript, try to understand
+as much as you can of this part of the tutorial, but don't feel bad if some
+parts seem extra hard.
+
 We'll learn how to use Template Tags, to optionally include, or duplicate parts
 of our HTML templates for data or properties.  We'll learn how to use
 StaticData, that lets us import JSON or CSV file types, or APIs that use these
@@ -282,6 +286,42 @@ conditionally include. The second is the `{% else %}` tag. This is optional.
 You do not need to include this for all examples.
 
 
+
+## The for-tag
+
+The "for-tag" is for when we want to duplicate a bit of template over and over
+for a repetitive bit fo data. For example, if we want to template "for every
+article", or "for every pin in a world map", or "for every post in an article
+comment section". Each of these "for" statements refers to some plural thing
+that we want to have a similar style duplicated across, using the same HTML
+template for each item in that collection.
+
+For example, imagine showing a paragraph for every student in a class's roster:
+
+    {% for name in state.names %}
+        <p>Name on roster: {{ name }}</p>
+    {% endif %}
+
+
+Or, refer to the `stations:=` _State_ data example above, a for loop can also
+loop through other types of data, formatting it in a reasonable way:
+
+
+    {% for station in state.stations %}
+        <p>{{ station.name }} | TRAFFIC SCORE: {{ station.trafficRating }}</p>
+    {% endif %}
+
+
+In this example, the `{{ station.name }}` and `{{ station.trafficRating }}`
+refer to templating the individual values within the station object in the
+array of stations.
+
+Like the "if", for has an "endfor", which it uses to designate the portion of
+the temlpate it will repeat. Unlike "if", it can use the template it 0 times, 1
+time, or 2+ times (`if-tags` can use the template only 0 times or 1 time, but
+can never "duplicate" the template and use it 2+ times).
+
+
 ##### Try It Now
 
 1. Examine the code below. Do you understand how the `if` template-tag checks
@@ -309,6 +349,137 @@ changes the if statement.
 
 3. Try writing your own if-statements based on other state variables of your
 creations.
+
+
+##### Try It Now
+
+1. Examine the code below. Do you see how the `for` template-tag "duplicates"
+the inner template for every item in the array of items?
+
+
+```modulo_demo
+<Template>
+    <ol>
+    {% for item in state.items %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ol>
+</Template>
+<State
+    items:='[ "toothbrush", "umbrella", "my bag", "laptop", "charger" ]'
+></State>
+```
+
+
+2. Try adding `|reversed` filter to the `items`, so it becomes `{% for item in
+items|reversed %}`. What do you think this will do?
+
+
+
+-----------
+
+
+# StaticData
+
+_StaticData_ is a CPart used to import data from a JSON or CSV source, such as
+a file or API. Unlike _State_, it is for "static" or unchanging data. When
+building or deploying, it will be bundled together for speedy look-ups.
+
+What are JSON files? Here's an example:
+
+<https://www.gov.uk/bank-holidays.json>
+
+
+```js
+{"england-and-wales":{"division":"england-and-wales","events":[{"title":"New Year’s Day","date":"2018-01-01",....
+```
+Okay, that's hard to read! But if you look closely through it, you recognize
+that it contains information about holidays in the UK, as provided by the
+government of the UK. That could be useful in a calendar app, or many other
+situations. In Modulo, it would be read like this:
+
+    <StaticData
+        -src="https://www.gov.uk/bank-holidays.json"
+    ></StaticData>
+
+
+Combining that with the `|json:2` filter, we can display a formatted version of
+it this way:
+
+```modulo_demo
+<Template>
+    <pre>{{ staticdata|json:2 }}</pre>
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    pre {
+        height: 100px;
+        overflow: auto;
+    }
+</Style>
+```
+
+Okay, that's still hard to see, but it looks like "england-and-wales" is a
+_key_, as well as _events_ is a key. This means we can use `|get` to access
+just the events, which is what we care about:
+
+
+```modulo_demo
+<Template>
+    <pre>{{ staticdata|get:"england-and-wales.events"|json:2 }}</pre>
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    pre {
+        height: 100px;
+        overflow: auto;
+    }
+</Style>
+```
+
+With this information, we can combine it with the `for` template tag, to
+display all the holidays in a table in the next TRY IT NOW.
+
+##### Try It Now
+
+```modulo_demo
+<Template>
+    <h3>Title</h3><h3>Date</h3>
+    {% for event in staticdata|get:"england-and-wales.events" %}
+        <div>{{ event.title }}</div>
+        <div>{{ event.date }}</div>
+    {% endfor %}
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    :host {
+        height: 200px;
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    div {
+        font-size: 0.8rem;
+    }
+</Style>
+```
+
+
+
+1. Examine the code above. Do you understand how the `get` filter accesses the
+data we need, and then the `for` template-tag loops through that data showing
+it in a grid format (thanks to CSS `display: grid`)?
+
+2. Bonus challenge: Try visualizing other data sets you find.  Can you display
+a table or details of some data set or JSON-based API you find online? For
+example, try using GitHub's API:
+<https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api>
 
 
 -----------
