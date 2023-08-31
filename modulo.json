@@ -1,5 +1,5 @@
 {
-    "isCopyOnly": "^static$",
+    "isCopyOnly": "^(static|slides)$",
     "output": "build",
     "input": "src"
 }
