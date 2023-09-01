@@ -17,6 +17,32 @@ li.ginactive > a::before {
     content: '+ ';
 }
 
+
+li.gactive > a {
+    left: 19px;
+}
+
+
+li.section-active > a {
+    display: block;
+    position: relative;
+    border: none !important;
+}
+
+li.section-active > a::before {
+    content: '%';
+    position: absolute;
+    display: inline-block;
+    left: -19px;
+    top: 1px;
+    color: var(--color-fg-semidark);
+}
+
+/* Second level highlight */
+li.section-active li.section-active > a::before {
+    color: var(--color);
+}
+
 span.hint {
     margin-left: 10px;
     color: var(--color-fg-semi);

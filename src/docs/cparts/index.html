@@ -1,0 +1,46 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: CParts
+---
+
+# CParts
+
+
+> **Custom CParts?** Here we describe core CParts used by component developers,
+> which are sufficient for most common use-cases. However, if you are instead
+> looking to extend this core functionality with custom CParts written in
+> JavaScript, refer to the [Custom Component Part examples on the demos
+> page](/static/demos/editor.html?file=/static/demos/advanced/custom_cpart_for_api.html),
+> at least until more thorough CPart API
+> documentation is developed.
+
+The central concept to Modulo Components is that of _Component Parts_. In this
+documentation and code it will be often shortened to _CParts_. Every component
+definition consists of configuring one or more CPart definitions. Modulo comes
+"batteries-included" with about 6 CParts, which provide the core functionality
+of building Modulo Components, and are documented here.
+
+Conventionally, when defining components, CParts are listed in the following
+order within a given _Component_ definition:
+
+1.  [Props](props.html)
+2.  [Template](template.html)
+3.  _(Any other CParts)_
+4.  [State](state.html)
+5.  [StaticData](staticdata.html)
+6.  [Script](script.html)
+7.  [Style](style.html)
+
+The rationale for this ordering is to put _Props_ and _Template_ first since
+they are often the first CParts that are important to read when trying to
+understand or debug the behavior of a _Component_, while putting _Style_ last
+as it's typically the least important to read. Note that ordering makes a
+difference: They will be processed in the order given.
+
+Typically, you will not need to have more than one of the same type of CPart in
+a given component. However, in some cases for particular CParts it might make
+sense, such as to mix in multiple _Styles_ into a single _Component_. In the
+case of duplicate CParts of the same type, often the behavior is that "whoever
+gets the last word in wins", or the configuration specified by the final CPart
+takes precedence (although this depends on the CPart in question).
+
+

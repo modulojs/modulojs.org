@@ -41,12 +41,18 @@
         <li class="{% if not props.showall %}
                 {% if page.sections %}
                     {% if page.filename|isactive %}gactive{% else %}ginactive{% endif %}
+                    {% if page.filename|isactive %}section-active{% endif %}
                 {% endif %}
             {% endif %}"><a href="{{ page.filename }}">{{ page.label }}</a>
             {% if page.filename|isactive|default:props.showall %}
                 <ul>
                 {% for section in page.sections %}
-                    <li><a href="{{ page.filename }}#{{ section.fragment }}">{{ section.label }}</a>
+                    <li class="
+                      {% if not props.showall %}
+                          {% if section.filename|isactive %}section-active{% endif %}
+                      {% endif %}"
+                    >
+                      <a href="{{ page.filename }}{% if section.filename %}{{ section.filename }}{% endif %}{% if section.fragment %}#{{ section.fragment }}{% endif %}">{{ section.label }}</a>
                     {% if props.showall %}
                         {% if section.keywords.length gt 0 %}
                             <span class="hint">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>

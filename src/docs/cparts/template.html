@@ -1,0 +1,62 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Template - CParts
+---
+
+# Template
+
+The _Template_ CPart allow components to render their HTML content using a
+tiny domain-specific language, called the _Modulo Templating Language_.
+
+Without a _Template_ CPart (or equivalent custom code), the default behavior of
+the _Component_ CPart is to make no attempt to alter their contents. However,
+most components require complicated HTML structures within them. This is where
+Templates come into play: They generate the `innerHTML` of a component.
+
+Templates are not DOM-based, but instead render synchronously to a String
+during the `render` [lifecycle phase](/docs/lifecycle.html), and
+store the results in `renderObj.component.innerHTML`. The _Component_ CPart
+will read this HTML code during the `reconcile` phase and then "reconcile",
+modify it's contents to resemble the target innerHTML. (More on this is in [the
+Component CPart documentation above](/docs/core.html#component).)
+
+Every time a Component renders, the Template will render using the _renderObj_
+as a "template context", or, in other words, using the various CPart's
+contributions to the _renderObj_ as Template variables that can be inserted
+into the HTML.
+
+## Templating reference
+
+[See the Templating documentation for further information on the functionality
+of the Templating CPart.](/docs/templating.html)
+
+
+## Usage example
+
+
+```modulo_demo
+<Template>
+<p>There are <em>{{ state.count }}
+  {{ state.count|pluralize:"articles,article" }}</em>.</p>
+
+{# Show the articles #}
+{% for article in state.articles %}
+    <h4 style="color: blue">{{ article.headline|upper }}</h4>
+    {% if article.tease %}
+      <p>{{ article.tease|truncate:30 }}</p>
+    {% endif %}
+{% endfor %}
+</Template>
+
+<!-- The data below was used to render the template above -->
+<State
+    count:=42
+    articles:='[
+      {"headline": "Modulo released!",
+       "tease": "The most exciting news of the century."},
+      {"headline": "Can JS be fun again?"},
+      {"headline": "MTL considered harmful",
+       "tease": "Why constructing JS is risky business."}
+    ]'
+></State>
+```
+

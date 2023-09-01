@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Props - CParts
+---
+
+
+# Props
+
+> **Read-only** Props are read-only within a component, and only be set by the
+> parent component. If the values change, the component re-renders with the new
+> values. They are only supposed to be information being _passed to_ the
+> component, which means they can't be changed internally. For internal,
+> mutable data, use [State](#state) instead.
+
+Props allow components to receive data. You can think of Props as being like
+"function parameters": They allow you to pass down "arguments" (attributes) to
+component which can then modify it's appearance, behavior, or content based on
+the values of these parameters.
+
+Props are set by the parent component (or HTML page). For String values, use plain attributes (e.g. `<x-Btn design="round">`). For any non-String types, you can use _data props_ set using a `:=` directive syntax for (e.g. `<x-Chart data:='[1, 2, 3]'>`).
+
+### renderObj
+
+Props contributes it's received values to the renderObj. Examples:
+
+1.  Prop set like: `<x-Btn design="round">` will be accessible on the renderObj
+like `renderObj.props.design`, and in the Script or Template CParts like
+`props.design`.
+2.  Prop set like: `<x-Chart data:='["a", "b"]'>` will be accessible on the
+renderObj like `renderObj.props.data` (with individual items accessed with code
+that ends with "`.data[0]`"), and in the Script or Template CParts like
+`props.data`.

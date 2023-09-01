@@ -26,39 +26,39 @@
     docs: [
         {
             label: 'Component Parts',
-            filename: '/docs/cparts.html',
+            filename: '/docs/cparts/',
             sections: [
                 {
                     label: 'Props',
-                    fragment: 'props',
+                    filename: 'props.html',
                     keywords: ['accessing props', 'defining props', 'setting props', 'using props'],
                 },
                 {
                     label: 'Script',
-                    fragment: 'script',
+                    filename: 'script.html',
                     keywords: ['javascript', 'events', 'computed properties',
                     'static execution', 'custom lifecycle methods',
                     'script callback execution context', 'script exports'],
                 },
                 {
                     label: 'State',
-                    fragment: 'state',
+                    filename: 'state.html',
                     keywords: ['state definition', 'state data types', 'json',
                     'state variables', 'state.bind directive'],
                 },
                 {
                     label: 'StaticData',
-                    fragment: 'staticdata',
+                    filename: 'staticdata.html',
                     keywords: ['loading API', 'loading json', 'bundling data'],
                 },
                 {
                     label: 'Style',
-                    fragment: 'style',
+                    filename: 'style.html',
                     keywords: ['CSS', 'styling', 'prefixing', 'isolation', ':host', 'shadowDOM'],
                 },
                 {
                     label: 'Template',
-                    fragment: 'template',
+                    filename: 'template.html',
                     keywords: ['custom template', 'templating engine'],
                 },
             ],

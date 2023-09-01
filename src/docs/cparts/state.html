@@ -1,0 +1,193 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Script - CParts
+---
+
+
+
+# State
+
+The _State_ is for component instances to store changing data. This could
+include anything from text a user entered into a form, data received from an
+API, or data that represents UI flow changes, such as the visibility of a
+modal. For more discussion of State, see 
+[Ramping Up with Modulo - Part 2](/tutorial/ramping-up-2.html).
+
+By default (that is, with no `-store` attribute), state data is unique to every component instance, and components can never directly access sibling or parent data. It is possible to indirectly reference it, however, by passing state data from a "parent" component to a "child" components within the parent by passing it via a _Props_ attribute. In this case, the data should be considered read-only to the child component, like any other _Props_ data.
+
+# Definition
+
+State is traditionally included in Component definitions below the _Template_ tag, but above the _Script_ tag. This makes sense because functions in the _Script_ tag typically manipulate state in order to render new HTML in the _Template_, making _Script_ a sort of mutable bridge between _Script_ and _Template_. State is defined in a similar way to Props: Only defined with properties, but no contents.
+
+See below for an example of defining a _State_ CPart:
+
+
+## Example 1
+
+Two State variables specified, of type String and Number:
+
+```
+<State
+    name="Luiz"
+    favenum:=13
+></State>
+```
+
+## Example 2
+
+Many State variables of different types:
+
+```
+<State
+    color="blue"      (String)
+    count:=1          (Number)
+    loading:=false    (Boolean)
+    speed:=null       (null value)
+    items:=&apos;[    (JSON Array)
+        "abc",
+        "def"
+    ]&apos;
+    obj:=&apos;{      (JSON Object)
+        "a": "b",
+        "c": "d"
+    }&apos;
+></State>
+```
+
+## Example 3
+
+Building up complicated JSON data with "." syntax:
+
+```
+<State
+    user:={}
+    user.name:=&apos;"gigasquid"&apos;
+    user.uid:=1313
+    user.address:={}
+    user.address.billable:=null
+    user.address.ready:=true
+></State>
+```
+
+
+Note that all "state variables" _must_ have an initial value. It's okay to make
+the initial value be `null` (as in the "speed" example above), or other some
+placeholder that will later be replaced.
+
+
+# Stores
+
+
+If you want to share data between components globally, such that any component
+can modify the data causing a re-render to all linked components, such as user
+log-in information or global state data, then you can use the powerful `-store`
+attribute:
+
+```
+<State
+    -store="userinfo"
+    username="pombo"
+    tags:=&apos;["admin", "printing"]&apos;
+></State>
+```
+
+With this, any state with the given store _throughout your application_ will
+share state and subscriptions to updates.
+
+#### Limiting a store with -only
+
+Sometimes, you'll only want to subscribe to certain attributes parts of a store:
+
+```
+<State
+    -store="userinfo"
+    -only:='["username"]'
+    username="pombo"
+></State>
+```
+
+For a full example of `-store` in use, [see the Global Store
+demo](/static/demos/editor.html?file=/static/demos/advanced/global_store.html).
+
+# CPart properties
+
+The actual data in a _State_ CPart is stored on it's "data" property. This
+property is a regular JavaScript Object, and thus can store any JavaScript data
+type. As an example, in a _Script_ CPart, you can directly reference this
+property with the code `cparts.state.data`.
+
+When writing the _State_ CPart definition, you must declare or pre-define each
+"state variable" or property of the "data" Object that you want to use. It is
+not permitted to create new state variables later on. In other words, if you
+only define `cparts.state.data` as having `.count` and `.title` as "state
+variables" (aka properties of the "data" Object), then an attempt like
+`cparts.state.data.newstuff = 10;` may result in an error. If you are dealing
+with a situation where you have an unknown quantity of data, such as from an
+API, the correct approach is to store it all within a nested Object _inside_
+the state data Object, e.g. such as an `data.apiResults` Object or Array.
+Unlike top-level "state variables", it's okay to add properties, modify, or
+build upon nested Objects.
+
+While it's allowed to assign any arbitrary reference as a _State_ variable,
+including complex, unserializable types such as function callbacks, it's highly
+recommended to try to keep it to primitive and serializable types as much as
+possible (e.g. String, Number, Boolean, Array, Object). The reason being that
+there may be future features or third-party add-ons for _State_ which will only
+support primitive types (as an example, that would be required to save state to
+localStorage). If you want to store functions, consider using a
+`prepareCallback` to generate the functions within a Script context, and only
+store the data needed to "generate" the function in the state (as opposed to
+storing a direct reference to the function itself).
+
+### renderObj
+
+State contributes it's current data values to the renderObj. Examples:
+
+* State initialized like: `<State name="Luiz">` will be accessible on the
+  renderObj like `renderObj.state.name`, and in the Script or Template CParts
+  like `state.name`.
+* State initialized like: `<State stuff:='["a", "b"]'>` will be accessible on
+  the renderObj like `renderObj.state.info` (with individual items accessed
+  with code that ends with "`.stuff[0]`"), and in the Script or Template CParts
+  like `state.info`.
+
+### Directives
+
+State provides a single directive:
+
+* `[state.bind]` \- Two-way binding with State data, with the key determined by
+  the `name=` property of whatever it is attached to. You can attach a
+  `[state.bind]` directive to any HTML `<input>`, and the _State_ CPart's
+  two-way binding will cause the input value to be updated if the state
+  variable ever changes, and if a user edits the input triggering a `"keyup"`
+  or `"change"` event, the state variable will be updated (along with,
+  typically, a re-render of the component).
+
+
+```
+<Template>
+<div>
+    <label>Username:
+        <input [state.bind] name="username" /></label>
+    <label>Color ("green" or "blue"):
+        <input [state.bind] name="color" /></label>
+    <label>Opacity: <input [state.bind]
+        name="opacity"
+        type="number" min="0" max="1" step="0.1" /></label>
+
+    <h5 style="
+            opacity: {{ state.opacity }};
+            color: {{ state.color|allow:'green,blue'|default:'red' }};
+        ">
+        {{ state.username|lower }}
+    </h5>
+</div>
+
+</Template>
+
+<State
+    opacity="0.5"
+    color="blue"
+    username="Testing_Username"
+></State>
+```
+

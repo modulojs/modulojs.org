@@ -1,0 +1,169 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Script - CParts
+---
+
+
+# StaticData
+
+The _StaticData_ CPart is useful for loading JSON files to use as a data
+source. StaticData has no "refresh" capability, meaning this should only
+consist data that you do not expect to change while running your program, such
+as type definitions or data from a API that does not change frequently.
+
+### Usage
+
+The StaticData CPart can be used in two different ways. The most common is
+loading data from a JSON file or JSON API by specifying a `-src=` attribute.
+During development, this will "fetch" when refreshing the page, but once you
+"build" the component, the specified content will be "frozen in time" during
+the build, and bundled in with the resulting JS file with any filtering
+applied.
+
+The other usage is to simply "hardcode" the data in JSON syntax within the
+element itself. There is no functional difference of including data in JSON
+syntax in a StaticData CPart to simply adding a Script CPart that uses
+`script.exports` to expose data, other than it being slightly more convenience
+(e.g. less typing), and intentionally less flexible compared to a script CPart.
+
+### attrs
+
+* `-src` \- Just like any other CParts, the `-src=` attribute lets you load the
+  content from another URL. This could be from an API (e.g. something like
+  `-src="https://some.api.com/v1/getdata?p=3"`), or for loading from a file
+  (e.g. `-src="./data/weatherData.json"`), or for loading from a file. If not
+  specified, then the data must be specified within the StaticData tag, or else
+  it will be simply "undefined".
+* `-data-type` \- This optional attribute should be set to a file-type string
+  (e.g. extension) of a registered converter. By default, the ones that are
+  available are:
+    * *Default:* `-data-type="json"` - This is a strictly JSON syntax (no
+      trailing commas, double quotes only)
+    * `-data-type="js"` - This is a JavaScript syntax JSON object (allows for
+      trailing commas, optional quotes, and even invoking functions to
+      manipulate the data before "freezing" it or bundling it)
+    * `-data-type="csv"` - This is a simple CSV parser, great for importing
+      spreadsheet data as exported from popular spreadsheet apps
+    * `-data-type="txt"` - This is a plain text file. It will be made available
+      as a string in the renderObj.
+
+
+### renderObj
+
+The StaticData CPart exposes it's data directly (e.g. so it can be accessed in Script, Template, etc).
+
+### Usage Examples
+
+Examine the following examples for ideas on how to use StaticData:
+
+
+#### Using an API
+```modulo_demo
+<!-- Load package.json file directly from GitHub -->
+<Template>
+    {{ staticdata.name }} v{{ staticdata.version }}
+    (by {{ staticdata.author }})
+</Template>
+<StaticData
+    -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"
+></StaticData>
+```
+
+#### Displaying a table with a for loop
+
+```modulo_demo
+<Template>
+    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
+    {% for item in staticdata %}
+        <div>#{{ item.userId }}</div>
+        <div>{{ item.title|truncate:5 }}</div>
+        <div>{{ item.body|truncate:10 }}</div>
+    {% endfor %}
+</Template>
+<!-- Load 100 items of sample data from a
+     JSON placeholder website "typicode" -->
+<StaticData
+    -src="https://jsonplaceholder.typicode.com/posts"
+></StaticData>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 150px;
+        overflow: auto;
+    }
+</Style>
+```
+
+#### Filtering with -data-type="js"
+
+```modulo_demo
+<Template>
+    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
+    {% for item in staticdata %}
+        <div>#{{ item.userId }}</div>
+        <div>{{ item.title|truncate:5 }}</div>
+        <div>{{ item.body|truncate:10 }}</div>
+    {% endfor %}
+</Template>
+<!-- Load items from a JSON placeholder website "typicode", and then use the
+contet of a "js" StaticData tag to pre-filter them right after loading -->
+<script StaticData -data-type="js" -src="https://jsonplaceholder.typicode.com/posts">
+    .filter(post =>
+        post.userId === 5
+    )
+/script>
+
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 150px;
+        overflow: auto;
+    }
+</Style>
+```
+
+
+#### Embedding data with -data-type="js"
+
+```modulo_demo
+<Template>
+    {% for item in staticdata %}
+        <label>
+          <img src="{{ item.thumbnailUrl }}" />
+          <tt>#{{ item.id }}</tt>
+          {{ item.title|capfirst }}
+        </label>
+    {% endfor %}
+</Template>
+<!-- Hardcode lorem ipsum / sample data, with a custom data type specified so
+we can use the more relaxed JavaScript syntax rules -->
+<script StaticData -data-type="js">
+[
+  {
+    id: 1,
+    title: "accusamus beatae ad facilis cum similique qui sunt",
+    url: "https://via.placeholder.com/600/92c952",
+    thumbnailUrl: "https://via.placeholder.com/50/92c952"
+  },
+  {
+    id: 2,
+    title: "reprehenderit est deserunt velit ipsam",
+    url: "https://via.placeholder.com/600/771796",
+    thumbnailUrl: "https://via.placeholder.com/50/771796"
+  },
+]
+/script>
+<Style>
+    :host {
+        display: flex;
+        height: 150px;
+        overflow: auto;
+    }
+    tt {
+        font-size: 2rem;
+    }
+</Style>
+```
+
+

@@ -1,0 +1,278 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Script - CParts
+---
+
+
+# Script
+
+> **Custom vs Script CPart** \- The general rule of thumb is that _Script_ tags are for custom, component-specific behavior, or to fill in gaps in stitching together other CParts, while writing Custom CParts is for interfacing with async, APIs, or any time that a Script CPart gets too cumbersome. Modulo's philosophy is to allow separation of work between _component development_ (HTML, CSS, templating, and high-level behavior), and _CPart development_ (complex JavaScript and APIs).
+
+_Script_ CParts allow you to define custom behavior for components using the full power of JavaScript. The most common use of _Script_ tags is to add more sophisticated interactive behavior. Instead of just relying on premade CParts, with a Script tag you can program any custom behavior into your component.
+
+### Definition
+
+_Script_ is traditionally included in _Component_ definitions below the _State_ or _Template_ tag. _Script_ has no expected attributes, but instead only has a text-content.
+
+#### Typical use
+
+The most common use of a _Script_ CPart is to specify custom JS code that is either run once after fulling loading all dependencies, or once each time the component renders. See below for a simple example:
+
+
+```
+<Component name="ButtonExample">
+    <Template>...</Template>
+    <State>...</State>
+    <Script>
+        console.log("Will execute once after loading dependencies");
+        function initializedCallback() {
+            console.log("Executes every time an instance of ButtonExample is created");
+        }
+        function updateCallback() {
+            console.log("Executes after every rerender of the component");
+        }
+    /Script>
+</Component>
+```
+
+#### Using within embedded component definitions
+
+Problems arise when attempting to include a _Script_ CPart within an embedded
+Component `<script Modulo>` definition, e.g. one that is being defined within
+the script tag of the same HTML file that it is being used on. This is because
+the `<` `/Script>` tag will end up closing off the outer `<script>` tag early,
+due to HTML syntax. The reason is that `</` `script>` is a special syntax that
+automatically closes the outer tag, and also HTML cannot distinguish capital
+(the `<Script>` CPart) vs lowercase (the outer `<script>` tag). The ideal
+solution is to simply move the component to a separate library file, included
+with `-src=` syntax, since that is preferred in general, and solves other
+issues as well (e.g. templating instructions in HTML tags).  However, if you
+simply must include a _Script_ tag in an embedded component definition you can
+write `<def Script>` as the opening tag, and `</def>` as the closing tag. See
+the following:
+
+
+```
+<script Modulo src="https://unpkg.com/mdu.js">
+    <Component name="ButtonExample">
+        <def Script>
+            console.log("Hello, world!");
+        </def>
+    </Component>
+/script>
+```
+
+A better alternative is to use the slightly more verbose `<template Modulo>` instead:
+
+```
+<template Modulo>
+    <Component name="ButtonExample">
+        <Script>
+            console.log("Hello, world!");
+        /Script>
+    </Component>
+</template>
+<script src="https://unpkg.com/mdu.js">/script>
+```
+
+### Defining event callbacks
+
+The most common purpose of a Script CPart is to add custom behavior when certain "events" occur to your component. Consider the following example of 3 click events:
+
+```modulo_demo
+<Template>
+    <button @click:=script.doConsole>Console Log</button>
+    <button @click:=script.doAlert>Show Alert</button>
+    <button @click:=script.countUp>Counter {{ state.num }}</button>
+</Template>
+<State
+    num:=42
+></State>
+<Script>
+    function doConsole() {
+        console.log("Event callback. State.num is:", state.num);
+    }
+    function doAlert() {
+        alert("Event callback. State.num is: " + state.num);
+    }
+    function countUp() {
+        state.num++;
+    }
+/Script>
+```
+
+In this, the _Script_ CPart defines a function named `countUp`. The `@click:=`
+attribute on the button utilizes directives to attach a "click event" to the
+button, such that when a user clicks on that button it will invoke the
+`countUp` function.
+
+From within event callbacks, the _Script_ CPart exposes the current renderObj as variables. So, `state` by itself is equivalent to `renderObj.state`. This enables us to directly modify the state by simply doing `state.count++`. By default, components rerender after every event, so after the event the component will rerender and visually reflect the state changes.
+
+This means that all renderObj variables will be available here, in a similar way to how _Template_ exposes them: For example, you can use code like `props.XYZ` to access data from a _Props_ CPart.
+
+You can also access the JavaScript Object instances of the CPart Class. To access those, you use the `cparts`
+
+Finally, the variable `element` will refer to the HTML element of the current component. This is useful for direct DOM manipulation or interfacing with other frameworks or "vanilla" JavaScript. Generally, however, you should avoid direct DOM manipulation whenever you can, instead using a _Template_ CPart to render the component (otherwise, the _Template_ will override whatever direct manipulation you do!).
+
+
+> **Template vs renderCallback**
+> Before replacing a _Template_ with a `renderCallback`, first consider using
+> prepareCallback or extending the templating language with a custom filter.
+> The _Templating_ language is intentionally limited and result in more
+> readable code and a cleaner separation of concerns of logic (JavaScript) from
+> presentation (HTML templates).
+
+### Defining lifecycle callbacks
+
+By naming functions with certain names, you can "hook into" the component
+rendering lifecycle with callbacks.
+
+You can define a function with any of the following names and expect it to be
+invoked during it's namesake lifecycle phase: `initializedCallback`,
+`prepareCallback`, `renderCallback`, `reconcileCallback`, and finally
+`updateCallback`.
+
+See below for an example of defining a custom `prepareCallback` in order to
+"hook into" the component rendering lifecycle to execute custom code. The
+return value of this function is available to the _Template_ CPart when it
+renders during the `render` lifecycle.
+
+
+```modulo_demo
+<Template>
+    {% for item in script.data %}<p>{{ item }}</p>{% endfor %}
+    <p>(C) {{ script.year }} All Rights Reserved</p>
+</Template>
+<Script>
+    function prepareCallback() {
+        return {
+            data: ["a", "b", "c"],
+            year: (new Date()).getFullYear(),
+        };
+    }
+/Script>
+```
+
+> **Template literals?** Modern JavaScript has a built-in mini-templating
+> system. Learn more at
+> [MDN's Template literals
+> reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals).
+
+For fine-grained control over a component's rendered HTML, you can hook into
+the renderCallback.  While not recommended for most usage, it remains an option
+to use the renderCallback to write JS that constructs the HTML in a custom
+fashion, such as using a third party templating system, or simply using
+template literals.
+
+Another option is to use this to, for example, use backtick template literals
+for templating, if for whatever reason Modulo's templating language is
+insufficient. See below:
+
+
+```modulo_demo
+<State
+    name="Ha-Joon Chang"
+    books:='[ "Edible Economics", "Kicking Away the Ladder" ]'
+></State>
+<Script>
+   function renderCallback() {
+        component.innerHTML = `
+            <p>Author: ${ state.name }</p>
+            <ol>${
+                state.books.map(title => `
+                    <li>${ title }</li>
+                `).join('')
+            }</ol>
+        `;
+    }
+/Script>
+```
+
+
+### Defining directive callbacks
+
+You can also create "custom directives" from within the Script tag. Read more
+about this in the section on [Directives](/docs/directives.html)
+
+### Execution context
+
+#### Static execution context (default)
+
+By default, the `factory` phase is when the code in the script tag itself gets executed. That is, it is executed exactly once while the component class is being prepared, before anything is yet even mounted on the document. This means that that any loose variables defined will be "static", or shared between all instances of that component.
+
+**Static execution _Script_ tags will only correctly isolate synchronous
+code.** It is thus recommended to keep your _Script_ tag to only contain
+synchronous code, that is, no async callbacks. This is an intentional
+limitation, as _Script_ tags are intended for _synchronously_ patching together
+behavior around potentially _asynchronous_ CParts. There is also a potential
+for a bug: If there are multiple instances of the same component on the same
+page, with async callbacks ready at the same time, it can cause the wrong
+state, props or other variables or CParts to get mixed up and go to the wrong
+component. Asynchronous coding should be thus moved to a custom CPart, that is
+then used in the script tag in a declarative, synchronous manner. The CPart API
+gives you low-level access, and makes no assumptions about using a synchronous
+or asynchronous coding style.
+
+That said, Modulo is intended to be useful as a glue language and it's common
+to find asynchronous snippets that you might want to quickly integrate into an
+existing component. Read on for a few ways to bend this rule in order to better
+integrate third party code.
+
+#### Lifecycle execution context
+
+> **ALPHA API NOTE:** This feature might be renamed in a future release of
+> Modulo alpha:
+> [See Issue #26](https://github.com/modulojs/modulo/issues/26)
+
+##### Per component: `lifecycle="initialized"`
+
+Setting `lifecycle="initialized"` behaves very similarly to the "static"
+execution context (the default): For both, functions defined there will be
+available to be attached to events, and you can define Callback and Mount and
+Unmount functions. However, there is one important difference: It will execute
+_each and every time_ an instance of the component first mounts on the page.
+That is, it will run everything in that script tag once per component use. This
+keeps all the data in the script tag private to that component, allowing for
+asynchronous code.
+
+It also allows use of the private variables as a sort of state. That is not
+recommended usage, but might be useful for integrating with other JavaScript
+state or store management systems.
+
+### renderObj
+
+The Script CPart "exports" a variety of properties to the `renderObj`, all of which should be considered "read-only".
+
+* `script.someFunctionName` for functions declared like
+  `function someFunctionName` \- In addition to "exports", the script tag will
+  also make available all functions that you have declared using the
+  "old-school" named-function style syntax. This is what allows attaching
+  events to be so simple: Simply define a named-function in your script tag
+  (e.g.  `function doStuff(payload, ev) { ...`), and then it can be referenced
+  elsewhere (e.g. in the template with: `@click:=script.doStuff` template with
+  a click event like: It will ignore any "arrow functions" (`() => {}`), or any
+  other anonymous functions (e.g. functions declared like
+  `const myFunc = function () { ...` will also be ignored). That's not to say
+  you can't declare your functions like this: However, you should only do so if
+  you do not want them to be automatically exported.
+* `script.exports` \- This gives you fine-grained control, allowing you to
+  export arbitrary static variables, functions, or data. This is useful for
+  building up static data structures to be shared between all instances of this
+  component, which can then be accessed in the template. This _should not_ be
+  used as a store or state variable (use the _Store_ CPart for that). Also, it
+  should not be used for simply storing static data that requires no further
+  code or manipulation (use the _StaticData_ CPart for this). For example:
+
+```
+<Template>
+    <p>{% for item in script.exports.bigArray %}
+        {{ item }},
+    {% endfor %}</p>
+</Template>
+<Script>
+    script.exports.bigArray =
+        Array.from({ length: 100 })
+        .map((val, i) => `i liek ${i} turtles`);
+/Script>
+```
+
+
