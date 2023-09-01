@@ -5,11 +5,23 @@ title: CParts
 # CParts
 
 
-> **Custom CParts?** Here we describe core CParts used by component developers, which are sufficient for most common use-cases. However, if you are instead looking to extend this core functionality with custom CParts written in JavaScript, refer to the [Custom Component Part examples on the demos page](/demos/#experiments), at least until more thorough CPart API documentation is developed.
+> **Custom CParts?** Here we describe core CParts used by component developers,
+> which are sufficient for most common use-cases. However, if you are instead
+> looking to extend this core functionality with custom CParts written in
+> JavaScript, refer to the [Custom Component Part examples on the demos
+> page](/demos/editor.html?file=/static/demos/advanced/custom_cpart_for_api.html),
+> at least until more thorough CPart API
+> documentation is developed.
 
-The central concept to Modulo Components is that of _Component Parts_. Because it is so central, saying _Component Parts_ over and over gets tiresome, so in this documentation it will be typically shortened to _CParts_. Every component definition consists of configuring one or more CPart definitions. Modulo comes "batteries-included" with about 8 CParts, which provide the core functionality of building Modulo Components, and are documented here.
+The central concept to Modulo Components is that of _Component Parts_. Because
+it is so central, saying _Component Parts_ over and over gets tiresome, so in
+this documentation it will be typically shortened to _CParts_. Every component
+definition consists of configuring one or more CPart definitions. Modulo comes
+"batteries-included" with about 8 CParts, which provide the core functionality
+of building Modulo Components, and are documented here.
 
-Conventionally, when defining components, CParts are listed in the following order within a given _Component_ definition:
+Conventionally, when defining components, CParts are listed in the following
+order within a given _Component_ definition:
 
 1.  Props
 2.  Template
@@ -19,15 +31,31 @@ Conventionally, when defining components, CParts are listed in the following ord
 6.  Script
 7.  Style
 
-The rationale for this ordering is to put _Props_ and _Template_ first since they are often the first CParts that are important to read when trying to understand or debug the behavior of a _Component_, while putting _Style_ last as it's typically the least important to read. Note that ordering makes a difference: They will be processed in the order given.
+The rationale for this ordering is to put _Props_ and _Template_ first since
+they are often the first CParts that are important to read when trying to
+understand or debug the behavior of a _Component_, while putting _Style_ last
+as it's typically the least important to read. Note that ordering makes a
+difference: They will be processed in the order given.
 
-Typically, you will not need to have more than one of the same type of CPart in a given component. However, in some cases for particular CParts it might make sense, such as to mix in multiple _Styles_ into a single _Component_. In the case of duplicate CParts of the same type, often the behavior is that "whoever gets the last word in wins", or the configuration specified by the final CPart takes precedence (although this depends on the CPart in question).
+Typically, you will not need to have more than one of the same type of CPart in
+a given component. However, in some cases for particular CParts it might make
+sense, such as to mix in multiple _Styles_ into a single _Component_. In the
+case of duplicate CParts of the same type, often the behavior is that "whoever
+gets the last word in wins", or the configuration specified by the final CPart
+takes precedence (although this depends on the CPart in question).
 
 # Props
 
-> **Read-only** Props are read-only within a component, and only be set by the parent component. If the values change, the component re-renders with the new values. They are only supposed to be information being _passed to_ the component, which means they can't be changed internally. For internal, mutable data, use [State](#state) instead.
+> **Read-only** Props are read-only within a component, and only be set by the
+> parent component. If the values change, the component re-renders with the new
+> values. They are only supposed to be information being _passed to_ the
+> component, which means they can't be changed internally. For internal,
+> mutable data, use [State](#state) instead.
 
-Props allow components to receive data. You can think of Props as being like "function parameters": They allow you to pass down "arguments" (attributes) to component which can then modify it's appearance, behavior, or content based on the values of these parameters. For more discussion of Props, see [Tutorial Part 2](/docs/tutorial_part2.html#props).
+Props allow components to receive data. You can think of Props as being like
+"function parameters": They allow you to pass down "arguments" (attributes) to
+component which can then modify it's appearance, behavior, or content based on
+the values of these parameters.
 
 Props are set by the parent component (or HTML page). For String values, use plain attributes (e.g. `<x-Btn design="round">`). For any non-String types, you can use _data props_ set using a `:=` directive syntax for (e.g. `<x-Chart data:='[1, 2, 3]'>`).
 
@@ -82,7 +110,7 @@ solution is to simply move the component to a separate library file, included
 with `-src=` syntax, since that is preferred in general, and solves other
 issues as well (e.g. templating instructions in HTML tags).  However, if you
 simply must include a _Script_ tag in an embedded component definition you can
-write `<def Script>` as the opening tag, and `</cpart>` as the closing tag. See
+write `<def Script>` as the opening tag, and `</def>` as the closing tag. See
 the following:
 
 
@@ -148,13 +176,28 @@ You can also access the JavaScript Object instances of the CPart Class. To acces
 
 Finally, the variable `element` will refer to the HTML element of the current component. This is useful for direct DOM manipulation or interfacing with other frameworks or "vanilla" JavaScript. Generally, however, you should avoid direct DOM manipulation whenever you can, instead using a _Template_ CPart to render the component (otherwise, the _Template_ will override whatever direct manipulation you do!).
 
+
+> **Template vs renderCallback**
+> Before replacing a _Template_ with a `renderCallback`, first consider using
+> prepareCallback or extending the templating language with a custom filter.
+> The _Templating_ language is intentionally limited and result in more
+> readable code and a cleaner separation of concerns of logic (JavaScript) from
+> presentation (HTML templates).
+
 ### Defining lifecycle callbacks
 
-By naming functions with certain names, you can "hook into" the component rendering lifecycle with callbacks.
+By naming functions with certain names, you can "hook into" the component
+rendering lifecycle with callbacks.
 
-You can define a function with any of the following names and expect it to be invoked during it's namesake lifecycle phase: `initializedCallback`, `prepareCallback`, `renderCallback`, `reconcileCallback`, and finally `updateCallback`.
+You can define a function with any of the following names and expect it to be
+invoked during it's namesake lifecycle phase: `initializedCallback`,
+`prepareCallback`, `renderCallback`, `reconcileCallback`, and finally
+`updateCallback`.
 
-See below for an example of defining a custom `prepareCallback` in order to "hook into" the component rendering lifecycle to execute custom code. The return value of this function is available to the _Template_ CPart when it renders during the `render` lifecycle.
+See below for an example of defining a custom `prepareCallback` in order to
+"hook into" the component rendering lifecycle to execute custom code. The
+return value of this function is available to the _Template_ CPart when it
+renders during the `render` lifecycle.
 
 
 ```modulo_demo
@@ -172,34 +215,37 @@ See below for an example of defining a custom `prepareCallback` in order to "hoo
 /Script>
 ```
 
+> **Template literals?** Modern JavaScript has a built-in mini-templating
+> system. Learn more at
+> [MDN's Template literals
+> reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals).
+
+For fine-grained control over a component's rendered HTML, you can hook into
+the renderCallback.  While not recommended for most usage, it remains an option
+to use the renderCallback to write JS that constructs the HTML in a custom
+fashion, such as using a third party templating system, or simply using
+template literals.
+
+Another option is to use this to, for example, use backtick template literals
+for templating, if for whatever reason Modulo's templating language is
+insufficient. See below:
+
 
 ```modulo_demo
 <State
     name="Ha-Joon Chang"
+    books:='[ "Edible Economics", "Kicking Away the Ladder" ]'
 ></State>
 <Script>
-    // Less frequently used than prepare, you can hook into these as well
-    function renderCallback() {
-        // A "renderCallback" can do any by-hand HTML generation needed
-        // component.innerHTML = `<p>Welcome: ${state.name}</p>`;
-    }
-    function updateCallback() {
-        // A "updateCallback" can do any by-hand DOM updates needed
-        // element.querySelector("p").onclick = () => alert("example");
-    }
-/Script>
-```
-
-
-```modulo_demo
-<Template>
-    <p>A</p> <p>B</p> <p>C</p> <p>D</p> <p>E</p>
-</Template>
-<Script -src="https://code.jquery.com/jquery-3.6.3.slim.min.js">
-    // updateCallback can be useful for quickly integrating third party JS that
-    // does DOM manipulation, such as many legacy JS libraries
-    function updateCallback() {
-        $(element).find("p").css("color", "blue");
+   function renderCallback() {
+        component.innerHTML = `
+            <p>Author: ${ state.name }</p>
+            <ol>${
+                state.books.map(title => `
+                    <li>${ title }</li>
+                `).join('')
+            }</ol>
+        `;
     }
 /Script>
 ```
@@ -235,6 +281,10 @@ existing component. Read on for a few ways to bend this rule in order to better
 integrate third party code.
 
 #### Lifecycle execution context
+
+> **ALPHA API NOTE:** This feature might change names and/or behavior  in a
+> future release of Modulo.
+> [See Issue #26](https://github.com/modulojs/modulo/issues/26)
 
 ##### Per component: `lifecycle="initialized"`
 
@@ -507,35 +557,36 @@ Examine the following examples for ideas on how to use StaticData:
 ```modulo_demo
 <!-- Load package.json file directly from GitHub -->
 <Template>
-    {% comment %}
     {{ staticdata.name }} v{{ staticdata.version }}
     (by {{ staticdata.author }})
-    {% endcomment %}
 </Template>
-<!--
 <StaticData
     -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"
 ></StaticData>
--->
 ```
 
 ```modulo_demo
 <Template>
-    <table>
+    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
     {% for item in staticdata %}
-        <tr>
-            <td>#{{ item.userId }}</td>
-            <td>{{ item.title|truncate:5 }}</td>
-            <td>{{ item.body|truncate:10 }}</td>
-        </tr>
+        <div>#{{ item.userId }}</div>
+        <div>{{ item.title|truncate:5 }}</div>
+        <div>{{ item.body|truncate:10 }}</div>
     {% endfor %}
-    </table>
 </Template>
 <!-- Load 100 items of sample data from a
      JSON placeholder website "typicode" -->
 <StaticData
     -src="https://jsonplaceholder.typicode.com/posts"
 ></StaticData>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 150px;
+        overflow: auto;
+    }
+</Style>
 ```
 
 ```modulo_demo
@@ -565,6 +616,14 @@ Examine the following examples for ideas on how to use StaticData:
   }
 ]
 </StaticData>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 150px;
+        overflow: auto;
+    }
+</Style>
 ```
 
   
@@ -630,15 +689,33 @@ strong {
 
 # Template
 
-The _Template_ CPart allow components to render their HTML content using a small domain-specific language, called the "templating engine". The default engine is the _Modulo templating language_ (aka "MTL"), although that can be configured on a per-CPart basis.
+The _Template_ CPart allow components to render their HTML content using a
+tiny domain-specific language, called the _Modulo Templating Language_.
 
-Without a _Template_ CPart (or equivalent custom code), the default behavior of the _Component_ CPart is to make no attempt to alter their contents. However, most components require complicated HTML structures within them. This is where Templates come into play: They generate the `innerHTML` of a component.
+Without a _Template_ CPart (or equivalent custom code), the default behavior of
+the _Component_ CPart is to make no attempt to alter their contents. However,
+most components require complicated HTML structures within them. This is where
+Templates come into play: They generate the `innerHTML` of a component.
 
-Templates are not DOM-based, but instead render synchronously to a String during the `render` [lifecycle phase](/docs/directives.html#lifecycle), and store the results in `renderObj.component.innerHTML`. The _Component_ CPart will read this HTML code during the `reconcile` phase and then "reconcile", modify it's contents to resemble the target innerHTML. (More on this is in [the Component CPart documentation above](#component).)
+Templates are not DOM-based, but instead render synchronously to a String
+during the `render` [lifecycle phase](/docs/lifecycle.html), and
+store the results in `renderObj.component.innerHTML`. The _Component_ CPart
+will read this HTML code during the `reconcile` phase and then "reconcile",
+modify it's contents to resemble the target innerHTML. (More on this is in [the
+Component CPart documentation above](#component).)
 
-Every time a Component renders, the Template will render using the _renderObj_ as a "template context", or, in other words, using the various CPart's contributions to the _renderObj_ as Template variables that can be inserted into the HTML. For more discussion of Template, see [Tutorial Part 2](/docs/tutorial_part2.html#templating).
+Every time a Component renders, the Template will render using the _renderObj_
+as a "template context", or, in other words, using the various CPart's
+contributions to the _renderObj_ as Template variables that can be inserted
+into the HTML.
 
-## Usage example:
+## Templating reference
+
+[See the Templating documentation for further information on the functionality
+of the Templating CPart.](/docs/templating.html)
+
+
+## Usage example
 
 
 ```modulo_demo

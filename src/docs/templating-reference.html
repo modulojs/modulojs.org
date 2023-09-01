@@ -321,32 +321,23 @@ The following are some examples of how the `in` operator will be interpreted in 
 Note that in these examples, some use hardcoded strings in places (e.g. `"B.C.E"`), while others use variables in the same place (e.g. `state.word`). As with every if-statement operator, you can either hardcoded values and variables are interchangeable.
 
 
-##### String context
-
 ```modulo_demo
 <Template>
-    {% if "B.C.E." in state.era %}
-        This appears since "B.C.E." is a substring of "{{ state.era }}"
-    {% endif %}
+{% if "B.C.E." in state.era %} {# String context #}
+    <p>"B.C.E." is a substring of "{{ state.era }}"</p>
+{% endif %}
+
+{% if state.word in state.greetings %} {# Array context  #}
+    <p>"{{ state.word }}" was found in: {{ state.greetings|join:", " }}</p>
+{% endif %}
+
+{% if "author" in state.article %} {# Object context  #}
+    <p>Author was found in article: {{ state.article.author }}</p>
+{% endif %}
 </Template>
 
 <State
   era="3rd Century B.C.E. (Macedonia)"
-></State>
-```
-
-
-##### Array context
-
-
-```modulo_demo
-<Template>
-    {% if state.word in state.greetings %}
-        "{{ state.word }}" was found in: {{ state.greetings|join:", " }}
-    {% endif %}
-</Template>
-
-<State
   word="hello"
   greetings:='[
     "hallo",
@@ -354,28 +345,14 @@ Note that in these examples, some use hardcoded strings in places (e.g. `"B.C.E"
     "hola",
     "óla"
   ]'
-></State>
-```
-
-##### Object context
-
-```modulo_demo
-<Template>
-    {% if "author" in state.article %}
-        Author was specified: {{ state.article.author }}
-    {% endif %}
-</Template>
-
-<State
   article:='{
     "author": "Albert Einstein",
-    "year": 1949,
-    "month": "May",
-    "publication": "Monthly Review",
-    "title": "Why Socialism?"
+    "publication": "Monthly Review"
   }'
 ></State>
 ```
+
+
 
 #### Filters
 

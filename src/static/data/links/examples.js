@@ -3,7 +3,6 @@
     starterTemplates: [
         {
             title: "JAMStack (Static Site with Markdown and CMS)",
-            description: "A starter project with Modulo ready-to-go that features ",
             supports: [ "Graphical CMS (Decap / Netlify)", "3rd Party Auth (Decap / Netlify)", "Markdown (& more)" ],
             requires: "Server",
             file: "modulo-jamstack-cms.zip",
@@ -11,7 +10,6 @@
         },
         {
             title: "JAMStack (Static Site with Markdown)",
-            description: "A starter project with Modulo ready-to-go that features ",
             supports: [ "Markdown", "Components", "JSON-based Data", ],
             requires: "Server",
             file: "modulo-jamstack-cms.zip",
@@ -19,9 +17,6 @@
         },
         {
             title: "JAMStack (Static Site)",
-            description: `A static site starter project with Modulo downloaded
-            locally and ready to go. This project demonstrates directory
-            structure, and features 3 example pages and 2 example components.`,
             supports: [ "Components", "JSON-based Data", ],
             file: "modulo-jamstack.zip",
             requires: "Server",
@@ -29,9 +24,6 @@
         },
         {
             title: "Single Page App",
-            description: `A much more miminamalist starting project compared to
-            the static-site variants above, choose this one if you want fewer
-            examples and a clean slate that's similar to "create-react-app"`,
             file: "modulo-spa.zip",
             supports: [ "Components", "Example Custom CPart Integration", "Example REST API Usage" ],
             requires: "Server",

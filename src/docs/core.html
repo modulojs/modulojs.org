@@ -243,7 +243,7 @@ the Modulo definition.  Here is an example of setting the
 
 ```
 <Configuration
-    domloader.topLevelTags:=&apos;["component", "library", "modulo"]&apos;
+    domloader.top-level-tags:=&apos;["component", "library", "modulo"]&apos;
 ></Configuration>
 ```
 
@@ -311,29 +311,30 @@ except they are "applied" across all child components. This means you can
 configure *any* configuration option on Components. However, you typically
 only want to set *namespace*, and possibly *mode*.
 
-*`namespace` - *default is `namespace="x"`* -
-    The namespace prefix that goes before the component when registering on the
-    DOM. This is the most common thing you will set on a Library, since it
-    allows you to "namespace" or isolate the components that you load and
-    prevent names from conflicting. For example, you can import two Libraries,
-    each with a `name="Modal"` component, but by giving them
-    separate namespaces, you can distinguish them with something like
-    `lib1-Modal` and `lib2-Modal`, instead of
-    `x-Modal` for both, which would get confusing.
+* `namespace` - 
+    - default: `namespace="x"`
+    - The namespace prefix that goes before the component when registering on
+      the DOM. This is the most common thing you will set on a Library, since
+      it allows you to "namespace" or isolate the components that you load and
+      prevent names from conflicting. For example, you can import two
+      Libraries, each with a `name="Modal"` component, but by giving them
+      separate namespaces, you can distinguish them with something like
+      `lib1-Modal` and `lib2-Modal`, instead of `x-Modal` for both, which would
+      get confusing.
 
-* `mode` -  Override the default mode of loaded components.
-    You can use this to force a Library to have vanishing components
-    (mode="vanish"), or have components that isolate their style
-    (mode="shadow"). Note that if you are loading somebody else's library this
-    way, it may not work correctly (or at all!) if changing the mode in this
-    way.
-    * `mode="shadow"`  - This will cause Components loaded
-            by this Library tag to isolate their interior DOM. Note that if you
-            are loading somebody else's library this way, it may not work
-            correctly (or at all!) if changing the mode in this way.
+* `mode`
+    - Override the default mode of loaded components.
+    - You can use this to force a _Library_ to have vanishing components
+      (`mode="vanish"`), or have components that isolate their style
+      (`mode="shadow"`).
+    - Note that if you are loading somebody else's component library and
+      overriding the component modes with this attribute, it may not work
+      correctly (or at all!), since many components may require they stay on
+      the page after rendering for the JavaScript and other functionality to
+      work. However, some components may work either way, allowing a
+      lighter-weight usage with "vanish", a style-isolated version with
+      "shadow", or an interactive, non-isolated version as default.
 
-   * `mode="vanish"` - This will cause Components loaded
-            to "vanish" after rendering.
 
 
 

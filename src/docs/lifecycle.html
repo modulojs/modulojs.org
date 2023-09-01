@@ -9,91 +9,6 @@ If CParts are the stage-hands and actors who put on a play, then the
 so on, such that every CPart stage-hand "jumps in" at the right moment to do
 it's job and set up for the next act.
 
-# Component lifecycle
-
-Every _Component_ that you define triggers a certain set of lifecycle phases.
-The lifecycle phases that a Modulo _Component_ progresses through can be
-categorized into a few groups. One way to think of these phases is that
-typically, the "output" of a previous lifecycle phase in a group is the "input"
-of the next phase. As an example, `prepare` figures out the template variables,
-`render` causes the template to actually perform the render based on the
-variables in the previous phase, and `update` updates the HTML of the element
-based on the rendered output of the previous phase.
-
-
-
-## Mount Lifecycle
-
-Several methods are triggered when a component is mounted on the page. Note
-that for most components, you'll want to only use *initializedCallback*, unless
-you want to customize any aspects of how the component hydrates from a built
-version of the page. 
-
-
-* _constructor()_ \- While technically not a lifecycle method, the
-  constructor() method will be invoked when creating an instance of the CPart
-  class. This happens _before_ the Component's HTML Element is guaranteed to be
-  fully loaded on the DOM, and _before_ injected properties (e.g. ".conf",
-  ".modulo", ".element") properties are set on the CPart instance.
-* `constructed` \- Also technically not a lifecycle method, but this will be
-  called _before_ the Component's HTML Element is fully parsed, but _after_
-  injected properties (e.g. ".conf", ".modulo", ".element") properties are set
-  on the CPart instance.
-* `mount` \- The first "regular" lifecycle method. The *Component* class will
-  use this phase for hydrating content from a SSR'ed version of the page. This
-  is useful to hook in code to activate before any further DOM modifications
-  happen, but after the HTML Element and it's contents are fully parsed.
-* `mountRender` \- The *Component* will use this callback to "take . Useful if
-  you want to hook in code right before the _prepare_ of the first rerender
-  (described below), and maybe adding code to cancel the first rerender.
-* `initialized` \- Happens once per instance, every time a component is fully
-  mounted (i.e. used) on a page, but before the first render. Useful for
-  fetching or setting up initial data on a component, as all the component will
-  be fully ready for use at this point.
-
-## Render Lifecycle
-
-All of 5 these lifecycle phases trigger in the following sequence every time a
-component renders. This including the first time, every manual rerender (e.g.
-invoking `element.rerender()`), and ever automatic rerender (e.g. after events
-or state manipulation). These will phases even trigger if you don't have a
-_Template_ CPart defined (although without a _Template_ there will be nothing
-to render, _per se_).
-
-* `prepare` \- Gather data needed before rendering (e.g. gather variables for
-  template). Return values from here to have "computed variables" within the
-  Template and Script code.
-* `render` \- The Template CPart will use this phase to to render HTML code
-  from the template specified (by setting `renderObj.component.innerHTML`
-* `dom` \- A DOM fragment is constructed for comparison during the reconcile
-  phase. Usefuly for doing direct DOM modification, but before directives are
-  activated (e.g. to do a `setAttribute('data:=', '{"a": 3}')` and expect the
-  `dataProp` to be in effect).
-* `reconcile` \- The Component CPart will compare the new rendered DOM fragment
-  to the document's actual DOM, and generates a "patch-set" or array of
-  operations necessary to reconcile the DOM to the new HTML (by setting
-  `renderObj.component.patches`)
-* `update` \- Finally, the Component will apply the patch-set generated in the
-  previous step, actually modifying the DOM and invoking any directive
-  callbacks specified
-
-
-## Directives
-
-Directives can can cause lifecycle phases as well. With the built-in CParts,
-there is only one directive that will trigger any lifecycle phases: The `event`
-directive (e.g. `@click`). More information on directives is [covered in the
-Directives section](/docs/directives.html).
-
-**Note:** These are ONLY available for full-fledged Component Parts written in
-JavaScript. They cannot be used in an embedded script tag, since the *Script*
-CPart does not support it.
-
-* `event` \- Triggers when an event is about to happen.
-* `eventCleanup` \- Triggers after an event happened. A common pattern is to
-  use this and the previous to figure out what has "changed" due to the event,
-  and respond accordingly.
-
 # Lifecycle Callbacks
 
 The purpose of _lifecycle phases_ is the _lifecycle methods_ or callback
@@ -188,3 +103,91 @@ Show messages in console</label>
     }
 /Script>
 ```
+
+
+
+
+# Component lifecycle
+
+Every _Component_ that you define triggers a certain set of lifecycle phases.
+The lifecycle phases that a Modulo _Component_ progresses through can be
+categorized into a few groups. One way to think of these phases is that
+typically, the "output" of a previous lifecycle phase in a group is the "input"
+of the next phase. As an example, `prepare` figures out the template variables,
+`render` causes the template to actually perform the render based on the
+variables in the previous phase, and `update` updates the HTML of the element
+based on the rendered output of the previous phase.
+
+
+
+## Mount Lifecycle
+
+Several methods are triggered when a component is mounted on the page. Note
+that for most components, you'll want to only use *initializedCallback*, unless
+you want to customize any aspects of how the component hydrates from a built
+version of the page. 
+
+
+* _constructor()_ \- While technically not a lifecycle method, the
+  constructor() method will be invoked when creating an instance of the CPart
+  class. This happens _before_ the Component's HTML Element is guaranteed to be
+  fully loaded on the DOM, and _before_ injected properties (e.g. ".conf",
+  ".modulo", ".element") properties are set on the CPart instance.
+* `constructed` \- Also technically not a lifecycle method, but this will be
+  called _before_ the Component's HTML Element is fully parsed, but _after_
+  injected properties (e.g. ".conf", ".modulo", ".element") properties are set
+  on the CPart instance.
+* `mount` \- The first "regular" lifecycle method. The *Component* class will
+  use this phase for hydrating content from a SSR'ed version of the page. This
+  is useful to hook in code to activate before any further DOM modifications
+  happen, but after the HTML Element and it's contents are fully parsed.
+* `mountRender` \- The *Component* will use this callback to "take . Useful if
+  you want to hook in code right before the _prepare_ of the first rerender
+  (described below), and maybe adding code to cancel the first rerender.
+* `initialized` \- Happens once per instance, every time a component is fully
+  mounted (i.e. used) on a page, but before the first render. Useful for
+  fetching or setting up initial data on a component, as all the component will
+  be fully ready for use at this point.
+
+## Render Lifecycle
+
+All of 5 these lifecycle phases trigger in the following sequence every time a
+component renders. This including the first time, every manual rerender (e.g.
+invoking `element.rerender()`), and ever automatic rerender (e.g. after events
+or state manipulation). These will phases even trigger if you don't have a
+_Template_ CPart defined (although without a _Template_ there will be nothing
+to render, _per se_).
+
+* `prepare` \- Gather data needed before rendering (e.g. gather variables for
+  template). Return values from here to have "computed variables" within the
+  Template and Script code.
+* `render` \- The Template CPart will use this phase to to render HTML code
+  from the template specified (by setting `renderObj.component.innerHTML`
+* `dom` \- A DOM fragment is constructed for comparison during the reconcile
+  phase. Usefuly for doing direct DOM modification, but before directives are
+  activated (e.g. to do a `setAttribute('data:=', '{"a": 3}')` and expect the
+  `dataProp` to be in effect).
+* `reconcile` \- The Component CPart will compare the new rendered DOM fragment
+  to the document's actual DOM, and generates a "patch-set" or array of
+  operations necessary to reconcile the DOM to the new HTML (by setting
+  `renderObj.component.patches`)
+* `update` \- Finally, the Component will apply the patch-set generated in the
+  previous step, actually modifying the DOM and invoking any directive
+  callbacks specified
+
+
+## Directives
+
+Directives can can cause lifecycle phases as well. With the built-in CParts,
+there is only one directive that will trigger any lifecycle phases: The `event`
+directive (e.g. `@click`). More information on directives is [covered in the
+Directives section](/docs/directives.html).
+
+**Note:** These are ONLY available for full-fledged Component Parts written in
+JavaScript. They cannot be used in an embedded script tag, since the *Script*
+CPart does not support it.
+
+* `event` \- Triggers when an event is about to happen.
+* `eventCleanup` \- Triggers after an event happened. A common pattern is to
+  use this and the previous to figure out what has "changed" due to the event,
+  and respond accordingly.

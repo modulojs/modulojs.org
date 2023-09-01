@@ -49,13 +49,12 @@
                 {
                     label: 'StaticData',
                     fragment: 'staticdata',
-                    keywords: ['loading API', 'loading json',
-                    'transform function', 'bundling data'],
+                    keywords: ['loading API', 'loading json', 'bundling data'],
                 },
                 {
                     label: 'Style',
                     fragment: 'style',
-                    keywords: ['CSS', 'styling', ':host', 'shadowDOM'],
+                    keywords: ['CSS', 'styling', 'prefixing', 'isolation', ':host', 'shadowDOM'],
                 },
                 {
                     label: 'Template',
@@ -164,15 +163,15 @@
             filename: '/docs/lifecycle.html',
             sections: [
                 {
+                    label: 'Lifecycle callbacks',
+                    fragment: 'callbacks',
+                    keywords: ['hooking into lifecycle', 'callbacks', 'script tag callbacks', 'renderObj', 'initRenderObj' ],
+                },
+                {
                     label: 'Component lifecycle',
                     fragment: 'global',
                     keywords: ['constructor', 'constructed', 'mount', 'mountRender', 'initialized', 'prepare',
                                'render', 'dom', 'reconcile', 'update', 'directive lifecycles', 'event', 'eventCleanup'],
-                },
-                {
-                    label: 'Lifecycle callbacks',
-                    fragment: 'callbacks',
-                    keywords: ['hooking into lifecycle', 'callbacks', 'script tag callbacks', 'renderObj', 'initRenderObj' ],
                 },
             ],
         },
