@@ -195,7 +195,7 @@ a.cta-btn:active {
         --navbar-height: 50px;
     }
     .page-container--navdocs {
-        display: block;
+        display: block !important;
     }
     .page-nav-link {
         font-size: 1.2rem;
