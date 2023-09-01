@@ -9,7 +9,7 @@ title: CParts
 > which are sufficient for most common use-cases. However, if you are instead
 > looking to extend this core functionality with custom CParts written in
 > JavaScript, refer to the [Custom Component Part examples on the demos
-> page](/demos/editor.html?file=/static/demos/advanced/custom_cpart_for_api.html),
+> page](/static/demos/editor.html?file=/static/demos/advanced/custom_cpart_for_api.html),
 > at least until more thorough CPart API
 > documentation is developed.
 
@@ -282,8 +282,8 @@ integrate third party code.
 
 #### Lifecycle execution context
 
-> **ALPHA API NOTE:** This feature might change names and/or behavior  in a
-> future release of Modulo.
+> **ALPHA API NOTE:** This feature might be renamed in a future release of
+> Modulo alpha:
 > [See Issue #26](https://github.com/modulojs/modulo/issues/26)
 
 ##### Per component: `lifecycle="initialized"`
@@ -300,76 +300,6 @@ asynchronous code.
 It also allows use of the private variables as a sort of state. That is not
 recommended usage, but might be useful for integrating with other JavaScript
 state or store management systems.
-
-##### Per rerender: `lifecycle="prepare"`, `lifecycle="render"`, `lifecycle="reconcile"`, and `lifecycle="update"`
-
-Less frequently used is the ability to attach the script to a certain lifecycle
-method. This is sometimes useful when you really want to only hook into a
-single method with some quick glue code that you want to reload with every
-rerender. This might also be useful if you are porting from or integrating with
-another framework that has a more "render-function" oriented structure (e.g.
-perhaps Svelte or hook-based React could be thought that way), or a more
-"update-DOM-directly" oriented structure (e.g. jQuery and similar).
-
-
-
-```modulo_demo
-<Template>
-    <button @click:=script.increment>Click me</button>
-</Template>
-<Script>
-    // "Static" execution context. We only have access to global variables:
-    // console.log("StaticContext Example: Global modulo is available:", modulo);
-    // console.log("...but element / cparts are undefined:", element, template);
-    let count = 0; // And variables defined in this "static" context are shared
-    function increment() {
-        count++; // this will increment for ALL buttons
-        console.log("Shared count between different components:", count);
-    }
-/Script>
-```
-
-```modulo_demo
-<Template>
-    <button @click:=script.increment>Click me: {{ script.count }}</button>
-</Template>
-<Script lifecycle="initialized">
-    // Now, "count" is private to each instance of this component
-    // (Note: In most cases, State should be used for this)
-    let count = 0;
-    function prepareCallback() {
-        return { count };
-    }
-    function increment() {
-        count++;
-        console.log("My private count:", count);
-    }
-/Script>
-```
-
-```modulo_demo
-<State
-    count:=3
-></State>
-<Script lifecycle="render">
-    // A "render" Script can become a custom, by-hand replacement for Template.
-    // (Note that in this particular case, is probably best to instead write a
-    // custom CPart or Templater engine before using this.)
-    component.innerHTML = "<ul>";
-    let i = 0;
-    while (i < state.count) {
-        component.innerHTML += `<li>Num: <em>${i}</em>`;
-        i++;
-    }
-    component.innerHTML += "</ul>";
-    component.innerHTML += `<input [state.bind] name="count" type="number" />`;
-/Script>
-<Script lifecycle="update">
-    // Similarly "update" Script can be useful for any direct DOM manipulation.
-    // element.querySelector("ul").style.color = "green";
-    // $(element).each(function() ... ) // ...or for a jQuery integration
-/Script>
-```
 
 ### renderObj
 
@@ -420,20 +350,27 @@ State is traditionally included in Component definitions below the _Template_ ta
 
 See below for an example of defining a _State_ CPart:
 
+
+#### Example 1
+
+Two State variables specified, of type String and Number:
+
 ```
-<!-- Example 1: Two variables specified -->
 <State
     name="Luiz"
     favenum:=13
 ></State>
 ```
 
+#### Example 2
+
+Many State variables of different types:
+
 ```
-<!-- Example 2: Many variables of different types -->
 <State
     color="blue"      (String)
     count:=1          (Number)
-    ready:=true       (Boolean)
+    loading:=false    (Boolean)
     speed:=null       (null value)
     items:=&apos;[    (JSON Array)
         "abc",
@@ -446,26 +383,34 @@ See below for an example of defining a _State_ CPart:
 ></State>
 ```
 
+#### Example 3
+
+Building up complicated JSON data with "." syntax:
+
 ```
-<!-- Example 3: Building up complicated JSON data with "." syntax -->
 <State
     user:={}
     user.name:=&apos;"gigasquid"&apos;
     user.uid:=1313
     user.address:={}
     user.address.billable:=null
-    user.address.ready:=false
+    user.address.ready:=true
 ></State>
 ```
 
 
-Note that all "state variables" _must_ have an initial value. It's okay to make the initial value be `null` (as in the "speed" example above), or other some placeholder that will later be replaced.
+Note that all "state variables" _must_ have an initial value. It's okay to make
+the initial value be `null` (as in the "speed" example above), or other some
+placeholder that will later be replaced.
 
 
 
 ### Linking State globally with stores
 
-If you want to share data between components globally, such that any component can modify the data causing a re-render to all linked components, such as user log-in information or global state data, then you can use the powerful `-store` attribute:
+If you want to share data between components globally, such that any component
+can modify the data causing a re-render to all linked components, such as user
+log-in information or global state data, then you can use the powerful `-store`
+attribute:
 
 ```
 <State
@@ -475,30 +420,77 @@ If you want to share data between components globally, such that any component c
 ></State>
 ```
 
-With this, any state with the given store _throughout your application_ will share state and subscriptions to updates.
+With this, any state with the given store _throughout your application_ will
+share state and subscriptions to updates.
 
-For a full example of `-store` in use, [see the Global Store demo](/demos/global_store.html).
+#### Limiting a store with -only
+
+Sometimes, you'll only want to subscribe to certain attributes parts of a store:
+
+```
+<State
+    -store="userinfo"
+    -only:='["username"]'
+    username="pombo"
+></State>
+```
+
+For a full example of `-store` in use, [see the Global Store
+demo](/static/demos/editor.html?file=/static/demos/advanced/global_store.html).
 
 ### CPart properties
 
-The actual data in a _State_ CPart is stored on it's "data" property. This property is a regular JavaScript Object, and thus can store any JavaScript data type. As an example, in a _Script_ CPart, you can directly reference this property with the code `cparts.state.data`.
+The actual data in a _State_ CPart is stored on it's "data" property. This
+property is a regular JavaScript Object, and thus can store any JavaScript data
+type. As an example, in a _Script_ CPart, you can directly reference this
+property with the code `cparts.state.data`.
 
-When writing the _State_ CPart definition, you must declare or pre-define each "state variable" or property of the "data" Object that you want to use. It is not permitted to create new state variables later on. In other words, if you only define `cparts.state.data` as having `.count` and `.title` as "state variables" (aka properties of the "data" Object), then an attempt like `cparts.state.data.newstuff = 10;` may result in an error. If you are dealing with a situation where you have an unknown quantity of data, such as from an API, the correct approach is to store it all within a nested Object _inside_ the state data Object, e.g. such as an `data.apiResults` Object or Array. Unlike top-level "state variables", it's okay to add properties, modify, or build upon nested Objects.
+When writing the _State_ CPart definition, you must declare or pre-define each
+"state variable" or property of the "data" Object that you want to use. It is
+not permitted to create new state variables later on. In other words, if you
+only define `cparts.state.data` as having `.count` and `.title` as "state
+variables" (aka properties of the "data" Object), then an attempt like
+`cparts.state.data.newstuff = 10;` may result in an error. If you are dealing
+with a situation where you have an unknown quantity of data, such as from an
+API, the correct approach is to store it all within a nested Object _inside_
+the state data Object, e.g. such as an `data.apiResults` Object or Array.
+Unlike top-level "state variables", it's okay to add properties, modify, or
+build upon nested Objects.
 
-While it's allowed to assign any arbitrary reference as a _State_ variable, including complex, unserializable types such as function callbacks, it's highly recommended to try to keep it to primitive and serializable types as much as possible (e.g. String, Number, Boolean, Array, Object). The reason being that there may be future features or third-party add-ons for _State_ which will only support primitive types (as an example, that would be required to save state to localStorage). If you want to store functions, consider using a `prepareCallback` to generate the functions within a Script context, and only store the data needed to "generate" the function in the state (as opposed to storing a direct reference to the function itself).
+While it's allowed to assign any arbitrary reference as a _State_ variable,
+including complex, unserializable types such as function callbacks, it's highly
+recommended to try to keep it to primitive and serializable types as much as
+possible (e.g. String, Number, Boolean, Array, Object). The reason being that
+there may be future features or third-party add-ons for _State_ which will only
+support primitive types (as an example, that would be required to save state to
+localStorage). If you want to store functions, consider using a
+`prepareCallback` to generate the functions within a Script context, and only
+store the data needed to "generate" the function in the state (as opposed to
+storing a direct reference to the function itself).
 
 ### renderObj
 
 State contributes it's current data values to the renderObj. Examples:
 
-* State initialized like: `<State name="Luiz">` will be accessible on the renderObj like `renderObj.state.name`, and in the Script or Template CParts like `state.name`.
-* State initialized like: `<State stuff:='["a", "b"]'>` will be accessible on the renderObj like `renderObj.state.info` (with individual items accessed with code that ends with "`.stuff[0]`"), and in the Script or Template CParts like `state.info`.
+* State initialized like: `<State name="Luiz">` will be accessible on the
+  renderObj like `renderObj.state.name`, and in the Script or Template CParts
+  like `state.name`.
+* State initialized like: `<State stuff:='["a", "b"]'>` will be accessible on
+  the renderObj like `renderObj.state.info` (with individual items accessed
+  with code that ends with "`.stuff[0]`"), and in the Script or Template CParts
+  like `state.info`.
 
 ### Directives
 
 State provides a single directive:
 
-* `[state.bind]` \- Two-way binding with State data, with the key determined by the `name=` property of whatever it is attached to. You can attach a `[state.bind]` directive to any HTML `<input>`, and the _State_ CPart's two-way binding will cause the input value to be updated if the state variable ever changes, and if a user edits the input triggering a `"keyup"` or `"change"` event, the state variable will be updated (along with, typically, a re-render of the component).
+* `[state.bind]` \- Two-way binding with State data, with the key determined by
+  the `name=` property of whatever it is attached to. You can attach a
+  `[state.bind]` directive to any HTML `<input>`, and the _State_ CPart's
+  two-way binding will cause the input value to be updated if the state
+  variable ever changes, and if a user edits the input triggering a `"keyup"`
+  or `"change"` event, the state variable will be updated (along with,
+  typically, a re-render of the component).
 
 
 ```
@@ -531,29 +523,58 @@ State provides a single directive:
 
 # StaticData
 
-The _StaticData_ CPart is useful for loading JSON files to use as a data source. StaticData has no "refresh" capability, meaning this should only consist data that you do not expect to change while running your program, such as type definitions or data from a API that does not change frequently.
+The _StaticData_ CPart is useful for loading JSON files to use as a data
+source. StaticData has no "refresh" capability, meaning this should only
+consist data that you do not expect to change while running your program, such
+as type definitions or data from a API that does not change frequently.
 
 ### Usage
 
-The StaticData CPart can be used in two different ways. The most common is loading data from a JSON file or JSON API by specifying a `src=` attribute. During development, this will "fetch" when refreshing the page, but once you "build" the component using `build()` or `bundle()`, the JSON file or JSON-based API will no longer be fetched. When using `build()` or `bundle()`, the specified content will be "frozen in time" during the build, and bundled in with the resulting JS file.
+The StaticData CPart can be used in two different ways. The most common is
+loading data from a JSON file or JSON API by specifying a `-src=` attribute.
+During development, this will "fetch" when refreshing the page, but once you
+"build" the component, the specified content will be "frozen in time" during
+the build, and bundled in with the resulting JS file with any filtering
+applied.
 
-The other usage is to simply "hardcode" the data in JSON syntax within the element itself. There is no functional difference of including data in JSON syntax in a StaticData CPart to simply adding a Script CPart that uses `script.exports` to expose data, other than it being slightly more convenience (e.g. less typing), and intentionally less flexible compared to a script CPart.
-
-Note: Currently, StaticData supports JavaScript Object syntax by default, NOT JSON syntax. This default might change in the future, to only strictly support JSON (e.g., require double-quotes, error on trailing commas), offering the looser structure.
+The other usage is to simply "hardcode" the data in JSON syntax within the
+element itself. There is no functional difference of including data in JSON
+syntax in a StaticData CPart to simply adding a Script CPart that uses
+`script.exports` to expose data, other than it being slightly more convenience
+(e.g. less typing), and intentionally less flexible compared to a script CPart.
 
 ### attrs
 
-* `src` \- Just like any other CParts, the `src=` attribute lets you load the content from another URL. This could be from an API (e.g. something like `src="https://some.api.com/v1/getdata?p=3"`), or for loading from a file (e.g. `src="./data/weatherData.json"`), or for loading from a file. If not specified, then the data must be specified within the StaticData tag, or else it will be simply "undefined".
-* `transform` \- This optional attribute can be set to a function (e.g. using `:=` data-prop syntax) that takes a single string as input (the original data) and outputs a single string (the transformed data), which should be a valid JavaScript expression that will result in the data format that you want. Generally, this JavaScript expression should be JS primitives, such as in JSON format. This happens before build() and bundle(), meaning it this JS expression will be what gets included in the built JS file. By default, no transformation is done, and the input is expected to already be valid JSON to be inserted verbatim.
+* `-src` \- Just like any other CParts, the `-src=` attribute lets you load the
+  content from another URL. This could be from an API (e.g. something like
+  `-src="https://some.api.com/v1/getdata?p=3"`), or for loading from a file
+  (e.g. `-src="./data/weatherData.json"`), or for loading from a file. If not
+  specified, then the data must be specified within the StaticData tag, or else
+  it will be simply "undefined".
+* `-data-type` \- This optional attribute should be set to a file-type string
+  (e.g. extension) of a registered converter. By default, the ones that are
+  available are:
+    * *Default:* `-data-type="json"` - This is a strictly JSON syntax (no
+      trailing commas, double quotes only)
+    * `-data-type="js"` - This is a JavaScript syntax JSON object (allows for
+      trailing commas, optional quotes, and even invoking functions to
+      manipulate the data before "freezing" it or bundling it)
+    * `-data-type="csv"` - This is a simple CSV parser, great for importing
+      spreadsheet data as exported from popular spreadsheet apps
+    * `-data-type="txt"` - This is a plain text file. It will be made available
+      as a string in the renderObj.
+
 
 ### renderObj
 
 The StaticData CPart exposes it's data directly (e.g. so it can be accessed in Script, Template, etc).
 
-### Usage Example
+### Usage Examples
 
 Examine the following examples for ideas on how to use StaticData:
 
+
+#### Using an API
 ```modulo_demo
 <!-- Load package.json file directly from GitHub -->
 <Template>
@@ -564,6 +585,8 @@ Examine the following examples for ideas on how to use StaticData:
     -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"
 ></StaticData>
 ```
+
+#### Displaying a table with a for loop
 
 ```modulo_demo
 <Template>
@@ -589,39 +612,74 @@ Examine the following examples for ideas on how to use StaticData:
 </Style>
 ```
 
+#### Filtering with -data-type="js"
+
 ```modulo_demo
 <Template>
+    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
     {% for item in staticdata %}
-        <label>
-          <img src="{{ item.thumbnailUrl }}" />
-          <tt>#{{ item.id }}</tt>
-          {{ item.title|truncate }}
-        </label>
+        <div>#{{ item.userId }}</div>
+        <div>{{ item.title|truncate:5 }}</div>
+        <div>{{ item.body|truncate:10 }}</div>
     {% endfor %}
 </Template>
-<!-- Hardcode lorem ipsum / sample data -->
-<StaticData>
-[
-  {
-    "id": 1,
-    "title": "accusamus beatae ad facilis cum similique qui sunt",
-    "url": "https://via.placeholder.com/600/92c952",
-    "thumbnailUrl": "https://via.placeholder.com/150/92c952"
-  },
-  {
-    "id": 2,
-    "title": "reprehenderit est deserunt velit ipsam",
-    "url": "https://via.placeholder.com/600/771796",
-    "thumbnailUrl": "https://via.placeholder.com/150/771796"
-  }
-]
-</StaticData>
+<!-- Load items from a JSON placeholder website "typicode", and then use the
+contet of a "js" StaticData tag to pre-filter them right after loading -->
+<script StaticData -data-type="js" -src="https://jsonplaceholder.typicode.com/posts">
+    .filter(post =>
+        post.userId === 5
+    )
+/script>
+
 <Style>
     :host {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         height: 150px;
         overflow: auto;
+    }
+</Style>
+```
+
+
+#### Embedding data with -data-type="js"
+
+```modulo_demo
+<Template>
+    {% for item in staticdata %}
+        <label>
+          <img src="{{ item.thumbnailUrl }}" />
+          <tt>#{{ item.id }}</tt>
+          {{ item.title|capfirst }}
+        </label>
+    {% endfor %}
+</Template>
+<!-- Hardcode lorem ipsum / sample data, with a custom data type specified so
+we can use the more relaxed JavaScript syntax rules -->
+<script StaticData -data-type="js">
+[
+  {
+    id: 1,
+    title: "accusamus beatae ad facilis cum similique qui sunt",
+    url: "https://via.placeholder.com/600/92c952",
+    thumbnailUrl: "https://via.placeholder.com/50/92c952"
+  },
+  {
+    id: 2,
+    title: "reprehenderit est deserunt velit ipsam",
+    url: "https://via.placeholder.com/600/771796",
+    thumbnailUrl: "https://via.placeholder.com/50/771796"
+  },
+]
+/script>
+<Style>
+    :host {
+        display: flex;
+        height: 150px;
+        overflow: auto;
+    }
+    tt {
+        font-size: 2rem;
     }
 </Style>
 ```

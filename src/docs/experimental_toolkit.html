@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<script Modulo
-    src="/static/js/Modulo.js"
-    -src="/static/" 
-></script>
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Experimental Toolkit
+---
 
-<x-Page pagetitle="Experimental Toolkit" navselected="docs/" navdocs="y">
+*DRAFT*
+*DRAFT*
+*DRAFT*
+*DRAFT*
+*DRAFT*
+*DRAFT*
+*DRAFT*
+*DRAFT*
 
 <h1>Modulo Toolkit</h1>
 
@@ -375,4 +380,73 @@ text='
 '></mws-Demo>
 
 
-</x-Page>
+
+
+##### Per rerender: `lifecycle="prepare"`, `lifecycle="render"`, `lifecycle="reconcile"`, and `lifecycle="update"`
+
+Less frequently used is the ability to attach the script to a certain lifecycle
+method. This is sometimes useful when you really want to only hook into a
+single method with some quick glue code that you want to reload with every
+rerender. This might also be useful if you are porting from or integrating with
+another framework that has a more "render-function" oriented structure (e.g.
+perhaps Svelte or hook-based React could be thought that way), or a more
+"update-DOM-directly" oriented structure (e.g. jQuery and similar).
+
+
+```modulo_demo
+<Template>
+    <button @click:=script.increment>Click me</button>
+</Template>
+<Script>
+    // "Static" execution context. We only have access to global variables:
+    // console.log("StaticContext Example: Global modulo is available:", modulo);
+    // console.log("...but element / cparts are undefined:", element, template);
+    let count = 0; // And variables defined in this "static" context are shared
+    function increment() {
+        count++; // this will increment for ALL buttons
+        console.log("Shared count between different components:", count);
+    }
+/Script>
+```
+
+```modulo_demo
+<Template>
+    <button @click:=script.increment>Click me: {{ script.count }}</button>
+</Template>
+<Script lifecycle="initialized">
+    // Now, "count" is private to each instance of this component
+    // (Note: In most cases, State should be used for this)
+    let count = 0;
+    function prepareCallback() {
+        return { count };
+    }
+    function increment() {
+        count++;
+        console.log("My private count:", count);
+    }
+/Script>
+```
+
+```modulo_demo
+<State
+    count:=3
+></State>
+<Script lifecycle="render">
+    // A "render" Script can become a custom, by-hand replacement for Template.
+    // (Note that in this particular case, is probably best to instead write a
+    // custom CPart or Templater engine before using this.)
+    component.innerHTML = "<ul>";
+    let i = 0;
+    while (i < state.count) {
+        component.innerHTML += `<li>Num: <em>${i}</em>`;
+        i++;
+    }
+    component.innerHTML += "</ul>";
+    component.innerHTML += `<input [state.bind] name="count" type="number" />`;
+/Script>
+<Script lifecycle="update">
+    // Similarly "update" Script can be useful for any direct DOM manipulation.
+    // element.querySelector("ul").style.color = "green";
+    // $(element).each(function() ... ) // ...or for a jQuery integration
+/Script>
+```
