@@ -89,9 +89,19 @@
 </Component>
 
 <Component name="ProjectVersion" mode="vanish">
-  <!--<Template>alpha&nbsp;v0.0.56</Template>-->
-  <Template>alpha&nbsp;v{{ staticdata.version }}</Template>
+  <Template>
+    <a
+        title="Modulo is still 'alpha' quality. Be on the lookout for bugs and
+glitches! Click to browser the issues page for a better idea of why."
+        href="https://github.com/modulojs/modulo/issues"
+    >alpha</a>&nbsp;v{{ staticdata.version }}
+  </Template>
   <StaticData -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"></StaticData>
+  <Style>
+    a {
+        color: var(--color-fg-semidark);
+    }
+  </Style>
 </Component>
 
 <Component name="TwoPanes" mode="vanish">
