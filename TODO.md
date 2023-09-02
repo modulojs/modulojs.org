@@ -4,8 +4,8 @@ Final list
 
 - (DONE) Fix / Replace World Map Demo
 - (DONE) Tutorial 1
-- (INP) Tutorial 2
-- (INP) Tutorial 3
+- (DONE) Tutorial 2
+- (DONE) Tutorial 3
 - (DONE) Finish news article of website launch
 - (DONE) Table of Contents - update keywords descriptions, tutorial name
 
@@ -16,17 +16,6 @@ Nice to haves
 - Swap out Highlight.js for one that can handle Django + CSS
 - Quick pages flat structure + config.js + site.css
 
-
-Blocking
----------------------------
-
-
-- Project Templates
-    - Quick Pages
-        - Change to flat 5 or 3 page structure
-        - Add in config.js (config logo etc, allows adding JS / extensions) and
-          site.css (allows CSS variables)
-    - All: Walk through each step again
 
 
 

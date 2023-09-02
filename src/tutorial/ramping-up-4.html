@@ -1,0 +1,78 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+tutorial: Part 4
+---
+
+# Shadow & Slots
+
+
+
+> **The origin of slots** Slots are a feature of the "shadow DOM", a new-ish
+> feature of web browsers. Modulo replicates the same behavior of these
+> "shadow" slots, making slots even easier to use without JavaScript.
+
+As we explored in the last section, _components_ are "define once, re-use many
+times" bits of code. Often, it's useful for a component to "wrap around" other
+HTML, or contain other HTML. For example, a stylized button component might
+wrap around text, or a stylish "modal dialog" component would wrap around
+paragraphs and other arbitrary HTML content. You can thus imagine the button or
+modal in these examples as having "empty spots" or _slots_ where this content
+would go. That is to say, the component is a sort of "empty picture frame", and
+the web developer using the component would be able to "slide content" into the
+frame's empty slot.
+
+_Slots_ allow there to be "empty spots" in your HTML that proceed to get filled
+by arbitrary content supplied when your component is used. Adding a slot is as
+simple as including a `<slot></slot>` HTML element in your component's
+_Template_ definition.
+
+Here's an example that "wraps" a slot inside a div with a CSS class of
+"picture-frame":
+
+```html
+<div class="picture-frame">
+    <slot></slot>
+</div>
+```
+
+To fill up a _slot_ with HTML content, add the content between the opening and
+closing tags of your HTML element. Here's an example that might go with the
+above example:
+
+```html
+<x-PictureFrame>
+    <p>My cat:</p>
+    <img src="./cat.jpg" />
+</x-PictureFrame>
+```
+
+##### Try it now
+
+1.  Resume editing the HTML file you were working on in the previous "TRY IT
+NOW" section.
+2.  Time to add a slot! Let's make our "HelloWorld" component be ready to have
+a customized greeting. Edit your embedded component to look like this:
+4.  Now, let's fill the slot! Edit your usage to include text or even other
+HTML between your `x-HelloWorld` opening and closing tags:
+
+
+# Events
+
+Let's review a list of event types, and practice attaching events like click in
+order to push items onto an array.
+
+```modulo_demo
+<Template>
+    <p>Items: {{ state.items|join:", " }}</p>
+    <button
+        @click:=state.items.reverse 
+    >Reverse</button>
+</Template>
+<State
+    items:='[ "candy", "bread" ]'
+></State>
+```
+
+
+# Script Tag
+
+
