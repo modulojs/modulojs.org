@@ -71,6 +71,7 @@
         {% endif %}
         <main class="page-content">
             {% if props.navbreadcrumb %}
+                <div class="page-topbar">
                     {% for page in staticdata.navigation %}
                         {% if page.file == props.navselected %}
                             <a href="/{{ page.file }}" title="{{ page.title }}" class="breadcrumb">
@@ -79,9 +80,22 @@
                         {% endif %}
                     {% endfor %}
                     <span class="breadcrumb">/</span>
-                    <a href="#" title="{{ page.title }}" class="breadcrumb breadcrumb--selected">
+                    <a href="#" class="breadcrumb breadcrumb--selected">
                         {{ props.navbreadcrumb }}
                     </a>
+                    {% if script.githubLinks %}
+                        <div class="right-toolbar">
+                            <span class="breadcrumb">[</span>
+                            <a
+                                target="_blank"
+                                class="edit-link"
+                                title="Spot a typo? Click to edit this document on GitHub, where you can submit suggested changes."
+                                href="{{ script.githubLinks.edit }}"
+                            ><span class="toolbar-icon">✏</span> EDIT</a>
+                            <span class="breadcrumb">]</span>
+                        </div>
+                    {% endif %}
+                </div>
             {% endif %}
             <slot></slot>
         </main>

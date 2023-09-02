@@ -1,9 +1,18 @@
 
 function prepareCallback() {
-    // Get the current year on every render of the page
+    let path = window.location.pathname;
+    if (path.endsWith('/')) {
+        path = path + 'index.html';
+    }
+    let githubLinks = {};
+    if (path.includes('/docs/') || path.includes('/tutorial/')) {
+        githubLinks.edit = 'https://github.com/modulojs/modulojs.org/edit/main/src' + path;
+        githubLinks.blame = 'https://github.com/modulojs/modulojs.org/blame/main/src' + path;
+    }
     return {
         currentYear: (new Date()).getFullYear(),
-        version: '0.0.53',
+        currentPath: path,
+        githubLinks,
     };
 }
 

@@ -151,6 +151,41 @@
     color: var(--color-fg);
 }
 
+.page-topbar {
+    padding-left: 30px;
+}
+.page-topbar .right-toolbar {
+    float: right;
+    opacity: 0.2;
+    padding: 10px;
+    padding-right: 20px;
+    transition: opacity 0.2s;
+    user-select: none;
+}
+.page-topbar .right-toolbar:hover {
+    opacity: 1;
+}
+
+.edit-link {
+    background: var(--color-fg-semilight);
+    font-size: 0.7rem;
+    padding: 0;
+    margin: -5px;
+    margin-left: -15px;
+    font-weight: bold;
+}
+.edit-link:hover {
+    opacity: 1;
+}
+
+.toolbar-icon {
+    font-size: 1.9rem;
+    font-weight: normal;
+    line-height: 0.1;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .cta-btn,
 a.cta-btn {
     box-shadow: var(--btn-shadow-dist) var(--btn-shadow-dist) 0 var(--color-alt);
