@@ -13,6 +13,22 @@ li, ul, ol {
     margin-bottom: 5px;
 }
 
+.section-keywordless-parent ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+.section-keywordless-parent li {
+    margin: 2px;
+}
+
+.section-keywordless-parent ul {
+    margin: 0;
+}
+
+.section-keywordless-parent li {
+    display: inline-block;
+}
+
 li.ginactive > a::before {
     content: '+ ';
 }
@@ -91,3 +107,9 @@ h1 {
     ;
 }
 
+@media (min-width: 700px) {
+  .section-keywordless-parent li {
+    padding: 2px;
+    margin-left: 1rem;
+  }
+}

@@ -2,10 +2,13 @@
 title: Templating Language
 ---
 
-Templating Language
-===================
 
-This document explains the language syntax and functionality of the included Modulo template system.
+This document explains the language syntax and functionality of the included
+Modulo template system.
+
+
+##### Approach
+
 
 Modulo's templating language is designed to be fairly versatile in
 capabilities, while still feel comfortable to those only used to working with
@@ -19,9 +22,6 @@ This also means that most text editors already can highlight Modulo template
 code: Just configure your editor to syntax highlight _Django HTML templates_,
 and you'll be all set for editing Modulo template or library files. Thanks,
 Django!
-
-
-##### Approach
 
 In approach, Modulo's tempting language joins the ranks of the
 ["Djangolike"](https://i5ar.medium.com/template-languages-a7b362971cbc)
@@ -168,7 +168,9 @@ Each _CPart_ within a given component may contribute a variable to the _Template
 
 We'll go over template-tags later, but some template-tags can add variables into the mix as well. As a sneak-peak, examine the following code:
 
-Note how `athlete` declares a new variable, which can be reused in `{{ athlete.name }}`. For more on for-loops, see the [built-in template-tag reference.](/docs/templating-reference.html#builtintags)
+Note how `athlete` declares a new variable, which can be reused in
+`{{ athlete.name }}`. For more on for-loops, see the
+[built-in template-tag reference.](/docs/templating/tags.html#for)
 
 
 ```
@@ -200,8 +202,8 @@ Filter arguments that contain spaces must be quoted; for example, to join a
 list with commas and spaces you'd use `{{ state.list|join:", " }}`.
 
 Modulo's templating language provides many built-in template filters.
-You can read all about them in the [built-in filter
-reference](/docs/templating-reference.html#filters).
+You can read all about them in the 
+[built-in filter reference](/docs/templating/filters.html).
 
 ## Example filter: default
 
@@ -251,7 +253,8 @@ Tags look like this: `{% tag %}` (except with the word "tag" replaced with somet
 
 Most built-in tags require beginning and ending tags, in the format of: `{% tag %}...contents...{% endtag %}`
 
-Modulo ships with several built-in template-tags. You can read all about them in the [built-in template-tag reference](/docs/templating-reference.html#builtinfilters).
+Modulo ships with several built-in template-tags. You can read all about them
+in the [built-in template-tag reference](/docs/templating/tags.html).
 
 
 ## Common Template-Tags

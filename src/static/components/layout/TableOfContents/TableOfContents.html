@@ -38,12 +38,19 @@
 <ul>
     <h2>Documentation</h2>
     {% for page in staticdata.docs %}
-        <li class="{% if not props.showall %}
-                {% if page.sections %}
-                    {% if page.filename|isactive %}gactive{% else %}ginactive{% endif %}
-                    {% if page.filename|isactive %}section-active{% endif %}
+        <li class="
+                {% if not props.showall %}
+                    {% if page.sections %}
+                        {% if page.filename|isactive %}gactive{% else %}ginactive{% endif %}
+                        {% if page.filename|isactive %}section-active{% endif %}
+                    {% endif %}
                 {% endif %}
-            {% endif %}"><a href="{{ page.filename }}">{{ page.label }}</a>
+                {% if page.sections %}
+                    {% if not page.sections|get:0|get:"keywords" %}
+                        section-keywordless-parent
+                    {% endif %}
+                {% endif %}
+            "><a href="{{ page.filename }}">{{ page.label }}</a>
             {% if page.filename|isactive|default:props.showall %}
                 <ul>
                 {% for section in page.sections %}
@@ -54,8 +61,10 @@
                     >
                       <a href="{{ page.filename }}{% if section.filename %}{{ section.filename }}{% endif %}{% if section.fragment %}#{{ section.fragment }}{% endif %}">{{ section.label }}</a>
                     {% if props.showall %}
+                        {% if section.keywords %}
                         {% if section.keywords.length gt 0 %}
                             <span class="hint">(<em>Topics: {{ section.keywords|join:', ' }}</em>)</span>
+                        {% endif %}
                         {% endif %}
                     {% endif %}
                     </li>

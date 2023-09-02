@@ -1,0 +1,374 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Templating Reference
+---
+
+
+Modulo's templating language comes with a standard library of filters and
+template-tags, modeled to be similar to the behavior of Django's templating
+language library. Although in general Django's has more features, some Django
+templates might work as Modulo templates with a few tweaks. In fact, there's
+such large overlap that some of this very documentation was [copied and
+arranged just like Django's
+own](https://docs.djangoproject.com/en/4.2/ref/templates/language/), to be
+instantly more familiar to developers. Thanks, Django!
+
+# Template Filters
+
+## add
+
+Adds the argument to the value. Example:
+
+
+```modulo_demo
+<Template>
+    {{ state.value|add:7 }} hacks <br />
+    {{ state.value|add:state.another }} hz
+</Template>
+
+<State
+    value:=1330
+    another:=1270
+></State>
+```
+
+## allow
+
+
+Given an "allowed list" of comma separated strings, only permit values that
+exist exactly the "allowed list". If the value does not exist within the
+allowed list, it will produce an empty string (`""`). The fact that empty
+strings are "falsy" means you can chain together this filter with the default
+filter in order to provide a fallback as well, which is demonstrated in the
+third example. Examples:
+
+*Note:* You should not use this for input validation for security purposes (use
+the backend instead, since any frontend code can be altered by users) or input
+validation, for which you use should `pattern=` instead since it's built in to
+HTML.
+
+```modulo_demo
+<Template>
+    Valid: {{ state.value|allow:"orange,apple,pear" }} <br />
+    Invalid: {{ state.value|allow:"a,b,c" }} <br />
+    Invalid + default: {{ state.value|allow:"a,b,c"|default:"Oops!" }}
+</Template>
+
+<State
+    value="apple"
+></State>
+```  
+
+## capfirst
+
+Output given string with the first letter capitalized.
+
+```modulo_demo
+<Template>
+    The {{ state.value|capfirst }} framework is my favorite
+</Template>
+
+<State
+    value="modulo.js"
+></State>
+```
+
+## default
+
+If the given value is [Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy), use the given default. Otherwise, use the value.
+
+```modulo_demo
+<Template>
+    Fave snack: {{ state.snack|default:"icecream" }} <br />
+    Snack count: {{ state.count|default:"none" }} <br />
+    Fave soda: {{ state.soda|default:"Cola" }}
+</Template>
+<State
+    snack=""
+    count:=0
+    soda="guarana"
+></State>
+```
+
+## divisibleby
+
+Returns `true` if the value is evenly divisible by the given argument.
+
+```modulo_demo
+<Template>
+    Can {{ state.value }} divide by 3? <br />
+    {{ state.value|divisibleby:3 }} <br />
+    {% if state.value|divisibleby:2 %}
+        {{ state.value }} is even
+    {% endif %}
+</Template>
+<State
+    value:=4
+></State>
+```
+
+## escapejs
+
+Escape special characters in a given string using JavaScript (specifically, JSON) escaping rules. If you have a string like `"Hello\nWorld!"` (where `\n` is a single new-line character), it will output `Hello\nWorld!` (that is, as "backslash-n" or two characters). It will also "double-up" any backslashes it encounters.
+
+Note that this is unrelated to the [HTML autoescaping](/docs/templating/index.html#escaping), meaning you may need to also mark as `|safe` if do not want it escaping for HTML rules as well (e.g. changing `<`, which is invalid for HTML text but valid for JavaScript, into `&lt;`). Similarly, there is no need to use this for escaping for HTML attribute values (e.g. `<input placeholder="{{ state.msg }}">`), as the HTML escaping is sufficient. The only use is embedded JS strings.
+
+
+```modulo_demo
+<Template>
+    Result: {{ state.value|escapejs }} <br />
+</Template>
+
+<State
+    value="Just
+trying
+\stuff\
+out"
+></State>
+```
+
+
+## first
+
+Retrieve the first item in an Array:
+
+
+```modulo_demo
+<Template>
+    <p>{{ state.athletes|first }}</p>
+</Template>
+
+<State
+  athletes:='["Neymar", "Maradona"]'
+></State>
+```
+
+
+## join
+
+Formats an array to be comma-separated. Optionally, a different separator can be specified as an argument.
+
+
+```modulo_demo
+<Template>
+    <p>{{ state.athletes|join }}</p>
+    <p>{{ state.athletes|join:" + " }}</p>
+</Template>
+
+<State
+  athletes:='["Neymar", "Maradona"]'
+></State>
+```
+
+
+## json
+
+Formats given data as a JSON string. It takes one optional argument, that if specified, will cause indentation by the given amount.
+
+
+```modulo_demo
+<Template>
+    <pre>{{ state.athletes|json }}</pre>
+    <pre>{{ state.athletes|json:2 }}</pre>
+</Template>
+
+<State
+    athletes:='[
+        {"name": "Devante Adams"},
+        {"name": "Steph Curry"},
+        {"name": "Megan Rapinoe"}
+    ]'
+></State>
+```
+
+
+## last
+
+Retrieve the last item in an Array:
+
+
+```modulo_demo
+<Template>
+    <p>{{ state.athletes|last }}</p>
+</Template>
+
+<State
+  athletes:='["Neymar", "Maradona"]'
+></State>
+```
+
+
+## length
+
+Determine the length of the given value. This supports Strings, Arrays, and Objects. For Objects, it will return the number of properties on the object.
+
+
+```modulo_demo
+<Template>
+    <p>Sentence length: {{ state.sentence|length }}</p>
+    <p>Flowers length: {{ state.flowers|length }}</p>
+    <p>Flights length: {{ state.flights|length }}</p>
+</Template>
+
+<State
+    sentence="The sweat wis lashing oafay Sick Boy; he wis trembling."
+    flowers:='["Marigolds", "Sunflowers"]'
+    flights:='{"SFO": "LAX", "BAI": "MEX", "MEX": "MVD"}'
+></State>
+```
+
+
+## lower
+
+Display the given string in all lowercase letters.
+
+
+```modulo_demo
+<Template>
+    <p>Without: {{ state.word }}</p>
+    <p>Lower: {{ state.word|lower }}</p>
+</Template>
+
+<State
+    word="rAndOm cAPitalS"
+></State>
+```
+
+
+## pluralize
+
+Allows for convenient pluralization in many human languages. This is for words in languages where a plural form is used when there is "0" or "2+" items, and a singular form for exactly 1 item. This is useful for the majority of noun and verb conjugations in English, along with many other Indo-European languages.
+
+To use, give it a number (typically, the length of a list), and a comma separated version of two forms of a word. If that number is exactly "1" it will output the second form (or nothing at all, if the second form is not specified), otherwise it will output the first form.
+
+Below are some examples. Note that in the second example, it does not specify a singular form, but instead only specifies an "s" to append to the word "flower" to make it's plural "flowers".
+
+
+```modulo_demo
+<Template>
+    We visited {{ state.citynames|length}} 
+    {{ state.citynames|length|pluralize:"cities,city" }}
+
+    and picked {{ state.flowers|length}} 
+    flower{{ state.flowers|length|pluralize:"s" }}
+</Template>
+
+<State
+    flowers:='["Marigolds", "Sunflowers"]'
+    citynames:='["Oakland", "Berkeley", "Richmond", "Concord"]'
+></State>
+```
+
+
+## subtract
+
+Subtracts the argument from the value. Example:
+
+
+```modulo_demo
+<Template>
+    {{ state.value|subtract:3 }} hacks <br />
+    {{ state.value|subtract:state.another }} is the answer
+</Template>
+
+<State
+    value:=1340
+    another:=1298
+></State>
+```
+
+
+## truncate
+
+Cut off the given string after a number of characters specified by the argument. If it has to cut off the string, it will append an "ellipsis" character.
+
+
+```modulo_demo
+<Template>
+    <p>Long sentence: {{ state.sentence|truncate:20 }}</p>
+    <p>Short word: {{ state.word|truncate:20 }}</p>
+</Template>
+
+<State
+    sentence="The sweat wis lashing oafay Sick Boy; he wis trembling."
+    word="Bird."
+></State>
+```
+
+
+## renderas
+
+A highly useful filter that allows use of re-usable template snippets.
+
+Typically in the format of `{{ state.data|renderas:trow }}`, where `state.data` is some Object, and there exists a template like with the `-name` "trow" that renders that object. The typical usage of this is refactoring templates to conveniently render complex data. This allows you to take complicated bits of template code and refactor it into another smaller, helper, "child" template that is then used within the main template.
+
+The "input" to renderas should always be an Object. The keys and values of that object will populate the "template variables" for that template, meaning you can access them directly as template variables within the child template. As an example, if we `renderas` with an Object like `{altTitle: "Newest entry"}`, then within the child template the "altTitle" becomes a "top-level" variable, and we can use syntax like `{{ altTitle }}` (no need for "." syntax).
+
+Note that the child template will be isolated or "sandboxed" to _only_ have access to properties of the specified object. State, props, script, etc will not be accessible as template variables. This sandboxing is usually good and helps reduce bugs and makes child templates much easier to read. However, sometimes you just want to quickly spit up and refactor a template, meaning you want the child template to behave just like the parent, and you want global variables available, just as they were available to the parent. To include another template without any sandboxing, consider using the `include` template-tag.
+
+
+```modulo_demo
+<Template -name="trow">
+    <div><strong>{{ name }}</strong></div>
+    <div><em>{{ type }}</em></div>
+    <div><tt>{{ level }}</tt></div>
+</Template>
+<Template>
+    <section>
+        <h3>Name</h3> <h3>Type</h3> <h3>Level</h3>
+        {% for info in state.pokemon %}
+            {{ info|renderas:trow }}
+        {% endfor %}
+    </section>
+</Template>
+<State
+    pokemon:='[
+        {"name": "Jigglypuff", "type": "Normal", "level": 13},
+        {"name": "Pikachu", "type": "Electric", "level": 10},
+        {"name": "Ghastly", "type": "Ghost", "level": 8}
+    ]'
+></State>
+<Style>
+    section {
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+    }
+</Style>
+```
+
+
+## reversed
+
+Reverses the given input. Typically, this is used to reverse Arrays, such as when you want to iterate over an Array in the opposite direction using a `{% for %}` template-tag. If the input is a String or another data type, it will attempt to first convert to an Array.
+
+
+```modulo_demo
+<Template>
+    <p>{{ state.flowers|reversed|join }}</p>
+    {% for city in state.cities|reversed %}
+        <p>{{ city }}</p>
+    {% endfor %}
+</Template>
+
+<State
+    flowers:='["Marigolds", "Sunflowers"]'
+    cities:='["Oakland", "Berkeley", "Richmond", "Concord"]'
+></State>
+```
+
+
+## upper
+
+Display the given string in all uppercase letters.
+
+
+```modulo_demo
+<Template>
+    <p>Without: {{ state.word }}</p>
+    <p>Upper: {{ state.word|upper }}</p>
+</Template>
+
+<State
+    word="rAndOm cAPitalS"
+></State>
+```
+

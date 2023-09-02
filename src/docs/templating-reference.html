@@ -473,7 +473,7 @@ Returns `true` if the value is evenly divisible by the given argument.
 
 Escape special characters in a given string using JavaScript (specifically, JSON) escaping rules. If you have a string like `"Hello\nWorld!"` (where `\n` is a single new-line character), it will output `Hello\nWorld!` (that is, as "backslash-n" or two characters). It will also "double-up" any backslashes it encounters.
 
-Note that this is unrelated to the [HTML autoescaping](/docs/templating.html#escaping), meaning you may need to also mark as `|safe` if do not want it escaping for HTML rules as well (e.g. changing `<`, which is invalid for HTML text but valid for JavaScript, into `&lt;`). Similarly, there is no need to use this for escaping for HTML attribute values (e.g. `<input placeholder="{{ state.msg }}">`), as the HTML escaping is sufficient. The only use is embedded JS strings.
+Note that this is unrelated to the [HTML autoescaping](/docs/templating/index.html#escaping), meaning you may need to also mark as `|safe` if do not want it escaping for HTML rules as well (e.g. changing `<`, which is invalid for HTML text but valid for JavaScript, into `&lt;`). Similarly, there is no need to use this for escaping for HTML attribute values (e.g. `<input placeholder="{{ state.msg }}">`), as the HTML escaping is sufficient. The only use is embedded JS strings.
 
 
 ```modulo_demo

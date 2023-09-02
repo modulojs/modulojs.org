@@ -65,7 +65,7 @@
         },
         {
             label: 'Templating',
-            filename: '/docs/templating.html',
+            filename: '/docs/templating/index.html',
             sections: [
                 {
                     label: 'Templates',
@@ -106,25 +106,152 @@
         },
 
         {
-            label: 'Template Reference',
-            filename: '/docs/templating-reference.html',
+            label: 'Template Tags',
+            filename: '/docs/templating/tags.html',
             sections: [
                 {
-                    label: 'Built-in Template Tags',
-                    fragment: 'builtintemplatetags',
-                    keywords: [ 'if', 'elseif', 'elif', 'else', 'endif', 'for',
-                    'empty', 'endfor', 'operators', 'in', 'not in', 'is',
-                    'is not', 'lt', 'gt', 'comparison', 'control-flow', ],
+                    "fragment": "comment",
+                    "label": "comment"
                 },
                 {
-                    label: 'Built-in Filters',
-                    fragment: 'builtinfilters',
-                    keywords: [ 'add', 'allow', 'capfirst', 'concat',
-                    'default', 'divisibleby', 'escapejs', 'first', 'join',
-                    'json', 'last', 'length', 'lower', 'number', 'pluralize',
-                    'subtract', 'truncate', 'renderas', 'reversed', 'upper', ],
+                    "fragment": "debugger",
+                    "label": "debugger"
                 },
+                {
+                    "fragment": "include",
+                    "label": "include"
+                },
+                {
+                    "fragment": "for",
+                    "label": "for"
+                },
+                {
+                    "fragment": "empty",
+                    "label": "empty"
+                },
+                {
+                    "fragment": "if",
+                    "label": "if"
+                },
+                {
+                    "fragment": "else",
+                    "label": "else"
+                },
+                {
+                    "fragment": "elifelseif",
+                    "label": "elif, elseif"
+                },
+                {
+                    "fragment": "iftagoperators",
+                    "label": "if-tag operators"
+                },
+                {
+                    "fragment": "isoperator",
+                    "label": "==, is"
+                },
+                {
+                    "fragment": "isnotoperator",
+                    "label": "!=, is not"
+                },
+                {
+                    "fragment": "notoperator",
+                    "label": "not"
+                },
+                {
+                    "fragment": "ltoperators",
+                    "label": "lt, <, <="
+                },
+                {
+                    "fragment": "gtoperators",
+                    "label": "gt, >, >="
+                },
+                {
+                    "fragment": "innotinoperators",
+                    "label": "in, not in"
+                }
             ],
+        },
+
+
+        {
+            label: 'Template Filters',
+            filename: '/docs/templating/filters.html',
+            sections: [
+                {
+                    "fragment": "add",
+                    "label": "add"
+                },
+                {
+                    "fragment": "allow",
+                    "label": "allow"
+                },
+                {
+                    "fragment": "capfirst",
+                    "label": "capfirst"
+                },
+                {
+                    "fragment": "default",
+                    "label": "default"
+                },
+                {
+                    "fragment": "divisibleby",
+                    "label": "divisibleby"
+                },
+                {
+                    "fragment": "escapejs",
+                    "label": "escapejs"
+                },
+                {
+                    "fragment": "first",
+                    "label": "first"
+                },
+                {
+                    "fragment": "join",
+                    "label": "join"
+                },
+                {
+                    "fragment": "json",
+                    "label": "json"
+                },
+                {
+                    "fragment": "last",
+                    "label": "last"
+                },
+                {
+                    "fragment": "length",
+                    "label": "length"
+                },
+                {
+                    "fragment": "lower",
+                    "label": "lower"
+                },
+                {
+                    "fragment": "pluralize",
+                    "label": "pluralize"
+                },
+                {
+                    "fragment": "subtract",
+                    "label": "subtract"
+                },
+                {
+                    "fragment": "truncate",
+                    "label": "truncate"
+                },
+                {
+                    "fragment": "renderas",
+                    "label": "renderas"
+                },
+                {
+                    "fragment": "reversed",
+                    "label": "reversed"
+                },
+                {
+                    "fragment": "upper",
+                    "label": "upper"
+                }
+            ]
+
+            ,
         },
 
         {

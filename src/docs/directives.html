@@ -223,7 +223,7 @@ A quick word of caution on custom directives: If you find yourself using custom 
 
 #### Directives vs. Templates for manipulating DOM
 
-Not sure which to use to manipulate the DOM and generate HTML? Short answer: Templates! Long answer: Directives deal with direct DOM references, and thus are almost always messier to use. Modulo's [templating system is designed](/docs/templating.html) to generate a string of HTML code as a purposeful limitation during the `render` phase, and thus prevents this messiness with a stricter structure.
+Not sure which to use to manipulate the DOM and generate HTML? Short answer: Templates! Long answer: Directives deal with direct DOM references, and thus are almost always messier to use. Modulo's [templating system is designed](/docs/templating/index.html) to generate a string of HTML code as a purposeful limitation during the `render` phase, and thus prevents this messiness with a stricter structure.
 
 So, when you can, try to make the DOM the "source of truth", and attach data to DOM elements via regular HTML properties or `:=`-style dataProp properties. In other words, avoid using direct DOM manipulation as your first approach, instead only using this "escape hatch" to vanilla JS as a last resort.
 
