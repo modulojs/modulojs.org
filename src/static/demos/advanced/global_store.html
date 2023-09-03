@@ -46,6 +46,8 @@
         <h2>The text is: "{{ state.example }}"</h2>
     </Template>
 
+    <!-- For this one, we "subscribe-only", but have no inputs that can update
+    the shared state -->
     <State
         -store="sharedstuff"
     ></State>
@@ -53,8 +55,7 @@
 
 </template>
 
-<!-- Include Modulo.js, using latest version: -->
-<script src="https://unpkg.com/mdu.js@0.0.53/src/Modulo.js"></script>
+<script src="https://unpkg.com/mdu.js@0.0.62/src/Modulo.js"></script>
 
 <hr />
 <x-SharedInput></x-SharedInput>
@@ -75,4 +76,3 @@
 <hr />
 <x-SharedInput></x-SharedInput>
 <hr />
-

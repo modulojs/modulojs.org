@@ -4,7 +4,7 @@
     testing frameworks, but instead is intended for allowing quick development
     of unit-testing of components in particular.
 -->
-<template id="Modulo">
+<template Modulo>
     <Component name="ExampleClickingComponent">
         <Props
             txt
@@ -109,32 +109,20 @@
 
 </template>
 
-<!-- Linking to Modulo  -->
-<!-- Load the TestSuite CPart -->
-<!--
-<script src="https://unpkg.com/mdu.js"></script>
-<script src="https://unpkg.com/mdu.js@latest/mdu/cparts/TestSuite.js"></script>
--->
-<script src="https://unpkg.com/mdu.js@0.0.21/src/Modulo.js"></script>
-<script src="https://unpkg.com/mdu.js@0.0.21/mdu/cparts/TestSuite.js"></script>
+<!-- Linking to Modulo & loading the TestSuite CPart -->
+<script src="https://unpkg.com/mdu.js@0.0.62/src/Modulo.js"></script>
+<script src="https://unpkg.com/mdu.js@0.0.62/mdu/cparts/TestSuite.js"></script>
 
-<!--<p>To run the tests, bring up your JavaScript Console, and click the "test"
-command from the COMMANDS menu.</p>-->
+<p>To run the tests, bring up your JavaScript Console, and click the "test"
+command from the COMMANDS menu. Or, click below for a shortcut:</p>
 
-<button onClick="this.textContent = 'Success: ' + modulo.registry.commands.test(modulo)">
-   Run tests
-</button>
-<script>
-    modulo.loadFromDOM(document.getElementById('Modulo').content);
-    modulo.preprocessAndDefine();
-</script>
+<a href="?mod-cmd=test"><tt>?mod-cmd=test</tt> | Run tests</a>
 
+<hr />
 
 <div>
     <p>The component being tested is also mounted below, so you can examine it's
     normal usage:</p>
-    <hr />
     <x-ExampleClickingComponent txt="Hello"></x-ExampleClickingComponent>
-    <hr />
 </div>
 

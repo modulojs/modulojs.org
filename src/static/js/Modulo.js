@@ -243,12 +243,19 @@ modulo.register('core', class ValueResolver {
         return window.modulo.registry.utils.get(ctxObj, key); // Drill down
     }
 
-    set(obj, keyPath, val) {
+    set(obj, keyPath, val, autoBind = false) {
         const index = keyPath.lastIndexOf('.') + 1; // Index at 1 (0 if missing)
         const key = keyPath.slice(index).replace(/:$/, ''); // Between "." & ":"
         const path = keyPath.slice(0, index - 1); // Exclude "."
         const target = index ? this.get(path, obj) : obj; // Get ctxObj or obj
-        target[key] = keyPath.endsWith(':') ? this.get(val) : val;
+        target[key] = val;
+        if (keyPath.endsWith(':')) { // Not a normal string setting
+            target[key] = this.get(val);
+            const parentKey = val.substr(0, val.lastIndexOf('.'));
+            if (autoBind && parentKey.includes('.')) { // Do auto-binding
+                target[key] = target[key].bind(this.get(parentKey));
+            }
+        }
     }
 });
 
@@ -712,9 +719,8 @@ modulo.register('coreDef', class Component {
 
     handleEvent(func, payload, ev) {
         this._lifecycle([ 'event' ]);
-        const { value } = (ev.target || {}); // Get value if is <INPUT>, etc
-        func.call(null, payload === undefined ? value : payload, ev);
-        this._lifecycle([ 'eventCleanup' ]); // todo: should this go below rerender()?
+        func(payload === undefined ? ev : payload);
+        this._lifecycle([ 'eventCleanup' ]);
         if (this.attrs.rerender !== 'manual') {
             this.element.rerender(); // always rerender after events
         }
@@ -733,21 +739,14 @@ modulo.register('coreDef', class Component {
     }
 
     eventMount({ el, value, attrName, rawName }) {
-        // Note: attrName becomes "event name"
-        // TODO: Make it @click.payload, and then have this see if '.' exists
-        // in attrName and attach as payload if so
         const { resolveDataProp } = this.modulo.registry.utils;
         const get = (key, key2) => resolveDataProp(key, el, key2 && get(key2));
-        const func = get(attrName);
-        this.modulo.assert(func, `No function found for ${rawName} ${value}`);
-        if (!el.moduloEvents) {
-            el.moduloEvents = {};
-        }
-        const listen = ev => {
+        this.modulo.assert(get(attrName), `Not found: ${ rawName }=${ value }`);
+        el.moduloEvents = el.moduloEvents || {}; // Attach if not already
+        const listen = ev => { // Define a listen event func to run handleEvent
             ev.preventDefault();
             const payload = get(attrName + '.payload', 'payload');
-            const currentFunction = resolveDataProp(attrName, el);
-            this.handleEvent(currentFunction, payload, ev);
+            this.handleEvent(resolveDataProp(attrName, el), payload, ev);
         };
         el.moduloEvents[attrName] = listen;
         el.addEventListener(attrName, listen);
@@ -768,7 +767,7 @@ modulo.register('coreDef', class Component {
         }
         const resolver = new this.modulo.registry.core.ValueResolver(// OLD TODO: Global modulo
                       this.element && this.element.getCurrentRenderObj());
-        resolver.set(el.dataProps, attrName + ':', value);
+        resolver.set(el.dataProps, attrName + ':', value, true);
         el.dataPropsAttributeNames[rawName] = attrName;
     }
 
@@ -1509,7 +1508,7 @@ modulo.register('cpart', class State {
 
     stateChangedCallback(name, value, el) {
         this.modulo.registry.utils.set(this.data, name, value);
-        if (!this.conf.Only || this.conf.Only.includes(name)) { // TODO: Test & document
+        if (!this.conf.Only || this.conf.Only.includes(name)) { // TODO: Test
             this.element.rerender();
         }
     }

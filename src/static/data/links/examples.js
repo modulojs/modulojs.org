@@ -95,6 +95,9 @@
             file: "/static/demos/eg/JSON.html",
         },
         {
+            file: "/static/demos/eg/TablePushPop.html",
+        },
+        {
             file: "/static/demos/eg/JSONArray.html",
         },
         /*

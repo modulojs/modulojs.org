@@ -8,6 +8,35 @@
 
 <template Modulo>
     <!--
+        Use a Configuration Definition to define the custom CPart itself.
+        Ideally, this should be in a separate file so it can be shared across
+        your Component Library, such as a Script CPart, or just a plain script
+        file loaded with a normal script tag (just like the ones below).
+    -->
+    <script Configuration>
+        modulo.register('cpart', class FitTextJQuery {
+            // Called after updating the DOM, so that it's safe to activate the plugin
+            updateCallback() {
+                // Using element.querySelector limits within this component
+                const target = this.element.querySelector(this.conf.selector);
+                // Use the underlying jQuery plugin $()
+                $(target).fitText(this.conf.size || 1.0);
+            }
+
+            /*
+            // The other callbacks aren't useful for this particular wrapper, but
+            // might be useful for other ones
+            initializedCallback() { } // Called when the element first mounts
+            prepareCallback() { } // Called before each rerender
+            renderCallback() { } // Called during each rerender
+            reconcileCallback() { } // Called after the reconciler has created patches
+            */
+        });
+    </script>
+</template>
+
+<template Modulo>
+    <!--
         Here we define a Component that uses the plugin. Note that it doesn't
         need to know very much about the internal workings of the plugin, or
         even any custom Script code at all. This means, the developer of this
@@ -41,40 +70,13 @@
     </Component>
 </template>
 
-<!-- Load the libraries we intend to use -->
-<script src="https://unpkg.com/mdu.js@0.0.19/src/Modulo.js"></script>
+<!-- Load Modulo + the libraries we intend to use -->
+<script src="https://unpkg.com/mdu.js@0.0.62/src/Modulo.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.slim.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/davatron5000/FitText.js/jquery.fittext.js"></script>
-
-<!-- Here is how we define the CPart itself. For the example, we put it in
-embedded in a <script> so we can keep everything in one file. However, it's
-better to move it to a separate JS file included with a <script src="..."> tag
-(just like we included the Modulo.js and the jQuery plugins). -->
-<script>
-    modulo.register('cpart', class FitTextJQuery {
-        // Called after updating the DOM, so that it's safe to activate the plugin
-        updateCallback() {
-            // Using element.querySelector limits within this component
-            const target = this.element.querySelector(this.conf.selector);
-            // Use the underlying jQuery plugin $()
-            $(target).fitText(this.conf.size || 1.0);
-        }
-
-        /*
-        // The other callbacks aren't useful for this particular wrapper, but
-        // might be useful for other ones
-        initializedCallback() { } // Called when the element first mounts
-        prepareCallback() { } // Called before each rerender
-        renderCallback() { } // Called during each rerender
-        reconcileCallback() { } // Called after the reconciler has created patches
-        */
-    });
-</script>
-
 
 <h1>Custom API CPart Example</h1>
 
 <hr />
 
 <x-ExampleComponent></x-ExampleComponent>
-

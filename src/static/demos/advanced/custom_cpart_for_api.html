@@ -1,8 +1,7 @@
 <!--
     This example shows how to write a custom CPart to wrap a backend API. The
-    API used is the Typicode testing API, but by swapping around the exact
-    requests that are sent, it can be used as a template for other APIs as
-    well.
+    API used is the Typicode testing API, but by swapping around the requests
+    that are sent, it can be used as a template for other APIs as well.
 
     This is the preferred way of interacting with private or custom APIs in
     Modulo, since it allows you to remove this sort of more complicated
@@ -10,7 +9,121 @@
     definitions focused on presentation logic only, and possibly eliminates the
     need for a Script CPart in the Component definitions at all.
 -->
-<script src="https://unpkg.com/mdu.js@0.0.19/src/Modulo.js"></script>
+<template Modulo>
+    <!--
+        Use a Configuration Definition to define the custom CPart itself.
+        Ideally, this should be in a separate file so it can be shared across
+        your Component Library, such as a Script CPart, or just a plain script
+        file loaded with a normal script tag.
+    -->
+    <script Configuration>
+        class ExampleAPI {
+            constructor() {
+                // CPart private data is defined in the constructor. If you are
+                // already utilizing Redux or similar stores with your API, you
+                // could attach these here.
+                this.data = {
+                    records: [],
+                    error: null,
+                    saveSuccess: null,
+                    lastPosted: {},
+                    // Expose two methods:
+                    refresh: this.refresh.bind(this),
+                    submit: this.submit.bind(this),
+                };
+                // (Note that "this.data" has no special meaning, it is merely
+                // convenient to store exposed data in a single object.)
+
+                // Since the testing Typicode API doesn't actually save it's POST
+                // data, we'll have manually store it here:
+                this.fakedPosts = [];
+
+                this.url = 'https://jsonplaceholder.typicode.com/posts';
+            }
+
+            initializedCallback() {
+                // This is how we tell Modulo that this.data will be the object
+                // exposed to other CParts (e.g. in this case, the Template in
+                // the form of template variables).
+                return this.data;
+            }
+
+            refresh() {
+                // This will refresh data from the API, and then expose it by
+                // attaching it to the this.data.records property
+                fetch(this.url)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.data.records = data.concat(this.fakedPosts);
+                        this.element.rerender();
+                    })
+                    .catch(err => {
+                        this.data.error = err;
+                        this.element.rerender();
+                    });
+            }
+
+            submit(payload) {
+                // Rename the state variables to be what the API suggests
+                const postData = {
+                    userId: payload.user,
+                    title: payload.topic,
+                    body: payload.comment,
+                };
+
+                // Send the POST request with fetch, then rerender after
+                const opts = {
+                    method: 'POST',
+                    body: JSON.stringify(postData),
+                    headers: { 'Content-type': 'application/json; charset=UTF-8' },
+                };
+                fetch(this.url, opts)
+                    .then(response => response.json())
+                    .then(results => {
+                        // (The Typicode API doesn't actually save, so we use fakedPosts)
+                        this.fakedPosts.push(results);
+                        this.data.saveSuccess = true;
+                        this.data.isLoading = false;
+                        this.data.error = null;
+                        this.data.lastPosted = postData;
+                        this.element.rerender();
+                    })
+                    .catch(err => {
+                        this.data.error = err;
+                        this.element.rerender();
+                    });
+                this.data.isLoading = true;
+                this.data.saveSuccess = null;
+                this.element.rerender(); // Rerender to show loading
+            }
+
+            /*
+                // The other callbacks aren't useful for this particular
+                // Example, but might be useful for other ones:
+                prepareCallback() {
+                    // Called before each rerender
+                }
+                renderCallback() {
+                    // Called during each rerender
+                }
+                domCallback() {
+                    // Called after creating a DOM fragment for the reconciler
+                }
+                reconcileCallback() {
+                    // Called after the reconciler has created patches
+                }
+                updateCallback() {
+                    // Called after applying patches
+                }
+            */
+        }
+
+        // All custom Definitions (e.g. Custom Component Parts) get registered
+        // via the modulo.register interface.
+        modulo.register('cpart', ExampleAPI);
+    </script>
+</template>
+
 <template Modulo>
     <!--
         Here we define a Component that uses the API. Note that it doesn't need
@@ -42,7 +155,8 @@
                 <p><input name="topic" [state.bind] /></p>
                 <p><input name="comment" [state.bind] /></p>
                 {% if exampleapi.saveSuccess %}
-                    <p><em>Successfully saved!</em></p>
+                    <p><em>Successfully saved! Remember to "REFRESH" and scroll
+                    to the bottom to see results.</em></p>
                 {% endif %}
 
                 <!-- When this button is clicked, it will trigger the submit()
@@ -96,115 +210,11 @@
     </Component>
 </template>
 
-<!-- Here is how we define the custom Component Part itself. For the example,
-we put it in embedded in a <script> so we can keep everything in one file.
-However, it's better to move it to a separate JS file included with a <script
-src="..."> tag (just like we include the Modulo.js file). -->
-<script>
-    modulo.register('cpart', class ExampleAPI {
-        constructor() {
-            // Any data private to each component can be defined here. If you
-            // are already utilizing Redux or similar stores with your API, you
-            // could attach these, or import necessary dependencies here.
-            // (Note that "this.data" has no special meaning, it is merely
-            // convenient to store exposed data in a single object.)
-            this.data = {
-                records: [],
-                error: null,
-                saveSuccess: null,
-                lastPosted: {},
-                // Expose two methods:
-                refresh: this.refresh.bind(this),
-                submit: this.submit.bind(this),
-            };
-
-            // Since the testing Typicode API doesn't actually save it's POST
-            // data, we'll have manually store it here:
-            this.fakedPosts = [];
-
-            this.url = 'https://jsonplaceholder.typicode.com/posts';
-        }
-
-        initializedCallback() {
-            // This is how we tell Modulo that this.data will be the object
-            // exposed to other CParts (e.g. in this case, the Template in the
-            // form of template variables).
-            return this.data;
-        }
-
-        refresh() {
-            // This will refresh data from the API, and then expose it by
-            // attaching it to the this.data.records property
-            fetch(this.url)
-                .then(response => response.json())
-                .then(data => {
-                    this.data.records = data.concat(this.fakedPosts);
-                    this.element.rerender();
-                })
-                .catch(err => {
-                    this.data.error = err;
-                    this.element.rerender();
-                });
-        }
-
-        submit(payload) {
-            // Rename the state variables to be what the API suggests
-            const postData = {
-                userId: payload.user,
-                title: payload.topic,
-                body: payload.comment,
-            };
-
-            // Send the POST request with fetch, then rerender after
-            const opts = {
-                method: 'POST',
-                body: JSON.stringify(postData),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' },
-            };
-            fetch(this.url, opts)
-                .then(response => response.json())
-                .then(results => {
-                    // (The Typicode API doesn't actually save, so we use fakedPosts)
-                    this.fakedPosts.push(results);
-                    this.data.saveSuccess = true;
-                    this.data.isLoading = false;
-                    this.data.error = null;
-                    this.data.lastPosted = postData;
-                    this.element.rerender();
-                })
-                .catch(err => {
-                    this.data.error = err;
-                    this.element.rerender();
-                });
-            this.data.isLoading = true;
-            this.data.saveSuccess = null;
-            this.element.rerender(); // Rerender to show loading
-        }
-
-        /*
-            // The other callbacks aren't useful for this particular API, but
-            // might be useful for other ones
-            prepareCallback() {
-                // Called before each rerender
-            }
-            renderCallback() {
-                // Called during each rerender
-            }
-            reconcileCallback() {
-                // Called after the reconciler has created patches
-            }
-            updateCallback() {
-                // Called after applying patches
-            }
-        */
-    });
-</script>
-
+<!-- Bring in Modulo itself -->
+<script src="https://unpkg.com/mdu.js@0.0.62/src/Modulo.js"></script>
 
 <h1>Custom API CPart Example</h1>
 
 <hr />
 
 <x-ExampleComponent></x-ExampleComponent>
-
-

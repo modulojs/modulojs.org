@@ -131,8 +131,8 @@
             Component Parts (CParts) are a flexible form of component middleware:
             You can create custom CParts to support your backend APIs, "mix and
             match" your favorite JS templating languages (e.g., <a
-            href="/demos/jsx_template.html">JSX</a> or <a
-            href="/demos/handlebars_templater.html">Handlebars</a>), or fine-tune
+            href="/static/demos/editor.html?file=/static/demos/advanced/jsx_template.html">JSX</a> or <a
+            href="/static/demos/editor.html?file=/static/demos/advanced/handlebars_templater.html">Handlebars</a>), or fine-tune
             DOM-resolution behavior, either globally, or on a per-component basis.
             Lifecycle callbacks are especially powerful, allowing you to hook your
             own code into the DOM or any steps of the rendering process.</p>
@@ -141,7 +141,7 @@
             Modulo's separation of CPart development from component development
             allows JavaScript developers to write <a
               title="Click for a demonstration of a custom CPart that wraps an API"
-              href="/demos/custom_cpart_for_api.html">pure JS to wrap APIs</a>, and
+              href="/static/demos/editor.html?file=/static/demos/advanced/custom_cpart_for_api.html">pure JS to wrap APIs</a>, and
             component developers to tie it all together with "low-code".</p>
         </article>
         <aside slot="right">
@@ -168,11 +168,13 @@
             single JS file!</p>
 
             <p><strong>Clean & concise</strong> - The code-base of Modulo
-            itself is intentionally kept short &amp; sweet: It's roughly 1500
-            <abbr title="Source Lines of Code - This counts 'physical lines' and thus does not include comments, documentation, blanks, etc">SLOC</abbr>,
-            80 char line limit, 4 spaces of indent, and a
-            <abbr title="Try to keep cyclomatic complexity of functions to 3 or lower">low-complexity</abbr>
-            imperative style. When something goes
+            itself is intentionally kept short &amp; sweet: It ways in at
+            roughly 1500 <abbr title="Source Lines of Code - This counts
+            'physical lines' and thus does not include comments, documentation,
+            blanks, etc">SLOC</abbr>, (mostly) 80 char line limit, 4 spaces of
+            indent, and a <abbr title="Try to keep cyclomatic complexity of
+            functions to 3 or lower">low-complexity</abbr> imperative style.
+            When something goes
             wrong (which it probably will since it's new), it's easier to
             "<tt>git blame</tt>"
             Modulo.</p>
