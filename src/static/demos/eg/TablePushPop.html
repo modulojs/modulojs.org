@@ -6,7 +6,7 @@
             <button @click:=state.list.splice payload:=0>✖</button>
         {% endif %}
     </div>
-    {% for item in state.list|reversed %}
+    {% for item in state.list %}
         <div>{{ item.author }}</div>
         <div>{{ item.title }}</div>
         <div></div>
@@ -14,17 +14,13 @@
     <input [state.bind] name="item.author" />
     <input [state.bind] name="item.title" />
     <button
-        [state.bind] name="title"
         @click:=state.list.push
         payload:='{{ state.item|json }}'
     >+</button>
-    <button [state.bind] name="item.author" value="">-</button>
-    <button [state.bind] name="item.title" value="">-</button>
-
     {% if state.list.length %}
-        <hr /> <hr /> <hr />
-        <button @click:=state.list.pop>↶</button>
         <button @click:=state.list.reverse>↕</button>
+        <hr />
+        <button @click:=state.list.pop>↶</button>
     {% endif %}
 </Template>
 
@@ -33,7 +29,6 @@
     item:={}
     item.author="Example"
     item.title="New item"
-    item.finished:=false
 ></State>
 
 <Style>

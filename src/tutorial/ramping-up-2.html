@@ -192,8 +192,8 @@ attribute. You can recognize _directive_ by spotting certain special characters
 in the attribute name. For example, `<input [state.bind] />` is an `input` HTML
 tag with a `[state.bind]` directive. Directives are useful for a variety of
 tasks, ranging connecting CParts to each other, to more complicated
-modifications to DOM elements. For now, we'll only care about one important
-directive: _state.bind_.
+modifications to DOM elements. For now, we'll only care about one directive:
+_[state.bind]_.
 
 ## The [state.bind] directive
 
@@ -223,28 +223,34 @@ To bind an input to state, use something like the following:
 
 
     <Template>
-        <input [state.bind] name="subject" />
+        <input [state.bind] name="title" />
     </Template>
     <State
-        subject="Testing message..."
+        title="The Picture of Dorian Gray"
     ></State>
 
 
 ##### Try it now
 
-1.  Try modifying the "subject" input box in the preview below. Do you see how
-it "quickly reacts" or re-renders the subject text as you type? This is the
-power of "binding" inputs to state.
+Examine and try the following code:
 
 ```modulo_demo
 <Template>
-    <p>SUBJECT: {{ state.subject }}</p>
-    <input [state.bind] name="subject" />
+    <p>Write something:</p>
+    <input [state.bind] name="sentence" />
+    <p>This is what you are typing: {{ state.sentence }}</p>
 </Template>
 <State
-    subject="Testing message..."
+    sentence="Modulo is fun."
 ></State>
 ```
+
+
+##### Comprehension Questions
+
+- Do you see how it "quickly reacts" or re-renders the sentence text as you
+  type?
+
 
 -----
 
@@ -256,57 +262,30 @@ State allows for multiple inputs to be bound in the same form.  It's important
 that you always include a "name" attribute when binding. This should contain
 the name of the _State_ variable to be kept in sync with that input.
 
-State also allows binding of different inputs for different data types. For
-example, you can use `type="color"` for a color picker, or `type="range"` for a
-range slider. For the full range of input types, consider [MDN's "The HTML5
-input types" Guide in their *Learn Web Development*
-series](https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types)
-
 
     <Template>
         <input [state.bind] name="subject" />
-        <textarea [state.bind] name="body"></textarea>
-        <input [state.bind] name="accent" type="color" />
+        <input [state.bind] name="body" />
+        <h1>{{ state.subject }}</h1>
+        <p>{{ state.body }}</p>
     </Template>
     <State
         subject="Testing message..."
         body="Welcome to my blog"
-        accent="#ff3300"
     ></State>
+
 
 
 ##### Try it now
 
-1.  Examine the below code. See how it uses different types for different
-inputs for a "reactive" font selector / customizer?
+1.  Examine the "silly story generator" demo below.
 
-```modulo_demo
-<Template>
-    <input [state.bind] name="text" />
-    <input [state.bind] name="color" type="color" />
-    <input [state.bind] name="size"
-            type="range" min="12" max="28" step="2" />
-    <hr />
-    <h5 style="
-            font-size: {{ state.size }}px;
-            color: {{ state.color }};
-        ">
-        {{ state.text }}
-    </h5>
-</Template>
-<State
-    size="24"
-    color="#333030"
-    text="Format This Message!"
-></State>
-```
+2. Do you see how the 5 different form fields are each bound to state, so that
+when they are changed, it "reacts" and re-renders the story at once?
 
+3. Practice modifying the demo to add new variables and input.
 
-2.  Now, examine the demo below. This demo takes the lessons learned in the
-previous two demos and combines them into a silly story generator. Do you see
-how the 5 different form fields are each bound to state, so that when they are
-changed, it "reacts" and re-renders the story at once?
-
+4. Extra: Write your own silly story generator!
 
 ```modulo_demo
 <Template>
@@ -357,10 +336,71 @@ to {{ state.verb }} a {{ state.noun }}.
 </Style>
 ```
 
+-----
 
-3. Practice modifying the demo to add a new variables and input.
 
-4. Extra: Rewrite the demo to feature a silly story of your own!
+## State and input types
+
+State also allows binding of different inputs for different data types. For
+example, you can use `type="color"` for a color picker, or `type="range"` for a
+range slider.
+
+    <Template>
+        <input [state.bind] name="subject" />
+        <textarea [state.bind] name="body"></textarea>
+        <input [state.bind] name="accent" type="color" />
+        <input [state.bind] name="size"
+                type="range" min="12" max="28" step="2" />
+    </Template>
+    <State
+        subject="Testing message..."
+        body="Welcome to my blog"
+        accent="#ff3300"
+        size="14"
+    ></State>
+
+
+Clarification: These are all just HTML5, built-in input types.  To peruse a
+full selection of input types, consider [MDN's "The HTML5 input types" Guide in
+their *Learn Web Development*
+series](https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types).
+Similarly, the other attributes, (e.g. `name`, along with `type`, `max`, `min`,
+and `step`), are also _not_ Modulo directives, but are instead plain HTML
+attributes documented in the MDN link. The _State_ CPart will look at `type` and
+`name` in order to behave appropriately, but will ignore the others.
+
+
+
+
+
+##### Try it now
+
+1.  Examine the below code. See how it uses different types for different
+inputs for a "reactive" font selector / customizer?
+
+2. **Local file challenge:** Practice incorporating State and binding by
+developing a form or similar application on your local page.
+
+```modulo_demo
+<Template>
+    <input [state.bind] name="text" />
+    <input [state.bind] name="color" type="color" />
+    <input [state.bind] name="size"
+            type="range" min="12" max="28" step="2" />
+    <hr />
+    <h5 style="
+            font-size: {{ state.size }}px;
+            color: {{ state.color }};
+        ">
+        {{ state.text }}
+    </h5>
+</Template>
+<State
+    size="24"
+    color="#333030"
+    text="Format This Message!"
+></State>
+```
 
 
 ##### Comprehension Questions
@@ -398,8 +438,8 @@ Modulo in particular, it allows for declarative programming of reactive forms
 without use of JavaScript.
 
 If you are still scratching your head over the use of `[state.bind]` but are
-familiar with vanilla JS, it's all about reducing the need to "manually reach"
-into the DOM. It simplifies code like this `var inputData =
+familiar with vanilla JS or jQuery, it's all about reducing the need to
+"manually reach" into the DOM. It simplifies code like this `var inputData =
 document.getElementsByName('myinput')[0].value` (or the similar
 `$('[name=myinput]').val()` in jQuery), with more readable code like
 `state.myinput`, and similarly untangles code for validation, API requests,
@@ -453,21 +493,28 @@ exactly matches the text "round" or "square".
 
 ##### Try It Now
 
+1.  Try modifying the "Username" input box in the preview below. Do you see how
+it "quickly reacts" or re-renders the username text in lower-case as you type?
+2.  Try also adjusting the "Size" input and "Color" inputs to see how it
+updates the appearance the text.
+3.  **Local file challenge:** Add a use of template filters somewhere in your
+local project.
+
 ```modulo_demo
 <Template>
 
 <div>
     <label>Username:
         <input [state.bind] name="username" /></label>
-    <label>Color ("green" or "blue"):
-        <input [state.bind] name="color" /></label>
-    <label>Opacity: <input [state.bind]
-        name="opacity"
-        type="number" min="0" max="1" step="0.1" /></label>
-
+    <label>Team ("green" or "blue" only):
+        <input [state.bind] name="team" /></label>
+    <label>Size: <input [state.bind]
+        name="size"
+        type="number" min="1" max="5" step="1" /></label>
     <h5 style="
-            opacity: {{ state.opacity }};
-            color: {{ state.color|allow:'green,blue'|default:'red' }};
+            color: {{ state.team|allow:'green,blue'|default:'red' }};
+            margin: {{ state.size }};
+            font-size: {{ state.size|multiply:2|add:5 }}px;
         ">
         {{ state.username|lower }}
     </h5>
@@ -476,36 +523,24 @@ exactly matches the text "round" or "square".
 </Template>
 
 <State
-    opacity="0.5"
-    color="blue"
+    size="2"
+    team="blue"
     username="Testing_Username"
 ></State>
 ```
 
-1.  Try modifying the "Username" input box in the preview above. Do you see how
-it "quickly reacts" or re-renders the username text in lower-case as you type?
-2.  Try also adjusting the "Opacity" input to see how it updates the
-transparency of the text, and the "Color" input, which only supports "blue" or
-"green" (anything else turns red).
-3.  Examine the code in the _Template_ CPart. Examine each input, and how it
-uses the `[state.bind]` directive to keep it in-sync with state. The
-`name="username"`, `name="color"`, and `name="opacity"` attributes are what the
-State CPart uses to figure out which state variable should be "linked".
-4.  Now, practice the link in "the other way": That is, see how _State_
-populates the inputs' values. You can do this by changing the initial values of
-_State_ and then re-running the program. See how by changing the initial values
-of _State_ it will also update the initial values of the linked inputs?
+##### Comprehension Questions
+
+- Identify every template filter in the sample code above.
 
 
+*Answer:*
 
-Clarification: The other attributes, (e.g. `name`, along with `type`, `max`,
-`min`, and `step`), are _not_ Modulo directives, but are instead plain HTML
-attributes. The State CPart reuses `name`, but will ignore the others.
+- It does a bit of pixel math on `state.size` using `|add` and `|multiply`, 
+- The `state.team` variable is used with `|allow` to only support "blue" or
+"green", and anything else turns a `|default` of red
+- The `|lower` filter is used to force the username into lowercase
 
-**Further practice:** Practice incorporating these CParts into your own
-components on a real page by copying the code here and pasting it within your
-component definition (that is, the one that you created in the _Part 1_ of this
-tutorial)
 
 ----
 

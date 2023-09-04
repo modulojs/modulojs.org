@@ -1,0 +1,54 @@
+<!-- The data below is embedded in a JS StaticData.
+This allows us to embed data using JavaScript syntax. -->
+<Template>
+    <h3>City</h3><h3>Name</h3><h3>Use</h3>
+    {% for station in staticdata %}
+        <div>[{{ station.city }}]</div>
+        <div class="right">{{ station.name }}</div>
+        <div class="
+            {% if station.trafficRating gt 800 %}
+                highlight
+            {% endif %}
+        ">{{ station.trafficRating }}</div>
+    {% endfor %}
+</Template>
+<StaticData -data-type="js">
+[
+    {
+        name: "Embarcadero",
+        city: "SF",
+        trafficRating: 1253
+    },
+    {
+        name: "West Oakland",
+        city: "OAK",
+        trafficRating: 695
+    },
+    {
+        name: "12th St",
+        city: "OAK",
+        trafficRating: 853
+    },
+    {
+        name: "19th St",
+        city: "OAK",
+        trafficRating: 732
+    }
+]
+</StaticData>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 3px;
+    }
+    div {
+        background: #ddd;
+    }
+    .right {
+        text-align: right;
+    }
+    .highlight {
+        background: #aaaaff;
+    }
+</Style>

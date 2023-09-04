@@ -73,6 +73,276 @@ order to push items onto an array.
 ```
 
 
-# Script Tag
 
 
+-----------
+
+
+
+# Script
+
+Just to round out this tutorial, let's peak at the last, most important
+Component Part: Script. If you are a total newbie when it comes to JavaScript,
+this last section might make less sense - feel free to skip over. If, however,
+you want to see how to greatly expand what you can do with Modulo with custom
+JavaScript code, create more interactive applications, better integrating APIs,
+or process data, read on.
+
+While Modulo is designed to be useful even without JavaScript, sometimes you
+just need access to that extra power of custom JavaScript code. Using
+JavaScript, Modulo can be even used to develop more complicated interactive web
+applications.
+
+### The _Script_ CPart
+
+To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
+contained within once, immediately upon loading the component. See this
+example:
+
+```
+<Script>
+    console.log("Hello JavaScript world!");
+/Script>
+```
+
+In this above example, the _Script_ CPart will execute that JS code once, as
+soon as it's loaded, causing the "console.log" to log that message to the web
+browser's Developer Tools JavaScript console exactly once.
+
+
+> **Event directives** Let's break down that event directive:
+> `@click:=script.sayHello`. First, note the at-sign: `@`. This is "syntactic
+> sugar" for the `[component.event]` directive. This will attach a "click"
+> event listener to the given element when that element is first mounted (i.e.
+> displayed on the screen), and remove the listener if it leaves. In this case,
+> we are using a `:=` style "data prop" style assignment, to assign the click
+> event to point to the sayHello function of the _Script_ CPart. All functions
+> defined in a _Script_ CPart will automatically be "exported" and available to
+> click events, or in dataprops in general.
+
+### Attaching click events
+
+Typically, it's more useful to execute code when a user performs an action. To
+do this, we must place the "console.log" into a function:
+
+```
+<Script>
+    function sayHello() {
+        console.log("Hello JavaScript world!");
+    }
+/Script>
+```
+
+Then, attach a "click" event directive to a HTML tag, such as, for example, a
+button element:
+
+```
+<button @click:=script.sayHello>Click me</button>
+```
+
+Now, whenever a user clicks on the button, it will run the "sayHello" function,
+logging the text into the JavaScript console.
+
+
+
+##### Try it now
+
+```modulo_demo
+<Template>
+    <button @click:="script.doLog">console.log a message</button>
+</Template>
+<Script>
+    console.log("COMPONENT GOT LOADED!");
+    function doLog() {
+        console.log("Hello Modulo Scripting World!");
+    }
+/Script>
+```
+
+1.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
+`Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
+you can right-click with your mouse and select "Inspect", and then go to the
+_Console_ tab.
+2.  Do you see the "COMPONENT GOT LOADED!" text displayed in the console? It is
+displayed once every time the component is loaded. By clicking "RUN", you can
+"reload" the component, causing that message to show (or count up) again.
+3.  Try now clicking on the button in the preview on the right. Do you see how
+every time you click it shows (or counts) the text of the console.log in the
+console?
+4.  _Extra:_ Any number of functions can be defined in a _Script_ CPart.
+Practice writing your own function that console logs a different message, and
+then attaching it to a new button (or the existing button).
+5.  _Extra:_ The "event" directive supports any event. Try changing "@click" to
+"@mouseover", and then move your mouse over the button (without clicking). (For
+the curious: [MDN has a list of all
+events](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing))
+
+------
+
+### Interacting with state
+
+The _Script_ CPart is like the _Template_ CPart in one way: You get variables
+referencing the other CParts. Within functions defined in the _Script_ CPart,
+variables will be available representing the other CParts that have been
+defined in the _Component_. As with the _Template_ CPart, the most useful
+variables are `state`, with the current data in _State_ CPart (the "data"
+Object), and `props`, with the value of the attributes that were passed to this
+component.
+
+Remember our "Holmes-style" detective work we did in the previous section? We
+looked at a button which incremented a value when clicked. The JavaScript code
+to increment a variable is `num++`, and for state data it can be:
+`state.num++`.  Also, by default, components will rerender after every event
+that you are listening to. With that in mind, examine the code of the Hello
+button:
+
+
+```modulo_demo
+<Template>
+    <button @click:="script.doCountup">Hello {{ state.num }}</button>
+</Template>
+<State
+    num:=42
+></State>
+<Script>
+    function doCountup() {
+        state.num++;
+    }
+/Script>
+```
+
+By clicking on the button, it will increment the state value. Since the
+component will rerender after the click, it will then change the DOM to show
+the new number.
+
+With the power of JavaScript, you can do all manner of things with the Script
+tag. The [Examples page](/examples/) has all sorts of examples of more
+complicated apps and applications. The typical use of a Script tag, thus, is to
+create custom logic that manipulates or "puppets" the state, which in turn is
+what controls the rendering of the component's HTML code by the Template CPart.
+
+Keep in mind that the Script CPart is intended to be limited. Serious
+JavaScript development should be split into separate JS files, or defined as
+custom CParts. Thus, think of the Script CPart as more "filling in the gaps"
+between CParts, which should do most of the heavy lifting (e.g. asynchronous
+code, complicated API calls or data transformation, etc).
+
+
+
+## Using StaticData and JavaScript to visualize data
+
+Data visualization is a huge topic. Modulo is not strictly a data visualization
+tool: Typically, you'll want to use a tried-and-true, "off-the-shelf" graphing
+library, or SVG-based graphics, which Modulo could work in conjunction with or
+pass the data into.  However, in either case, "StaticData" and "Template"
+combined can be used for quick data visualizations, very useful for assembling
+dashboards, reports, and many other types of web projects.
+
+### -data-type=js
+
+By adding -data-type=js, we can begin to mix in JavaScript in with our
+`StaticData`. This JavaScript will run at "build time", meaning it will happen
+before the data is bundled in. This allows you to filter through large data
+sets and only include the data you want, or provide the attributes you want.
+
+
+```
+<script StaticData -src="https://www.gov.uk/bank-holidays.json" -data-type="js" -name="years">
+    ['england-and-wales']
+    ['events']
+    .map(function (ev) {
+        return Number(ev.date.split('-')[0]); // Get year of each date
+    })
+/script>
+```
+
+Note the alternative `<script StaticData` syntax for defining StaticData.  This
+is not a Script CPart: It is indeed a StaticData CPart! However, we can start
+with "<script" just as a convenience, so that editors will recognize it as
+JavaScript code. Just make sure to include that StaticData as the first
+attribute, otherwise Modulo wil think it's a regular Script, which behaves much
+differently than StaticData!
+
+
+
+##### Try It Now
+
+1. Examine below for how the holiday API is turned into a chart, graphing on
+which month it lies:
+
+
+```modulo_demo
+<Template>
+    {% for number in month_numbers %}
+        <section style="--month-number: {{ number }};">
+            <h2 title="Month #{{ number }}">{{ number }}</h2>
+            {% for event in staticdata %}
+                {% if event.month is number %}
+                    <article>{{ event.title }}</article>
+                {% endif %}
+            {% endfor %}
+        </section>
+    {% endfor %}
+</Template>
+
+<StaticData -data-type="js" -name="month_numbers">
+    // -data-type="js" lets us quickly store JSON data
+    [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+</StaticData>
+
+<script StaticData -src="https://www.gov.uk/bank-holidays.json" -data-type="js">
+    ['england-and-wales']
+    ['events']
+    .map(function (originalEvent) {
+        // Get item 1 when split by dashes, convert to number (gets month)
+        return {
+            month: Number(originalEvent.date.split('-')[1]),
+            title: originalEvent.title,
+        };
+    })
+/script>
+
+<Style>
+    :host {
+        height: 200px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+    }
+    h2 {
+        font-size: 0.9rem;
+    }
+    section {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    section:hover {
+        background: #aaa;
+    }
+    article {
+        font-size: 0.8rem;
+        grid-column: var(--month-number) / span 1;
+        background: orange;
+        color: white;
+        font-weight: bold;
+        box-sizing: border-box;
+        height: 10px;
+        width: 15px;
+        overflow: hidden;
+    }
+    article:hover {
+        height: 50px;
+        width: 85px;
+        margin-bottom: -40px;
+        margin-right: -70px;
+        z-index: 1;
+    }
+</Style>
+```
+
+
+
+##### Key terms
+
+* **Script** \- CPart that enables embedding of arbitrary JavaScript code, and
+  allowing for easy access to CPart interface, and exposing JS functions to be
+  attached as events

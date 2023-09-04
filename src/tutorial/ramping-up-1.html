@@ -137,25 +137,35 @@ like: <code>&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;</code>
 ##### Learning Tips
 
 * *Tip 1:* The *Try It Now* instructions tell you to apply the concepts you
-  learn on a component you develop separately in a text editor (such as
-  [Geany](https://www.geany.org/), [Notepad++](https://notepad-plus-plus.org/),
-  or Visual Studio Code), saved to your computer, also opened in a modern web
-  browser (such as [Firefox](https://firefox.com/) or Chrome). It's okay to
-  start from scratch, or use an existing HTML-based project. It's also okay to
-  try to follow along in the online editor; however, working locally is
-  recommended.
+  learn. Most will have sample code to edit and see. Some will say "**Local
+  file challenge:**", and encourage you to apply the lesson you learned on a
+  component you develop locally on your computer. What does it mean to develop
+  locally? This means editing a HTML file separately in a text editor (open
+  source options include [Geany](https://www.geany.org/),
+  [Notepad++](https://notepad-plus-plus.org/), or Visual Studio Code), saved to
+  your computer, also opened in a modern web browser (such as
+  [Firefox](https://firefox.com/) or Chrome). 
 
-* *Tip 2:* To maximize learning and retention, consider applying these *Try It
-  Now* activities in creative way, such as on a website or project you care
-  about! If you feel "out of ideas", consider getting inspiration from one of
-  these [ultra-simple, beginner HTML
+- *Tip 2:* When working locally, developers often like to tile the web browser
+  and editor side-by-side, in separate monitors, or just use key-combos like
+  `Alt+Tab` and `Ctrl+Shift+R` to switch between editor and browser and
+  hard-refresh. It's also okay to try to follow along in the online editor;
+  however, working locally is recommended. Do whatever is most comfortable for
+  learning!
+
+* *Tip 3:* It's okay to start from scratch, use an existing HTML-based
+  project, or click "SAVE" on one of these activities (see . To maximize learning and retention, consider applying these *local
+  file challenge* activities in creative way, such as on a website or project
+  you care about!  If you feel "out of ideas", consider getting inspiration
+  from one of these [ultra-simple, beginner HTML
   designs](https://freecodinglessons.com/foundations/1.3/).
 
 
 
 ##### Try it now
 
-1.  Open up an HTML file in your preferred text editor.
+1. **Local file challenge:** Open up an HTML file in your preferred text
+editor.
 2.  Copy & paste in the following code:
     ```
     <!-- Define a custom component in a "Modulo" definition tag -->
@@ -176,18 +186,34 @@ like: <code>&lt;script Modulo src="https://unpkg.com/mdu.js"&gt;</code>
 3.  Ensure that the HTML file is opened in your preferred web browser
 as well.
 4.  Refresh your web browser to view the results.
+5.  Try making an edit (e.g. change "World!" to "Universe!")
+6.  Refresh your web browser. If you don't see the results right away, try
+force refreshing.
+
+##### Comprehension Questions
+
+- Do you see how `<x-HelloWorld></x-HelloWorld>` gets replaced with the content
+  of the template?
+
+- How might this save time when writing HTML?
+    - Answer #1: Repetive code can be "refactored" (rewritten) to be more DRY
+      ("don't repeat yourself") by identifying the "repeating units" and then
+      putting those inside of Components, so their template can be repeated
+      with less code required.
+    - Answer #2: When repetitive code is refactored this way, it lets us edit
+      it in one spot, and see the results everywhere.
 
 ##### Try it now *(Alternative)*
 
-There's a time-saving alternative way to start a brand new Modulo file. The
-fastest way is by clicking the `SAVE` button (hidden below "RUN") on any of the
-interactive examples on this website. This will download an HTML file with all
-of the above code already filled in, ready for you to start! This allows you to pick
-the example that has the most code in common with the project you are about to
+There's a time-saving alternative way to start a local file. The fastest way is
+by clicking the `SAVE` button (hidden below "RUN") on any of the interactive
+examples on this website. This will download an HTML file with all of the above
+code already filled in, ready for you to start! This allows you to pick the
+example that has the most code in common with the project you are about to
 build, which speeds up initial development.
 
-**Alternative starting instructions: If you want, feel free to start this
-tutorial by clicking SAVE below:**
+**Alternative local file starting instructions: Start this tutorial by clicking
+SAVE below:**
 
 ```modulo_demo
 <Template>
@@ -257,9 +283,9 @@ the right!
 1.  Practice modifying the **Template** CPart (`<Template>`) to see how that
 affects the output preview on the right
 2.  Practice modifying the **Style** CPart (`<Style>`) to add or modify CSS
-3.  Practice incorporating these CParts into your own components on a real page
-by copying the code here and pasting it within your component definition (that
-is, the one that you created in the previous part of this tutorial)
+3.  **Local file challenge:** Practice incorporating the `<Style>` CPart into your
+local component, and expanding on the `<Template>` as needed to build out the
+beginnings of your component or layout.
 
 ```modulo_demo
 <Template>
@@ -282,6 +308,21 @@ strong {
 }
 </Style>
 ```
+
+
+##### Comprehension Question
+
+- What is the purpose of `<Style>`?
+    - Answer: Style lets us add isolated CSS styling to our Component
+- What is does it mean that Style "isolates" CSS?
+    - Answer: Style by defaultj"isolates" CSS by making it only apply to the
+      content of the Component it is defined in. This keeps our CSS neater, and
+      less confusing (e.g. if you ever find yourself asking: "Did I already use
+      this class name?", "Did I accidnetally just style ALL divs this way?"
+      etc). As an aside, the isolation mechanism is configurable, as well: The
+      default is called "prefix" isolation, but more precise "shadow" and
+      class-based isolation systems availble as well, but beyond the scope of
+      this tutorial.
 
 ---
 
@@ -372,18 +413,19 @@ board with pieces in a specified setup?
 ### Defining and using the Props CPart
 
 
-> **Props and Templating for CSS** The _Style_ CPart intentionally
-> *does not* support templating, props, or any such "live" modification.
-> Instead, this should be done in the template by using an inline `style=`
-> attribute.  If it gets too messy, consider setting CSS to `style=` attributes
-> used by the _Style_ CPart, using the `var()` CSS function.
 Let's "peel back the layers" and examine out how this `ExampleBtn` was written.
-
 In order for a component to be able to "receive" props when it is reused, we
 must define a _Props_ CPart, which is conventionally placed as the first thing
 in a component definition. _Props_ CParts are defined somewhat like previous
 CParts, except they have no contents and are just an opening tag with
 attributes, followed by a closing tag. A _Props_ CPart might look like this:
+
+> **Props and Templating for CSS** The _Style_ CPart intentionally
+> *does not* support templating, props, or any such "live" modification.
+> Instead, this should be done in the template by using an inline `style=`
+> attribute.  If it gets too messy, consider setting CSS to `style=` attributes
+> used by the _Style_ CPart, using the `var()` CSS function.
+
 
 ```
 <Props name device frequency></Props>
@@ -468,18 +510,14 @@ series.
 
 ##### Try it now
 
-1. Examine the _Props_ code below. Do you see how there are two "props"
-available? Can you spot what those two props are called? (Hint: "caption" and
-"image" -- the two attributes of the _Props_ CPart.).
-2. Examine the _Template_ code below. Do you see how it uses the two "props" to
-create a "picture frame" component, that can be re-used with different pictures
-and captions?
-3. Do you see how both the "image" and "caption" is blank in the example below?
-This is because you have to actually *use* the component with correct props to
-see the effect. To complete this challenge, add a _Props_ CPart to your
-component, and then use the _Props_ in your _Template_ CPart by using _template
-variables_.
 
+1. Examine the _Props_ and _Template_ variable code below, and see if you can
+answer the comprehension questions.
+
+2. **Local file challenge:**
+    1. Add a _Props_ CPart to your component -- e.g. `<Props messsage>`)
+    2. Use the _Props_ in your _Template_ CPart by using _template variables_ -- e.g. `{{ props.message }}`
+    3. Practice setting them in using your component -- e.g. `<x-Hello message="Hi">`
 
 ```modulo_demo
 <Props
@@ -510,10 +548,22 @@ variables_.
 </Style>
 ```
 
-* **Hint:** Either *A)* add a _Props_ CPart with the props "caption" and
-  "image" as below to your component definition and *template variables* to
-  your _template_ cpart, or *b)* simply "save" the below example to get
-  started.
+##### Comprehension questions
+
+1. Why is both the "image" and "caption" is blank in the example above?
+    - Answer: This is because you have to actually *use* the component with
+      correct props to see the effect. In the mini demos embedded in this
+      tutorial, it doesn't set any _Props_.
+2. In the example above, do you see how there are two "props" declared to be
+available? Can you name them both?
+    - The "Props" CPart specifies which props should be used. In this case, the
+      two props are "caption" and "image" -- the two attributes of the _Props_
+      CPart.
+3. If you had to use this component in an HTML document, how would specify
+these "Props"?
+    - You'd specify them like `<x-PictureFrame image="./myfile.jpg">`
+    - It could be re-used with different pictures and captions
+
 
 
 ----
@@ -551,7 +601,7 @@ components that can help us re-use HTML code between different pages.
 -----
 
 
-In the subsequent tutorials we will go deeper: Explore the full capabilities of
+In the subsequent tutorial we will go deeper: Explore the full capabilities of
 Templates, and finally create forms and interactive, changing components with
 the State CPart.
 

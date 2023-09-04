@@ -13,9 +13,9 @@ parts seem extra hard.
 
 We'll learn how to use Template Tags, to optionally include, or duplicate parts
 of our HTML templates for data or properties.  We'll learn how to use
-StaticData, that lets us import JSON or CSV file types, or APIs that use these
-types, into our Modulo components, so that we can use template tags to explore
-3rd party data.
+StaticData, that lets us import JSON files or CSV file types, or APIs that use
+these types, into our Modulo components, so that we can use template tags to
+explore 3rd party data.
 
 Before we get to these more powerful features of Modulo, we'll need to first
 explore Data Props, and how they enable different JavaScript data types.
@@ -45,17 +45,11 @@ learn next). While re-rendering, Modulo scans the resulting DOM to set-up or
 "mount" any directives it encounters.
 
 Directives are useful for a variety of tasks, ranging connecting CParts to each
-other, to more complicated modifications to DOM elements.  ).
+other, to more complicated modifications to DOM elements.
 
 ## The dataProp directive `:=`
 
 We'll learn one more directive next: _data prop_  or `:=` syntax
-
-> **Why don't we use "strings" for numbers?** Using strings of digits (i.e. in
-> quotes) instead of the numbers themselves means that things like arithmetic
-> won't work as intended. Example: If state variable `count="1"`, then
-> `state.count + 10` will result in `"110"` instead of the desired `11`, since
-> it's a string of digits, so `"1" + "10" = "110"`
 
 Typically, when we add attributes to anything, whether it is a CPart or even
 just in regular HTML, the attribute value can only be a string. This means when
@@ -68,15 +62,27 @@ _String_. To fix it, we do the following:
         color="blue"
     >&lt;/State&gt;
 
+> **Data type?** If you are new to coding, you might be confused by this term.
+> It's a little like a file format for variables: Instead of JPG, DOCX, and
+> ZIP, we have Numbers, Strings, Arrays, Objects, Booleans, etc. This
+> collection of types is what makes up the "JSON" format, which Modulo uses.
+
 This is called a _data prop_ directive. You can identify a _data prop_
 directive (`:=`), by spotting an attribute name that is suffixed with a colon
 right before the equal sign, like this: `attributeName:=value`.
+
 
 ## The many types of data you'll see
 
 Modulo uses the same data types as JavaScript and the JSON file format, which
 Modulo uses extensively. The remainder of this section will highlight the most
 useful types for new Modulo developers:
+
+> **Why don't we use "strings" for numbers?** Using strings of digits (i.e. in
+> quotes) instead of the numbers themselves means that things like arithmetic
+> won't work as intended. Example: If state variable `count="1"`, then
+> `state.count + 10` will result in `"110"` instead of the desired `11`, since
+> it's a string of digits, so `"1" + "10" = "110"`
 
 ### Strings & Numbers
 
@@ -103,7 +109,42 @@ Examples of both are below:
 ></State>
 ```
 
-### Array
+##### Try It Now
+
+1. Examine the code below, and it's output.
+
+```modulo_demo
+<Template>
+    Adding strings: {{ state.a|add:state.b }}<br />
+    Adding numbers: {{ state.d|add:state.e }}<br />
+</Template>
+<State
+    a="10"
+    b="20"
+    d:=10
+    e:=20
+></State>
+```
+
+2. Numbers can actually "do math", as opposed to strings that you'd only
+combine end-to-end, but not "do math". For example, `5 + 5 = 10` in Number
+arithmetic, while `"5" + "5" = "55"` in string arithmetic. Knowing that, do you
+see how the code above shows the important difference between Numbers and
+Strings?
+
+------
+
+
+
+#### Container types
+
+
+Continuing on our tour of data types, let's examine "container types" (ones
+that contain other data). In our case, container types are also "iterable
+types" (ones you can "loop on", e.g. with a for loop, as we'll learn later).
+
+
+### Arrays
 
 > **Iterables** - There are some types of data that are called "iterable". That
 > means you can "iterate" over them, or repeat code for them. A good rule of
@@ -113,28 +154,68 @@ Examples of both are below:
 > matches a search result, that is "plural", and that is when we want to use an
 > iterable.
 
-Arrays are the most important type of "container type" in JavaScript, that is,
-a type that can contain other types. Next in the tutorial we'll cover how to
-use Arrays to duplicate template code across data, but for now let's start with
-the syntax. In this case, we'll make an *Array of Numbers* and an *Array of
-Strings*, called `dataset` and `cities` respectively:
+*Warning: This stuff gets trickier!* Arrays are more complex data types, so it
+might take more practice to get the hang of them!
+
+Arrays are the most important type of "container type" or "iterable type" in
+JavaScript. This means, a type that can contain other types.  This means you
+can say it's an "Array of Numbers" (to refer to a certain collection of
+numbers, e.g. data you want to chart or graph), or an "Array of Strings" (to
+refer to a collection of items of text, e.g. the usernames of people who are
+present in a chat room).
+
+Next in the tutorial we'll cover how to use Arrays to duplicate template code
+across data, but for now let's start with the syntax. In this case, we'll make
+an *Array of Numbers* and an *Array of Strings*, called `dataset` and `cities`
+respectively:
 
 ```
 <State
     dataset:='[ 103, 32, 15, 100 ]'
     cities:='[ "Berkeley", "Porto Alegre" ]'
+    students:='[ "Alice", "Bob", "Candace" ]'
 ></State>
 ```
 
-### Arrays of Objects
+
+
+### Objects
+
+Objects are like arrays in that they contain other data, but instead of having
+an ordered sequence of items, they have them behind "keys", which are strings
+designations or labels for values, which can be any other type. Objects are
+sometimes called "dictionaries" in other programming languages, because they
+are a lot like a dictionary, consisitng of a words of phrases (keys), followed
+by their "definitions" (values).
+
+The format for objects is like: `{ "key": "value", "key2": "another value" }`
+
+See below for a more complete example:
+
+```
+<State
+    info:='{
+        "title": "Roller coaster",
+        "ticketPrice": 123.5
+    }'
+></State>
+```
+
+
+
+
+#### Arrays of Objects
 
 When we access real-world data, whether those are blog articles in a publishing
 site, or a data items in a dashboard, they often "arrive formatted" as what's
 called a JSON array of objects.
 
-This is a much more complicated data format. We'll encounter it again in a
-moment, when we start using StaticData. For now, scan the following format
-containing some imaginary "traffic rating" about two train stations:
+This is a much more complicated data format that builds on the previous two
+data formats. We'll encounter it again in a moment, when we start using
+StaticData. Look over the following format containing some imaginary "traffic
+rating" about two train stations. Don't worry about understanding every aspect
+about the format, but focus instead on the big picture of what this data might
+be trying to express:
 
 ```
 <State
@@ -170,53 +251,65 @@ containing some imaginary "traffic rating" about two train stations:
    props with different types:
 
 
+##### Summary: JSON type list
+
+To summarize this, look at this list of JSON types, and see if you can
+understand the examples given of each type of data:
+
+- **String** - `"Hello!"`, `"how are you"`, `"f$J^&m$j"`, or the empty `""`
+- **Number** - `42` or `32.5`
+- **Array** - `[ ]` or `[ 1, "a", true ]` *(can contain other data)*
+- **Object** - `{ }` or `{ "a": 123, "b": "XYZ" }` *(can contain other data)*
+- **Boolean** - `true` and `false` *(no other possible values)*
+- *Other:* `null`
+
+
 ##### Try It Now
 
-1. Examine the code below, and it's output.
-
-```modulo_demo
-<Template>
-    Adding strings: {{ state.a|add:state.b }}<br />
-    Adding numbers: {{ state.d|add:state.e }}
-</Template>
-<State
-    a="10"
-    b="20"
-    d:=10
-    e:=20
-></State>
-```
-
-2. Numbers can actually "do math", as opposed to strings that you'd only
-combine end-to-end, but not "do math". For example, `5 + 5 = 10` in Number
-arithmetic, while `"5" + "5" = "55"` in string arithmetic. Knowing that, do you
-see how the code above shows the important difference between Numbers and
-Strings?
-
-3. Let's see how we can use filters to "poke" at an Array. Examine the next bit
+1. Let's see how we can use filters to "poke" at an Array. Examine the next bit
 of code. Do you see how you can access individual items in an Array using the
 `|get` filter?
 
+
+
 ```modulo_demo
 <Template>
-    {{ state.items|get:3 }}
+    <p>Item at index 3: <tt>{{ state.items|get:3 }}</tt></p>
     <p>Items separated by a dash: {{ state.items|join:"-" }}</p>
-    <p>Items in JSON format: {{ state.items|json }}</p>
+    <hr />
+    <input [state.bind] name="str1" />
+    <input [state.bind] name="str2" />
+    <input [state.bind] name="num" type="number" />
+    <p>All of state in JSON format: <pre>{{ state|json:2 }}</pre></p>
 </Template>
 <State
     items:='[ "toothbrush", "umbrella", "my bag", "laptop", "charger" ]'
+    str1="hello"
+    str2="123"
+    num:=10
 ></State>
 ```
 
-##### Exploration Questions
+2. *Extra:* Try using the following snippet in the different demos in this
+tutorial for "peaking" at state in JSON format:  `<pre>{{ state|json:2 }}</pre>`
 
-* **Why do you think `|get:3` produces "laptop"?** Answer: Modulo  starts
-  counting the "index" of Arrays at "index number 0". This is the same behavior
-  as JavaScript.
 
-* **What is the purpose of JSON format?** JSON is a standard file format that
-  Modulo can read in. Any (strictly) JSON formatted data structure can be
-  inserted in a Modulo dataProp, e.g. `dataprop:='{"Hello": "World"}'`
+##### Comprehension Questions
+
+* **What do you think the `|json` filter is for?
+    - Answer 1: It displays the given data into JSON format. It's useful to
+      quickly checking the exact content of a state variable, or data from any
+      other source.
+    - Answer 2: The output of this filter can be pasted into attributes with
+      the syntax of `data:='{ ... }'`, or into `StaticData` (covered later).
+      This is useful for "saving" useful state configurations during testing!
+* **Why do you think `|get:3` produces "laptop"?**
+    - Answer: Modulo  starts counting the "index" of Arrays at "index number
+      0". This is the same behavior as JavaScript.
+* **What is the purpose of JSON format?** 
+    - JSON is a standard file format that Modulo can read in. Any (strictly)
+      JSON formatted data structure can be inserted in a Modulo dataProp, e.g.
+      `dataprop:='{"Hello": "World"}'`
 
 -----------
 
@@ -282,49 +375,40 @@ See below for two examples of using the "if" tag:
 Note that there are two other tags in the mix. These a related to the `if` tag,
 and will only show up after the `if` tag. The first is the `{% endif %}` tag.
 This is required, since it shows Modulo what you want the `if` tag to
-conditionally include. The second is the `{% else %}` tag. This is optional.
-You do not need to include this for all examples.
-
-
-
-## The for-tag
-
-The "for-tag" is for when we want to duplicate a bit of template over and over
-for a repetitive bit fo data. For example, if we want to template "for every
-article", or "for every pin in a world map", or "for every post in an article
-comment section". Each of these "for" statements refers to some plural thing
-that we want to have a similar style duplicated across, using the same HTML
-template for each item in that collection.
-
-For example, imagine showing a paragraph for every student in a class's roster:
-
-    {% for name in state.names %}
-        <p>Name on roster: {{ name }}</p>
-    {% endif %}
-
-
-Or, refer to the `stations:=` _State_ data example above, a for loop can also
-loop through other types of data, formatting it in a reasonable way:
-
-
-    {% for station in state.stations %}
-        <p>{{ station.name }} | TRAFFIC SCORE: {{ station.trafficRating }}</p>
-    {% endif %}
-
-
-In this example, the `{{ station.name }}` and `{{ station.trafficRating }}`
-refer to templating the individual values within the station object in the
-array of stations.
-
-Like the "if", for has an "endfor", which it uses to designate the portion of
-the temlpate it will repeat. Unlike "if", it can use the template it 0 times, 1
-time, or 2+ times (`if-tags` can use the template only 0 times or 1 time, but
-can never "duplicate" the template and use it 2+ times).
-
+conditionally include. The second is the `{% else %}` tag. This is optional:
+You don't need it for all uses of the `if` tag.
 
 ##### Try It Now
 
-1. Examine the code below. Do you understand how the `if` template-tag checks
+1. Examine the code below. Do you see how the `show` checkbox toggles the State
+value, which in turn toggles the visibility of the second `div`?
+
+```modulo_demo
+<Template>
+    <div>
+        <label>
+            <input [state.bind] name="show" type="checkbox" />
+            Show details
+        </label>
+    </div>
+    {% if state.show %}
+        <div>Look, more stuff here!</div>
+    {% endif %}
+</Template>
+<State
+    show:=false
+></State>
+<Style>
+    div {
+        border: 1px black solid;
+        padding: 3px;
+        margin: 3px;
+    }
+</Style>
+```
+
+
+2. Examine the code below. Do you understand how the `if` template-tag checks
 the value of `state.word`  to see if it is filled in, and only shows it back to
 the user when the user has started typing?
 
@@ -344,11 +428,78 @@ the user when the user has started typing?
     word=""
 ></State>
 ```
-2. Try modifying the "word" state variable's initital value to see how that
-changes the if statement.
 
-3. Try writing your own if-statements based on other state variables of your
-creations.
+3. **Local file challenge:** Try writing your own if-statements based on other
+state variables of your creations.
+
+
+##### Comprehension Question
+
+Try modifying the "word" and/or show state variable's initial value to see how
+that changes the if statement. What activates the if statement? What values are
+"true" (active) and what values are "false" (inactive)?
+
+- Answer: The Empty String is `false` (e.g. `word=""`), along with the Number `0`
+  (`word:=0`) and two more values: `false` (Boolean) and `null`.
+- Answer: Everything else will activate the if statement
+
+
+-----
+
+
+## The for-tag
+
+The "for-tag" is for when we want to duplicate a bit of template over and over
+for a repetitive bit fo data. For example, if we want to template "for every
+article", or "for every pin in a world map", or "for every post in an article
+comment section". Each of these "for" statements refers to some plural thing
+that we want to have a similar style duplicated across, using the same HTML
+template for each item in that collection.
+
+For example, imagine showing a paragraph for every student in a class's roster
+(assuming data like in the `students:=`  _State_ data example above):
+
+    {% for name in state.students %}
+        <p>Name on roster: {{ name }}</p>
+    {% endif %}
+
+
+A for loop can also loop through other types of data, such as the very popular
+Array of Objects, formatting it in a reasonable way
+(assuming data like in the `stations:=`  _State_ data example above):
+
+
+    {% for station in state.stations %}
+        <p>{{ station.name }} | TRAFFIC SCORE: {{ station.trafficRating }}</p>
+    {% endif %}
+
+
+In this example, the `{{ station.name }}` and `{{ station.trafficRating }}`
+refer to templating the individual values within the station object in the
+array of stations.
+
+Like the "if", for has an "endfor", which it uses to designate the portion of
+the temlpate it will repeat. Unlike "if", it can use the template it 0 times, 1
+time, or 2+ times (`if-tags` can use the template only 0 times or 1 time, but
+can never "duplicate" the template and use it 2+ times).
+
+
+### Template tag gotchas
+
+**Important syntax note:** Always put templating tags *inside* of attribute
+values. For example:
+
+```html
+
+<div class="{% if state.show" %}visible{% endif %}">
+    ...hidden things...
+</div>
+```
+
+Do you see how the `class="` goes outside the `if`? That is correct. It is
+incorrect to put it inside, e.g. syntax like `{% if state.show %}class=...` is
+*incorrect*.
+
 
 
 ##### Try It Now
@@ -376,14 +527,102 @@ items|reversed %}`. What do you think this will do?
 
 
 
+##### Try It Now
+
+1. Examine the code below. Do you see how the `for` template-tag "duplicates"
+the inner template for each station, in the Array of Objects?
+
+
+```modulo_demo
+<Template>
+    {% for station in state.stations %}
+        <div>{{ station.name }}</div>
+        <div>{{ station.trafficRating }}</div>
+    {% endfor %}
+</Template>
+<State
+    stations:='[
+        {
+            "name": "Embarcadero",
+            "trafficRating": 1353
+        },
+        {
+            "name": "19th St",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+</Style>
+```
+
+
+2. Examine this modification. This shows a more data, and a combination of an
+`if` and a `for`.  It allows it to add a "highlight" on ones that meet a
+certain criteria. The `gt 800` means "greater than 800".
+
+```modulo_demo
+<Template>
+    <h3>Name</h3> <h3>City</h3> <h3>Use</h3>
+    {% for station in state.stations %}
+        <div>{{ station.name }}</div>
+        <div>[{{ station.city }}]</div>
+        <div class="{% if station.trafficRating gt 800 %}warning-alt{% endif %}">{{ station.trafficRating }}</div>
+    {% endfor %}
+</Template>
+<State
+    stations:='[
+        {
+            "name": "Embarcadero",
+            "city": "SF",
+            "trafficRating": 1253
+        },
+        {
+            "name": "West Oakland",
+            "city": "OAK",
+            "trafficRating": 695
+        },
+        {
+            "name": "12th St",
+            "city": "OAK",
+            "trafficRating": 853
+        },
+        {
+            "name": "19th St",
+            "city": "OAK",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .warning-alt {
+        border: #ffeeee 2px solid;
+        background: #ffaaaa;
+    }
+</Style>
+```
+
+3. **Local file challenge:** This one is tricky, but think about if there's a
+way you can reduce your code size and reuse by "refactoring" repetitive code in
+your local project into a State data and a for-loop.
+
 -----------
 
 
 # StaticData
 
-_StaticData_ is a CPart used to import data from a JSON or CSV source, such as
-a file or API. Unlike _State_, it is for "static" or unchanging data. When
-building or deploying, it will be bundled together for speedy look-ups.
+_StaticData_ is a CPart used to import data from a JSON file format or CSV file
+format source, such as a file or API. Unlike _State_, it is for "static" or
+unchanging data. When building or deploying, it will be bundled together for
+speedy look-ups.
 
 What are JSON files? Here's an example:
 
@@ -415,7 +654,7 @@ it this way:
 ></StaticData>
 <Style>
     pre {
-        height: 150px;
+        height: 250px;
         overflow: auto;
     }
 </Style>
@@ -435,7 +674,7 @@ just the events, which is what we care about:
 ></StaticData>
 <Style>
     pre {
-        height: 100px;
+        height: 250px;
         overflow: auto;
     }
 </Style>
@@ -472,180 +711,21 @@ display all the holidays in a table in the next TRY IT NOW.
 
 
 
-1. Examine the code above. Do you understand how the `get` filter accesses the
-data we need, and then the `for` template-tag loops through that data showing
-it in a grid format (thanks to CSS `display: grid`)?
+1. Examine the code above.
 
-2. Bonus challenge: Try visualizing other data sets you find.  Can you display
-a table or details of some data set or JSON-based API you find online? For
-example, try using GitHub's API:
-<https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api>
+2. Do you understand how the `get` filter accesses the data we need, and then
+the `for` template-tag loops through that data showing it in a grid format
+(thanks to CSS `display: grid`)?
 
-
------------
-
-
-
-# Bonus - Script
-
-Just to round out this tutorial, let's peak at the last, most important
-Component Part: Script. If you are a total newbie when it comes to JavaScript,
-this section might make less sense - feel free to skip over.
-
-While Modulo is designed to be useful even without JavaScript, sometimes you
-just need access to that extra power of custom JavaScript code. Using
-JavaScript, Modulo can be even used to develop more complicated interactive web
-applications.
-
-### The _Script_ CPart
-
-To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
-contained within once, immediately upon loading the component. See this
-example:
-
-```html
-<Script>
-    console.log("Hello JavaScript world!");
-/Script>
-```
-
-In this above example, the _Script_ CPart will execute that JS code once, as
-soon as it's loaded, causing the "console.log" to log that message to the web
-browser's Developer Tools JavaScript console exactly once.
-
-### Embedded components and script tags
-
-Generally speaking, it's always desirable to put components in a separate file,
-as was demonstrated in _Part 1_ with the `-src=` style attribute. This becomes
-even more necessary if you want to use a _Script_ CPart. This is because of a
-limitation with HTML: It does not support "nested" script tags. This means that
-the `&lt;/Script>` tag will end up closing off the outer `script` tag early and
-"interrupting" your component definition.
-
-However, there is an alternative syntax to still allow a _Script_ CPart
-embedded in your `&lt;script Modulo ...` definition, even without splitting it
-off. This messier syntax is far from ideal, but can do in a pinch:
-
-    &lt;def Script&gt;
-        console.log("Hello JavaScript world!");
-    &lt;/def&gt;
-
-Note: Only use this alternative `def Script` syntax within a
-`&gt;script Modulo ...` tag. There is no reason to use it when writing code in a
-separate file!
-
-> **Event directives** Let's break down that event directive:
-> `@click:=script.sayHello`. First, note the at-sign: `@`. This is "syntactic
-> sugar" for the `[component.event]` directive. This will attach a "click"
-> event listener to the given element when that element is first mounted (i.e.
-> displayed on the screen), and remove the listener if it leaves. In this case,
-> we are using a `:=` style "data prop" style assignment, to assign the click
-> event to point to the sayHello function of the _Script_ CPart. All functions
-> defined in a _Script_ CPart will automatically be "exported" and available to
-> click events, or in dataprops in general.
-
-### Attaching click events
-
-Typically, it's more useful to execute code when a user performs an action. To
-do this, we must place the "console.log" into a function:
-
-    <Script>
-        function sayHello() {
-            console.log("Hello JavaScript world!");
-        }
-    /Script>
-
-Then, attach a "click" event directive to a HTML tag, such as, for example, a
-button element:
-
-    &lt;button @click:=script.sayHello&gt;Click me&lt;/button&gt;
-
-Now, whenever a user clicks on the button, it will run the "sayHello" function,
-logging the text into the JavaScript console.
+3. **Local file challenge:** Try accessing other data sets you find.  Can you
+display a table or details of some data set or JSON-based API you find online?
+For example, if you are fan of the Pokemon franchise, you might enjoy using the
+[PokeAPI](https://pokeapi.co/). Or, [try using GitHub's
+API](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
+Many more are available here: <https://github.com/public-apis/public-apis>
 
 
 
-##### Try it now
-
-```modulo_demo
-<Template>
-    <button @click:="script.doLog">console.log a message</button>
-</Template>
-<Script>
-    console.log("COMPONENT GOT LOADED!");
-    function doLog() {
-        console.log("Hello Modulo Scripting World!");
-    }
-/Script>
-```
-
-1.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
-`Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
-you can right-click with your mouse and select "Inspect", and then go to the
-_Console_ tab.
-2.  Do you see the "COMPONENT GOT LOADED!" text displayed in the console? It is
-displayed once every time the component is loaded. By clicking "RUN", you can
-"reload" the component, causing that message to show (or count up) again.
-3.  Try now clicking on the button in the preview on the right. Do you see how
-every time you click it shows (or counts) the text of the console.log in the
-console?
-4.  _Extra:_ Any number of functions can be defined in a _Script_ CPart.
-Practice writing your own function that console logs a different message, and
-then attaching it to a new button (or the existing button).
-5.  _Extra:_ The "event" directive supports any event. Try changing "@click" to
-"@mouseover", and then move your mouse over the button (without clicking). (For
-the curious: [MDN has a list of all
-events](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing))
-
-------
-
-### Interacting with state
-
-The _Script_ CPart is like the _Template_ CPart in one way: You get variables
-referencing the other CParts. Within functions defined in the _Script_ CPart,
-variables will be available representing the other CParts that have been
-defined in the _Component_. As with the _Template_ CPart, the most useful
-variables are `state`, with the current data in _State_ CPart (the "data"
-Object), and `props`, with the value of the attributes that were passed to this
-component.
-
-Remember our "Holmes-style" detective work we did in the previous section? We
-looked at a button which incremented a value when clicked. The JavaScript code
-to increment a variable is `num++`, and for state data it can be:
-`state.num++`.  Also, by default, components will rerender after every event
-that you are listening to. With that in mind, examine the code of the Hello
-button:
-
-
-```modulo_demo
-<Template>
-    <button @click:="script.doCountup">Hello {{ state.num }}</button>
-</Template>
-<State
-    num:=42
-></State>
-<Script>
-    function doCountup() {
-        state.num++;
-    }
-/Script>
-```
-
-By clicking on the button, it will increment the state value. Since the
-component will rerender after the click, it will then change the DOM to show
-the new number.
-
-With the power of JavaScript, you can do all manner of things with the Script
-tag. The [Examples page](/examples/) has all sorts of examples of more
-complicated apps and applications. The typical use of a Script tag, thus, is to
-create custom logic that manipulates or "puppets" the state, which in turn is
-what controls the rendering of the component's HTML code by the Template CPart.
-
-Keep in mind that the Script CPart is intended to be limited. Serious
-JavaScript development should be split into separate JS files, or defined as
-custom CParts. Thus, think of the Script CPart as more "filling in the gaps"
-between CParts, which should do most of the heavy lifting (e.g. asynchronous
-code, complicated API calls or data transformation, etc).
 
 ##### Key terms
 
@@ -659,9 +739,7 @@ code, complicated API calls or data transformation, etc).
 * **Template tag** \- A more advanced type of Template code that lets us repeat
   or optionally include other templat code based on data contained in state,
   props, or from a static data CPart
-* **Script** \- CPart that enables embedding of arbitrary JavaScript code, and
-  allowing for easy access to CPart interface, and exposing JS functions to be
-  attached as events
+
 
 -----
 
