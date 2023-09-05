@@ -68,6 +68,8 @@
             //console.log('inititalized callback!', text.length, text.substr(0, 20));
             let { mode } = props;
             if (mode && mode.includes('_')) {
+                // Messy code to deal with "upgrading" self into a <x-DemoEditor>
+                // This is only used in Markdown, e.g. "```modulo_demo" fenced blocks
                 let [ modeName, editor ] = mode.split('_');
                 mode = modeName;
                 // Clean up to prevent double encoding:
@@ -76,7 +78,8 @@
                 const e = document.createElement('x-DemoEditor');
                 e.setAttribute('value', valueAttr);
                 e.setAttribute('class', element.getAttribute('class')); // copy class attr
-                // TODO: Hack, make this search through the examples data structure to generate auto-include
+                // TODO: Hacky code now, should instead search through the
+                // examples data structure to generate auto-include
                 if (valueAttr.includes('<x-ExampleBtn')) {
                     e.setAttribute('includes', "/static/demos/usedby/ExampleBtn.html");
                 }
@@ -153,7 +156,7 @@
         function showDemo(demoFileName) {
             state.selected = demoFileName;
             setTimeout(() => {
-                // Messy hack to force it to run + rerender
+                // Messy hack to force it to run + rerender when selected
             	const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
                 const synEditor = editor.querySelector('x-SyntaxEditor');
                 editor.cparts.modulosandbox.editor = synEditor;
@@ -163,24 +166,6 @@
         function prepareCallback() {
             const examples = [];
             return { examples };
-        }
-
-        function updateCallback() {
-            for (const editor of element.querySelectorAll('x-DemoEditor')) {
-                /*
-                setTimeout(() => { // Stupid hack to force it to run
-                    const synEditor = editor.querySelector('x-SyntaxEditor');
-                    if (!editor.cparts.modulosandbox.hasRun) {
-                        editor.cparts.modulosandbox.run();
-                    }
-                }, 0);
-                */
-                /*
-                editor.cparts.modulosandbox.editor = synEditor;
-                editor.cparts.modulosandbox.run();
-            	editor.cparts.modulosandbox.updateCallback(); // Hack to cause it to rerender / fix issue after display
-                */
-            }
         }
     </Script>
     <Style

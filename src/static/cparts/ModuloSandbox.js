@@ -67,6 +67,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
                     this.element.setAttribute('modulo-value', text);
                     this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
+                        this.hasRun = true;
                         this._run();
                     }
                 });
@@ -92,8 +93,16 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
 
     run() {
         const state = this.element.cparts.state.data;
-        if (state.showEditor) {
+        if (this.element.hasAttribute('modulo-value') && !state.value) {
+            state.value = this.element.getAttribute('modulo-value');
+        }
+        if (state.showEditor || state.showEditor === null) {
             state.value = this.element.editor.value;
+        }
+        if (state.value === undefined) { // value is undefined, timing issue when rehydrating?
+            if (this.element.editor && this.element.editor.getAttribute('value')) {
+                state.value = this.element.editor.getAttribute('value');
+            }
         }
         this.hasRun = true;
         this._run();
@@ -168,11 +177,27 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
         */
         window.modulo = window.sandboxModulo;
         window.sandboxModulo.loadString(fullText); // Load the string, and when finished, apply
+
         window.sandboxModulo.preprocessAndDefine(() => {
-            window.modulo = window.sandboxModulo;
-            this.element.cparts.state.propagate('demo', this.getDemoCode(ns));
-            this.element.rerender();
+            window.modulo = window.sandboxModulo; // ensure wasn't ovewritten
+            const demoCode = this.getDemoCode(ns)
+            state.demo = demoCode;
+            this.element.cparts.state.propagate('demo', demoCode);
+            this.element.cparts.component.rerender();
             window.modulo = window.globalModulo; // Ensure restored
+            // TODO: Not sure why this is necessary, but after rehydrating the
+            // demo doesn't run automatically on pages where it's un-collapsed
+            if (this.hasRun) {
+                return;
+            }
+            window.setTimeout(() => {
+                const demoArea = this.element.querySelector('.demo-area');
+                if (!demoArea.textContent.trim() && state.demo && !props.src && !props.includes) {
+                    window.modulo = window.sandboxModulo; // ensure wasn't ovewritten
+                    demoArea.innerHTML = demoCode;
+                    window.modulo = window.globalModulo; // Ensure restored
+                }
+            }, 1);
         });
     }
 
