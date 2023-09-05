@@ -17,14 +17,18 @@ instantly more familiar to developers. Thanks, Django!
 ## comment
 
 Used specifically for commenting out blocks of Templating code. Ignores
-everything between `{% comment %}` and `{% endcomment %}`. An optional note may
-be inserted in the first tag. This can be useful to document why the code was
-commented out or disabled. You should avoid nesting comment tags.
+everything between `{% comment %}` and `{% endcomment %}`.  Do not nest comment
+tags (e.g. one comment tag cannot contain or comment out another).
 
+An optional note may be inserted in the first tag. This can be useful to
+document why the code was commented out or disabled.  For example:
+`{% comment "Deactivating due to API bug" %}`
+
+An example of a comment tag:
 
 ```modulo_demo
 <Template>
-    {% comment "Optional note" %}
+    {% comment %}
         <p>Commented out text that will be ignored
           {{ nonExistingVar|brokenFilter:"abc" }}</p>
     {% endcomment %}

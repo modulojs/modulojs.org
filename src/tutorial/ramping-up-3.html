@@ -86,19 +86,23 @@ useful types for new Modulo developers:
 
 ### Strings & Numbers
 
-String is the default. If you don't use `:=` it will be a plain old string. That refers
-to a "string of characters", and is used for generic text.
+String is the default.  If you use `=` like a regular HTML attribute, it will
+be a "plain old" String.  The word "String" refers to a "string of characters",
+and is used for text, whether it's a single letter, a word, a paragraph, or an
+entire book.
 
 If you use the `:=` syntax followed by a number, like `:=10` or `:=32.4`, you
-create a value of the Number type.  This is useful for numeric data that you want to do
-calculations on.
+create a value of the Number type.  This is useful for numeric data that you
+want to do calculations on.  That is to say, Numbers can actually "do math", as
+opposed to strings that you'd only combine end-to-end, but not "do math". For
+example, `5 + 5 = 10` for Numbers, while `"5" + "5" = "55"` for Strings.
 
 Examples of both are below:
 
 ```
 <State
-    stringval="Hello world!"
-    another="
+    message="Hello world!"
+    longer="
         Strings can be more
         than one line.
     "
@@ -126,9 +130,7 @@ Examples of both are below:
 ></State>
 ```
 
-2. Numbers can actually "do math", as opposed to strings that you'd only
-combine end-to-end, but not "do math". For example, `5 + 5 = 10` in Number
-arithmetic, while `"5" + "5" = "55"` in string arithmetic. Knowing that, do you
+2. do you
 see how the code above shows the important difference between Numbers and
 Strings?
 
@@ -268,24 +270,38 @@ understand the examples given of each type of data:
 
 1. Let's see how we can use filters to "poke" at an Array. Examine the next bit
 of code. Do you see how you can access individual items in an Array using the
-`|get` filter?
+`|get` filter? Do you see how `|json` is used to show State in JSON syntax, and five
 
 
 
 ```modulo_demo
 <Template>
-    <p>Item at index 3: <tt>{{ state.items|get:3 }}</tt></p>
-    <p>Items separated by a dash: {{ state.items|join:"-" }}</p>
+    <p>Item at index 3:
+        <tt>{{ state.items|get:3 }}</tt>
+    </p>
+    <p>Items separated by a dash:
+        {{ state.items|join:"-" }}
+    </p>
     <hr />
     <input [state.bind] name="str1" />
     <input [state.bind] name="str2" />
-    <input [state.bind] name="num" type="number" />
-    <p>All of state in JSON format: <pre>{{ state|json:2 }}</pre></p>
+    <input [state.bind] name="num"
+                        type="number" />
+    <p>
+        State in JSON format:
+        <pre>{{ state|json:2 }}</pre>
+    </p>
 </Template>
 <State
-    items:='[ "toothbrush", "umbrella", "my bag", "laptop", "charger" ]'
     str1="hello"
     str2="123"
+    items:='[
+        "toothbrush",
+        "umbrella",
+        "my bag",
+        "laptop",
+        "charger"
+    ]'
     num:=10
 ></State>
 ```
@@ -296,17 +312,18 @@ tutorial for "peaking" at state in JSON format:  `<pre>{{ state|json:2 }}</pre>`
 
 ##### Comprehension Questions
 
-* **What do you think the `|json` filter is for?
+* **What do you think the `|json` filter is for?**
     - Answer 1: It displays the given data into JSON format. It's useful to
       quickly checking the exact content of a state variable, or data from any
       other source.
     - Answer 2: The output of this filter can be pasted into attributes with
-      the syntax of `data:='{ ... }'`, or into `StaticData` (covered later).
-      This is useful for "saving" useful state configurations during testing!
+      the syntax of `data:='{ ... }'`, or into the content of a `StaticData`
+      (covered later).  This is useful for "saving" useful state configurations
+      during testing.
 * **Why do you think `|get:3` produces "laptop"?**
     - Answer: Modulo  starts counting the "index" of Arrays at "index number
       0". This is the same behavior as JavaScript.
-* **What is the purpose of JSON format?** 
+* **What is the purpose of JSON format?**
     - JSON is a standard file format that Modulo can read in. Any (strictly)
       JSON formatted data structure can be inserted in a Modulo dataProp, e.g.
       `dataprop:='{"Hello": "World"}'`
@@ -461,7 +478,7 @@ For example, imagine showing a paragraph for every student in a class's roster
 
     {% for name in state.students %}
         <p>Name on roster: {{ name }}</p>
-    {% endif %}
+    {% endfor %}
 
 
 A for loop can also loop through other types of data, such as the very popular
@@ -471,7 +488,7 @@ Array of Objects, formatting it in a reasonable way
 
     {% for station in state.stations %}
         <p>{{ station.name }} | TRAFFIC SCORE: {{ station.trafficRating }}</p>
-    {% endif %}
+    {% endfor %}
 
 
 In this example, the `{{ station.name }}` and `{{ station.trafficRating }}`
