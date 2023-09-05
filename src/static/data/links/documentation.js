@@ -21,6 +21,16 @@
             filename: '/tutorial/ramping-up-3.html',
             keywords: [ 'string', 'number', 'array', 'object', 'template tags', 'if', '==', 'is', 'else', 'endif', 'for', 'endfor', 'staticdata', 'json', 'API', 'CSV' ],
         },
+        {
+            label: 'Shadow & Slots, Events, and Scripts',
+            tutorialName: 'Ramping Up with Modulo',
+            partLabel: 'Part 4',
+            filename: '/tutorial/ramping-up-4.html',
+            keywords: [ 'slot', 'slot name', 'children', 'shadow dom',
+              'css isolation', 'class isolation', 'shadow isolation', 'vanish',
+              'event', 'event listening', 'click', '@click:=', 'methods',
+              'Array methods', 'pop', 'push', 'reverse', 'shift', 'script tag', 'JavaScript', 'num++', '-data-type="js"' ],
+        },
     ],
 
     docs: [

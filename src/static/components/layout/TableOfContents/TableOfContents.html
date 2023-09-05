@@ -1,17 +1,19 @@
+
+
 <ul>
     {% if props.showall %}
-        <h2>Begin</h2>
     {% else %}
         <h1>%</h1>
     {% endif %}
-    <li class="{% if not props.showall %}button-sidebar{% endif %}">
+
+    <h2>Documentation</h2>
+    <li>
         <a href="/docs/#TableOfContents" class="{% if "docs/"|isactive %}button--active{% endif %}">
             Table of Contents
         </a>
     </li>
     {% if props.showall %}
-        <li>Tutorial: 
-            <span style="font-size: 0.8rem;">{{ staticdata.tutorial|get:0|get:"tutorialName"|upper }}</span><br />
+        <li> Tutorial: {{ staticdata.tutorial|get:0|get:"tutorialName" }}
             <ul>
             {% for page in staticdata.tutorial %}
                 <li>
@@ -22,21 +24,31 @@
             </ul>
         </li>
     {% else %}
-        <li class="button-sidebar">
-            Tutorial: <br />
-            <span style="font-size: 0.8rem;">{{ staticdata.tutorial|get:0|get:"tutorialName"|upper }}</span><br />
-            {% for page in staticdata.tutorial %}
-                <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
+        {% if "/tutorial/"|isactive %}
+            <li class="button-sidebar">
+                {{ staticdata.tutorial|get:0|get:"tutorialName" }}:
+                {% for page in staticdata.tutorial %}
+                    <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
                         {{ page.partLabel }}
-                </a>
-            {% endfor %}
-        </li>
+                    </a>
+                {% endfor %}
+            </li>
+        {% else %}
+            <li>
+                {% for page in staticdata.tutorial %}
+                    {% if "1" in page.partLabel  %} {# found first #}
+                        <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
+                            {{ page.tutorialName }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            </li>
+        {% endif %}
     {% endif %}
 </ul>
 
 
 <ul>
-    <h2>Documentation</h2>
     {% for page in staticdata.docs %}
         <li class="
                 {% if not props.showall %}

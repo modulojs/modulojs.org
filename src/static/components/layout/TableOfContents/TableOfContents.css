@@ -9,7 +9,7 @@ li, ul, ol {
 
 :host > ul,
 :host > ul > li {
-    margin-left: 30px;
+    margin-left: 20px;
     margin-bottom: 5px;
 }
 
@@ -46,11 +46,11 @@ li.section-active > a {
 }
 
 li.section-active > a::before {
-    content: '%';
+    content: '◯';
     position: absolute;
     display: inline-block;
-    left: -19px;
-    top: 1px;
+    left: -23px;
+    top: -1px;
     color: var(--color-fg-semidark);
 }
 
@@ -82,7 +82,12 @@ a:active {
 
 .button-sidebar a {
     border: 1px solid black;
-    padding: 3px;
+    padding: 2px;
+    margin: 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-left: -6px;
 }
 
 .button-sidebar a:hover,
@@ -113,3 +118,12 @@ h1 {
     margin-left: 1rem;
   }
 }
+
+@media (max-width: 992px) {
+  :host > ul,
+  :host > ul > li {
+      margin-left: 10%;
+  }
+}
+
+

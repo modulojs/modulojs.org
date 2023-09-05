@@ -94,35 +94,76 @@ Examine the following examples for ideas on how to use StaticData:
 </Style>
 ```
 
-#### Filtering with -data-type="js"
+
+#### Displaying a table from an API
 
 ```modulo_demo
 <Template>
-    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
-    {% for item in staticdata %}
-        <div>#{{ item.userId }}</div>
-        <div>{{ item.title|truncate:5 }}</div>
-        <div>{{ item.body|truncate:10 }}</div>
+    {% for category, info in staticdata %}
+        <h4>{{ category }}</h4>
+        <section>
+            <h5>date</h5> <h5>name</h5> <h5>bunt</h5>
+            {% for holiday in info.events %}
+                <div>{{ holiday.date }}</div>
+                <div>{{ holiday.title }}</div>
+                <div>{{ holiday.bunting|yesno:"X,_,?" }}</div>
+            {% endfor %}
+        </section>
     {% endfor %}
 </Template>
-<!-- Load items from a JSON placeholder website "typicode", and then use the
-contet of a "js" StaticData tag to pre-filter them right after loading -->
-<script StaticData -data-type="js" -src="https://jsonplaceholder.typicode.com/posts">
-    .filter(post =>
-        post.userId === 5
-    )
-/script>
-
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
 <Style>
-    :host {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        height: 150px;
-        overflow: auto;
-    }
+  section {
+      display: grid;
+      grid-template-columns: 2fr 3fr 1fr;
+      font-size: 0.7rem;
+      height: 80px;
+      overflow-x: auto;
+  }
+  h4, h5 {
+      margin: 0;
+      padding: 0;
+  }
 </Style>
 ```
 
+
+
+> **Use case: DataViz** - Data visualization is a huge topic. Modulo is not
+> strictly a data visualization tool: Typically, you'll want to use a
+> tried-and-true, "off-the-shelf" graphing library, or SVG-based graphics,
+> which Modulo could work in conjunction with or pass the data into.  However,
+> in either case, "StaticData" and "Template" combined can be used for quick
+> data visualizations, very useful for assembling dashboards, reports, and many
+> other types of web projects.
+
+## Usage: Mixing in JavaScript
+
+By adding -data-type=js, we can begin to mix in JavaScript in with our
+`StaticData`. This JavaScript will run at "build time", meaning it will happen
+before the data is bundled in. This allows you to filter through large data
+sets and only include the data you want, or provide the attributes you want.
+
+For example:
+
+```
+<script StaticData -src="https://www.gov.uk/bank-holidays.json" -data-type="js" -name="years">
+    ['england-and-wales']
+    ['events']
+    .map(function (ev) {
+        return Number(ev.date.split('-')[0]); // Get year of each date
+    })
+/script>
+```
+
+Note the alternative `<script StaticData` syntax for defining StaticData.  This
+is not a Script CPart: It is indeed a StaticData CPart! However, we can start
+with `<script ...` just as a convenience, so that editors will recognize it as
+JavaScript code. Just make sure to include that StaticData as the first
+attribute, otherwise Modulo will think it's a regular Script, which behaves much
+differently than StaticData!
 
 #### Embedding data with -data-type="js"
 
@@ -166,4 +207,101 @@ we can use the more relaxed JavaScript syntax rules -->
 </Style>
 ```
 
+#### Filtering with JavaScript
+
+```modulo_demo
+<Template>
+    <h4>uid</h4> <h4>Title</h4> <h4>Body</h4>
+    {% for item in staticdata %}
+        <div>#{{ item.userId }}</div>
+        <div>{{ item.title|truncate:5 }}</div>
+        <div>{{ item.body|truncate:10 }}</div>
+    {% endfor %}
+</Template>
+<!-- Load items from a JSON placeholder website "typicode", and then use the
+content of a StaticData tag to pre-filter them right after loading -->
+<script StaticData -data-type="js" -src="https://jsonplaceholder.typicode.com/posts">
+    .filter(post =>
+        post.userId === 5
+    )
+/script>
+
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        height: 150px;
+        overflow: auto;
+    }
+</Style>
+```
+
+#### Making a small chart with JavaScript
+
+```modulo_demo
+<Template>
+    {% for number in month_numbers %}
+        <section style="--month-number: {{ number }};">
+            <h2 title="Month #{{ number }}">{{ number }}</h2>
+            {% for event in staticdata %}
+                {% if event.month is number %}
+                    <article>{{ event.title }}</article>
+                {% endif %}
+            {% endfor %}
+        </section>
+    {% endfor %}
+</Template>
+
+<StaticData -name="month_numbers">
+    [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+</StaticData>
+
+<script StaticData -src="https://www.gov.uk/bank-holidays.json" -data-type="js">
+    ['england-and-wales']
+    ['events']
+    .map(function (originalEvent) {
+        // Get item 1 when split by dashes, convert to number (gets month)
+        return {
+            month: Number(originalEvent.date.split('-')[1]),
+            title: originalEvent.title,
+        };
+    })
+/script>
+
+<Style>
+    :host {
+        height: 200px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+    }
+    h2 {
+        font-size: 0.9rem;
+    }
+    section {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    section:hover {
+        background: #aaa;
+    }
+    article {
+        font-size: 0.8rem;
+        grid-column: var(--month-number) / span 1;
+        background: orange;
+        color: white;
+        font-weight: bold;
+        box-sizing: border-box;
+        height: 10px;
+        width: 15px;
+        overflow: hidden;
+    }
+    article:hover {
+        height: 50px;
+        width: 85px;
+        margin-bottom: -40px;
+        margin-right: -70px;
+        z-index: 1;
+    }
+</Style>
+```
 
