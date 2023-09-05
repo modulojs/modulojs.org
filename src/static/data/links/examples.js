@@ -117,7 +117,13 @@
         {
             file: "/static/demos/eg/ColorSelector.html",
         },
+        {
+            file: "/static/demos/eg/GradientPicker.html",
+        },
         /*
+        {
+            file: "/static/demos/eg/TextStyler.html",
+        },
         {
             file: "/static/demos/eg/DateNumberPicker.html",
         },

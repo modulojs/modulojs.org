@@ -1,0 +1,28 @@
+<Template>
+    <input [state.bind] name="text" />
+    <label>FG: <input [state.bind] name="color" type="color" /></label>
+    <label>BG: <input [state.bind] name="bgcolor" type="color" /></label>
+    <label>Size: <input [state.bind] name="size"
+            type="range" min="12" max="28" step="2" /></label>
+    <hr />
+    <label>Shadow
+      <input [state.bind] name="shadow"
+            type="range" min="0" max="8" step="1" />
+    </label>
+    <hr />
+    <h5 style="
+            font-size: {{ state.size }}px;
+            color: {{ state.color }};
+            background-color: {{ state.bgcolor }};
+            text-shadow: {{ state.shadow }}px {{ state.shadow }}px {{ state.shadow }}px #00000066;
+        ">
+        {{ state.text }}
+    </h5>
+</Template>
+<State
+    size:=24
+    shadow:=2
+    color="#333030"
+    bgcolor="#fff0f0"
+    text="Style Me"
+></State>

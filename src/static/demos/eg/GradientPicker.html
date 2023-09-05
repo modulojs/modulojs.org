@@ -1,0 +1,23 @@
+<!-- A succinct "Gradient Picker" that previews
+    gradients as the user uses the system picker -->
+<Template>
+    <label>From: <input [state.bind] name="from" type="color" /></label>
+    <label>To: <input [state.bind] name="to" type="color" /></label>
+    <input [state.bind] name="percent" type="range"
+        min="0" max="100" step="1" />
+    <div style="
+          height: 100px;
+          width: 200px;
+          background: linear-gradient(
+              to right,
+              {{ state.from }} {{ state.percent }}%,
+              {{ state.to }}
+          );
+        ">
+    </h5>
+</Template>
+<State
+    from="#aabaaa"
+    to="#3abd47"
+    percent:=50
+></State>
