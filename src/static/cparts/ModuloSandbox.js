@@ -191,6 +191,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
                 return;
             }
             window.setTimeout(() => {
+                const props = this.element.cparts.props.initializedCallback();
                 const demoArea = this.element.querySelector('.demo-area');
                 if (!demoArea.textContent.trim() && state.demo && !props.src && !props.includes) {
                     window.modulo = window.sandboxModulo; // ensure wasn't ovewritten
