@@ -1,0 +1,37 @@
+<!-- Demos toggling height of an element based on state -->
+<Template>
+    <label>
+        <input [state.bind] name="visible" type="checkbox" />
+        Show more {% if state.visible %}&uarr;{% else %}&darr;{% endif %}
+    </label>
+    <article class="{{ state.visible|yesno:'visible,invisible' }}">
+        <p>The contents of the hidden panel...</p>
+        <p>And more contents of the hidden panel...</p>
+    </article>
+</Template>
+
+<State
+    visible:=false
+></State>
+
+<Style>
+    :host {
+        display: block;
+        background: linear-gradient(#aab, #aac);
+        padding: 5px;
+    }
+    label {
+        font-weight: bold;
+    }
+    article {
+        overflow: hidden;
+        transition: height 0.5s;
+    }
+    article.invisible {
+        height: 0;
+    }
+    article.visible {
+        height: 120px;
+    }
+</Style>
+

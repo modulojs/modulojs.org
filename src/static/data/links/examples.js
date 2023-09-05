@@ -117,8 +117,16 @@
         {
             file: "/static/demos/eg/ColorSelector.html",
         },
+        /*
         {
             file: "/static/demos/eg/DateNumberPicker.html",
+        },
+        */
+        {
+            file: "/static/demos/eg/ToggleVisible.html",
+        },
+        {
+            file: "/static/demos/eg/Accordion.html",
         },
         {
             file: "/static/demos/eg/PrimeSieve.html",

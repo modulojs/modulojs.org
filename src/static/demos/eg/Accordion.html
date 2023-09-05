@@ -1,0 +1,48 @@
+<!-- This time, we have 3 sections which each get toggled based
+     on one value -->
+<Template>
+    <select [state.bind] name="val">
+        <option value="top">View Top</option>
+        <option value="middle">View Middle</option>
+        <option value="bottom">View Bottom</option>
+    </select>
+
+    <article class="{% if state.val is 'top' %}active{% endif %}">
+        <h1>Top</h1>
+        <p>The contents of the hidden panel...</p>
+    </article>
+
+    <article class="{% if state.val is 'middle' %}active{% endif %}">
+        <h1>Middle</h1>
+        <p>The contents of the hidden panel...</p>
+    </article>
+
+    <article class="{% if state.val is 'bottom' %}active{% endif %}">
+        <h1>Bottom</h1>
+        <p>The contents of the hidden panel...</p>
+    </article>
+</Template>
+
+<State
+    val="top"
+></State>
+
+<Style>
+    :host {
+        display: block;
+    }
+    label {
+        font-weight: bold;
+    }
+    article {
+        overflow: hidden;
+        transition: height 0.5s;
+        background: linear-gradient(#aab, #aac);
+        padding: 5px;
+        height: 0;
+    }
+    article.active {
+        height: 120px;
+    }
+</Style>
+
