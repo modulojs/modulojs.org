@@ -1,16 +1,11 @@
-
-
 <ul>
-    {% if props.showall %}
-    {% else %}
+    {% if not props.showall %}
         <h1>%</h1>
     {% endif %}
 
     <h2>Documentation</h2>
     <li>
-        <a href="/docs/#TableOfContents" class="{% if "docs/"|isactive %}button--active{% endif %}">
-            Table of Contents
-        </a>
+        <a href="/docs/#TableOfContents">Table of Contents</a>
     </li>
     {% if props.showall %}
         <li> Tutorial: {{ staticdata.tutorial|get:0|get:"tutorialName" }}
@@ -46,7 +41,6 @@
         {% endif %}
     {% endif %}
 </ul>
-
 
 <ul>
     {% for page in staticdata.docs %}

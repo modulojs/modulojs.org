@@ -454,11 +454,11 @@ that can be added, and we'll generate the payloads from that:
     <h3>Shopping list | {{ state.items|length }}</h3>
     <p>{{ state.items|join }}</p>
     <hr />
-    {% for option in state.options %}
+    {% for favorite in state.favorites %}
         <button
             @click:=state.items.push
-            payload="{{ option }}"
-        >{{ option|capfirst }}</button>
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
     {% endfor %}
 </Template>
 <State
@@ -469,7 +469,8 @@ that can be added, and we'll generate the payloads from that:
 
 
 4. Finally, we'll re-apply the same technique, but this time to make an HTML
-input for adding "item favorites", where we can write in a custom favorite and see it appear in the favorite list, and then use the favorite list to .
+input for adding "item favorites", where we can write in a custom favorite and
+see it appear in the favorite list, and then use the favorite list to .
 
 
 ```modulo_demo
@@ -478,11 +479,11 @@ input for adding "item favorites", where we can write in a custom favorite and s
     <p>{{ state.items|join }}</p>
     <hr />
     <h4>Favorites</h4>
-    {% for option in state.favorites %}
+    {% for favorite in state.favorites %}
         <button
             @click:=state.items.push
-            payload="{{ option }}"
-        >{{ option|capfirst }}</button>
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
     {% endfor %}
     <hr />
     <input
@@ -530,11 +531,11 @@ Examine the following final code transformation:
     <p>{{ state.items|join }}</p>
     <hr />
     <h4>Favorites</h4>
-    {% for option in state.favorites %}
+    {% for favorite in state.favorites %}
         <button
             @click:=state.items.push
-            payload="{{ option }}"
-        >{{ option|capfirst }}</button>
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
     {% empty %}
         <em>(None yet! Use form below.)</em>
     {% endfor %}
@@ -600,7 +601,7 @@ While Modulo is designed to be a handy little tool for web developers even
 without use of embedded JavaScript or _Script_ parts, sometimes you just need
 access to that extra power of custom JavaScript code.
 
-##### Learning Tip
+##### Learning Tips
 
 * **Tip 1:** When developing with Modulo, especially if you are working with
   JavaScript, remember to keep your JavaScript Console open, so you know if
@@ -613,9 +614,10 @@ access to that extra power of custom JavaScript code.
   [MDN's Learn JavaScript tutorial
   collection](https://developer.mozilla.org/en-US/docs/Learn/JavaScript), or [JavaScript.info](https://javascript.info/).
 
+------
 
 
-### The _Script_ CPart
+## The Script CPart
 
 
 To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
@@ -800,7 +802,10 @@ would you choose one over the other?
 
 ------
 
-### Direct DOM manipulation
+## Direct DOM manipulation
+
+**New to JavaScript?** You probably won't have much need for this. Feel free to
+skip this last section!
 
 
 > **DOM Methods? What DOM methods are there?** All "DOM elements" (p, h1, etc)
@@ -824,7 +829,7 @@ values).
 Examine the following code:
 
 ```
-<div [script.getReady]>
+<div [script.ready]>
     Hey!
 </div>
 ```
