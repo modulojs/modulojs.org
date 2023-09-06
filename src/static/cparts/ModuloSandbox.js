@@ -185,11 +185,13 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
             this.element.cparts.state.propagate('demo', demoCode);
             this.element.cparts.component.rerender();
             window.modulo = window.globalModulo; // Ensure restored
-            // TODO: Not sure why this is necessary, but after rehydrating the
-            // demo doesn't run automatically on pages where it's un-collapsed
-            if (this.hasRun) {
+            // TODO: Hacky stuff: Not sure why this is necessary, but after
+            // rehydrating the demo doesn't run automatically on pages where
+            // it's un-collapsed
+            if (this.hasRun || !this.element.hasAttribute('modulo-mount-html')) {
                 return;
             }
+            window.modulo = window.sandboxModulo; // ensure wasn't ovewritten
             window.setTimeout(() => {
                 const props = this.element.cparts.props.initializedCallback();
                 const demoArea = this.element.querySelector('.demo-area');
