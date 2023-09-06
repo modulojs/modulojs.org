@@ -55,7 +55,27 @@ HTML.
 <State
     value="apple"
 ></State>
-```  
+```
+
+## camelcase
+
+Converts a `kebab-case-style-string` (like favored by HTML, or website URL
+slugs), among other formats, into a `camelCase` (like what's favored by
+JavaScript, others).
+
+```modulo_demo
+<Template>
+    Original: {{ state.slug }} <br />
+    Camel: {{ state.slug|camelcase }} <hr />
+    Original: {{ state.filename }} <br />
+    Camel: {{ state.filename|camelcase }}
+</Template>
+<State
+    slug="no-more-sluggish-sites"
+    filename="article-dir-index_2.html"
+></State>
+```
+
 
 ## capfirst
 
@@ -68,6 +88,27 @@ Output given string with the first letter capitalized.
 
 <State
     value="modulo.js"
+></State>
+```
+
+
+## combine
+
+Combine is for combining values, which results in a few different operations
+depending on type. For Arrays, it will combine them end-to-end. For Objects, it
+will attempt to "squash" them. See the following examples:
+
+```modulo_demo
+<Template>
+    Arrays: {{ state.start|combine:state.end|json }}<br />
+    Objects: {{ state.baseobj|combine:state.topobj|json }}
+</Template>
+
+<State
+    start:='[1, 2, 3 ]'
+    end:='[ "a", "b", "c" ]'
+    baseobj:='{ "a": 1, "b": 2 }'
+    topobj:='{ "b": 3, "c": 4 }'
 ></State>
 ```
 
@@ -105,9 +146,57 @@ Returns `true` if the value is evenly divisible by the given argument.
 ></State>
 ```
 
+
+
+<!--
+## dividedinto
+
+Does the mathematical division operation on the argument provided, and then
+takes the ceiling, so it counts from 1 until the number. Useful while looping
+through data and wanting to divvy the data up.
+
+```modulo_demo
+<Template>
+    Can {{ state.value }} divide by 3? <br />
+    {{ state.value|divisibleby:3 }} <br />
+    {% if state.value|divisibleby:2 %}
+        {{ state.value }} is even
+    {% endif %}
+</Template>
+<State
+    value:=4
+></State>
+```
+-->
+
+
+
+## entries
+
+Convert the entire Object an Array format. If you only want one part of it, see
+the related [values](#values) and [keys](#keys).
+
+```modulo_demo
+<Template>
+    Entries: {{ state.obj|entries|json }}
+</Template>
+
+<State
+    obj:='{
+        "abc": 123,
+        "def": 456
+    }'
+></State>
+```
+
+
 ## escapejs
 
-Escape special characters in a given string using JavaScript (specifically, JSON) escaping rules. If you have a string like `"Hello\nWorld!"` (where `\n` is a single new-line character), it will output `Hello\nWorld!` (that is, as "backslash-n" or two characters). It will also "double-up" any backslashes it encounters.
+Escape special characters in a given string using JavaScript (specifically,
+JSON) escaping rules. If you have a string like `"Hello\nWorld!"` (where `\n`
+is a single new-line character), it will output `Hello\nWorld!` (that is, as
+"backslash-n" or two characters). It will also "double-up" any backslashes it
+encounters.
 
 Note that this is unrelated to the [HTML autoescaping](/docs/templating/index.html#escaping), meaning you may need to also mark as `|safe` if do not want it escaping for HTML rules as well (e.g. changing `<`, which is invalid for HTML text but valid for JavaScript, into `&lt;`). Similarly, there is no need to use this for escaping for HTML attribute values (e.g. `<input placeholder="{{ state.msg }}">`), as the HTML escaping is sufficient. The only use is embedded JS strings.
 
@@ -177,7 +266,35 @@ Formats given data as a JSON string. It takes one optional argument, that if spe
         {"name": "Megan Rapinoe"}
     ]'
 ></State>
+
+<Style>
+    :host {
+        overflow: auto;
+        display: block;
+        height: 180px;
+    }
+</Style>
 ```
+
+
+## keys
+
+Show only the keys of the given Object, converted into an Array format. See
+also the similar [values](#values) and [entries](#entries).
+
+```modulo_demo
+<Template>
+    Keys: {{ state.obj|keys|json }}
+</Template>
+
+<State
+    obj:='{
+        "abc": 123,
+        "def": 456
+    }'
+></State>
+```
+
 
 
 ## last
@@ -233,13 +350,38 @@ Display the given string in all lowercase letters.
 ```
 
 
+## multiply
+
+Performs the mathematical operation of "multiplication" of the given numbers.
+
+```modulo_demo
+<Template>
+    {{ state.a }} x {{ state.b }} =
+    {{ state.a|multiply:state.b }}
+</Template>
+<State
+    a:=10
+    b:=3
+></State>
+```
+
+
+
 ## pluralize
 
-Allows for convenient pluralization in many human languages. This is for words in languages where a plural form is used when there is "0" or "2+" items, and a singular form for exactly 1 item. This is useful for the majority of noun and verb conjugations in English, along with many other Indo-European languages.
+Allows for convenient pluralization in many human languages. This is for words
+in languages where a plural form is used when there is "0" or "2+" items, and a
+singular form for exactly 1 item. This is useful for the majority of noun and
+verb conjugations in English, along with many other Indo-European languages.
 
-To use, give it a number (typically, the length of a list), and a comma separated version of two forms of a word. If that number is exactly "1" it will output the second form (or nothing at all, if the second form is not specified), otherwise it will output the first form.
+To use, give it a number (typically, the length of a list), and a comma
+separated version of two forms of a word. If that number is exactly "1" it will
+output the second form (or nothing at all, if the second form is not
+specified), otherwise it will output the first form.
 
-Below are some examples. Note that in the second example, it does not specify a singular form, but instead only specifies an "s" to append to the word "flower" to make it's plural "flowers".
+Below are some examples. Note that in the second example, it does not specify a
+singular form, but instead only specifies an "s" to append to the word "flower"
+to make it's plural "flowers".
 
 
 ```modulo_demo
@@ -255,6 +397,69 @@ Below are some examples. Note that in the second example, it does not specify a 
     flowers:='["Marigolds", "Sunflowers"]'
     citynames:='["Oakland", "Berkeley", "Richmond", "Concord"]'
 ></State>
+```
+
+
+## safe
+
+By default, template variables automatically escape the output of every
+variable value. Specifically, `>`, `<`, `'`, `"`, and `&` are all turned into
+their "escaped" HTML  equivalents, to prevent them from being interpreated as
+HTML tags. 
+
+`|safe` disables this feature. It "marks" the HTML as "safe" for inclusion, and
+thus allowed to be interpreted as HTML, and not just display the sourcecode to
+the user.  Further reading on this topic is in the
+[Templating section on "Escaping"](/docs/templating/#escaping).
+
+See below for example:
+
+```modulo_demo
+<Template>
+    Escaped: {{ state.str }}<br />
+    Marked safe: {{ state.str|safe }}
+</Template>
+<State
+    str="Try to escape <em>this!</em>"
+></State>
+```
+
+
+
+## skipfirst
+
+Does the opposite of "first" -- takes all except for the first element. It's
+useful for skipping over data you don't need to process.
+
+
+You can skip more than one by specifying the optional argument. For example,
+with the syntax: `|skipfirst:10`, e.g. "skip the first 10".
+
+```modulo_demo
+<Template>
+    {% for top in state.data|first %} <h5>{{ top }}</h5> {% endfor %}
+    {% for row in state.data|skipfirst %}
+        {% for cell in row %}
+            <div>{{ cell }}</div>
+        {% endfor %}
+    {% endfor %}
+</Template>
+
+<State
+    data:='[
+        [ "Col 1", "Col 2", "Col 3" ],
+        [ 1, 2, 3 ],
+        [ 1, 2, 3 ],
+        [ 1, 2, 3 ]
+    ]'
+></State>
+
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+</Style>
 ```
 
 
@@ -290,6 +495,36 @@ Cut off the given string after a number of characters specified by the argument.
 <State
     sentence="The sweat wis lashing oafay Sick Boy; he wis trembling."
     word="Bird."
+></State>
+```
+
+
+## type
+
+Attempts to figure out the JavaScript type of the given value, and returns the
+type, in all lowercase. Useful for acting differently when data, for example,
+is a Number, instead of a String.
+
+
+```modulo_demo
+<Template>
+    {{ state.str|type }} <br />
+    {{ state.num|type }} <br />
+    {{ state.arr|type }} <br />
+    {{ state.obj|type }} <br />
+    {{ state.bool|type }} <br />
+    {{ state.arr.reverse|type }} <br />
+    {% if state.arr|type is "array" %}
+        <hr /> It's an array!
+    {% endif %}
+</Template>
+
+<State
+    str="abc"
+    num:=123
+    arr:='[ 1, 2, 3 ]'
+    obj:='{ "a": 3 }'
+    bool:=false
 ></State>
 ```
 
@@ -369,5 +604,73 @@ Display the given string in all uppercase letters.
 <State
     word="rAndOm cAPitalS"
 ></State>
+```
+
+
+## values
+
+Show only the values of the given Object, converted into an Array format. See
+also the similar [keys](#keys) and [entries](#entries).
+
+```modulo_demo
+<Template>
+    Values: {{ state.obj|values|json }}
+</Template>
+
+<State
+    obj:='{
+        "abc": 123,
+        "def": 456
+    }'
+></State>
+```
+
+
+## yesno
+
+The `|yesno` filter converts the data into a string. The `|yesno` filter is a
+handy shortcut with many practical uses when generating HTML and displaying
+values from the database.
+
+By default, it will convert `true` and other true values into "yes", `false`
+and other false values, and the "placeholder" `null` type into a "" (blank),
+since that is often used to designate something that is not yet defined (such
+as a null value in a database).
+
+When arguments are provided, these substitute these 3 options, as designated by
+commas.
+
+If a single argument is provided, then both "no" and "null" options get
+combined into "", and only "truthy" values will cause the given argument to
+show. This is useful for optionally adding a class, and can end up being
+simpler than a full if statement. For example, you can quickly add an "active"
+class like: `<div class="{{ state.visible|yesno:'active' }}">`
+
+With two arguments, the default behavior is replaced with the two alternaties.
+With 3 arguments, then a value is presented for the undefined third value as
+well.
+
+
+
+```modulo_demo
+<Template>
+    <span></span> <h3>{{ state.a }}</h3>       <h3>{{ state.b }}</h3>       <h3>{{ state.c }}</h3>
+    <span></span> <span>{{ state.a|yesno }}</span> <span>{{ state.b|yesno }}</span> <span>{{ state.c|yesno }}</span>
+    <span>on</span> <span>{{ state.a|yesno:"on" }}</span> <span>{{ state.b|yesno:"on" }}</span> <span>{{ state.c|yesno:"on" }}</span>
+    <span>on,off</span> <span>{{ state.a|yesno:"on,off" }}</span> <span>{{ state.b|yesno:"on,off" }}</span> <span>{{ state.c|yesno:"on,off" }}</span>
+    <span>on,off,maybe</span> <span>{{ state.a|yesno:"on,off,maybe" }}</span> <span>{{ state.b|yesno:"on,off,maybe" }}</span> <span>{{ state.c|yesno:"on,off,maybe" }}</span>
+</Template>
+<State
+    a:=true
+    b:=false
+    c:=null
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        text-align: right;
+    }
+</Style>
 ```
 

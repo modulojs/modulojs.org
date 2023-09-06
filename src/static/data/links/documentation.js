@@ -182,86 +182,143 @@
             ],
         },
 
-
         {
             label: 'Template Filters',
             filename: '/docs/templating/filters.html',
             sections: [
                 {
-                    "fragment": "add",
-                    "label": "add"
+                  "fragment": "add",
+                  "label": "add"
                 },
                 {
-                    "fragment": "allow",
-                    "label": "allow"
+                  "fragment": "allow",
+                  "label": "allow"
                 },
                 {
-                    "fragment": "capfirst",
-                    "label": "capfirst"
+                  "fragment": "camelcase",
+                  "label": "camelcase"
                 },
                 {
-                    "fragment": "default",
-                    "label": "default"
+                  "fragment": "capfirst",
+                  "label": "capfirst"
+                },
+                /*
+                {
+                  "fragment": "concat",
+                  "label": "concat"
+                },
+                */
+                {
+                  "fragment": "combine",
+                  "label": "combine"
                 },
                 {
-                    "fragment": "divisibleby",
-                    "label": "divisibleby"
+                  "fragment": "default",
+                  "label": "default"
                 },
                 {
-                    "fragment": "escapejs",
-                    "label": "escapejs"
+                  "fragment": "divisibleby",
+                  "label": "divisibleby"
+                },
+                /*
+                {
+                  "fragment": "dividedinto",
+                  "label": "dividedinto"
+                },
+                */
+                {
+                  "fragment": "escapejs",
+                  "label": "escapejs"
                 },
                 {
-                    "fragment": "first",
-                    "label": "first"
+                  "fragment": "first",
+                  "label": "first"
                 },
                 {
-                    "fragment": "join",
-                    "label": "join"
+                  "fragment": "get",
+                  "label": "get"
                 },
                 {
-                    "fragment": "json",
-                    "label": "json"
+                  "fragment": "join",
+                  "label": "join"
                 },
                 {
-                    "fragment": "last",
-                    "label": "last"
+                  "fragment": "json",
+                  "label": "json"
                 },
                 {
-                    "fragment": "length",
-                    "label": "length"
+                  "fragment": "last",
+                  "label": "last"
                 },
                 {
-                    "fragment": "lower",
-                    "label": "lower"
+                  "fragment": "length",
+                  "label": "length"
                 },
                 {
-                    "fragment": "pluralize",
-                    "label": "pluralize"
+                  "fragment": "lower",
+                  "label": "lower"
                 },
                 {
-                    "fragment": "subtract",
-                    "label": "subtract"
+                  "fragment": "multiply",
+                  "label": "multiply"
                 },
                 {
-                    "fragment": "truncate",
-                    "label": "truncate"
+                  "fragment": "number",
+                  "label": "number"
                 },
                 {
-                    "fragment": "renderas",
-                    "label": "renderas"
+                  "fragment": "pluralize",
+                  "label": "pluralize"
                 },
                 {
-                    "fragment": "reversed",
-                    "label": "reversed"
+                  "fragment": "skipfirst",
+                  "label": "skipfirst"
                 },
                 {
-                    "fragment": "upper",
-                    "label": "upper"
+                  "fragment": "subtract",
+                  "label": "subtract"
+                },
+                {
+                  "fragment": "truncate",
+                  "label": "truncate"
+                },
+                {
+                  "fragment": "type",
+                  "label": "type"
+                },
+                {
+                  "fragment": "renderas",
+                  "label": "renderas"
+                },
+                {
+                  "fragment": "reversed",
+                  "label": "reversed"
+                },
+                {
+                  "fragment": "upper",
+                  "label": "upper"
+                },
+                {
+                  "fragment": "values",
+                  "label": "values"
+                },
+                {
+                  "fragment": "yesno",
+                  "label": "yesno"
+                },
+                {
+                  "fragment": "safe",
+                  "label": "safe"
+                },
+                {
+                  "fragment": "keys",
+                  "label": "keys"
+                },
+                {
+                  "fragment": "entries",
+                  "label": "entries"
                 }
-            ]
-
-            ,
+            ],
         },
 
         {
