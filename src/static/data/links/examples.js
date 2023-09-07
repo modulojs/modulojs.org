@@ -149,6 +149,7 @@
         {
             file: "/static/demos/eg/FlexibleFormWithAPI.html",
         },
+        /*
         {
             file: "/static/demos/eg/Components.html",
             includes: "/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html",
@@ -157,12 +158,17 @@
             file: "/static/demos/eg/ComponentsLoop.html",
             includes: "/static/demos/usedby/DemoModal.html",
         },
+        */
         {
             file: "/static/demos/eg/OscillatingGraph.html",
             includes: "/static/demos/usedby/DemoChart.html",
         },
         {
             file: "/static/demos/usedby/DemoModal.html",
+            usage: `<x-DemoModal button="Example Button" title="Example Title">
+    <p>Example paragraph #1</p>
+    <p>Example paragraph #2</p>
+</x-DemoModal>`,
         },
         {
             file: "/static/demos/usedby/DemoChart.html",

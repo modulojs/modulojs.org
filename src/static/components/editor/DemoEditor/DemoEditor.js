@@ -21,11 +21,15 @@ function _updateState() {
     if (element.hasAttribute('modulo-value') && !state.value) {
         state.value = element.getAttribute('modulo-value');
     }
+    if (state.showExample === null) {
+        state.showExample = !!props.editex; // Default to if it's an "example editor"
+    }
     state.showEditor = !props.collapsed;
     state.componentName = getComponentName();
-    if (element.exampleEditor) {
-        // Use user-supplied example code
+    if (element.exampleEditor) { // Use user-supplied example code
         state.exampleCode = element.exampleEditor.value;
+    } else if (!state.exampleCode && props.example) {
+        state.exampleCode = props.example; // start with this
     } else {
         // Otherwise, use generic default
         state.exampleCode = `<x-${ state.componentName }></x-${ state.componentName }>`;
@@ -62,16 +66,18 @@ function toggleMenu() {
 }
 
 function run() {
-    _updateState(); // Will auto-rerender, which will auto run if changed
+    _updateState(); // Will auto-rerender, which will also auto run if changed
 }
 
 function save() {
+    // Saves as HTML
     _updateState();
     const fullText = toEmbed(state.value, state.componentName);
     saveFileAs(`Modulo_${ state.componentName }.html`, fullText);
 }
 
 function open() {
+    // Opens in ACE editor
     _updateState();
     const fullText = toEmbed(state.value, state.componentName);
     const path =`/demo/${ state.componentName }.html`

@@ -42,10 +42,31 @@
             <x-DemoEditor src="/static/demos/eg/Search.html"></x-DemoEditor>
         </x>
         <x tab-title="Components">
+            <!--
             <x-DemoEditor
                 src="/static/demos/eg/Components.html"
                 includes="/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html"
             ></x-DemoEditor>
+            -->
+            <x-DemoEditor
+                src="/static/demos/usedby/DemoModal.html"
+                editex=true
+example='
+<p>Once defined, Modulo Web Components are used
+   (and re-used) as if they were "real" HTML:</p>
+
+<x-DemoModal><p>Oh look, I am in a modal!</p></x-DemoModal>
+
+<hr />
+
+<x-DemoModal button="Actor Info" title="Nic Cage">
+    <img src="https://i.imgur.com/hJwIMx7.png" />
+    <p>Nicholas Cage is a prolific Hollywood actor</p>
+    <x-DemoModal button="Birthday">January 7th</x-DemoModal>
+    <x-DemoModal button="Height">6ft (183cm)</x-DemoModal>
+</x-DemoModal>
+'></x-DemoEditor>
+
         </x>
         <x tab-title="MarkdownSrc">
             <x-DemoEditor src="/static/demos/eg/MarkdownPreview.html"></x-DemoEditor>

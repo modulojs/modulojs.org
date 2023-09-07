@@ -6,23 +6,23 @@
             --demo-height: 120px;
         ">
         <div class="pane pane--left">
+
             {% if state.showMenu %}
                 <div class="toolbar toolbar--settings">
                     <label>
                         <input [state.bind] type="checkbox" name="showExample" />
                         Edit Usage
                     </label>
-
                     <label>
                         <input [state.bind] name="divider" type="range" min="50" max="500" step="10" />
                         Size
                     </label>
-
                     <button @click:=script.open>
                         Switch to ACE Editor
                         <span alt="Pencil edit icon">&#10000;</span>
                     </button>
                 </div>
+
             {% elif state.showExample %}
                 <!-- add a little styling around the example editor -->
                 <div style="height: 100%; border: 5px dashed var(--color-alt); padding: 5px; position: relative;">
@@ -35,16 +35,20 @@
                         value="{{ state.exampleCode }}"
                     ></x-SyntaxEditor>
                 </div>
+
             {% elif state.value %}
                 <x-SyntaxEditor
                     [script.editor]
                     style="height: 100%"
                     value="{{ state.value }}"
                 ></x-SyntaxEditor>
+
             {% else %}
                 <em>Loading...</em>
+
             {% endif %}
         </div>
+
         <div class="pane pane--divider">
             <div class="toolbar toolbar--small {% if not state.showMenu %}toolbar--autohide{% endif %}">
                 <button @click:=script.toggleMenu><span alt="Dots menu icon">&#x22EF;</span> Menu</button>

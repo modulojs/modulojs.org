@@ -8,6 +8,8 @@
         value
         src
         preview
+        example
+        editex
         collapsed
         includes
     ></Props>
@@ -122,12 +124,12 @@
                 setTimeout(() => { // messy hack to force it to run + rerender
                     const syneditor = e.querySelector('x-SyntaxEditor');
                     /*e.cparts.modulosandbox.editor = syneditor;
-                    e.cparts.modulosandbox.run();*/
+                    e.cparts.modulosandbox.run();
                     console.log(`
                       deactivated code:
                       e.cparts.modulosandbox.editor = syneditor;
                       e.cparts.modulosandbox.run();
-                    `);
+                    `);*/
                 }, 0);
                 element.wasReplaced = true; // prevent update from being called
             }

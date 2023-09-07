@@ -13,6 +13,7 @@
             <x-DemoEditor
                 src="{{ example.file }}"
                 includes="{{ example.includes|default:'' }}"
+                example="{{ example.usage|default:'' }}"
                 collapsed:=false
                 id="de_for_{{ example.file|getTitle }}"
             ></x-DemoEditor>
@@ -20,6 +21,7 @@
             <x-DemoEditor
                 src="{{ example.file }}"
                 includes="{{ example.includes|default:'' }}"
+                example="{{ example.usage|default:'' }}"
                 collapsed:=true
                 id="de_for_{{ example.file|getTitle }}"
             ></x-DemoEditor>
