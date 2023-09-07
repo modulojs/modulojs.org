@@ -67,7 +67,7 @@ modulo.registry.cparts.ModuloSandbox = class ModuloSandbox {
                     this.element.setAttribute('modulo-value', text);
                     this.element.cparts.state.propagate('value', text);
                     if (!state.showEditor) {
-                        this.hasRun = true;
+                        //this.hasRun = true;
                         this._run();
                     }
                 });

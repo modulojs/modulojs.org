@@ -15,16 +15,45 @@
         -src="./DemoEditor/DemoEditor.html"
     ></Template>
     <State
-        divider:=240
+        divider:=310
         demo=""
         value=""
-        show-editor:=null
+        component-name=""
+        example-code=""
         is-fetching:=null
+        show-editor:=null
+        show-menu:=null
+        show-example:=null
     ></State>
-    <ModuloSandbox></ModuloSandbox>
+    <Script
+        lifecyle="initialized"
+        -src="./DemoEditor/DemoEditor.js"
+    ></Script>
     <Style
         -src="./DemoEditor/DemoEditor.css"
     ></Style>
+</Component>
+
+<Component name="DemoBox">
+    <Props
+        value
+        component
+        example
+    ></Props>
+    <Template>
+        <div [modulodemo.demo]></div>
+    </Template>
+    <!-- Hook the ModuloDemo CPart directly to Props -->
+    <ModuloDemo
+        value="props.value"
+        component="props.component"
+        example="props.example"
+    ></ModuloDemo>
+    <!--
+    <Style
+        -src="./DemoBox/DemoBox.css"
+    ></Style>
+    -->
 </Component>
 
 <Component name="SyntaxEditor" rerender="manual">
@@ -92,8 +121,13 @@
                 element.replaceWith(e);
                 setTimeout(() => { // messy hack to force it to run + rerender
                     const syneditor = e.querySelector('x-SyntaxEditor');
-                    e.cparts.modulosandbox.editor = syneditor;
-                    e.cparts.modulosandbox.run();
+                    /*e.cparts.modulosandbox.editor = syneditor;
+                    e.cparts.modulosandbox.run();*/
+                    console.log(`
+                      deactivated code:
+                      e.cparts.modulosandbox.editor = syneditor;
+                      e.cparts.modulosandbox.run();
+                    `);
                 }, 0);
                 element.wasReplaced = true; // prevent update from being called
             }
@@ -157,10 +191,12 @@
             state.selected = demoFileName;
             setTimeout(() => {
                 // Messy hack to force it to run + rerender when selected
+                /*
             	const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
                 const synEditor = editor.querySelector('x-SyntaxEditor');
                 editor.cparts.modulosandbox.editor = synEditor;
                 editor.cparts.modulosandbox.run();
+                */
             }, 0);
         }
         function prepareCallback() {

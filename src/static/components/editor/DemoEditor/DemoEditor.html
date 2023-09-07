@@ -1,16 +1,43 @@
-<div
-    class="pane-holder {% if not state.showEditor %}pane-holder--collapsed{% endif %}"
-    style="
-        --right-width: {{ state.divider }}px;
-        --divider-width: 45px;
-        --divider-height: 35px;
-        --demo-height: 120px;
-    ">
-    {% if state.showEditor %}
+{% if state.showEditor %}
+    <div class="pane-holder" style="
+            --right-width: {{ state.divider|multiply:'-1'|add:550 }}px;
+            --divider-width: 45px;
+            --divider-height: 35px;
+            --demo-height: 120px;
+        ">
         <div class="pane pane--left">
-            {% if state.value %}
+            {% if state.showMenu %}
+                <div class="toolbar toolbar--settings">
+                    <label>
+                        <input [state.bind] type="checkbox" name="showExample" />
+                        Edit Usage
+                    </label>
+
+                    <label>
+                        <input [state.bind] name="divider" type="range" min="50" max="500" step="10" />
+                        Size
+                    </label>
+
+                    <button @click:=script.open>
+                        Switch to ACE Editor
+                        <span alt="Pencil edit icon">&#10000;</span>
+                    </button>
+                </div>
+            {% elif state.showExample %}
+                <!-- add a little styling around the example editor -->
+                <div style="height: 100%; border: 5px dashed var(--color-alt); padding: 5px; position: relative;">
+                    <div style="position: absolute; top: -5px; right: -5px; background: var(--color-alt); padding: 5px">
+                        USAGE
+                    </div>
+                    <x-SyntaxEditor
+                        [script.example]
+                        style="height: 100%"
+                        value="{{ state.exampleCode }}"
+                    ></x-SyntaxEditor>
+                </div>
+            {% elif state.value %}
                 <x-SyntaxEditor
-                    [modulosandbox.editor]
+                    [script.editor]
                     style="height: 100%"
                     value="{{ state.value }}"
                 ></x-SyntaxEditor>
@@ -19,23 +46,34 @@
             {% endif %}
         </div>
         <div class="pane pane--divider">
-            <div class="toolbar">
-                <button @click:=modulosandbox.open><span alt="Pencil edit icon">&#10000;</span> Open</button>
-                <button @click:=modulosandbox.run><span alt="Refresh arrow in circle">&#x27F3;</span> Run</button>
-                <button @click:=modulosandbox.save><span alt="Download arrow downward">&#10515;</span> Save</button>
+            <div class="toolbar toolbar--small {% if not state.showMenu %}toolbar--autohide{% endif %}">
+                <button @click:=script.toggleMenu><span alt="Dots menu icon">&#x22EF;</span> Menu</button>
+                <button @click:=script.run><span alt="Refresh arrow in circle">&#x27F3;</span> Run</button>
+                <button @click:=script.save><span alt="Download arrow downward">&#10515;</span> Save</button>
             </div>
         </div>
-    {% endif %}
-    <div class="pane pane--right">
-        <div class="demo-area">
-            {% if not state.demo %}
-                {# For now, just leave blank #}
-                {% if props.preview %}
-                    {{ props.preview|safe }}
+        <div class="pane pane--right">
+            <div class="demo-area">
+                {% if state.value %}
+                    <x-DemoBox
+                        value="{{ state.value }}"
+                        component="{{ state.componentName }}"
+                        example="{{ state.exampleCode }}"
+                    ></x-DemoBox>
                 {% endif %}
-            {% else %}
-                {{ state.demo|safe }}
-            {% endif %}
+            </div>
         </div>
     </div>
-</div>
+{% else %}
+    <!-- Collapsed view -->
+    <div class="pane-holder pane-holder--collapsed">
+        <div class="pane pane--right">
+            <div class="demo-area">
+                {% if state.value %}
+                    <x-DemoBox value="{{ state.value }}" name="{{ state.componentName }}"></x-DemoBox>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
