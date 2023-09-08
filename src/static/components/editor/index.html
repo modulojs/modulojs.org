@@ -2,7 +2,6 @@
     Component definitions for the embedded editor and syntax highlighter are
     contained here.
 -->
-
 <Component name="DemoEditor">
     <Props
         value
@@ -10,6 +9,7 @@
         preview
         example
         editex
+        component
         collapsed
         includes
     ></Props>
@@ -94,84 +94,17 @@
         fix
     ></Props>
     <Script -src="./SyntaxHighlighter/highlight/highlight.min.js">
-        function initializedCallback() {
-            const text = props.value || element.originalHTML;
-            //console.log('inititalized callback!', text.length, text.substr(0, 20));
-            let { mode } = props;
-            if (mode && mode.includes('_')) {
-                // Messy code to deal with "upgrading" self into a <x-DemoEditor>
-                // This is only used in Markdown, e.g. "```modulo_demo" fenced blocks
-                let [ modeName, editor ] = mode.split('_');
-                mode = modeName;
-                // Clean up to prevent double encoding:
-                let valueAttr = text.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
-                valueAttr = valueAttr.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>');
-                const e = document.createElement('x-DemoEditor');
-                e.setAttribute('value', valueAttr);
-                e.setAttribute('class', element.getAttribute('class')); // copy class attr
-                // TODO: Hacky code now, should instead search through the
-                // examples data structure to generate auto-include
-                if (valueAttr.includes('<x-ExampleBtn')) {
-                    e.setAttribute('includes', "/static/demos/usedby/ExampleBtn.html");
-                }
-                if (valueAttr.includes('<x-MemoryGame')) {
-                    e.setAttribute('includes', "/static/demos/eg/MemoryGame.html");
-                }
-                if (valueAttr.includes('<x-HelloCount')) {
-                    e.setAttribute('includes', "/static/demos/eg/HelloCount.html");
-                }
-                element.replaceWith(e);
-                setTimeout(() => { // messy hack to force it to run + rerender
-                    const syneditor = e.querySelector('x-SyntaxEditor');
-                    /*e.cparts.modulosandbox.editor = syneditor;
-                    e.cparts.modulosandbox.run();
-                    console.log(`
-                      deactivated code:
-                      e.cparts.modulosandbox.editor = syneditor;
-                      e.cparts.modulosandbox.run();
-                    `);*/
-                }, 0);
-                element.wasReplaced = true; // prevent update from being called
-            }
-        }
-
-        function updateCallback(renderObj) {
-            if (element.wasReplaced) {
-                return;
-            }
-            /*
-            if (element.hasAttribute('modulo-original-html')) {
-                element.removeAttribute('modulo-original-html');
-                return; // lock if original HTML was set
-            }
-            */
-            let text = props.value || element.originalHTML;
-            // Undo exceccive HTML encoding
-            if (props.fix === 'html_encoding') {
-                text = text
-                  .replace(/&gt;/gi, '>')
-                  .replace(/&lt;/gi, '<');
-                text = text.replace(new RegExp('(\\W)/(script)>', 'ig'), '$1</$2>');
-            }
-            // Should never have to encounter a '-'...
-            const language = props.mode ? props.mode.split('_')[0] : 'django';
-            const opts = { language };
-            let html = hljs.highlight(text, opts).value;
-            // Add in colors for Modulo tag names / attributes
-            html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
-            html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
-            html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
-            html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');
-            html = html.replace(/"hljs-string">([A-Za-z])/g, '"hljs-modulo-attr-value">$1');
-            html = html.replace(/"hljs-string">([0-9\[\{])/g, '"hljs-modulo-attr-value-lit">$1');
-            element.innerHTML = html
-         } 
+        modulo.register('util', function syntaxHighlight(text, opts) {
+            return hljs.highlight(text, opts).value;
+        });
     </Script>
+    <Script
+        -src="./SyntaxHighlighter/SyntaxHighlighter.js"
+    ></Script>
     <Style
         -src="./SyntaxHighlighter/custom-scheme.css"
     ></Style>
 </Component>
-
 
 <Component name="EditorGrid">
     <Template

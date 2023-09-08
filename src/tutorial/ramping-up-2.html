@@ -19,19 +19,44 @@ whatsoever, or any _dynamic_ or changing content.
 
 Let's put on our "Holmes-style" detective hats and get out our detective
 magnifying glasses, we're about to go sleuthing! Examine the usage of this
-`<x-MemoryGame>` component, written with Modulo as well and demoed on the
-homepage:
+`<x-GuessingGame>` component, written with Modulo as well:
 
-```modulo_demo
+```modulo_demo_examplefirst
 <Template>
-
-    <h3>Memory game time!</h3>
-
-    <hr />
-    <x-MemoryGame></x-MemoryGame>
-    <hr />
-
+    <p>Guess my secret number:</p>
+    <diV>
+        <input [state.bind] name="guess" type="number" min="1" max="1000" />
+        <button @click:=state.guesses.push payload="{{ state.guess }}">Guess</button>
+        (Tries: {{ state.guesses|length }})
+    </div>
+    <section>
+        {% for guess in state.guesses %}
+          <p>
+              You guessed: {{ guess }}.
+              {% if guess gt state.hidden %}
+                  TOO BIG!
+              {% endif %}
+              {% if guess lt state.hidden %}
+                  TOO SMALL!
+              {% endif %}
+              {% if guess|number == state.hidden %}
+                  CORRECT!
+              {% endif %}
+          </p>
+        {% endfor %}
+    </section>
 </Template>
+<State
+    hidden:=342
+    guess:=500
+    guesses:=[]
+></State>
+<!--%%%GuessingGame%%%-->
+<h3>Guessing game time!</h3>
+
+<hr />
+<x-GuessingGame></x-GuessingGame>
+<hr />
 ```
 
 
@@ -39,45 +64,44 @@ This demo component is doing much more than what we have covered in the
 tutorial so far. It is changing, or _mutating_ based on user interaction.  This
 is no longer a simple, static component, but a _dynamic_ component.
 
-We can deduce two things about this memory game component. Deduction
-One: It used a _State_ CPart. We know that it used a _State_ CPart because it
-changes or mutates. Without a _State_ CPart, a component cannot "change state",
-or mutate or have dynamic content, and instead will be rendered the same way
-every time (that is, assuming it has the same _Props_). In other words, if a
-component needs to have dynamic content or change over time, then a _State_
-CPart is necessary to store this dynamic content.
-
-Now on to Deduction Two: It used a _Script_ CPart. Script CParts allow for
-complicated interactions and new behavior to be developed. Unfortunately,
-anything as complicated as this game logic requires a background in JavaScript
-to accomplish, meaning we will not cover the behavior in this tutorial.
-However, if you are familiar with JavaScript, feel free to examine the [demo
-source code on the examples page](/examples/) to see how it works yourself!
-
+We can deduce that this component used a _State_ CPart. We know that it used a
+_State_ CPart because it changes or mutates. Without a _State_ CPart, a
+component cannot "change state", or mutate or have dynamic content, and instead
+will be rendered the same way every time (that is, assuming it has the same
+_Props_). In other words, if a component needs to have dynamic content or
+change over time, then a _State_ CPart is necessary to store this dynamic
+content.
 
 ## Examining a private counter's usage of State
 
 State allows each component instance to store data. Each component instance has
 a separate state from every other instance. Instead of using the complex
-`x-MemoryGame` example from before, examine the behavior of the following
+`x-GuessingGame` example from before, examine the behavior of the following
 `x-HelloCount` counting buttons, which increment whenever clicked:
 
-
-
-```modulo_demo
+```modulo_demo_examplefirst
 <Template>
-
-    <h3>Counting time!</h3>
-
-    <hr />
-    <x-HelloCount></x-HelloCount>
-    <hr />
-    <x-HelloCount></x-HelloCount>
-    <hr />
-    <x-HelloCount></x-HelloCount>
-    <hr />
-
+    <button @click:="script.doCountup">Hello {{ state.num }}</button>
 </Template>
+<State
+    num:=42
+></State>
+<Script>
+    function doCountup() {
+        state.num++;
+    }
+/Script>
+<!-- %%%% HelloCount %%% -->
+
+<h3>Counting time!</h3>
+
+<hr />
+<x-HelloCount></x-HelloCount>
+<hr />
+<x-HelloCount></x-HelloCount>
+<hr />
+<x-HelloCount></x-HelloCount>
+<hr />
 ```
 
 
@@ -86,16 +110,21 @@ button changes when that button is clicked. Furthermore, this demonstrates how
 state is not shared: Each button is a totally separate instance that keeps
 track of it's own separate number.
 
-So far, in our sleuthing, we've accumulated three "CPart facts": Two "_State_
-facts" and one "_Script_ fact":
+<!--So far, in our sleuthing, we've accumulated three "CPart facts": Two "_State_
+facts" and one "_Script_ fact":-->
+
+So far, in our sleuthing, we've accumulated two "CPart facts":
 
 1. **_State Fact:_ Used to make components change** - A *State* CPart is needed if
 our component is mutable, or has dynamic, changing data or behavior
 2. **_State Fact:_ Private** - Each *State* is private to each component instance
 (that is, they keep individual and separate copies of their state data)
+
+<!--
 3. **_Script Fact:_ Used for complex behavior** - A *Script* CPart is needed to add complex
 custom behavior (that is, behavior beyond the core Modulo behavior coded in
 custom JavaScript, and also beyond the scope of this *Ramping Up* tutorial)
+-->
 
 
 Let's "peel back the layers" and examine out how these "stateful" or dynamic

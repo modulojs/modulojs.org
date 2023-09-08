@@ -30,7 +30,7 @@ function _updateState() {
         state.exampleCode = element.exampleEditor.value;
     } else if (!state.exampleCode && props.example) {
         state.exampleCode = props.example; // start with this
-    } else {
+    } else if (!state.exampleCode) {
         // Otherwise, use generic default
         state.exampleCode = `<x-${ state.componentName }></x-${ state.componentName }>`;
     }
@@ -53,6 +53,9 @@ function prepareCallback() {
 }
 
 function getComponentName(src = false) {
+    if (props.component) { // takes precedence
+        return props.component;
+    }
     src = src || props.src;
     if (src) {
         return src.split('/').pop().split('.').shift();
@@ -72,14 +75,14 @@ function run() {
 function save() {
     // Saves as HTML
     _updateState();
-    const fullText = toEmbed(state.value, state.componentName);
+    const fullText = toEmbed(state.value, state.componentName, state.exampleCode);
     saveFileAs(`Modulo_${ state.componentName }.html`, fullText);
 }
 
 function open() {
     // Opens in ACE editor
     _updateState();
-    const fullText = toEmbed(state.value, state.componentName);
+    const fullText = toEmbed(state.value, state.componentName, state.exampleCode);
     const path =`/demo/${ state.componentName }.html`
     localStorage.setItem(LOCAL_STORAGE_PREFIX + path, fullText);
     window.location.href = (EDITOR_LOCATION + '?ls=' + path);

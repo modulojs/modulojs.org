@@ -19,12 +19,15 @@
         };
             .replace(new RegExp(params.left, 'gi'), 
         */
+        // TODO: Ugh.
         const t = '<x-SyntaxHighlighter fix="html_encoding" ';
         html = html
             .replace(/<pre><code\b[^>]*javascript*[^>]*>/gi, t + 'mode="javascript">')
             .replace(/<pre><code\b[^>]*html*[^>]*>/gi, t + 'mode="html">')
             .replace(/<pre><code\b[^>]*css*[^>]*>/gi, t + 'mode="css">')
             .replace(/<pre><code\b[^>]*bash*[^>]*>/gi, t + 'mode="bash">')
+            .replace(/<pre><code\b[^>]*modulo_demo_examplefirst*[^>]*>/gi, t + 'mode="django_demo_examplefirst">')
+            .replace(/<pre><code\b[^>]*modulo_demo_example*[^>]*>/gi, t + 'mode="django_demo_example">')
             .replace(/<pre><code\b[^>]*modulo_demo*[^>]*>/gi, t + 'mode="django_demo">')
             .replace(/<pre><code\b[^>]*modulo*[^>]*>/gi, t + 'mode="django">')
             .replace(/<pre><code\b[^>]*django*[^>]*>/gi, t + 'mode="django">')

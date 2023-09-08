@@ -22,9 +22,9 @@
 <Script>
     function prepareCallback() {
         let data = props.data || [];
-        if (data.length === 0) {
-            //  Use default data, for demo:
-            data = [ 35, 20, 15, 100 ];
+        if (typeof data === 'string') {
+            // Permit normal attributes (e.g. vs dataprops) containing JSON
+            data = JSON.parse(data);
         }
         const max = Math.max(...data);
         // Scale to 0, uncomment the following to make it scale to the lowest

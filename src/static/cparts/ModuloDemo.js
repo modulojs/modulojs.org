@@ -6,23 +6,20 @@ modulo.config.modulodemo = {
 
 
 modulo.registry.cparts.ModuloDemo = class ModuloDemo {
-    static toEmbed(codeText, componentName, includeStr = '') {
+    static toEmbed(codeText, componentName, exampleUsage = '') {
         const name = componentName || 'App';
-        const indentText = ('\n' + codeText.trim()).replace(/\n/g, '\n    ');
-        if (includeStr) {
-            includeStr = ('\n' + includeStr.trim()).replace(/\n/g, '\n  ');
-            includeStr = includeStr.replace(new RegExp("/static/", "g"), "https://modulojs.org/static/");
-            includeStr = includeStr.replace(new RegExp(' mode="shadow"', "g"), "");
-            includeStr = includeStr.replace(new RegExp(' namespace="[^"]+"', "g"), "");
+        if (!exampleUsage) {
+            //'<p>Example usage:</p><hr />\n' +
+            exampleUsage = `\n\n<!-- Example usage: -->\n` +
+              `<x-${name}></x-${name}>`;
         }
-        const fullText = `<!DOCTYPE html>\n<template Modulo>${ includeStr }\n` +
+        const indentText = ('\n' + codeText.trim()).replace(/\n/g, '\n    ');
+        const fullText = `<!DOCTYPE html>\n<template Modulo>\n` +
                           `  <Component name="${ name }">` + indentText + '\n' +
                           '  </Component>\n' +
                           '</template>\n' +
                           '<script src="https://unpkg.com/mdu.js"></script>\n' +
-                          //'<p>Example usage:</p><hr />\n' +
-                          `\n\n<!-- Example usage: -->\n` +
-                          `<x-${name}></x-${name}>`;
+                          exampleUsage;
         return fullText;
     }
 
@@ -52,6 +49,7 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
         }
         this.value = this.modulo.registry.utils.get(renderObj, this.conf.value);
         this.componentName = this.modulo.registry.utils.get(renderObj, this.conf.component) || 'App';
+        //console.log('this is component name', this.componentName, renderObj.props.component);
         this.example = this.modulo.registry.utils.get(renderObj, this.conf.example);
         this.checkForRun();
     }
@@ -89,12 +87,12 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
         const includesNameMap = {
             [ placeholder.toUpperCase() ]: tagName,
         };
-        this.example = this.example || `<${ placeholder }></${ placeholder }>`;
 
         // Do all necessary substitutions
         const tags = Object.keys(includesNameMap).join('|').toLowerCase();
         const regexp = new RegExp('<(\\s*/?\\s*)(' + tags + ')([^a-zA-Z-])', 'ig');
-        const text = this.example.replace(regexp, (match, m1, m2, m3) => {
+        let text = this.example || `<${ placeholder }></${ placeholder }>`;
+        text = text.replace(regexp, (match, m1, m2, m3) => {
             const newTag = includesNameMap[m2.toUpperCase()]; // </x-TagName to
             return `<${ m1 }${ newTag }${ m3 }`; // </demo123-TagName
         });

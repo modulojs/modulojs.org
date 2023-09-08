@@ -74,7 +74,11 @@
         <div class="pane pane--right">
             <div class="demo-area">
                 {% if state.value %}
-                    <x-DemoBox value="{{ state.value }}" name="{{ state.componentName }}"></x-DemoBox>
+                    <x-DemoBox
+                        value="{{ state.value }}"
+                        component="{{ state.componentName }}"
+                        example="{{ state.exampleCode }}"
+                    ></x-DemoBox>
                 {% endif %}
             </div>
         </div>

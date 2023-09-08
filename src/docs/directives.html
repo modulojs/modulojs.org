@@ -135,31 +135,65 @@ input when a button is clicked:
 /Script>
 ```
 
--------
+
+
+### Notes on custom directives
+
+- Note that the functions *must* be named exactly like this, including
+  capitalization. The attributes, however, are technically not case-sensitive,
+  but the JavaScript portion is.
+- DOM manipulation is what Templates, and many other features of Modulo, are
+  supposed to "save you from". In other words, it gets messy.  This is why the
+  it is recommended to try to use the "Modulo" way of State, Templating, and
+  re-rendering, to keep things from getting messy.
+- Only do direct DOM manipulation as a last resort, such as when you are
+  following a tutorial that gives instructions this way, or are combining
+  Modulo with another framework that operates with direct DOM references
+
 
 ### Multiple directives
 
-Multiple directives can be attached to the same attribute. For example, `@click:` has both a `component.event` directive (`@`) and a `component.dataProp` (`:`) directive. Similarly, multiple custom directives can be applied to the same attribute. For example: `[script.hook][script.setup]text="Hello"` would be a valid way to register two directives(the imaginary `script.hook` and `script.setup` directives, in that order).
+Multiple directives can be attached to the same attribute. For example,
+`@click:` has both a `component.event` directive (`@`) and a
+`component.dataProp` (`:`) directive. Similarly, multiple custom directives can
+be applied to the same attribute. For example:
+`[script.hook][script.setup]text="Hello"` would be a valid way to register two
+directives(the imaginary `script.hook` and `script.setup` directives, in that
+order).
 
 ### Mount and Unmount parameters
 
 #### Frequently used
 
 * `el` will contain a reference to the HTML element
-* `value` will contain the value you are assigning to the attribute, with any previous directives resolved (e.g. if you combine your directive with a `:=` dataProp directive, you will already have the "true value" be passed in.)
-* `attrName` will contain the bare attribute name, e.g. the portion of the attribute name (on the left side of the assignment) without the directive syntax
+* `value` will contain the value you are assigning to the attribute, with any
+  previous directives resolved (e.g. if you combine your directive with a `:=`
+  dataProp directive, you will already have the "true value" be passed in.)
+* `attrName` will contain the bare attribute name, e.g. the portion of the
+  attribute name (on the left side of the assignment) without the directive
+  syntax
 
 #### Infrequently used
 
-* `name` contains contain the entirety of the attribute name, directive syntax included
-* `rawName` will typically be the same as `name`. However, if shortcuts were applied, `rawName` will show the previous, "unexpanded" verison of the name (e.g. without the regular expression substitution applied).
-* `directiveName` will contain the name of the current directive being applied — typically not useful since we already know that, it's the function's name!
+* `name` contains contain the entirety of the attribute name, directive syntax
+  included
+* `rawName` will typically be the same as `name`. However, if shortcuts were
+  applied, `rawName` will show the previous, "unexpanded" verison of the name
+  (e.g. without the regular expression substitution applied).
+* `directiveName` will contain the name of the current directive being applied
+  — typically not useful since we already know that, it's the function's name!
 
 #### Mount and Unmount and multiple directive demonstration
 
-The following demonstration shows both Mount and Unmount callbacks in a script tag. Note that in this demonstration, the "Mount count" and "Unmount count" values visually displayed in the `<p>` tags appear to "lag" behind the actual value — the number of times a Mount or Unmount callback was actually called. This is because the Mount and Unmount happen _after_ the rendering is complete, and thus the rendering can only "report" on the previous value.
+The following demonstration shows both Mount and Unmount callbacks in a script
+tag. Note that in this demonstration, the "Mount count" and "Unmount count"
+values visually displayed in the `<p>` tags appear to "lag" behind the actual
+value — the number of times a Mount or Unmount callback was actually called.
+This is because the Mount and Unmount happen _after_ the rendering is complete,
+and thus the rendering can only "report" on the previous value.
 
-Uncommenting the "console.log" statements will reveal what arguments and information are sent along with the callback.
+Uncommenting the "console.log" statements will reveal what arguments and
+information are sent along with the callback.
 
 
 ```modulo_demo
@@ -217,17 +251,31 @@ Uncommenting the "console.log" statements will reveal what arguments and informa
 /Script>
 ```
 
-### Directive pitfalls
+## Directive pitfalls
 
-A quick word of caution on custom directives: If you find yourself using custom directives to do vanilla JS DOM manipulation often, you are probably doing something wrong! They are meant as an "emergency escape hatch" to gain access to the DOM underneath, and typically you only use them to integrate with other libraries. The most common usage is mixing in older jQuery-style libraries that require a reference to a DOM element. In general, it's when you run into the limits of what Modulo is capable of doing.
+A quick word of caution on custom directives: If you find yourself using custom
+directives in _Script_ CParts to do vanilla JS DOM manipulation often, you are
+probably doing something wrong!  They are meant as an "emergency escape hatch"
+to gain access to the DOM underneath, and typically you only use them while
+writing a CPart library, or when you are doing something unusual such as a
+situational or unique performacne enhancement in mind that requires direct DOM
+manipulation.
 
-#### Directives vs. Templates for manipulating DOM
+### Directives vs. Templates for manipulating DOM
 
-Not sure which to use to manipulate the DOM and generate HTML? Short answer: Templates! Long answer: Directives deal with direct DOM references, and thus are almost always messier to use. Modulo's [templating system is designed](/docs/templating/index.html) to generate a string of HTML code as a purposeful limitation during the `render` phase, and thus prevents this messiness with a stricter structure.
+Not sure which to use to manipulate the DOM and generate HTML? Short answer:
+Templates! Long answer: Directives deal with direct DOM references, and thus
+are almost always messier to use. Modulo's [templating system is
+designed](/docs/templating/index.html) to generate a string of HTML code as a
+purposeful limitation during the `render` phase, and thus prevents this
+messiness with a stricter structure.
 
-So, when you can, try to make the DOM the "source of truth", and attach data to DOM elements via regular HTML properties or `:=`-style dataProp properties. In other words, avoid using direct DOM manipulation as your first approach, instead only using this "escape hatch" to vanilla JS as a last resort.
+So, when you can, try to make the DOM the "source of truth", and attach data to
+DOM elements via regular HTML properties or `:=`-style dataProp properties. In
+other words, avoid using direct DOM manipulation as your first approach,
+instead only using this "escape hatch" to vanilla JS as a last resort.
 
-#### Directives and template variables
+### Directives and template variables
 
 Don't get confused when attempting to mix _Template_ CPart variables with directives. Directives cannot access template variables, since directives are only are applied after the template is fully rendered and all template variables are already forgotten. As an example, consider the following code:
 
@@ -254,14 +302,149 @@ Don't get confused when attempting to mix _Template_ CPart variables with direct
 ```
 
 
-> **Why "payload"?** Why does Modulo take this approach, vs something like React, that allows direct attachment of anonymous JavaScript functions? As any React developer knows by now, there are a lot of "footguns" (common mistakes) with attaching events like this, specifically because complexities with "this" context, anonymous functions, and bound functions with arguments can make introspection (e.g. interactive debugging) hard.
+> **Why "payload"?** Why does Modulo take this approach, vs something like
+> React, that allows direct attachment of anonymous JavaScript functions? As
+> any React developer knows by now, there are a lot of "footguns" (common
+> mistakes) with attaching events like this, specifically because complexities
+> with "this" context, anonymous functions, and bound functions with arguments
+> can make introspection (e.g. interactive debugging) hard.
 > 
-> The Modulo approach is always "DOM determines behavior". Just by using "Inspect" in your browser's Developer Tools, you can examine or even modify the "payload" attribute while debugging event behavior. In other words, Modulo _tends to treat the DOM as the "source of truth"_, and thus derives it's behavior from properties on DOM elements.
+> The Modulo approach is always "DOM determines behavior". Just by using
+> "Inspect" in your browser's Developer Tools, you can examine or even modify
+> the "payload" attribute while debugging event behavior. In other words,
+> Modulo _tends to treat the DOM as the "source of truth"_, and thus derives
+> it's behavior from properties on DOM elements.
 
-The first attempt (HTML Attributes) uses a directive (`[component.dataProp]`, in this case using the colon `:` shortcut), in an attempt to "directly" attach the URL to href. The second attempt correctly uses the template variable with double curly braces to embed it as an actual HTML property. The first attempt will fail because it fails to take into account that the directives will happen _after_ rendering the template. That is, the resulting HTML will literally resemble something like this: “`<a href:=athlete.url>Steph Curry </a> <a href:=athlete.url>Megan Rapinoe</a> <a href:=athlete.url>Devante Adams</a>`”.
+The first attempt (HTML Attributes) uses a directive (`[component.dataProp]`,
+in this case using the colon `:` shortcut), in an attempt to "directly" attach
+the URL to href. The second attempt correctly uses the template variable with
+double curly braces to embed it as an actual HTML property. The first attempt
+will fail because it fails to take into account that the directives will happen
+_after_ rendering the template. That is, the resulting HTML will literally
+resemble something like this: “`<a href:=athlete.url>Steph Curry </a> <a
+href:=athlete.url>Megan Rapinoe</a> <a href:=athlete.url>Devante Adams</a>`”.
 
-In other words, the "athlete" variable _is a temporary Template variable in the for loop_ (that is to say, not a variable in the _renderObj_), and will only be used at the templating step, and forgotten immediately after. Since directives are only invoked once templating is fully completed, there is no way to resolve the variable from the for loop.
+In other words, the "athlete" variable _is a temporary Template variable in the
+for loop_ (that is to say, not a variable in the _renderObj_), and will only be
+used at the templating step, and forgotten immediately after. Since directives
+are only invoked once templating is fully completed, there is no way to resolve
+the variable from the for loop.
 
-What is the proper use of the `[component.dataProp]` directive, you might ask? The proper use is for direct assignment or attachment of values that are not strings or numbers _at the top level of the renderObj_. Basically, anything that can't be conveniently serialized into a string attribute. The common usage is passing down complex nested data types as `Props` (i.e. without having to clutter the DOM and waste memory with a massive JSON object serialized as an attribute), or for attaching callbacks from the renderObj.
+What is the proper use of the `[component.dataProp]` directive, you might ask?
+The proper use is for direct assignment or attachment of values that are not
+strings or numbers _at the top level of the renderObj_. Basically, anything
+that can't be conveniently serialized into a string attribute. The common usage
+is passing down complex nested data types as `Props` (i.e. without having to
+clutter the DOM and waste memory with a massive JSON object serialized as an
+attribute), or for attaching callbacks from the renderObj.
 
-We see such correct usage in the second (Events) "correct" example: It references `script.selectAthlete` which is at the global level. We can tell that it's at the global renderObj level since it starts with `script.`, referencing the contribution to the renderObj that was provided by the Script CPart. The issue with this, however, is that we won't know _which_ button was clicked, since it references one universal `selectAthlete` function. This is solved by attaching some sort of ID reference to the DOM element as a "payload" so that the callback function knows which athlete was selected. This is the correct approach: It uses the DOM as a "source of truth" and is predictable in behavior, with no "hidden" functions getting attached.
+We see such correct usage in the second (Events) "correct" example: It
+references `script.selectAthlete` which is at the global level. We can tell
+that it's at the global renderObj level since it starts with `script.`,
+referencing the contribution to the renderObj that was provided by the Script
+CPart. The issue with this, however, is that we won't know _which_ button was
+clicked, since it references one universal `selectAthlete` function. This is
+solved by attaching some sort of ID reference to the DOM element as a "payload"
+so that the callback function knows which athlete was selected. This is the
+correct approach: It uses the DOM as a "source of truth" and is predictable in
+behavior, with no "hidden" functions getting attached.
+
+
+
+## Rewriting direct DOM manipulation
+
+In this section, the goal is to show how direct DOM manipulation might be more
+cumbersome than using Template and other built-in Modulo features. If you are
+familiar with vanilla JavaScript, observer how these two approaches differ in
+the next section.
+
+### Using direct DOM manipulation
+
+Examine this odd little example of directly attaching click events using the
+`onclick` property, without using the Modulo helper "@click", and then directly
+using the "textContent" property to modify content.
+
+```modulo_demo
+<Template>
+    {% for num in state.numbers %}
+        <tt [script.explode]>{{ num }}</tt>
+    {% endfor %}
+</Template>
+<State
+    numbers:='[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]'
+></State>
+<Script>
+    function explodeMount({ el }) {
+        // console.log('Explode component Mounting:', value);
+        let numberToLookFor = Number(el.textContent);
+        el.onclick = () => {
+            el.textContent = '-(  ( Popped! )  )-';
+            setTimeout(() => {
+                state.numbers = state.numbers
+                    .filter(num => num !== numberToLookFor);
+                element.rerender();
+            }, 1000); // 1 second!
+        }
+    }
+
+    function explodeUnmount({ el }) {
+        // console.log('Explode component Unmounting:', value);
+    }
+/Script>
+<Style>
+    tt {
+        background: #aaa;
+        display: block;
+        border: 1px solid #777;
+        padding: 3px;
+    }
+    :host {
+        overflow: auto;
+        height: 150px;
+        display: block;
+    }
+</Style>
+```
+
+
+## Rewritten
+
+Here is the previous code rewritten to be a normal click event. Using Modulo's
+built-in functionality the code becomes cleaner.
+
+
+```modulo_demo
+<Template>
+    {% for num in state.numbers %}
+        <tt @click:=script.explode payload="{{ num }}">{{ num }}</tt>
+    {% endfor %}
+</Template>
+<State
+    numbers:='[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]'
+></State>
+<Script>
+    function explode(value) {
+        let numberToLookFor = Number(value);
+        let index = state.numbers.indexOf(numberToLookFor);
+        state.numbers[index] = '-(  ( Popped! )  )-';
+        setTimeout(() => {
+            state.numbers.splice(index, 1); // cut away 1 item at index
+            element.rerender();
+        }, 1000); // 1 second!
+    }
+/Script>
+<Style>
+    tt {
+        background: #aaa;
+        display: block;
+        border: 1px solid #777;
+        padding: 3px;
+    }
+    :host {
+        overflow: auto;
+        height: 150px;
+        display: block;
+    }
+</Style>
+```
+

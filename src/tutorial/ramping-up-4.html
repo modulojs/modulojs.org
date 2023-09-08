@@ -303,7 +303,9 @@ The most used event is the `click` event. Here's an example a click event:
 > default, JavaScript comes with several very handy ones attached to the
 > `Array` type, and we'll go over them all in this tutorial.  However, for a
 > full reference, you can refer to MDN's documentation:
-> [Array tutorial](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays), [Full list of Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+> [DOM
+> Introduction](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction),
+> [DOM-Node reference](https://developer.mozilla.org/en-US/docs/Web/API/Node)
 
 
 Let's break down the event directive in  detail:
@@ -617,6 +619,22 @@ access to that extra power of custom JavaScript code.
 ------
 
 
+<!--We can deduce two things about this guessing game component. Deduction One:
+It used a _State_ CPart. We know that it used a _State_ CPart because it
+changes or mutates. Without a _State_ CPart, a component cannot "change state",
+or mutate or have dynamic content, and instead will be rendered the same way
+every time (that is, assuming it has the same _Props_). In other words, if a
+component needs to have dynamic content or change over time, then a _State_
+CPart is necessary to store this dynamic content. Now on to Deduction Two: It
+used a _Script_ CPart. Script CParts allow for complicated interactions and new
+behavior to be developed. Unfortunately, anything as complicated as this game
+logic requires a background in JavaScript to accomplish, meaning we will not
+cover the behavior in this tutorial.  However, if you are familiar with
+JavaScript, feel free to examine the [demo source code on the examples
+page](/examples/) to see how it works yourself!-->
+
+
+
 ## The Script CPart
 
 
@@ -853,66 +871,29 @@ function readyUnmount({ el }) {
 }
 ```
 
-### Notes on custom directives
-
-- Note that the functions *must* be named exactly like this, including
-  capitalization. The attributes, however, are technically not case-sensitive,
-  but the JavaScript portion is.
-- DOM manipulation is what Templates, and many other features of Modulo, are
-  supposed to "save you from". In other words, it gets messy.  This is why the
-  it is recommended to try to use the "Modulo" way of State, Templating, and
-  re-rendering, to keep things from getting messy.
-- Only do direct DOM manipulation as a last resort, such as when you are
-  following a tutorial that gives instructions this way, or are combining
-  Modulo with another framework that operates with direct DOM references
+Note that the naming is important: the directive name must be all lowercase,
+and the function must end with either `Mount` or `Unmount`.
 
 
 ##### Try it now
 
-Examine this odd little example of directly attaching click events using the
-`onclick` property, without using the Modulo helper "@click", and then directly
-using the "textContent" property to modify content.
+One common use of directives might be to focus a particular input. Try
+uncommenting the `el.focus()` line of code (that is, removing the `//`
+prefixing it), and see what happens when you click RUN:
 
 ```modulo_demo
 <Template>
-    {% for num in state.numbers %}
-        <tt [script.explode]="{{ num }}">{{ num }}</tt>
-    {% endfor %}
+    <label>Top: <input  /></label>
+    <label>Middle: <input [script.focus] /></label>
+    <label>Bottom: <input  /></label>
 </Template>
-<State
-    numbers:='[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]'
-></State>
-<Script>
-    function explodeMount({ el, value }) {
-        // console.log('Explode component Mounting:', value);
-        let numberToLookFor = Number(value);
-        el.onclick = () => {
-            el.textContent = '-(  ( Popped! )  )-';
-            setTimeout(() => {
-                state.numbers = state.numbers
-                    .filter(num => num !== numberToLookFor);
-                element.rerender();
-            }, 1000); // 1 second!
-        }
-    }
 
-    function explodeUnmount({ el, value }) {
-        // console.log('Explode component Unmounting:', value);
+<Script>
+    function focusMount({ el }) {
+        el.value = 'Ready to type:';
+        // el.focus();
     }
 /Script>
-<Style>
-    tt {
-        background: #aaa;
-        display: block;
-        border: 1px solid #777;
-        padding: 3px;
-    }
-    :host {
-        overflow: auto;
-        height: 150px;
-        display: block;
-    }
-</Style>
 ```
 
 
@@ -923,51 +904,13 @@ What are uses of custom directives?
 - **Answer:** When core Modulo features are not enough, and you need to
   directly use the browser's DOM methods.
 
-Could you have made this example without using Mount?
+When you should do direct DOM manipulation with directives?
 
-- **Answer:** Yes! This was just an example to show how to access the DOM. In
-  real code, you can use a normal Script event.
+- **Answer:** Only do direct DOM manipulation as a last resort, such as when
+  you are following a tutorial that gives instructions this way, or are
+  combining Modulo with another framework that operates with direct DOM
+  references
 
-##### Try It Now
-
-One final "Try It Now" for this tutorial: Here is the previous code rewritten
-to be a normal click event. Using Modulo's built-in functionality the code
-becomes cleaner.
-
-```modulo_demo
-<Template>
-    {% for num in state.numbers %}
-        <tt @click:=script.explode payload="{{ num }}">{{ num }}</tt>
-    {% endfor %}
-</Template>
-<State
-    numbers:='[ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]'
-></State>
-<Script>
-    function explode(value) {
-        let numberToLookFor = Number(value);
-        let index = state.numbers.indexOf(numberToLookFor);
-        state.numbers[index] = '-(  ( Popped! )  )-';
-        setTimeout(() => {
-            state.numbers.splice(index, 1); // cut away 1 item at index
-            element.rerender();
-        }, 1000); // 1 second!
-    }
-/Script>
-<Style>
-    tt {
-        background: #aaa;
-        display: block;
-        border: 1px solid #777;
-        padding: 3px;
-    }
-    :host {
-        overflow: auto;
-        height: 150px;
-        display: block;
-    }
-</Style>
-```
 
 ------
 

@@ -95,19 +95,35 @@ the page's "Modulo definition". Also note that technically, either `modulo` or
 
 ### Defining your first component
 
-Once you have included Modulo and activated it, you can define your first
-_custom component_. Right now, we'll do that by "embedding" the component
-definition into the script tag that we used to activate Modulo for simplicity's
-sake. Later, we'll learn how to split your components into a separate file and
-then include that file, which is the preferred way.
+Once you have included Modulo and activated it, you can fill it up with
+Component *definitions*, which are special tags in HTML format. These work like
+keywords or configuration settings in order to set-up the component and define
+it's apearance and behavior.
 
-**Component definitions** start with a "Component" opening tag in the format of
+#### Structure of definition
+
+Let's examine our first Modulo definition:
+
+```
+<Component name="HelloWorld">
+    <Template>
+        Hello <strong>Modulo</strong> World!
+    </Template>
+</Component>
+```
+
+
+Component _definitions_ start with a "Component" opening tag in the format of
 `<Component name="HelloWorld">`. Modulo will look for these tags, defining
 components for each one it encounters. Every component definition must specify
 a name, conventionally in `UpperCamelCase`. This is just a convention when
 writing code: Technically HTML tag names are all case insensitive, and so while
 inspecting the DOM, browsers typically display them in `all-lowercase`,
 removing any capitalization.
+
+
+#### Usage
+
 
 Once defined, you can use a component by referring to it's name as though it
 were a plain HTML tag. Components can go anywhere that plain HTML tags can go,
@@ -170,17 +186,18 @@ editor.
     ```
     <!-- Define a custom component in a "Modulo" definition tag -->
     <template Modulo>
-        <Component name="HelloWorld">
+        <Component name="RampingUpWithModulo">
             <Template>
                 Hello <strong>Modulo</strong> World!
             </Template>
         </Component>
+    </template>
     <script src="https://unpkg.com/mdu.js"> /script>
 
     <!-- Reuse it anywhere, just like a "real" HTML tag -->
     <div>
-        <x-HelloWorld></x-HelloWorld>
-        <p>In a P tag: <x-HelloWorld></x-HelloWorld></p>
+        <x-RampingUpWithModulo></x-RampingUpWithModulo>
+        <p>In a P tag: <x-RampingUpWithModulo></x-RampingUpWithModulo></p>
     </div>
     ```
 3.  Ensure that the HTML file is opened in your preferred web browser
@@ -192,10 +209,18 @@ force refreshing.
 
 ##### Comprehension Questions
 
-- Do you see how `<x-HelloWorld></x-HelloWorld>` gets replaced with the content
-  of the template?
+- What's different between the first Component definition example we saw in
+  this tutorial, and the second? What's the same? How do we use them?
+    - Answer #1: The name of the components are different, as the first example
+      given was `HelloWorld`, while the second example was
+      `RampingUpWithModulo`
+    - Answer #2: The content of the components is the same: Both had a
+      "Template" of: `Hello <strong>Modulo</strong> world!`
+    - Answer #3: `<x-HelloWorld></x-HelloWorld>` and
+      `<x-RampingUpWithModulo></x-RampingUpWithModulo>` respectively
 
-- How might this save time when writing HTML?
+- When in use, do you see how the tag gets replaced with the content of the
+  template?  How might this save time when writing HTML?
     - Answer #1: Repetive code can be "refactored" (rewritten) to be more DRY
       ("don't repeat yourself") by identifying the "repeating units" and then
       putting those inside of Components, so their template can be repeated
@@ -215,10 +240,17 @@ build, which speeds up initial development.
 **Alternative local file starting instructions: Start this tutorial by clicking
 SAVE below:**
 
-```modulo_demo
+```modulo_demo_example
 <Template>
   Hello <strong>Modulo</strong> world!
 </Template>
+
+<!-- %%% RampingUpWithModulo %%% -->
+<!-- Reuse it anywhere, just like a "real" HTML tag -->
+<div>
+    <x-RampingUpWithModulo></x-RampingUpWithModulo>
+    <p>In a P tag: <x-RampingUpWithModulo></x-RampingUpWithModulo></p>
+</div>
 ```
 
 * **Hint:** *Can't find the SAVE button?* - It might only appear when you hover
@@ -283,29 +315,29 @@ the right!
 1.  Practice modifying the **Template** CPart (`<Template>`) to see how that
 affects the output preview on the right
 2.  Practice modifying the **Style** CPart (`<Style>`) to add or modify CSS
-3.  **Local file challenge:** Practice incorporating the `<Style>` CPart into your
-local component, and expanding on the `<Template>` as needed to build out the
-beginnings of your component or layout.
+3.  **Local file challenge:** Practice incorporating the `<Style>` CPart into
+your local component, and expanding on the `<Template>` as needed to build out
+the beginnings of your component or layout.
 
 ```modulo_demo
 <Template>
-Hello <strong>Modulo</strong> World!
-<p class="neat">Any HTML can be here!</p>
+    Hello <strong>Modulo</strong> World!
+    <p class="neat">Any HTML can be here!</p>
 </Template>
 <Style>
-/* ...and any CSS here! */
-strong {
-    color: blue;
-}
-.neat {
-    font-variant: small-caps;
-}
-:host { /* styles the entire component */
-    display: inline-block;
-    background-color: cornsilk;
-    padding: 5px;
-    box-shadow: 10px 10px 0 0 turquoise;
-}
+    /* ...and any CSS here! */
+    strong {
+        color: blue;
+    }
+    .neat {
+        font-variant: small-caps;
+    }
+    :host { /* styles the entire component */
+        display: inline-block;
+        background-color: cornsilk;
+        padding: 5px;
+        box-shadow: 10px 10px 0 0 turquoise;
+    }
 </Style>
 ```
 
@@ -362,26 +394,70 @@ In this next activity, we'll practice reusing components.
 
 ##### Try it now
 
-Context: The `<x-ExampleBtn>` button component has already been defined for
-you. It was defined to accept two so-called _"props"_: `label`, and `shape`.
-We'll cover how it was defined to use a _Props_ CPart later on. For now, we'll
-practice only with using the `x-ExampleBtn`.
+*Usage:* For even more flexibility, the mini-demonstration editors found
+through can demonstrate usage of components when in "USAGE" mode, such as the
+`<x-ExampleBtn>` below. You can toggle "USAGE" mode from the "MENU" button,
+which is above the "RUN" button.
+
+The button below was defined to accept two so-called
+_"props"_: `label`, and `shape`.  We'll cover how it was defined to use a
+_Props_ CPart later on. For now, we'll practice only with using the
+`x-ExampleBtn`.
 
 
-```modulo_demo
+```modulo_demo_examplefirst
+<Props
+    label
+    shape
+></Props>
 <Template>
-    <p>Trying out the button...</p>
-    <x-ExampleBtn
-        label="Button Example"
-        shape="square"
-    ></x-ExampleBtn>
-
-    <p>Another button...</p>
-    <x-ExampleBtn
-        label="Example 2: Rounded"
-        shape="round"
-    ></x-ExampleBtn>
+    <button class="my-btn my-btn__{{ props.shape }}">
+        {{ props.label }}
+    </button>
 </Template>
+<Style>
+    .my-btn {
+        display: inline-block;
+        box-sizing: border-box;
+        font-family: sans-serif;
+        border: 1px solid gray;
+        transition: 0.1s;
+        box-shadow:
+            inset -3px -3px
+            1px 1px rgba(100, 100, 100, 0.3);
+        border-radius: 1px 8px 1px 8px;
+        cursor: default;
+        text-align: center;
+        padding: 3px;
+        padding-right: 5px;
+        padding-bottom: 5px;
+        height: 30px;
+        background: turquoise;
+        font-weight: bold;
+    }
+
+    .my-btn:active {
+        box-shadow: inset 3px 3px 1px 1px rgba(100, 100, 100, 0.3);
+    }
+    .my-btn__square {
+        border-radius: 1px 8px 1px 8px;
+    }
+    .my-btn__round {
+        border-radius: 150px;
+    }
+</Style>
+<!-- %%% ExampleBtn %%% -->
+<p>Trying out the button...</p>
+<x-ExampleBtn
+    label="Button Example"
+    shape="square"
+></x-ExampleBtn>
+
+<p>Another button...</p>
+<x-ExampleBtn
+    label="Example 2: Rounded"
+    shape="round"
+></x-ExampleBtn>
 ````
 
 1.  Examine the code above. Examine the preview on the right. Do you see how
@@ -514,12 +590,7 @@ series.
 1. Examine the _Props_ and _Template_ variable code below, and see if you can
 answer the comprehension questions.
 
-2. **Local file challenge:**
-    1. Add a _Props_ CPart to your component -- e.g. `<Props messsage>`)
-    2. Use the _Props_ in your _Template_ CPart by using _template variables_ -- e.g. `{{ props.message }}`
-    3. Practice setting them in using your component -- e.g. `<x-Hello message="Hi">`
-
-```modulo_demo
+```modulo_demo_example
 <Props
     caption
     image
@@ -546,14 +617,38 @@ answer the comprehension questions.
         background: salmon;
     }
 </Style>
+<!--%%% PictureFrame %%%-->
+<x-PictureFrame
+    image="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
+    caption="Hippopotamus out of water"
+    location="Ngorongoro Crater, Tanzania"
+    photographer="Lee R. Berger"
+/></x-PictureFrame>
 ```
+
+2. **Challenge:** Add code to the *Template* and *Prop* CParts to display the
+the "photographer" and "location" information.
+    - *Hint 1:* Try flipping to "USAGE" editing mode (go to MENU button above
+      RUN, then toggle EDIT USAGE). Do you see how image and caption are
+      specified as attributes? Note there's a "photographer" credit there as
+      well. How would you use that in the component?
+    - *Hint 2:* Remember to first add it to `<Props` at the top! It's very easy
+      to forget this step, but Modulo will only "gather" the attributes
+      specified there, and ignore the rest.
+    - *Hint 3:* Try copying the same structure as the "Caption" code, but for
+      the other property names.
+
+2. **Local file challenge:**
+    1. Add a _Props_ CPart to your component -- e.g. `<Props messsage>`)
+    2. Use the _Props_ in your _Template_ CPart by using _template variables_ -- e.g. `{{ props.message }}`
+    3. Practice setting them in using your component -- e.g. `<x-Hello message="Hi">`
 
 ##### Comprehension questions
 
-1. Why is both the "image" and "caption" is blank in the example above?
+1. What happens when you delete Props that are expected?
+    - Answer: Both the "image" and "caption" become blank
     - Answer: This is because you have to actually *use* the component with
-      correct props to see the effect. In the mini demos embedded in this
-      tutorial, it doesn't set any _Props_.
+      correct props to see the effect.
 2. In the example above, do you see how there are two "props" declared to be
 available? Can you name them both?
     - The "Props" CPart specifies which props should be used. In this case, the
