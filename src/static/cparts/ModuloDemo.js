@@ -6,12 +6,10 @@ modulo.config.modulodemo = {
 
 
 modulo.registry.cparts.ModuloDemo = class ModuloDemo {
-    static toEmbed(codeText, componentName, exampleUsage = '') {
+    static toEmbed(codeText, componentName, usage = '') {
         const name = componentName || 'App';
-        if (!exampleUsage) {
-            //'<p>Example usage:</p><hr />\n' +
-            exampleUsage = `\n\n<!-- Example usage: -->\n` +
-              `<x-${name}></x-${name}>`;
+        if (!usage) {
+            usage = `\n\n<!-- Example usage: -->\n<x-${name}></x-${name}>`;
         }
         const indentText = ('\n' + codeText.trim()).replace(/\n/g, '\n    ');
         const fullText = `<!DOCTYPE html>\n<template Modulo>\n` +
@@ -19,7 +17,7 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
                           '  </Component>\n' +
                           '</template>\n' +
                           '<script src="https://unpkg.com/mdu.js"></script>\n' +
-                          exampleUsage;
+                          usage;
         return fullText;
     }
 
@@ -109,6 +107,10 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
             try {
                 window.modulo.loadString(definitionCode, '_component');
                 window.modulo.preprocessAndDefine(() => {
+                    // Delete all '_component' prefix main requires, so they
+                    // don't get included in any builds
+                    modulo.assets.mainRequires = modulo.assets.mainRequires
+                        .filter(name => !name.startsWith('_component'));
                     resolve(componentUseExample);
                 });
             } catch (error) {

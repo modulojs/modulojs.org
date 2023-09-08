@@ -28,11 +28,9 @@ function _updateState() {
     state.componentName = getComponentName();
     if (element.exampleEditor) { // Use user-supplied example code
         state.exampleCode = element.exampleEditor.value;
-    } else if (!state.exampleCode && props.example) {
-        state.exampleCode = props.example; // start with this
-    } else if (!state.exampleCode) {
-        // Otherwise, use generic default
-        state.exampleCode = `<x-${ state.componentName }></x-${ state.componentName }>`;
+    }
+    if (!state.exampleCode) { // Init with props if available
+        state.exampleCode = props.example || `<x-${ state.componentName }></x-${ state.componentName }>`;
     }
 }
 
