@@ -166,6 +166,7 @@
         {
             file: "/static/demos/usedby/DemoModal.html",
             usage: `<x-DemoModal button="Example Button" title="Example Title">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg" />
     <p>Example paragraph #1</p>
     <p>Example paragraph #2</p>
 </x-DemoModal>`,
