@@ -1,0 +1,80 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+tutorial: Building Apps Part 2
+---
+
+# Integrating
+
+### Integrating builds with existing projects
+
+> **What can Modulo integrate with?** Modulo was developed to be
+> easy-to-integrate with existing code. In other words, it doesn't matter if
+> you use WordPress or Django, Drupal or Rails, Jekyll or Hugo, Modulo
+> components can be embedded into your page to add JavaScript-based
+> interactivity and more convenient HTML development. Although probably less
+> useful, you could conceivably even use it with JavaScript-based generators,
+> such as Next.js or Gatsby—in the end, as long as JS and HTML is getting sent
+> to a browser, Modulo components can be in the mix!
+
+If you are experienced with other JavaScript build systems, such as those that
+are NPM-based (e.g. Webpack, Parcel, Rollup), you might be curious as to how to
+practically use Modulo's browser-based build system. Even if you aren't
+familiar with other build systems, you might (correctly!) think that in
+practice it must get hard to keep track of which JS files, CSS files, and
+pre-rendered HTML files should be included in the published version of the
+site, and further more that re-building after every change on every single page
+on larger sites could get tedious. Also, you might wonder how to integrate this
+process with pre-existing web apps, or apply it in a real-life web development
+team, as we've thus far only been talking about developing Modulo components in
+isolation. This is where _workflow_ comes into play, i.e. the patterns and
+procedures you follow to keep a project humming along.
+
+One useful workflow for integrating Modulo with existing projects is to have a
+sort of sandbox "testing page" or hidden internal-only "showcase" HTML page
+(i.e. similar to a "story book" or "design guide" of components). On this page,
+you develop and showcase your re-usable components, both to ease development,
+and also to serve as a demonstration for other members of your development team
+or organization.
+
+From this "showcase" page, you can then run `build` to generate built JS files
+and CSS files whenever you have completed sufficient work on your components
+that you want to integrate and release into the rest of the project. The
+"self-packing" nature of these builds make the integration no harder than
+adding any other script or link tag. This works especially well for small
+projects, and avoids the need for a complicated automated build process for
+component libraries that you might only occasionally change. One downside of
+this workflow is that you might not be able to pre-render any of the pages you
+are integrating with, so there might be slight delays in mounting your
+components.
+
+For example, see below for a complete page showing including a bundle in a
+hypothetical existing PHP project:
+
+```html
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <!-- Include the output of the bundle command: -->
+        <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
+        <script async src="./modulo-bundle.(some hash goes here).js">/script>
+    </head>
+    <body>
+        <!-- The components we define can be used just like before: -->
+        <x-HelloWorld goal="10" ></x-HelloWorld>
+
+        <!-- We can also combine other language or templating features: -->
+        <?php
+            for ($i = 0; $i <= 10; $i++) {
+                echo "<x-HelloWorld goal=\"$i\"></x-HelloWorld>";
+            }
+        ?>
+   </body>
+</html>
+```
+
+
+**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+
+However, you can still try the parts that are done, by continuing to Part 2:
+
+[Part 3: JAMStack, Markdown, and CMS »](part3.html)
+

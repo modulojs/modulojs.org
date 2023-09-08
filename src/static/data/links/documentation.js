@@ -1,40 +1,76 @@
 {
-    tutorial: [
-        {
-            label: 'Components and Their Parts',
-            tutorialName: 'Ramping Up with Modulo',
-            partLabel: 'Part 1',
-            filename: '/tutorial/ramping-up-1.html',
-            keywords: ['component', 'component part', 'cparts', 'customElement', 'Template', 'Props', 'template variable'],
-        },
-        {
-            label: 'State, Binding, and Template Filters',
-            tutorialName: 'Ramping Up with Modulo',
-            partLabel: 'Part 2',
-            filename: '/tutorial/ramping-up-2.html',
-            keywords: [ 'state', 'directives', 'binding inputs', 'state.bind', 'template filters', 'default', 'allow' ],
-        },
-        {
-            label: 'Data Types, Template Tags, and StaticData',
-            tutorialName: 'Ramping Up with Modulo',
-            partLabel: 'Part 3',
-            filename: '/tutorial/ramping-up-3.html',
-            keywords: [ 'string', 'number', 'array', 'object', 'template tags', 'if', '==', 'is', 'else', 'endif', 'for', 'endfor', 'staticdata', 'json', 'API', 'CSV' ],
-        },
-        {
-            label: 'Shadow & Slots, Events, and Scripts',
-            tutorialName: 'Ramping Up with Modulo',
-            partLabel: 'Part 4',
-            filename: '/tutorial/ramping-up-4.html',
-            keywords: [ 'slot', 'slot name', 'children', 'shadow dom',
-              'css isolation', 'class isolation', 'shadow isolation', 'vanish',
-              'event', 'event listening', 'click', '@click:=', 'methods',
-              'Array methods', 'pop', 'push', 'reverse', 'shift', 'script tag', 'JavaScript', 'num++', '-data-type="js"' ],
-        },
-    ],
-
     docs: [
+
         {
+            showHeader: 'Tutorials',
+            label: 'Ramping Up',
+            tutorial: true,
+            filename: '/tutorial/ramping-up/',
+            sections: [
+                {
+                    label: 'Components and Their Parts',
+                    partLabel: 'Part 1',
+                    filename: 'part1.html',
+                    keywords: ['component', 'component part', 'cparts', 'customElement', 'Template', 'Props', 'template variable'],
+                },
+                {
+                    label: 'State, Binding, and Template Filters',
+                    partLabel: 'Part 2',
+                    filename: 'part2.html',
+                    keywords: [ 'state', 'directives', 'binding inputs', 'state.bind', 'template filters', 'default', 'allow' ],
+                },
+                {
+                    label: 'Data Types, Template Tags, and StaticData',
+                    partLabel: 'Part 3',
+                    filename: 'part3.html',
+                    keywords: [ 'string', 'number', 'array', 'object', 'template tags', 'if', '==', 'is', 'else', 'endif', 'for', 'endfor', 'staticdata', 'json', 'API', 'CSV' ],
+                },
+                {
+                    label: 'Shadow & Slots, Events, and Scripts',
+                    partLabel: 'Part 4',
+                    filename: 'part4.html',
+                    keywords: [ 'slot', 'slot name', 'children', 'shadow dom',
+                      'css isolation', 'class isolation', 'shadow isolation', 'vanish',
+                      'event', 'event listening', 'click', '@click:=', 'methods',
+                      'Array methods', 'pop', 'push', 'reverse', 'shift', 'script tag', 'JavaScript', 'num++', '-data-type="js"' ],
+                },
+            ],
+        },
+
+        {
+            label: 'Building Apps',
+            tutorial: true,
+            filename: '/tutorial/building-apps/',
+            sections: [
+                {
+                    label: 'Sources, Libraries, and Building',
+                    partLabel: 'Part 1',
+                    filename: 'part1.html',
+                    keywords: ['live server', 'building', 'source', '-src', 'Library', 'splitting files' ],
+                },
+                {
+                    label: 'Packages, Dependencies, and NPM',
+                    partLabel: 'Part 2',
+                    filename: 'part2.html',
+                    keywords: [ 'incomplete' ],
+                },
+                {
+                    label: 'SSG / JAMStack, Markdown, and Launching',
+                    partLabel: 'Part 3',
+                    filename: 'part3.html',
+                    keywords: [ 'ssg', 'server-side generation', 'ssr',
+                    'server-side rendering', 'jamstack', 'starting templates',
+                    'projects', 'markdown', 'markdown-html', 'decap', 'cms',
+                    'netlify', 'github', 'cd', 'continuous delivery',
+                    'launching' ],
+                },
+            ],
+        },
+
+
+
+        {
+            showHeader: 'Documentation',
             label: 'Component Parts',
             filename: '/docs/cparts/',
             sections: [

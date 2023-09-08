@@ -1,0 +1,285 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+tutorial: Building Apps Part 3
+---
+
+In this section, we'll introduce the SSG / JAMStack template, which is a
+template all set-up and ready to go to launch on servers like Netlify.
+
+
+**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+
+# SSG / JAMStack
+
+
+> **DecapCMS** is a simple but powerful content management system that can be
+> run locally for a GUI Markdown editor of files in your project, or run
+> remotely using a third party login auth system (e.g. GitHub's authentication
+> system API) to have multiple users contirbute to the same site. This allows
+> non technical users to edit the same files as developers, keeping everything
+> in one spot (a git repo).
+> ![](/static/images/example-projects/jamstack-cms.png)
+
+## Terminology 
+
+
+*Background:* In order to understand this next section, some terminology
+background might be useful. 
+
+- *SSG* is Server-side Generated.  This refers to the strategy of running
+  Modulo on the webserver so it generates the initial load there, and builds
+  the JS and CSS bundle automatically (e.g. developers may not even have to
+  think about it, it will just "make it go fast" in the ideal situation). 
+
+- *JAMStack* is a nickname for an approach (stak) for building websites that
+  prioritizes JavaScript and Markup being delivered by static servers, with
+  (optional) backing in the form of serverless fucntions or custom API app
+  servers.  Modulo is a great little framework for this sort of setup, and this
+  section of the tutorial will walk through why!
+
+- *CMS* is a "content management system". It allows users to contribute changes
+  to the site without having to code. For example, Wordpress is a popular CMS.
+  We'll be using _Decap_ as a CMS, since it "plays well" with this JAMStack
+  approach.
+
+
+## Getting started
+
+
+
+Modulo has two different ways to start a new JAMStack project: Either a 1) zip
+file that you download and then put into a directory you then use a web server
+to serve, or 2) by using the `npm` command in the terminal that comes with the
+Node.js JavaScript runtime.
+
+Continue to get practice getting a new website project started!
+
+
+
+##### Try it now
+
+
+1. Start a new JAMStack project in one of 2 ways:
+    - `.zip` - Go to [/Examples/#StartingTemplate](/examples/#StartingTemplate)
+      and download the *JAMStack (Static Site with Markdown and CMS)* zip file
+      template
+    - **NPM:** - If you have NPM installed, and are comfortable using it, use the
+      `create-modulo` script by running the following command (no prior install
+      necessary): `npm init modulo`
+
+2. Click aroud, explore the features! 
+
+3. Read the section below for a "tour" of the directory structure. Try
+editing each thing and see if you can cause the effects you intend.  **Relevant files to edit:**
+    - You will mostly work in the `src/` directory
+    - Edit the Markdown files in `src/articles/` to add article or blog-style
+      content (also editable by CMS, see below)
+    - Edit the files in `src/static/` to work on the CSS, JS, and HTML
+      Templates that create Modulo Components (including the "x-Page" layout
+      template)
+    - Edit the files in `src/static/data/links/` to change the ordering or
+      content of the page navigation or article link list (also editable by
+      CMS, see below)
+
+
+4. Using local server and CMS (npm users only)
+    - NPM Users Only: If you using Simple Web Server and do not have NPM, skip this step!
+    - Try each of the following commands from your new repo:
+    - `npm start`
+        - Starts a simple HTTP server for convient testing: <http://127.0.0.1:3334/>
+    - `npm run startcms`
+        - Runs proxy for Decap CMS: <http://127.0.0.1:3334/static/cms/admin/>
+        - This is intended for local content editing (it is NOT a live, public site)
+        - Note: Run this at the same time as `npm start` (e.g. in another terminal)
+    - `npm run build`
+        - Generates static site build locally in `build/` directory
+        - Useful for testing server-side rendering
+        - Note: This requires dependencies. It runs `npm install modulocli` first.
+
+
+-----
+
+
+
+
+# Markdown
+
+> **What is Markdown?** - Markdown is a handy language for authoring large
+> documents in a langauge that is close to HTML, but easier to write. In other
+> words, if you are tired of typing `<p>` over and over, maybe writing in
+> Markdown and then converting that to HTML will save you effort and
+> frustration! Learn more at [Markdown
+> Guide](https://www.markdownguide.org/getting-started/) and
+> [MarkdownTutorial.com](https://www.markdowntutorial.com/)
+
+_Markdown_ is one of the most popualr things to integrate into a static site
+generator. The JAMStack template we just installed has a Markdown system setup
+and ready to go. Go ahead and open up `/articles/example-article.html` in your
+text editor (and browser as well, for comparison). Examine  the HTML code,
+as you continue reading below.
+
+## Markdow-HTML
+
+It's time for the Modulo JAMStack magician to reveal a trick! 🎩✨
+
+The Modulo JAMStack template uses something that could be thought of as a sort
+of magic trick, a file that is "magically" both an HTML file and Markdown file.
+It's a sort of miniature "dual file format" that is as portable as HTML and as
+easy-to-edit as Markdown, by being both simultaneously. Let's dig into how it
+works.
+
+These files rely on that browsers fill in unclosed tags. Thus, it imports
+Modulo and opens a tag at the top to start the page and start interpretting the
+rest as Markdown.  This lets it make a file which is simultaneously both a
+stand-alone HTML page and a valid Markdown document that can be read by a
+Markdown editor (e.g. even a GUI one, assuming that it allows configuring the
+"frontmatter delimiter").  They function as an HTML file, since these
+Markdown-HTML files can be "double clicked on" and opened with the browser's
+`file://` protocol, just like any other HTML file saved with the "SAVE" feature
+on this site.
+
+When opened in the browser, the user sees only the final rendered page (not the
+markdown source), complete with the markdown code converted into HTML, and any
+templating, CSS, custom code, etc applied. When opened with a text editor,
+these files resemble Markdown files, as long as you ignore the first line. This
+means that true novice coders, who are only comfortable using text editors but
+not comfortable with HTML or CSS, can edit these files as long as they don't
+touch the first line. 
+
+Furthermore, graphical Markdown editors (notably Decap), can be configured to
+accept a custom "frontmatter" deliminator. That means if you configure them to
+accept that long HTML string as the frontmatter deliminator, it will hide it
+from the user and editing the file will be like any other markdown file. This
+allows for properly configured GUI Markdown editors to open up and
+transparently edit these Markdown-HTML files as well, while enforcing that the
+"magic" words at the top that make it an HTML file as well remain.
+
+##### Try It Now
+
+1. Open up `/articles/example-article.html` in your text editor (and browser as
+well, for comparison). Try making changes to the Markdown, to confirm it works.
+2. For convenience, the relevant bits are also excerpted the beginning below.
+It is displayed "word-wrapping" so you can see the first line in it's entirity.
+As long as you don't edit the first line, the file will act like HTML but be
+editable like Markdown!
+
+
+**The first line:**
+
+```
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/cms/">/script><x-ArticlePage><script type=md>---
+```
+
+
+**The rest of the file:**
+
+```
+title: The Example Article
+subtitle: Why this is the example ever and why you should like it
+author: Author Authorino, PhD in Authoring
+---
+
+This is an example markdown page. Here is an image:
+
+![](/static/images/example_logo.svg)
+
+Here is some lorem ipsum:
+...
+```
+
+- **Bonus Challenge:** To see how Decap was configured to accept this custom
+  frontmatter, examine `/static/cms/admin/config.yml`
+
+-----
+
+
+# Launching
+
+## Launching to Netlify
+
+Your project should be ready to launch to Netlify. Just upload or use git to
+pus heverything in the exact structure, making sure the `package.json` is intact
+at the top level (see below). Netlify should server-side build everything.
+
+## Launching to GitHub Workflows
+
+Your project should be ready to launch to GitHub after the following steps:
+
+1. Download the `modulo.yml` file from here:
+    - Direct link:
+      <https://raw.githubusercontent.com/modulojs/modulojs.org/main/.github/workflows/modulojs.yml>
+    - Visible in tree GUI:
+      <https://github.com/modulojs/modulojs.org/tree/main/.github/workflows>
+
+2. Ensure it is put in the exact same directory structure:
+      - Make a hidden directory structure like: `.github/workflows` in your repo
+      - Add the `modulo.yml` file to `.github/workflows`
+    -  Ensure GitHub Workflows is enabled on your account
+
+3. If done correctly, every push will trigger an auto-build.
+
+
+## Custom: Using a package.json
+
+If one of these instructions doesn't work, or your host isn't listed here, you
+may need to customize the `package.json` file further.
+
+Many hosts, including Heroku and Netlify, expect a Node.js `package.json` file.
+For Modulo.js to automatically build on these servers, we can use a `modulocli`
+script as part of the `mdu.js` package to build the site using the same script
+that the official site does.
+
+Examine the following one, which is slightly modified from the one that comes
+with the template:
+
+```json
+{
+    "name": "new-modulo-app",
+    "version": "0.0.0",
+    "private": true,
+    "description": "...a new project...",
+    "scripts": {
+        "start": "npm exec -y http-server -- -p 3334 -e html src/",
+        "startcms": "cd src ; npm exec -y netlify-cms-proxy-server",
+        "build": "modulocli ssg -f"
+    },
+    "modulo": {
+        "isCopyOnly": "^static$",
+        "output": "build",
+        "input": "src"
+    },
+    "dependencies": {
+        "express": "4.18.2",
+        "mdu.js": "^0.0.63"
+    }
+}
+```
+
+You can use this `package.json` for your own Modulo projects. This will enable
+it to be automatically server-side built every time you upload it to the
+server. This can be very convenient, and result in a much better experience for
+users than the development version.
+
+- The setting you will mostly likely need to edit are the `"output": "build"`
+  setting (`build` is a common default, but others might expect `docs/` (GitHub
+  pages) or `output/`).
+- You might want to change `input` to be a different value as well. This should
+  be where you put all your HTML and other web files (e.g. your "src" or
+  "source" files). This is your "www" or your root directory that will be
+  hosting all your website, e.g. the `index.html` here should be the one for
+  your top-level domain (that is, in this example, `mysite.com/index.html`)
+
+
+----
+
+#### Next step
+
+That's all for the *Building Apps with Modulo* tutorial!
+
+Continue perusing the full [Modulo Documentation](/docs/) to focus learning
+on a particular topic
+
+**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+It's likely the tutorial will expand in the near future to cover more aspects of
+Modulo development. Keep on checking soon!
+
+

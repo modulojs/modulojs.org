@@ -1,49 +1,20 @@
 <ul>
     {% if not props.showall %}
-        <h1>%</h1>
-    {% endif %}
-
-    <h2>Documentation</h2>
-    <li>
-        <a href="/docs/#TableOfContents">Table of Contents</a>
-    </li>
-    {% if props.showall %}
-        <li> Tutorial: {{ staticdata.tutorial|get:0|get:"tutorialName" }}
-            <ul>
-            {% for page in staticdata.tutorial %}
-                <li>
-                    <a href="{{ page.filename }}" title="{{ page.label }}">{{ page.partLabel }}: {{ page.label }}</a>
-                    <span class="hint">(<em>Topics: {{ page.keywords|join:', ' }}</em>)</span>
-                </li>
-            {% endfor %}
-            </ul>
+        <a href="/docs/#TableOfContents">
+            <h1>%</h1>
+        </a>
+        {% comment %}
+        <li>
+            <a href="/index.html#start">START</a>
+            <a href="/docs/#TableOfContents">DOCS</a>
+            <a href="/examples/">EXAMPLES</a>
         </li>
-    {% else %}
-        {% if "/tutorial/"|isactive %}
-            <li class="button-sidebar">
-                {{ staticdata.tutorial|get:0|get:"tutorialName" }}:
-                {% for page in staticdata.tutorial %}
-                    <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
-                        {{ page.partLabel }}
-                    </a>
-                {% endfor %}
-            </li>
-        {% else %}
-            <li>
-                {% for page in staticdata.tutorial %}
-                    {% if "1" in page.partLabel  %} {# found first #}
-                        <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
-                            {{ page.tutorialName }}
-                        </a>
-                    {% endif %}
-                {% endfor %}
-            </li>
-        {% endif %}
+        {% endcomment %}
     {% endif %}
-</ul>
-
-<ul>
     {% for page in staticdata.docs %}
+        {% if page.showHeader %}
+            <h2>{{ page.showHeader }}</h2>
+        {% endif %}
         <li class="
                 {% if not props.showall %}
                     {% if page.sections %}
@@ -56,7 +27,13 @@
                         section-keywordless-parent
                     {% endif %}
                 {% endif %}
-            "><a href="{{ page.filename }}">{{ page.label }}</a>
+            ">
+            <a href="{{ page.filename }}">
+                {{ page.label }}
+                {% if page.tutorial %}
+                    with Modulo
+                {% endif %}
+            </a>
             {% if page.filename|isactive|default:props.showall %}
                 <ul>
                 {% for section in page.sections %}
@@ -65,7 +42,12 @@
                           {% if section.filename|isactive %}section-active{% endif %}
                       {% endif %}"
                     >
-                      <a href="{{ page.filename }}{% if section.filename %}{{ section.filename }}{% endif %}{% if section.fragment %}#{{ section.fragment }}{% endif %}">{{ section.label }}</a>
+                      <a href="{{ page.filename }}{% if section.filename %}{{ section.filename }}{% endif %}{% if section.fragment %}#{{ section.fragment }}{% endif %}">
+                        {% if section.partLabel %}
+                            {{ section.partLabel }}: 
+                        {% endif %}
+                        {{ section.label }}
+                      </a>
                     {% if props.showall %}
                         {% if section.keywords %}
                         {% if section.keywords.length gt 0 %}
@@ -80,4 +62,29 @@
         </li>
     {% endfor %}
 </ul>
+
+{% comment %}
+{% if not props.showall %}
+    {% if "/tutorial/"|isactive %}
+        <li class="button-sidebar">
+            {{ staticdata.tutorial|get:0|get:"tutorialName" }}:
+            {% for page in staticdata.tutorial %}
+                <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
+                    {{ page.partLabel }}
+                </a>
+            {% endfor %}
+        </li>
+    {% else %}
+        <li>
+            {% for page in staticdata.tutorial %}
+                {% if "1" in page.partLabel  %} {# found first #}
+                    <a href="{{ page.filename }}" title="{{ page.label }}" class="{% if page.filename|isactive %}button--active{% endif %}">
+                        {{ page.tutorialName }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </li>
+    {% endif %}
+{% endif %}
+{% endcomment %}
 
