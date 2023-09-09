@@ -1,21 +1,7 @@
 
-Final list
----------------------------
-
-- (DONE) Fix / Replace World Map Demo
-- (DONE) Tutorial 1
-- (DONE) Tutorial 2
-- (DONE) Tutorial 3
-- (DONE) Finish news article of website launch
-- (DONE) Table of Contents - update keywords descriptions, tutorial name
-
-
-
-Nice to haves
+Tasks
 -------------
-- Swap out Highlight.js for one that can handle Django + CSS
 - Quick pages flat structure + config.js + site.css
-
 
 
 

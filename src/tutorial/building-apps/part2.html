@@ -3,155 +3,250 @@ tutorial: Building Apps Part 2
 ---
 
 
+In this section, we'll introduce the SSG / JAMStack template, which is a
+template all set-up and ready to go to launch on servers like Netlify.
+
 
 **DOCUMENTATION STUB NOTE:** *This tutorial is incomplete. This section needs
 better explanations, and future sections are missing content.* 🐛
 
-# Layouts
-
-**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
-
-# Dependencies
-
-**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
-
-# Integrating
-
-This section contains advice on integrating Modulo.js with other frameworks.
-This might include backend frameworks or other frontend frameworks.
-
-It also talks about workflows. In this case, different workflows for component
-designers and developers to work in a steady rhythm to maintain component
-libraries that are then used elsewhere, e.g. in a backend app, or a static app.
+# SSG / JAMStack
 
 
-## Integrating builds with existing projects
+> **DecapCMS** is a simple but powerful content management system that can be
+> run locally for a GUI Markdown editor of files in your project, or run
+> remotely using a third party login auth system (e.g. GitHub's authentication
+> system API) to have multiple users contirbute to the same site. This allows
+> non technical users to edit the same files as developers, keeping everything
+> in one spot (a git repo).
+> ![](/static/images/example-projects/jamstack-cms.png)
 
-> **What can Modulo integrate with?** Modulo was developed to be
-> easy-to-integrate with existing code. In other words, it doesn't matter if
-> you use WordPress or Django, Drupal or Rails, Jekyll or Hugo, Modulo
-> components can be embedded into your page to add JavaScript-based
-> interactivity and more convenient HTML development. Although probably less
-> useful, you could conceivably even use it with JavaScript-based generators,
-> such as Next.js or Gatsby—in the end, as long as JS and HTML is getting sent
-> to a browser, Modulo components can be in the mix!
-
-If you are experienced with other JavaScript build systems, such as those that
-are NPM-based (e.g. Webpack, Parcel, Rollup), you might be curious as to how to
-practically use Modulo's browser-based build system. Even if you aren't
-familiar with other build systems, you might (correctly!) think that in
-practice it must get hard to keep track of which JS files, CSS files, and
-pre-rendered HTML files should be included in the published version of the
-site, and further more that re-building after every change on every single page
-on larger sites could get tedious. Also, you might wonder how to integrate this
-process with pre-existing web apps, or apply it in a real-life web development
-team, as we've thus far only been talking about developing Modulo components in
-isolation. This is where _workflow_ comes into play, i.e. the patterns and
-procedures you follow to keep a project humming along.
+## Terminology 
 
 
-### Example: Integration with legacy PHP project
+*Background:* In order to understand this next section, some terminology
+background might be useful. 
 
-*Hypothetical integration with legacy PHP project: For example, see below for a
-complete page showing including a bundle in a hypothetical existing PHP
-project:
+- *SSG* is Server-side Generated.  This refers to the strategy of running
+  Modulo on the webserver so it generates the initial load there, and builds
+  the JS and CSS bundle automatically (e.g. developers may not even have to
+  think about it, it will just "make it go fast" in the ideal situation). 
 
+- *JAMStack* is a nickname for an approach (stak) for building websites that
+  prioritizes JavaScript and Markup being delivered by static servers, with
+  (optional) backing in the form of serverless fucntions or custom API app
+  servers.  Modulo is a great little framework for this sort of setup, and this
+  section of the tutorial will walk through why!
 
-```html
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <!-- Include the output of the bundle command: -->
-        <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
-        <script async src="./modulo-bundle.(some hash goes here).js">/script>
-    </head>
-    <body>
-        <!-- The components we define can be used just like before: -->
-        <x-HelloWorld goal="10" ></x-HelloWorld>
-
-        <!-- We can also combine other language or templating features: -->
-        <?php
-            for ($i = 0; $i <= 10; $i++) {
-                echo "<x-HelloWorld goal=\"$i\"></x-HelloWorld>";
-            }
-        ?>
-   </body>
-</html>
-```
-
-## Workflows
-
-When you use Modulo, or any framework, enough, the question arises of
-*workflow*, or good patterns of use that facilitate contiued development and
-deployment of a product in a team setting. In this section, we'll look over a
-few possible approaches to integration.
+- *CMS* is a "content management system". It allows users to contribute changes
+  to the site without having to code. For example, Wordpress is a popular CMS.
+  We'll be using _Decap_ as a CMS, since it "plays well" with this JAMStack
+  approach.
 
 
-### Showcase Workflow
-
-> **When to use it** - The *showcase.html workflow* is great if Modulo is only
-> going to contribute a few compoennts that you don't update that often. For
-> example, maybe you are tasked with enhancing a form interaction, perhaps with
-> more validation, so you make a really good new input-type component that has
-> certain  form validation features. Then, you use this in your app whenever
-> you need it, but it is a bit more "write and forget" in terms of development.
-
-One useful workflow for integrating Modulo with existing projects is to have a
-sort of sandbox "testing page" or hidden internal-only "showcase" HTML page
-(i.e. similar to a "story book" or "design guide" of components). On this page,
-you develop and showcase your re-usable components, both to ease development,
-and also to serve as a demonstration for other members of your development team
-or organization.
-
-From this "showcase" page, you can then run `build` to generate built JS files
-and CSS files whenever you have completed sufficient work on your components
-that you want to integrate and release into the rest of the project. The
-"self-packing" nature of these builds make the integration no harder than
-adding any other script or link tag. This works especially well for small
-projects, and avoids the need for a complicated automated build process for
-component libraries that you might only occasionally change. One downside of
-this workflow is that you might not be able to pre-render any of the pages you
-are integrating with, so there might be slight delays in mounting your
-components.
+## Getting started
 
 
 
+Modulo has two different ways to start a new JAMStack project: Either a 1) zip
+file that you download and then put into a directory you then use a web server
+to serve, or 2) by using the `npm` command in the terminal that comes with the
+Node.js JavaScript runtime.
 
-###### Try it Now
+Continue to get practice getting a new website project started!
 
-Try out the "Showcase Workflow" for creating and maintaining a library of built
-components that you integrate into another website, such as a backend MVC app.
 
-1. Create a new "showcase" page that imports your component library. 
-    - You can put it in `/showcase.html` to make it easy to find.
-    - You can even put it in your `/static/` directory to keep it a bit more
-      "hidden", e.g.  `/static/showcase/index.html`
-2. In your showcase file, import your Modulo header like any other file.
-3. Then, to "use" this workflow, work on developing an assortment of components
-in isolation on this file. 
-4. When you are ready to integrate it with the other app, export the JS and CSS
-file, and add script tags to your template of your other app. 
-5. Then, in the other app, be sure to include the necessary tags:
-    ```html
-    <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
-    <script async src="./modulo-bundle.(some hash goes here).js">/script>
-    ```
-6. Now, Modulo components can be used to "spice up" your otherwise simple HTML
-templated app!
+
+##### Try it now
+
+
+1. Start a new JAMStack project in one of 2 ways:
+    - `.zip` - Go to [/Examples/#StartingTemplate](/examples/#StartingTemplate)
+      and download the *JAMStack (Static Site with Markdown and CMS)* zip file
+      template
+    - **NPM:** - If you have NPM installed, and are comfortable using it, use the
+      `create-modulo` script by running the following command (no prior install
+      necessary): `npm init modulo`
+
+2. Click aroud, explore the features! 
+
+3. Read the section below for a "tour" of the directory structure. Try
+editing each thing and see if you can cause the effects you intend.  **Relevant files to edit:**
+    - You will mostly work in the `src/` directory
+    - Edit the Markdown files in `src/articles/` to add article or blog-style
+      content (also editable by CMS, see below)
+    - Edit the files in `src/static/` to work on the CSS, JS, and HTML
+      Templates that create Modulo Components (including the "x-Page" layout
+      template)
+    - Edit the files in `src/static/data/links/` to change the ordering or
+      content of the page navigation or article link list (also editable by
+      CMS, see below)
+
+
+4. Using local server and CMS (npm users only)
+    - NPM Users Only: If you using Simple Web Server and do not have NPM, skip this step!
+    - Try each of the following commands from your new repo:
+    - `npm start`
+        - Starts a simple HTTP server for convient testing: <http://127.0.0.1:3334/>
+    - `npm run startcms`
+        - Runs proxy for Decap CMS: <http://127.0.0.1:3334/static/cms/admin/>
+        - This is intended for local content editing (it is NOT a live, public site)
+        - Note: Run this at the same time as `npm start` (e.g. in another terminal)
+    - `npm run build`
+        - Generates static site build locally in `build/` directory
+        - Useful for testing server-side rendering
+        - Note: This requires dependencies. It runs `npm install modulocli` first.
 
 
 -----
 
 
 
-### Automated Build Workflow
 
-To integrate building file, you can use a `package.json` similar to the
-following:
+# Markdown
 
-```JSON
+> **What is Markdown?** - Markdown is a handy language for authoring large
+> documents in a langauge that is close to HTML, but easier to write. In other
+> words, if you are tired of typing `<p>` over and over, maybe writing in
+> Markdown and then converting that to HTML will save you effort and
+> frustration! Learn more at [Markdown
+> Guide](https://www.markdownguide.org/getting-started/) and
+> [MarkdownTutorial.com](https://www.markdowntutorial.com/)
+
+_Markdown_ is one of the most popualr things to integrate into a static site
+generator. The JAMStack template we just installed has a Markdown system setup
+and ready to go. Go ahead and open up `/articles/example-article.html` in your
+text editor (and browser as well, for comparison). Examine  the HTML code,
+as you continue reading below.
+
+## Markdow-HTML
+
+It's time for the Modulo JAMStack magician to reveal a trick! 🎩✨
+
+The Modulo JAMStack template uses something that could be thought of as a sort
+of magic trick, a file that is "magically" both an HTML file and Markdown file.
+It's a sort of miniature "dual file format" that is as portable as HTML and as
+easy-to-edit as Markdown, by being both simultaneously. Let's dig into how it
+works.
+
+These files rely on that browsers fill in unclosed tags. Thus, it imports
+Modulo and opens a tag at the top to start the page and start interpretting the
+rest as Markdown.  This lets it make a file which is simultaneously both a
+stand-alone HTML page and a valid Markdown document that can be read by a
+Markdown editor (e.g. even a GUI one, assuming that it allows configuring the
+"frontmatter delimiter").  They function as an HTML file, since these
+Markdown-HTML files can be "double clicked on" and opened with the browser's
+`file://` protocol, just like any other HTML file saved with the "SAVE" feature
+on this site.
+
+When opened in the browser, the user sees only the final rendered page (not the
+markdown source), complete with the markdown code converted into HTML, and any
+templating, CSS, custom code, etc applied. When opened with a text editor,
+these files resemble Markdown files, as long as you ignore the first line. This
+means that true novice coders, who are only comfortable using text editors but
+not comfortable with HTML or CSS, can edit these files as long as they don't
+touch the first line. 
+
+Furthermore, graphical Markdown editors (notably Decap), can be configured to
+accept a custom "frontmatter" deliminator. That means if you configure them to
+accept that long HTML string as the frontmatter deliminator, it will hide it
+from the user and editing the file will be like any other markdown file. This
+allows for properly configured GUI Markdown editors to open up and
+transparently edit these Markdown-HTML files as well, while enforcing that the
+"magic" words at the top that make it an HTML file as well remain.
+
+##### Try It Now
+
+1. Open up `/articles/example-article.html` in your text editor (and browser as
+well, for comparison). Try making changes to the Markdown, to confirm it works.
+2. For convenience, the relevant bits are also excerpted the beginning below.
+It is displayed "word-wrapping" so you can see the first line in it's entirity.
+As long as you don't edit the first line, the file will act like HTML but be
+editable like Markdown!
+
+
+**The first line:**
+
+```
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/cms/">/script><x-ArticlePage><script type=md>---
+```
+
+
+**The rest of the file:**
+
+```
+title: The Example Article
+subtitle: Why this is the example ever and why you should like it
+author: Author Authorino, PhD in Authoring
+---
+
+This is an example markdown page. Here is an image:
+
+![](/static/images/example_logo.svg)
+
+Here is some lorem ipsum:
+...
+```
+
+- **Bonus Challenge:** To see how Decap was configured to accept this custom
+  frontmatter, examine `/static/cms/admin/config.yml`
+
+-----
+
+
+# Launching
+
+Using the NPM package `modulocli`, you can automate building Modulo. This is
+the same Puppeteer based script that this website uses to build itself. It will
+loop through all items in input directoyr running the in-browser `build`
+command on each, and saving the output to the `build/` directory.
+
+## Launching to Netlify
+
+Your project should be ready to launch to Netlify. Just upload or use git to
+pus heverything in the exact structure, making sure the `package.json` is intact
+at the top level (see below). Netlify should server-side build everything.
+
+## Launching to GitHub Workflows
+
+Your project should be ready to launch to GitHub after the following steps:
+
+1. Download the `modulo.yml` file from here:
+    - Direct link:
+      <https://raw.githubusercontent.com/modulojs/modulojs.org/main/.github/workflows/modulojs.yml>
+    - Visible in tree GUI:
+      <https://github.com/modulojs/modulojs.org/tree/main/.github/workflows>
+
+2. Ensure it is put in the exact same directory structure:
+      - Make a hidden directory structure like: `.github/workflows` in your repo
+      - Add the `modulo.yml` file to `.github/workflows`
+    -  Ensure GitHub Workflows is enabled on your account
+
+3. If done correctly, every push will trigger an auto-build.
+
+
+## Custom: Using a package.json
+
+If one of these instructions doesn't work, or your host isn't listed here, you
+may need to customize the `package.json` file further.
+
+Many hosts, including Heroku and Netlify, expect a Node.js `package.json` file.
+For Modulo.js to automatically build on these servers, we can use a `modulocli`
+script as part of the `mdu.js` package to build the site using the same script
+that the official site does.
+
+Examine the following one, which is slightly modified from the one that comes
+with the template:
+
+```json
 {
+    "name": "new-modulo-app",
+    "version": "0.0.0",
+    "private": true,
+    "description": "...a new project...",
     "scripts": {
+        "start": "npm exec -y http-server -- -p 3334 -e html src/",
+        "startcms": "cd src ; npm exec -y netlify-cms-proxy-server",
         "build": "modulocli ssg -f"
     },
     "modulo": {
@@ -166,39 +261,20 @@ following:
 }
 ```
 
-* Consider replacing the `"build": "modulocli ssg -f"` with
-something like `"build": "modulocli ssg -f ; mv build/_modulo_output/*
-../../path/to/other/app "`  if you are using this to integrate just the JS and
-CSS files into your other app
+You can use this `package.json` for your own Modulo projects. This will enable
+it to be automatically server-side built every time you upload it to the
+server. This can be very convenient, and result in a much better experience for
+users than the development version.
 
+- The setting you will mostly likely need to edit are the `"output": "build"`
+  setting (`build` is a common default, but others might expect `docs/` (GitHub
+  pages) or `output/`).
+- You might want to change `input` to be a different value as well. This should
+  be where you put all your HTML and other web files (e.g. your "src" or
+  "source" files). This is your "www" or your root directory that will be
+  hosting all your website, e.g. the `index.html` here should be the one for
+  your top-level domain (that is, in this example, `mysite.com/index.html`)
 
-##### Using Git
-
-> **Git** - Git is essential when automating workflows.  If you are brand new,
-> you might want to start using git using a GUI. One popular free GUI for Git
-> is [GitKraken](https://gitkraken.com/), for macOS, Linux, and Windows. You
-> can follow a tutorial about how to use
-> [GitKraken here](https://help.gitkraken.com/gitkraken-client/guide/)
-
-
-### Automated Build Workflow
-
-> **When to use it** - When you are building a Modulo-focused app, and
-> automatic building and integration of Modulo in the site is so important.
-> It's also important to be able to update frequently, as quickly as you can
-> upload your changes with `git push`.
-
-Using the NPM package `modulocli`, you can automate building Modulo. This is
-the same Puppeteer based script that this website uses to build itself. It will
-loop through all items in input directoyr running the in-browser `build`
-command on each, and saving the output to the `build/` directory.
-
-This is the style of building apps that we will cover in _Part 3_ of this
-tutorial.
-
------
-
-**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
 
 
 In the next section, we'll learn how *not* integrate Modulo. That is, how to
