@@ -100,6 +100,17 @@
         {
             file: "/static/demos/eg/SimpleTable.html",
         },
+        /*
+        {
+            file: "/static/demos/eg/SimpleButton.html",
+            usage: `
+<x-SimpleButton>Example One</x-SimpleButton><br />
+<x-SimpleButton>Example Two: The attack of the longer text</x-SimpleButton><br />
+<x-SimpleButton>Three</x-SimpleButton><br />
+            `
+        },
+        */
+
         {
             file: "/static/demos/eg/TablePushPop.html",
         },
@@ -120,10 +131,10 @@
         {
             file: "/static/demos/eg/GradientPicker.html",
         },
-        /*
         {
             file: "/static/demos/eg/TextStyler.html",
         },
+        /*
         {
             file: "/static/demos/eg/DateNumberPicker.html",
         },
@@ -163,6 +174,26 @@
             includes: "/static/demos/usedby/DemoChart.html",
         },
         */
+        {
+            file: "/static/demos/eg/SimpleTabs.html",
+            usage: `
+<x-SimpleTabs>
+    <div slot="info">
+        <p><strong>Peafowl</strong> is a common name for three bird species.</p>
+    </div>
+    <div slot="image">
+        <img 
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Peacock.jpg/320px-Peacock.jpg"
+          style="height: 100px"
+        />
+    </div>
+    <div slot="link">
+        <p><a href="https://en.wikipedia.org/wiki/Peafowl">Join the peafowl.</a></p>
+        <p><em>Leave your worries behind, become one with the peafowl!</em></p>
+    </div>
+</x-SimpleTabs>
+            `
+        },
         {
             file: "/static/demos/usedby/DemoModal.html",
             usage: `<x-DemoModal button="Example Button" title="Example Title">

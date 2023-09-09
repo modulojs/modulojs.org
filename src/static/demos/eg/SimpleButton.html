@@ -1,0 +1,20 @@
+<!-- Components can even just be a Style -->
+<Style>
+    :host {
+        --primary: tomato;
+        font-weight: bold;
+        border-radius: 1px 6px 1px 6px;
+        color: black;
+        border: 3px solid var(--primary);
+        box-shadow: -5px -5px 1px 1px hsla(0, 100%, 39.2%, 0.05);
+        cursor: default;
+        padding: 5px;
+        background-color: white;
+        margin-bottom: 4px;
+        transition: box-shadow 0.1s;
+        user-select: none;
+    }
+    :host:active {
+        box-shadow: -5px -5px 1px 1px hsla(0, 100%, 39.2%, 0.15);
+    }
+</Style>

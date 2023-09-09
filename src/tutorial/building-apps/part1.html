@@ -184,8 +184,6 @@ this new file, and then delete it from your main HTML file.
       with the file changes when you save not being noticed.
 
 
-------
-
 ##### RESULTS
 
 - If done correctly, your new component library file (e.g.
@@ -207,15 +205,17 @@ this new file, and then delete it from your main HTML file.
     >/script>
     ```
 
-5. Now, you can simply "drop in" these 4 lines of script tag on multiple HTML
-pages, and they will be all you need to import and share the same set of
-components between pages!
+- Now, you can simply "drop in" these 4 lines of script tag on multiple HTML
+  pages, and they will be all you need to import and share the same set of
+  components between pages.
 
-6. Bonus Challenge: Try practicing with multiple "main HTML" files sharing the
-same component library. Also, if you used the example name, consider renaming
-your component library. Consider naming it something that is relevant to you,
-e.g. "ecommerce-website-components" or something, whatever you think is a good
-name based on what you are working on.
+##### Bonus Challenge
+
+- Try practicing with multiple "main HTML" files (e.g. `/index.html` or
+  `/about.html` or "Modulo_App.html" or something) sharing a single Component
+  library (e.g.  `/static/index.html`)
+
+- Try defining multiple components in one Component library HTML file
 
 
 ------
@@ -270,20 +270,6 @@ everything together.
 
 # Library
 
-> **Why build?** Let's start with a "thought experiment", where we fast forward
-> into the future. Imagine that as you create more and more components, you
-> begin splitting them up into more component libraries. Also, as mentioned
-> previously, perhaps you find some nice component libraries that others have
-> made that you want to use in your project. In the end, you might find
-> yourself with dozens of HTML files being loaded, scattered in different
-> directories.
-> 
-> In this situation you will have too many `<Library>` tags, meaning your page
-> may take a long time to start-up. As it's downloading all the different
-> files, the browser will be showing the ugly, unformatted text in the
-> mean-time. On slow connections, this could be end up being a frustrating
-> experience for users. This is why building to one file is useful.
-
 We've got one more topic for _Part 1_ of the Building Apps tutorial: How to keep
 your project manageable and loading fast as you accumulate more and more
 _Component_ definitions, and they require more and more files.
@@ -302,22 +288,22 @@ imported into different _Component namespaces_.
 
 First, re-examine our original _Modulo_ import:
 
-    &lt;script Modulo
+    <script Modulo
         src="https://unpkg.com/mdu.js"
         -src="/static/my-stuff.html"
-    &gt;&lt;/script&gt;
+    >/script>
 
 To use a _Library_ definition tag, we move the
 `-src="/static/my-stuff.html"` and add a `namespace` to one or more
 `<Library>` tags in the _Modulo_ script tag. This ends up looking like the
 following:
 
-    &lt;script Modulo src="https://unpkg.com/mdu.js"&gt;
+    <script Modulo src="https://unpkg.com/mdu.js">
         <Library
             -src="/static/my-stuff.html"
             namespace="mylib"
-        >&lt;/Library&gt;
-    &lt;/script&gt;
+        ></Library>
+    /script>
 
 > **Why use namespaces?** Namespaces allow different component library files to
 > have conflicting component names. This is especially useful when using
@@ -374,6 +360,20 @@ stay neat during development, but still have a fast site? This is where
 
 # Build
 
+> **Why build?** Let's start with a "thought experiment", where we fast forward
+> into the future. Imagine that as you create more and more components, you
+> begin splitting them up into more component libraries. Also, as mentioned
+> previously, perhaps you find some nice component libraries that others have
+> made that you want to use in your project. In the end, you might find
+> yourself with dozens of HTML files being loaded, scattered in different
+> directories.
+> 
+> In this situation you will have too many `<Library>` tags, meaning your page
+> may take a long time to start-up. As it's downloading all the different
+> files, the browser will be showing the ugly, unformatted text in the
+> mean-time. On slow connections, this could be end up being a frustrating
+> experience for users. This is why building to one file is useful.
+
 ### Building: Packing it all up
 
 "Building" is a feature of Modulo where it packs up all the components,
@@ -399,13 +399,6 @@ publishing, but not for editing. Never directly edit builds; instead, create
 new ones.
 
 ### Pre-rendering HTML for instant loading
-
-> **modulocli** If you truly want to build using terminal or NPM-based tools,
-> Modulo supports that as well with `modulocli`. However, Modulo is still in
-> _alpha_ stages, and so the browser-focused workflow is the best documented,
-> tested, and least likely to change with updates. That said, it's usable: It's
-> what was used to build this website! To get going, use the _create-modulo_
-> scaffolding tool, by running the following: `npm init modulo`
 
 Even with built JavaScript code, you might notice that there is a "flicker"
 effect, where the page remains unstructured and unstyled until all your

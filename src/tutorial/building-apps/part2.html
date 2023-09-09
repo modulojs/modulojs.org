@@ -2,9 +2,30 @@
 tutorial: Building Apps Part 2
 ---
 
+
+
+**DOCUMENTATION STUB NOTE:** *This tutorial is incomplete. This section needs
+better explanations, and future sections are missing content.* 🐛
+
+# Layouts
+
+**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+
+# Dependencies
+
+**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+
 # Integrating
 
-### Integrating builds with existing projects
+This section contains advice on integrating Modulo.js with other frameworks.
+This might include backend frameworks or other frontend frameworks.
+
+It also talks about workflows. In this case, different workflows for component
+designers and developers to work in a steady rhythm to maintain component
+libraries that are then used elsewhere, e.g. in a backend app, or a static app.
+
+
+## Integrating builds with existing projects
 
 > **What can Modulo integrate with?** Modulo was developed to be
 > easy-to-integrate with existing code. In other words, it doesn't matter if
@@ -28,26 +49,13 @@ team, as we've thus far only been talking about developing Modulo components in
 isolation. This is where _workflow_ comes into play, i.e. the patterns and
 procedures you follow to keep a project humming along.
 
-One useful workflow for integrating Modulo with existing projects is to have a
-sort of sandbox "testing page" or hidden internal-only "showcase" HTML page
-(i.e. similar to a "story book" or "design guide" of components). On this page,
-you develop and showcase your re-usable components, both to ease development,
-and also to serve as a demonstration for other members of your development team
-or organization.
 
-From this "showcase" page, you can then run `build` to generate built JS files
-and CSS files whenever you have completed sufficient work on your components
-that you want to integrate and release into the rest of the project. The
-"self-packing" nature of these builds make the integration no harder than
-adding any other script or link tag. This works especially well for small
-projects, and avoids the need for a complicated automated build process for
-component libraries that you might only occasionally change. One downside of
-this workflow is that you might not be able to pre-render any of the pages you
-are integrating with, so there might be slight delays in mounting your
-components.
+### Example: Integration with legacy PHP project
 
-For example, see below for a complete page showing including a bundle in a
-hypothetical existing PHP project:
+*Hypothetical integration with legacy PHP project: For example, see below for a
+complete page showing including a bundle in a hypothetical existing PHP
+project:
+
 
 ```html
 <!DOCTYPE HTML>
@@ -71,8 +79,134 @@ hypothetical existing PHP project:
 </html>
 ```
 
+## Workflows
+
+When you use Modulo, or any framework, enough, the question arises of
+*workflow*, or good patterns of use that facilitate contiued development and
+deployment of a product in a team setting. In this section, we'll look over a
+few possible approaches to integration.
+
+
+### Showcase Workflow
+
+> **When to use it** - The *showcase.html workflow* is great if Modulo is only
+> going to contribute a few compoennts that you don't update that often. For
+> example, maybe you are tasked with enhancing a form interaction, perhaps with
+> more validation, so you make a really good new input-type component that has
+> certain  form validation features. Then, you use this in your app whenever
+> you need it, but it is a bit more "write and forget" in terms of development.
+
+One useful workflow for integrating Modulo with existing projects is to have a
+sort of sandbox "testing page" or hidden internal-only "showcase" HTML page
+(i.e. similar to a "story book" or "design guide" of components). On this page,
+you develop and showcase your re-usable components, both to ease development,
+and also to serve as a demonstration for other members of your development team
+or organization.
+
+From this "showcase" page, you can then run `build` to generate built JS files
+and CSS files whenever you have completed sufficient work on your components
+that you want to integrate and release into the rest of the project. The
+"self-packing" nature of these builds make the integration no harder than
+adding any other script or link tag. This works especially well for small
+projects, and avoids the need for a complicated automated build process for
+component libraries that you might only occasionally change. One downside of
+this workflow is that you might not be able to pre-render any of the pages you
+are integrating with, so there might be slight delays in mounting your
+components.
+
+
+
+
+###### Try it Now
+
+Try out the "Showcase Workflow" for creating and maintaining a library of built
+components that you integrate into another website, such as a backend MVC app.
+
+1. Create a new "showcase" page that imports your component library. 
+    - You can put it in `/showcase.html` to make it easy to find.
+    - You can even put it in your `/static/` directory to keep it a bit more
+      "hidden", e.g.  `/static/showcase/index.html`
+2. In your showcase file, import your Modulo header like any other file.
+3. Then, to "use" this workflow, work on developing an assortment of components
+in isolation on this file. 
+4. When you are ready to integrate it with the other app, export the JS and CSS
+file, and add script tags to your template of your other app. 
+5. Then, in the other app, be sure to include the necessary tags:
+    ```html
+    <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
+    <script async src="./modulo-bundle.(some hash goes here).js">/script>
+    ```
+6. Now, Modulo components can be used to "spice up" your otherwise simple HTML
+templated app!
+
+
+-----
+
+
+
+### Automated Build Workflow
+
+To integrate building file, you can use a `package.json` similar to the
+following:
+
+```JSON
+{
+    "scripts": {
+        "build": "modulocli ssg -f"
+    },
+    "modulo": {
+        "isCopyOnly": "^static$",
+        "output": "build",
+        "input": "src"
+    },
+    "dependencies": {
+        "express": "4.18.2",
+        "mdu.js": "^0.0.63"
+    }
+}
+```
+
+* Consider replacing the `"build": "modulocli ssg -f"` with
+something like `"build": "modulocli ssg -f ; mv build/_modulo_output/*
+../../path/to/other/app "`  if you are using this to integrate just the JS and
+CSS files into your other app
+
+
+##### Using Git
+
+> **Git** - Git is essential when automating workflows.  If you are brand new,
+> you might want to start using git using a GUI. One popular free GUI for Git
+> is [GitKraken](https://gitkraken.com/), for macOS, Linux, and Windows. You
+> can follow a tutorial about how to use
+> [GitKraken here](https://help.gitkraken.com/gitkraken-client/guide/)
+
+
+### Automated Build Workflow
+
+> **When to use it** - When you are building a Modulo-focused app, and
+> automatic building and integration of Modulo in the site is so important.
+> It's also important to be able to update frequently, as quickly as you can
+> upload your changes with `git push`.
+
+Using the NPM package `modulocli`, you can automate building Modulo. This is
+the same Puppeteer based script that this website uses to build itself. It will
+loop through all items in input directoyr running the in-browser `build`
+command on each, and saving the output to the `build/` directory.
+
+This is the style of building apps that we will cover in _Part 3_ of this
+tutorial.
+
+-----
 
 **DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
+
+
+In the next section, we'll learn how *not* integrate Modulo. That is, how to
+start a new modulo static site generator project which will server-side render
+Modulo components and automatically build JS and CSS when you push.
+
+*When to use it:* When not integrating at all! However
+
 
 However, you can still try the parts that are done, by continuing to Part 2:
 

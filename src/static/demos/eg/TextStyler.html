@@ -1,28 +1,53 @@
 <Template>
+    <label for="text">Text</label>
     <input [state.bind] name="text" />
-    <label>FG: <input [state.bind] name="color" type="color" /></label>
-    <label>BG: <input [state.bind] name="bgcolor" type="color" /></label>
-    <label>Size: <input [state.bind] name="size"
-            type="range" min="12" max="28" step="2" /></label>
-    <hr />
-    <label>Shadow
-      <input [state.bind] name="shadow"
-            type="range" min="0" max="8" step="1" />
-    </label>
-    <hr />
-    <h5 style="
+    <label for="text">Font</label>
+    <select [state.bind] name="font">
+        <option value="serif">Serif</option>
+        <option value="sans-serif">Sans-Serif</option>
+        <option value="monospace">Monospace</option>
+    </select>
+    <label for="color">FG</label>
+    <input [state.bind] name="color" type="color" />
+    <label for="bgcolor">BG</label>
+    <input [state.bind] name="bgcolor" type="color" />
+    <label for="size">Size</label>
+    <input [state.bind] name="size" type="range" min="12" max="28" step="2" />
+    <label for="shadow">Shadow</label>
+    <input [state.bind] name="shadow" type="range" min="0" max="8" step="1" />
+    <p style="
+            grid-column: 1 / span 2;
             font-size: {{ state.size }}px;
             color: {{ state.color }};
+            font-family: {{ state.font }};
             background-color: {{ state.bgcolor }};
             text-shadow: {{ state.shadow }}px {{ state.shadow }}px {{ state.shadow }}px #00000066;
         ">
         {{ state.text }}
-    </h5>
+    </p>
 </Template>
 <State
     size:=24
     shadow:=2
     color="#333030"
     bgcolor="#fff0f0"
+    font="serif"
     text="Style Me"
 ></State>
+<Style>
+    :host {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr 3fr;
+    }
+    input,
+    select,
+    option {
+        max-width: 60%;
+    }
+    p {
+        margin: 0;
+        padding: 0;
+        max-width: 90%;
+    }
+</Style>

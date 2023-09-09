@@ -1,0 +1,118 @@
+<!-- This Component uses named slots for tabs.  See "Edit Usage" from
+MENU for how you specify "slot=" in order to use it. -->
+<Template>
+    {# Create a button for each tab #}
+    {% for tab in state.tabs %}
+        <button
+            @click:=script.selectTab
+            payload="{{ tab }}"
+            role="tab"
+            aria-controls="Tab{{ tab }}"
+            area-selected="{% if tab == state.selected %}true{% else %}false{% endif %}"
+            class="{% if tab == state.selected %}active{% endif %}"
+        >{{ tab|capfirst }}</button>
+    {% endfor %}
+
+    {# Create named slots for all the children with slots defined #}
+    {% for tab in state.tabs %}
+        <div role="tablist">
+            <slot
+                name="{{ tab }}"
+                id="Tab{{ tab }}"
+                role="tabpanel"
+                class="tab-body {% if tab == state.selected %}visible{% endif %}"
+            ></slot>
+        </div>
+    {% endfor %}
+</Template>
+
+<!-- (Hint: The ="" syntax is for strings, while :='' is for other types) -->
+<State
+    tabs:=[]
+    selected=""
+></State>
+
+<Script>
+    // (Hint: prepareCallback is invoked before every rerender)
+    function prepareCallback(renderObj) {
+        state.tabs = []; // Will be a list of slot names
+
+        // Loop through the original children passed to this element, and
+        // use their "slot=" information to create the tabs.
+        for (const child of element.originalChildren) {
+            if (!child.hasAttribute || !child.hasAttribute('slot')) {
+                continue; // not a DOM node, or correctly slotted
+            }
+            state.tabs.push(child.getAttribute('slot'));
+            if (!state.selected) { // Select the first one on first render
+                state.selected = child.getAttribute('slot');
+            }
+        }
+    }
+
+    function selectTab(tabToSelect) {
+        state.selected = tabToSelect;
+    }
+</Script>
+
+<Style>
+    :host {
+        --primary: plum;
+        --foreground: black;
+        --background-color: cornsilk;
+        --light-shading-color: #ffffff55;
+        --dark-shading-color: #00000015;
+        display: relative;
+        overflow: relative;
+    }
+
+    .tab-body {
+        border: 10px var(--primary) ridge;
+        background: var(--background-color);
+        display: none;
+        padding: 10px;
+        box-sizing: border-box;
+        min-height: 50px;
+        margin-top: -3px;
+        box-shadow:
+              8px 8px 10px inset var(--light-shading-color),
+              -8px -8px 10px inset var(--dark-shading-color);
+    }
+    .visible {
+        display: block;
+    }
+
+    button {
+        font-weight: bold;
+        border-radius: 1px 6px 1px 1px;
+        cursor: default;
+        padding: 4px;
+        padding-top: 10px;
+        background: var(--primary);
+        color: var(--foreground);
+        margin-top: 5px;
+        margin-bottom: -8px;
+        transition: box-shadow 0.5s;
+        user-select: none;
+        text-transform: uppercase;
+        border: 5px var(--primary) solid;
+        opacity: 0.9;
+        text-align: center;
+        border-bottom-width: 0;
+        border-left-width: 10px;
+        box-shadow:
+              8px 8px 10px inset var(--light-shading-color),
+              -8px -8px 10px inset var(--dark-shading-color);
+    }
+
+    button.active {
+        border-style: ridge;
+        opacity: 1;
+        box-shadow:
+              8px 8px 10px inset var(--light-shading-color),
+              -1px -1px 1px inset var(--light-shading-color);
+    }
+
+</Style>
+
+
