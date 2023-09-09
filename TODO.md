@@ -1,6 +1,9 @@
-
 Tasks
 -------------
+- Flesh out: Building Apps Tutorial
+    1. Part 1: Sources
+    2. Part 2: Going Big
+    3. Part 3: Building and Integrating
 - Quick pages flat structure + config.js + site.css
 
 

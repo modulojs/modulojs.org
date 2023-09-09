@@ -43,26 +43,30 @@
             filename: '/tutorial/building-apps/',
             sections: [
                 {
-                    label: 'Sources, Libraries, and Building',
+                    label: 'Sources',
                     partLabel: 'Part 1',
                     filename: 'part1.html',
-                    keywords: ['live server', 'building', 'source', '-src', 'Library', 'splitting files' ],
+                    keywords: ['live server', 'building', 'source', '-src', 'splitting files' ],
                 },
                 {
-                    label: 'Packages, Dependencies, and NPM',
+                    label: 'Going Big',
                     partLabel: 'Part 2',
                     filename: 'part2.html',
-                    keywords: [ 'incomplete' ],
+                    keywords: [
+                        'Library', 'ssg', 'server-side generation', 'ssr',
+                        'server-side rendering', 'jamstack',
+                        'starting templates', 'projects', 'markdown',
+                        'markdown-html', 'decap', 'cms', 'netlify'
+                    ],
                 },
                 {
-                    label: 'SSG / JAMStack, Markdown, and Launching',
+                    label: 'Building and Integrating',
                     partLabel: 'Part 3',
                     filename: 'part3.html',
-                    keywords: [ 'ssg', 'server-side generation', 'ssr',
-                    'server-side rendering', 'jamstack', 'starting templates',
-                    'projects', 'markdown', 'markdown-html', 'decap', 'cms',
-                    'netlify', 'github', 'cd', 'continuous delivery',
-                    'launching' ],
+                    keywords: [
+                        'build', 'optimizing', 'github', 'cd', 'library',
+                        'continuous delivery', 'launching', 'php', 'backend'
+                    ],
                 },
             ],
         },

@@ -211,10 +211,18 @@
             file: "/static/demos/eg/Search.html",
         },
         {
+            file: "/static/demos/eg/SearchBox.html",
+        },
+        {
             file: "/static/demos/eg/MarkdownPreview.html",
         },
         {
-            file: "/static/demos/eg/SearchBox.html",
+            file: "/static/demos/eg/CKEditor.html",
+            usage: `<x-CKEditor>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Peacock.jpg/320px-Peacock.jpg" />
+    <p>Example paragraph #1</p>
+    <p>Example paragraph #2</p>
+</x-CKEditor>`,
         },
         {
             file: "/static/demos/eg/MemoryGame.html",

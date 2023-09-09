@@ -53,7 +53,8 @@ file that you download and then put into a directory you then use a web server
 to serve, or 2) by using the `npm` command in the terminal that comes with the
 Node.js JavaScript runtime.
 
-Continue to get practice getting a new website project started!
+Follow the instructions below and get practice getting a new website project
+started:
 
 
 
@@ -191,100 +192,135 @@ Here is some lorem ipsum:
 - **Bonus Challenge:** To see how Decap was configured to accept this custom
   frontmatter, examine `/static/cms/admin/config.yml`
 
+
+
+------
+
+
+# Library
+
+We've got one more topic for _Part 2_ of the Building Apps tutorial: How to keep
+your project manageable with so many components that might have the same name,
+or third party components you want to integrate into your project.
+
+## Using libraries
+
+In the previous section, we learned we can use `-src=` to split _Template_ and
+_Style_ Component Parts into separate HTML and CSS files respectively. However,
+what if our component definition files themselves get too big to manage? That
+is, what if we define so many components, that we need to start organizing the
+components themselves?
+
+This is where the _Library_ definition tag becomes useful. It allows us to
+cluster our components into individual _Component Libraries_, that then get
+imported into different _Component namespaces_.
+
+First, re-examine our original _Modulo_ import:
+
+    <script Modulo
+        src="https://unpkg.com/mdu.js"
+        -src="/static/my-stuff.html"
+    >/script>
+
+To use a _Library_ definition tag, we move the `-src="/static/my-stuff.html"`
+and add a `namespace` to one or more `<Library>` tags in the _Modulo_ script
+tag. This ends up looking like the following:
+
+    <script Modulo src="https://unpkg.com/mdu.js">
+        <Library
+            -src="/static/my-stuff.html"
+            namespace="mylib"
+        ></Library>
+    /script>
+
+> **Why use namespaces?** Namespaces allow different component library files to
+> have conflicting component names. This is especially useful when using
+> third-party component libraries or while working in a big team: That way, if
+> both you and another developer define a component with some common name (eg
+> `name="Button"`), there won't be a conflict as long as you load each into
+> different namespaces.
+
+Let's break this down:
+
+* `-src="./static/my-stuff.html"`
+    
+    The `-src` attribute specifies the source of the component library file.
+    This file can be anywhere that is accessible to your web-browser or
+    web-server. Ideally, it should be in the same place as your CSS and static
+    media files, such as a `static/` directory, or whatever the equivalent is
+    for your set-up.
+    
+    The component library itself (`my-stuff.html` in this example) should
+    consist of an HTML file filled with `<Component>` definitions.
+    
+* `namespace="mylib"`
+    
+    The `namespace` attribute specifies the _namespace prefix_, which is
+    combined with a dash and the component name in order to create the
+    component's _full name_.
+    
+    **Example:** If `my-stuff.html` has a component defined like `<Component
+    name="MyThing">` imported with `namespace="mylib"`, then the resulting full
+    name would be `mylib-MyThing`, and we'd use the component like  
+    `<mylib-MyThing></mylib-MyThing>`.
+    
+* **Multiple libraries:** As we add more and more component libraries to a
+  project, we can simply add additional _Library_ definition tags into the
+  _Modulo_ `static/index.html` file.
+
+
+However, there is a downside to splitting up your files in general (and this
+goes for the other uses of -src as well): Each new file you create will require
+an additional request to load it. This means that each additional individual
+file you include in a page will cause the page to take a little longer to
+loader. So, if `-src=` causes it to load slower, how can we stay neat during
+development, but still have a fast site? This is where "building" comes into
+play, which is the first topic of the next tutorial.
+
+
+
+##### Try it now
+
+1. Examine the use of `<Library>` in the downloaded template file
+
+2. Bonus: Split off components into different _Library_ definitions
+
+3. Bonus: Change the namespace of one or more of your components from the default `x`
+
+------
+
+
+## Part 2: Summary
+
+
+In this tutorial, we started by learning how to "go big" with a JAMStack or SSG
+project template. We learned how to edit Markdown pages for an easier to
+maintain website. We learned how to keep our components in a component library
+and then load that library into different HTML files.
+
+
+- *SSG* - Server-side Generated, pre-rendering HTML and CSS on the server
+
+- *JAMStack* - nickname for approach that prioritizes JavaScript and Markup
+  being delivered by static servers
+
+- *CMS* - "content management systems" users to contribute changes
+  to a website without having to code via a userfriendly GUI
+
+* _markdown_ -- Mini "HTML-lite" language for websites
+
+* _Library_ - Allows grouping of Components into library files that can be
+  "siloed" under a certain component namespace or configuration.
+
+* _namespace_ - The prefix that replaces the default "x" and goes before the
+  name of a component to form the complete component name, e.g. `namespace="maps"`
+  joins with `<Component name="India">` to form a `<maps-India>` component.
+
+
 -----
 
 
-# Launching
+Continue on to Part 2:
 
-Using the NPM package `modulocli`, you can automate building Modulo. This is
-the same Puppeteer based script that this website uses to build itself. It will
-loop through all items in input directoyr running the in-browser `build`
-command on each, and saving the output to the `build/` directory.
-
-## Launching to Netlify
-
-Your project should be ready to launch to Netlify. Just upload or use git to
-pus heverything in the exact structure, making sure the `package.json` is intact
-at the top level (see below). Netlify should server-side build everything.
-
-## Launching to GitHub Workflows
-
-Your project should be ready to launch to GitHub after the following steps:
-
-1. Download the `modulo.yml` file from here:
-    - Direct link:
-      <https://raw.githubusercontent.com/modulojs/modulojs.org/main/.github/workflows/modulojs.yml>
-    - Visible in tree GUI:
-      <https://github.com/modulojs/modulojs.org/tree/main/.github/workflows>
-
-2. Ensure it is put in the exact same directory structure:
-      - Make a hidden directory structure like: `.github/workflows` in your repo
-      - Add the `modulo.yml` file to `.github/workflows`
-    -  Ensure GitHub Workflows is enabled on your account
-
-3. If done correctly, every push will trigger an auto-build.
-
-
-## Custom: Using a package.json
-
-If one of these instructions doesn't work, or your host isn't listed here, you
-may need to customize the `package.json` file further.
-
-Many hosts, including Heroku and Netlify, expect a Node.js `package.json` file.
-For Modulo.js to automatically build on these servers, we can use a `modulocli`
-script as part of the `mdu.js` package to build the site using the same script
-that the official site does.
-
-Examine the following one, which is slightly modified from the one that comes
-with the template:
-
-```json
-{
-    "name": "new-modulo-app",
-    "version": "0.0.0",
-    "private": true,
-    "description": "...a new project...",
-    "scripts": {
-        "start": "npm exec -y http-server -- -p 3334 -e html src/",
-        "startcms": "cd src ; npm exec -y netlify-cms-proxy-server",
-        "build": "modulocli ssg -f"
-    },
-    "modulo": {
-        "isCopyOnly": "^static$",
-        "output": "build",
-        "input": "src"
-    },
-    "dependencies": {
-        "express": "4.18.2",
-        "mdu.js": "^0.0.63"
-    }
-}
-```
-
-You can use this `package.json` for your own Modulo projects. This will enable
-it to be automatically server-side built every time you upload it to the
-server. This can be very convenient, and result in a much better experience for
-users than the development version.
-
-- The setting you will mostly likely need to edit are the `"output": "build"`
-  setting (`build` is a common default, but others might expect `docs/` (GitHub
-  pages) or `output/`).
-- You might want to change `input` to be a different value as well. This should
-  be where you put all your HTML and other web files (e.g. your "src" or
-  "source" files). This is your "www" or your root directory that will be
-  hosting all your website, e.g. the `index.html` here should be the one for
-  your top-level domain (that is, in this example, `mysite.com/index.html`)
-
-
-
-In the next section, we'll learn how *not* integrate Modulo. That is, how to
-start a new modulo static site generator project which will server-side render
-Modulo components and automatically build JS and CSS when you push.
-
-*When to use it:* When not integrating at all! However
-
-
-However, you can still try the parts that are done, by continuing to Part 2:
-
-[Part 3: JAMStack, Markdown, and CMS »](part3.html)
+[Part 3: Building and Integrating »](part3.html)
 

@@ -1,0 +1,12 @@
+<Script -src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js">
+    function updateCallback() {
+        ClassicEditor
+            .create(element)
+            .then(editor => {
+                element.editor = editor; // in case we need it later!
+            })
+            .catch(error => console.error(error));
+        // (Optional) Prevent component from rerendering
+        element.rerender = () => {};
+    }
+</Script>

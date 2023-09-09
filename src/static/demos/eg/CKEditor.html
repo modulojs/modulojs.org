@@ -1,0 +1,13 @@
+<!-- Using -src= can quickly embed classic JS libraries, such as CKEditor -->
+<Script -src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js">
+    function updateCallback() {
+        if (!element.editor) { // Prevent double activating
+            ClassicEditor
+                .create(element)
+                .then(editor => {
+                    element.editor = editor; // Set editor on host element
+                })
+                .catch(error => console.error(error));
+        }
+    }
+</Script>

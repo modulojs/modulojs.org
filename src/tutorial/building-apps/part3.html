@@ -3,10 +3,11 @@ tutorial: Building Apps Part 3
 ---
 
 
-In this final section of *Building Apps*, we'll talk about _optimizing_ and
-_integrating_. In other words, let's make our code go fast, and making it mesh
-well our server set-ups!
-
+In this final section of *Building Apps*, we'll talk about _optimizing_ via
+_building_, and _integrating_ by launching to web hosts, servers, especially
+those with automatic building features so it frees up our _workflow_ it will
+build without us having to think about it. In other words, let's make our code
+go fast and our workflow go smooth!
 
 
 ------------
@@ -148,18 +149,161 @@ mistake is forgetting that you are editing the original `.html` file while
 using the built `.js` version, causing much confusion as to why your changes
 don't take effect!
 
+------------
 
-# Integrating
 
-This section contains advice on integrating Modulo.js with other frameworks.
-This might include backend frameworks or other frontend frameworks.
+# Servers & integration
+
+This section contains advice on launching Modulo as a static site generator on
+various website hosting companies and platforms.  It also discusses integrating
+Modulo.js as purely a component library supplier with other frameworks.  This
+might include backend frameworks or other frontend frameworks.
 
 It also talks about workflows. In this case, different workflows for component
 designers and developers to work in a steady rhythm to maintain component
 libraries that are then used elsewhere, e.g. in a backend app, or a static app.
 
 
-## Integrating builds with existing projects
+## Which one to choose?
+
+1. [Modulo-centered stack](#modulostack) - Modulo is the main framework you are using to
+build a static site and/or single page app, potentially with API integration,
+and/or "serverless" functions *(covered first)*
+
+2. [Integrating as a library](#integratingasalibrary) - Modulo is intended to supplement an
+existing app, such as a backaned app, as an easy to "sprinkle-in" JavaScript
+library *(covered last)*
+
+
+## Modulo stack
+
+### Launching Modulo as a SSG with autobuilding
+
+> **When to use it** - When you are building a Modulo-focused app, and
+> automatic building and integration of Modulo in the site is so important.
+> It's also important to be able to update frequently, as quickly as you can
+> upload your changes with `git push`.
+
+Using the NPM package `modulocli`, you can automate building Modulo. This is
+the same Puppeteer based script that this website uses to build itself. It will
+loop through all items in input directory running the in-browser `build`
+command on each, and saving the output to the `build/` directory.
+
+
+
+#### Autobuilding on Netlify
+
+Netlify is a company that provides free and paid web hosting plans for
+"JAMStack" and similar SSG-style projects.
+
+If you started with the SSG / JAMStack template, your project should be ready
+to launch to Netlify already. Just upload or use git! Make sure everything gets
+pushed in the exact structure it came in, making sure the `package.json` is
+intact at the top level (if curious, see see below). 
+
+Netlify should server-side build everything.
+
+
+#### Autobuilding on GitHub
+
+> **Git** - Git is essential when automating workflows.  If you are brand new,
+> you might want to start using git using a GUI. One popular free GUI for Git
+> is [GitKraken](https://gitkraken.com/), for macOS, Linux, and Windows. You
+> can follow a tutorial about how to use
+> [GitKraken here](https://help.gitkraken.com/gitkraken-client/guide/)
+
+GitHub is a git hosting company owned by Microsoft that provides free and paid
+hosting plans for public and open source projects.
+
+If you started with the SSG / JAMStack template, your project should be ready
+to launch to GitHub after completing the following steps:
+
+1. Download the `modulo.yml` file from here:
+    - [.github/workflows/modulojs.yml](https://raw.githubusercontent.com/modulojs/modulojs.org/main/.github/workflows/modulojs.yml)
+    - [(View file on GitHub)](https://github.com/modulojs/modulojs.org/tree/main/.github/workflows)
+
+2. Ensure it is put in the exact same directory structure:
+    - Make a hidden directory structure like: `.github/workflows` in your
+      repository
+    - Add the `modulo.yml` file to `.github/workflows`
+3. Ensure necessary features are enabled
+    - Ensure GitHub Workflows is enabled on your repository
+    - Ensure GitHub Pages is enabled on your repository
+4. Verify the site is getting launched after each push
+
+
+
+#### Troubleshooting GitHub Pages
+
+- Verify by visiting:
+  `https://<YOUR-GITHUB-USERNAME>.github.io/<YOUR-GITHUB-REPO-NAME>`
+- If done correctly, every push to that repository will trigger an auto-build,
+  launching your sit at the domain
+- *Troubleshooting:* Just getting 404? Make sure your URL looks something like
+  (for tuxpenguin's repo "new-modulo-app"):
+  `https://tuxpenguin.github.io/new-modulo-app/`
+- *Troubleshooting:* Still getting 404? Try possibly adding an HTML path if you
+  don't have an index.html, so the URL will end up looking like:
+  `https://tuxpenguin.github.io/new-modulo-app/about_me.html`
+- *Troubleshooting:* Still not seeing changes? Try doing "hard refresh", and
+  also waiting a few minutes, GitHub pages can end up getting cached and not
+  reflecting changes. If GitHub servers are busy, and you are on a free plan,
+  you could end up waiting even longer for it to re-build and re-launch.
+
+
+
+### Custom: Using a package.json
+
+If one of these instructions doesn't work, or your host isn't listed here, you
+may need to customize the `package.json` file further.
+
+Many hosts, including Heroku and Netlify, expect a Node.js `package.json` file.
+For Modulo.js to automatically build on these servers, we can use a `modulocli`
+script as part of the `mdu.js` package to build the site using the same script
+that the official site does.
+
+Examine the following one, which is slightly modified from the one that comes
+with the template:
+
+```json
+{
+    "name": "new-modulo-app",
+    "version": "0.0.0",
+    "private": true,
+    "description": "...a new project...",
+    "scripts": {
+        "start": "npm exec -y http-server -- -p 3334 -e html src/",
+        "startcms": "cd src ; npm exec -y netlify-cms-proxy-server",
+        "build": "modulocli ssg -f"
+    },
+    "modulo": {
+        "isCopyOnly": "^static$",
+        "output": "build",
+        "input": "src"
+    },
+    "dependencies": {
+        "express": "4.18.2",
+        "mdu.js": "^0.0.63"
+    }
+}
+```
+
+You can use this `package.json` for your own Modulo projects. This will enable
+it to be automatically server-side built every time you upload it to the
+server. This can be very convenient, and result in a much better experience for
+users than the development version.
+
+- The setting you will mostly likely need to edit are the `"output": "build"`
+  setting (`build` is a common default, but others might expect `docs/` (GitHub
+  pages) or `output/`).
+- You might want to change `input` to be a different value as well. This should
+  be where you put all your HTML and other web files (e.g. your "src" or
+  "source" files). This is your "www" or your root directory that will be
+  hosting all your website, e.g. the `index.html` here should be the one for
+  your top-level domain (that is, in this example, `mysite.com/index.html`)
+
+
+## Integrating as a library
 
 > **What can Modulo integrate with?** Modulo was developed to be
 > easy-to-integrate with existing code. In other words, it doesn't matter if
@@ -170,65 +314,44 @@ libraries that are then used elsewhere, e.g. in a backend app, or a static app.
 > such as Next.js or Gatsby—in the end, as long as JS and HTML is getting sent
 > to a browser, Modulo components can be in the mix!
 
-If you are experienced with other JavaScript build systems, such as those that
-are NPM-based (e.g. Webpack, Parcel, Rollup), you might be curious as to how to
-practically use Modulo's browser-based build system. Even if you aren't
-familiar with other build systems, you might (correctly!) think that in
-practice it must get hard to keep track of which JS files, CSS files, and
-pre-rendered HTML files should be included in the published version of the
-site, and further more that re-building after every change on every single page
-on larger sites could get tedious. Also, you might wonder how to integrate this
-process with pre-existing web apps, or apply it in a real-life web development
-team, as we've thus far only been talking about developing Modulo components in
-isolation. This is where _workflow_ comes into play, i.e. the patterns and
-procedures you follow to keep a project humming along.
+You might wonder how to integrate this process with pre-existing web apps, or
+apply it in a real-life web development team, as we've thus far only been
+talking about developing Modulo components in isolation.
+
+This is where _workflow_ comes into play, i.e. the patterns and procedures you
+follow to keep a project humming along.  When you use Modulo, or any framework,
+enough, the question arises of _workflow_, or good patterns of use that
+facilitate contiued development and deployment of a product in a team setting.
+In this section, we'll look over possible approaches to integrating a
+Modulo.js-powered component library with some other framework, such as a
+backend framework.
 
 
-### Example: Integration with legacy PHP project
 
-*Hypothetical integration with legacy PHP project: For example, see below for a
-complete page showing including a bundle in a hypothetical existing PHP
-project:
+### Manual workflow: Without automated builds
 
+A manual workflow may sound tedious, but if done correctly, is doable for
+small-to-medium sized projects.  If you are experienced with other JavaScript
+build systems, such as those that are NPM-based (e.g. Webpack, Parcel, Rollup),
+you might be curious as to how to practically use Modulo's browser-based build
+system, even with small projects! Even if you aren't familiar with other build
+systems, you might (correctly!) think that in practice it must get hard to keep
+track of which JS files, CSS files, and pre-rendered HTML files should be
+included in the published version of the site, and further more that
+re-building after every change on every single page on larger sites could get
+tedious.
 
-```html
-<!DOCTYPE HTML>
-<html>
-    <head>
-        <!-- Include the output of the bundle command: -->
-        <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
-        <script async src="./modulo-bundle.(some hash goes here).js">/script>
-    </head>
-    <body>
-        <!-- The components we define can be used just like before: -->
-        <x-HelloWorld goal="10" ></x-HelloWorld>
-
-        <!-- We can also combine other language or templating features: -->
-        <?php
-            for ($i = 0; $i <= 10; $i++) {
-                echo "<x-HelloWorld goal=\"$i\"></x-HelloWorld>";
-            }
-        ?>
-   </body>
-</html>
-```
-
-## Workflows
-
-When you use Modulo, or any framework, enough, the question arises of
-*workflow*, or good patterns of use that facilitate contiued development and
-deployment of a product in a team setting. In this section, we'll look over a
-few possible approaches to integration.
-
-
-### Showcase Workflow
+#### Showcase Workflow
 
 > **When to use it** - The *showcase.html workflow* is great if Modulo is only
-> going to contribute a few compoennts that you don't update that often. For
-> example, maybe you are tasked with enhancing a form interaction, perhaps with
-> more validation, so you make a really good new input-type component that has
-> certain  form validation features. Then, you use this in your app whenever
-> you need it, but it is a bit more "write and forget" in terms of development.
+> going to contribute a few components that you don't update that often after
+> periods of focused development. For example, maybe you are tasked with
+> enhancing a form interaction, or integrating a specific JSON file or API so
+> to add a splash of live data on an otherwise static portion of the site. In
+> these cases, it's workable to keep your "showcase" development in as separate
+> location, then manually build and integrate whenever you make changes,
+> essentially like you are developing your own internal library that you
+> occasionally "release".
 
 One useful workflow for integrating Modulo with existing projects is to have a
 sort of sandbox "testing page" or hidden internal-only "showcase" HTML page
@@ -251,7 +374,7 @@ components.
 
 
 
-###### Try it Now
+##### Try it Now
 
 Try out the "Showcase Workflow" for creating and maintaining a library of built
 components that you integrate into another website, such as a backend MVC app.
@@ -274,311 +397,64 @@ file, and add script tags to your template of your other app.
 templated app!
 
 
+##### Example Solution
+
+**Example: Integration with a "legacy" PHP project**
+
+
+```html
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <!-- Include the output of the bundle command: -->
+        <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
+        <script async src="./modulo-bundle.(some hash goes here).js">/script>
+    </head>
+    <body>
+        <!-- The components we define can be used just like before: -->
+        <x-App title="Build It!" ></x-App>
+
+        <!-- We can still combine other language or templating features: -->
+        <?php
+            for ($i = 0; $i <= 10; $i++) {
+                echo "<x-App title='Component Number: $i'></x-App>";
+            }
+        ?>
+   </body>
+</html>
+```
+
 -----
 
 
+### Automated workflow: Integrating automated builds
 
-### Automated Build Workflow
-
-To integrate building file, you can use a `package.json` similar to the
-following:
-
-```JSON
-{
-    "scripts": {
-        "build": "modulocli ssg -f"
-    },
-    "modulo": {
-        "isCopyOnly": "^static$",
-        "output": "build",
-        "input": "src"
-    },
-    "dependencies": {
-        "express": "4.18.2",
-        "mdu.js": "^0.0.63"
-    }
-}
-```
-
-* Consider replacing the `"build": "modulocli ssg -f"` with
-something like `"build": "modulocli ssg -f ; mv build/_modulo_output/*
-../../path/to/other/app "`  if you are using this to integrate just the JS and
-CSS files into your other app
+Automatically integrating Modulo into a backend app is beyond this tutorial.
+Instead, you should examine the documentation of the other framework, and let
+it "drive". For example, see if you can find instructions for integrating `npm`
+or `webpack` or `React` in general -- those might work for Modulo as well,
+since it uses `npm run build` for the same purpose, and outputs to the same
+directory (`build/`).
 
 
-##### Using Git
-
-> **Git** - Git is essential when automating workflows.  If you are brand new,
-> you might want to start using git using a GUI. One popular free GUI for Git
-> is [GitKraken](https://gitkraken.com/), for macOS, Linux, and Windows. You
-> can follow a tutorial about how to use
-> [GitKraken here](https://help.gitkraken.com/gitkraken-client/guide/)
+-----
 
 
-### Automated Build Workflow
+## Part 3: Summary
 
-> **When to use it** - When you are building a Modulo-focused app, and
-> automatic building and integration of Modulo in the site is so important.
-> It's also important to be able to update frequently, as quickly as you can
-> upload your changes with `git push`.
+In this tutorial, we started with trying Modulo's self-building feature, and
+then went on to discuss was to automate it or structure workflow around it.
 
-Using the NPM package `modulocli`, you can automate building Modulo. This is
-the same Puppeteer based script that this website uses to build itself. It will
-loop through all items in input directoyr running the in-browser `build`
-command on each, and saving the output to the `build/` directory.
-
-This is the style of building apps that we will cover in _Part 3_ of this
-tutorial.
-
---------------
+### Key Terms
 
 
-# Library
-
-We've got one more topic for _Part 3_ of the Building Apps tutorial: How to keep
-your project manageable with so many components that might have the same name,
-or third party components you want to integrate into your project.
-
-## Using libraries
-
-In the previous section, we learned we can use `-src=` to split _Template_ and
-_Style_ Component Parts into separate HTML and CSS files respectively. However,
-what if our component definition files themselves get too big to manage? That
-is, what if we define so many components, that we need to start organizing the
-components themselves?
-
-This is where the _Library_ definition tag becomes useful. It allows us to
-cluster our components into individual _Component Libraries_, that then get
-imported into different _Component namespaces_.
-
-First, re-examine our original _Modulo_ import:
-
-    <script Modulo
-        src="https://unpkg.com/mdu.js"
-        -src="/static/my-stuff.html"
-    >/script>
-
-To use a _Library_ definition tag, we move the
-`-src="/static/my-stuff.html"` and add a `namespace` to one or more
-`<Library>` tags in the _Modulo_ script tag. This ends up looking like the
-following:
-
-    <script Modulo src="https://unpkg.com/mdu.js">
-        <Library
-            -src="/static/my-stuff.html"
-            namespace="mylib"
-        ></Library>
-    /script>
-
-> **Why use namespaces?** Namespaces allow different component library files to
-> have conflicting component names. This is especially useful when using
-> third-party component libraries or while working in a big team: That way, if
-> both you and another developer define a component with some common name (eg
-> `name="Button"`), there won't be a conflict as long as you load each into
-> different namespaces.
-
-Let's break this down:
-
-* `-src="./static/my-stuff.html"`
-    
-    The `-src` attribute specifies the source of the component library file.
-    This file can be anywhere that is accessible to your web-browser or
-    web-server. Ideally, it should be in the same place as your CSS and static
-    media files, such as a `static/` directory, or whatever the equivalent is
-    for your set-up.
-    
-    The component library itself (`my-stuff.html` in this example) should
-    consist of an HTML file filled with `<Component>` definitions.
-    
-* `namespace="mylib"`
-    
-    The `namespace` attribute specifies the _namespace prefix_, which is
-    combined with a dash and the component name in order to create the
-    component's _full name_.
-    
-    **Example:** If `my-stuff.html` has a component defined like `<Component
-    name="MyThing">` imported with `namespace="mylib"`, then the resulting full
-    name would be `mylib-MyThing`, and we'd use the component like  
-    `<mylib-MyThing></mylib-MyThing>`.
-    
-* **Multiple libraries:** As we add more and more component libraries to a
-  project, we can simply add additional _Library_ definition tags into the
-  _Modulo_ script tag. If we accumulate too many _Library_ definition tags that
-  it becomes unmanageable to copy and paste them between HTML files, the
-  solution is simple: Go back to the same boilerplate you learned in Part 1 of
-  the tutorial, except point to a new file that in turn contains all your
-  libraries imported and set up as expected. In other words, the
-  `Modulo -src="/static/my-stuff.html"` can either point to a file
-  containing your components, or a file that contains _Library_ definition tags
-  that point in turn to files containing your components.
-* **Where to put it:** The Modulo tag can go anywhere in your HTML. For
-  neatness, consider putting them either within the `<head>` tag, or near the
-  `</body>` closing tag. After being built, it won't matter: The JS script tag
-  will be put before the `</body>`.
-
-However, there is a downside to splitting up your files: Each new file you
-create will require an additional request to load it. This means that each
-additional individual file you include in a page will cause the page to take a
-little longer to loader. So, if `-src=` causes it to load slower, how can we
-stay neat during development, but still have a fast site? This is where
-"building" comes into play.
-
-# Build
-
-> **Why build?** Let's start with a "thought experiment", where we fast forward
-> into the future. Imagine that as you create more and more components, you
-> begin splitting them up into more component libraries. Also, as mentioned
-> previously, perhaps you find some nice component libraries that others have
-> made that you want to use in your project. In the end, you might find
-> yourself with dozens of HTML files being loaded, scattered in different
-> directories.
-> 
-> In this situation you will have too many `<Library>` tags, meaning your page
-> may take a long time to start-up. As it's downloading all the different
-> files, the browser will be showing the ugly, unformatted text in the
-> mean-time. On slow connections, this could be end up being a frustrating
-> experience for users. This is why building to one file is useful.
-
-### Building: Packing it all up
-
-"Building" is a feature of Modulo where it packs up all the components,
-JavaScript, and CSS you have loaded on a particular page into single `.js` and
-`.css` files, respectively. This single file file, called a _build_, contains
-all the code from all your components (including CParts that were split off
-using `-src=`).
-
-These "builds" are fully independent: Once the "build" file is included using a
-`<script src="...">`, all your components on that page will work, without any
-need for including Modulo or your libraries specifically. In other words, this
-tag replaces all the boilerplate you have on your page, and you can remove all
-the importing-type code (e.g. `<script Modulo>`) from your HTML files,
-replacing it only with the single script tag. Not only that, it will also
-pre-compile JavaScript code, removing the need for "eval", and reducing file
-sizes. This causes the components to load much faster.
-
-Generally, developers create builds before "launching" their site to
-"production" (e.g. publishing their site for the world to see), since it
-results in the fastest possible loading time. Note that you should only attempt
-to edit your original, source files: Builds are only for releasing or
-publishing, but not for editing. Never directly edit builds; instead, create
-new ones.
-
-### Pre-rendering HTML for instant loading
-
-Even with built JavaScript code, you might notice that there is a "flicker"
-effect, where the page remains unstructured and unstyled until all your
-components finish rendering their _Templates_. Depending on how complicated
-your page is, this could be brief and forgivable, or could take a while and
-create a bad user experience. One option is to add a "Spinner" to your page,
-that is removed once things are loaded. Another option is to use pre-rendered
-HTML.
-
-Modulo can pre-render HTML as well, and output a brand new HTML file that can
-be published instead of your original one. A "pre-rendered HTML" file is a
-special, processed HTML file which basically "freezes" the result of loading
-the page for the first time. You can use this messy, processed HTML file as a
-drop-in replacement to your previous HTML page when launching, as it will
-already have JavaScript and CSS tags included for your build!
-
-To build a project, we will need to use the _Modulo Command Menu_. The
-_console_ is a feature of all web browsers. As a web developer you likely have
-used it: It's a panel, hidden by default, where JS, CSS, and other such error
-messages are displayed. While most JS frameworks require NPM-based tools to
-build, Modulo can be built right from your browser's console, simply clicking
-on the `build` commands in the `COMMAND` menu, that is visible in your browser
-developer tools console.
-
-Build files will look like: `modulo-build-xx4bz9v4.js`,
-`modulo-build-x9f2za71.css`. Note the so-called "hash" (e.g. “xx4bz9v4”): These
-unique IDs identify each JS and CSS file that is generated by Modulo. If you
-change something in your components, you will cause one (or both) of these
-hashes to change, if they end up affecting the component's behavior (`.js`) or
-it's appearance (`.css`).
-
-##### Try it now
-
-1.  Open up your HTML file in your browser (e.g. Firefox or Chrome/Chromium).
-Do not open your component library HTML files: Be sure to open the file that
-_is doing the importing_ and _using the components_, not the file(s) that
-contain the component definitions themselves.
-2.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
-`Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
-you can right-click with your mouse and select "Inspect", and then go to the
-_Console_ tab.
-3.  _Optional:_ Within the newly opened developer tools, navigate for a moment
-to the "Network" tab. Force refresh your browser. You should see a list of
-"requests" being sent, including one for each component library that needs
-loading. For example, if we named our component library
-"./static/my-component-lib.html", we'll see an additional request for this
-HTML file. If we had further split our files using "-src=", we'll see even more
-requests.
-4.  Do you see a Modulo logo (`%`), with the word `COMMANDS`? Click on
-`COMMANDS`, and possibly one more time (on Firefox), and you should see a
-command menu, containing commands like `build` and `test`. To build, simply
-click the "`build`" command.
-    
-    Note: Look in the upper-right hand of your browser. You might see a
-    warning, prompting you about "Allowing multiple downloads". You should
-    allow it, otherwise it will block the generated files from being
-    downloaded. If you see no warnings about this, then just continue to the
-    next step.
-    
-5.  Your browser should reload, and then offer to download an HTML, CSS, and JS
-file, or perhaps offer a way to save them. These are the "build" files, and
-contain the contents of all libraries that were loaded on this page, with
-underlying JavaScript pre-compiled for speed and security. Save them all
-together in some spot.
-6.  The HTML "build" is a copy of the HTML page you were working on, with two
-important differences:
-7.  Difference #1: It's been modified to include the built versions of the CSS
-and JS: A link tag to include the CSS file is inserted before the `</head>`,
-and a script tag inserted before the `</body>` tag to include the JS file.
-8.  Difference #2: It contains the page's _current_ state, e.g., the result of
-an initial render. This means that when that HTML page is loaded, it will be
-"prerendered", and thus appear to load much faster, and components will render
-correctly, even before the JavaScript finishes loading.
-9.  Now, open up your "build" file. If all went well, it should look and behave
-exactly as before, except load much faster.
-
-_Tip:_ If all went well after building, you should see a link to the command
-you just ran. Clicking on the link will refresh the page, causing it to build
-again. You can also just hit refresh (Ctrl+R or Command+R) to rebuild. Consider
-keeping this window open, or as another tab, and resuming work in another
-window. Then, to rebuild, simply switch back to this window, and either click
-the button or hit refresh!
-
-**Important: Don't edit your builds!** Built files are disposable. Don't edit
-the HTML, JS, or CSS files produced. Instead, continue working on your original
-"source" files, and then build again. The purpose of these new "built" files is
-to only share them when you are done with your website. These should only be
-used when "launching" your site. Your development should continue on the
-"source" files.
-
-This can easily trip up beginners: The build "freezes" the component library in
-time, and you'll have to run build again if you change anything. A common
-mistake is forgetting that you are editing the original `.html` file while
-using the built `.js` version, causing much confusion as to why your changes
-don't take effect!
-
--------
-
-## Part 1: Summary
-
-In this tutorial, we learned how to keep our components in a component library
-and then load that library into different HTML files. We finally wrapped up
-with trying Modulo's self-building feature.
-
-* `-src=` - A special attribute that allows content in Modulo to be loaded from
-  separate files, making it easier to manage as projects grow.
-* _Library_ - Allows grouping of Components into library files that can be
-  "siloed" under a certain component namespace or configuration.
-* _namespace_ - The prefix that replaces the default "x" and goes before the
-  name of a component to form the complete component name, e.g. namespace maps
-  joins with <Component name="India"> to form a <maps-India> component.
 * _build_ - Combining all your JS and CSS together into a single file that
   loads faster, and pre-render the HTML so there's no flicker.
 * _hash_ - These unique IDs identify each JS and CSS file that is generated by
   Modulo.
+* _automated build_ - Setting it up so it builds automatically whenever you
+  make a change
+
 
 ----
 
@@ -588,9 +464,4 @@ That's all for the *Building Apps with Modulo* tutorial!
 
 Continue perusing the full [Modulo Documentation](/docs/) to focus learning
 on a particular topic
-
-**DOCUMENTATION STUB NOTE:** This tutorial is incomplete. 🐛
-It's likely the tutorial will expand in the near future to cover more aspects of
-Modulo development. Keep on checking soon!
-
 
