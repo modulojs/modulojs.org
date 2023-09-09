@@ -50,6 +50,11 @@
             description: "Use '-store' to let components share state and trigger refreshes",
         },
         {
+            title: "Frontend: Adding CKeditor",
+            file: "/static/demos/advanced/ckeditor.html",
+            description: "Use '-src' to integrate a popular JavaScript rich text editor",
+        },
+        {
             title: "Custom CPart for APIs",
             file: "/static/demos/advanced/custom_cpart_for_api.html",
             description: "A typical use of custom CParts is to abstract away APIs.",
@@ -216,6 +221,7 @@
         {
             file: "/static/demos/eg/MarkdownPreview.html",
         },
+        /*
         {
             file: "/static/demos/eg/CKEditor.html",
             usage: `<x-CKEditor>
@@ -224,6 +230,7 @@
     <p>Example paragraph #2</p>
 </x-CKEditor>`,
         },
+        */
         {
             file: "/static/demos/eg/MemoryGame.html",
         },

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="CKEditor">
+    <!-- Using -src= can quickly embed classic JS libraries, such as CKEditor -->
+    <Script -src="https://cdn.ckeditor.com/ckeditor5/39.0.2/classic/ckeditor.js">
+        function updateCallback() {
+            if (!element.editor) { // Prevent double activating
+                ClassicEditor
+                    .create(element)
+                    .then(editor => {
+                        element.editor = editor; // Set editor on host element
+                    })
+                    .catch(error => console.error(error));
+            }
+        }
+    </Script>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js@0.0.63/src/Modulo.js"></script>
+<x-CKEditor>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Peacock.jpg/320px-Peacock.jpg" />
+    <p>Example paragraph #1</p>
+    <p>Example paragraph #2</p>
+</x-CKEditor>
