@@ -365,7 +365,7 @@ answer the questions below.
 </Style>
 <!--%%% PictureFrame %%%-->
 <x-PictureFrame>
-    <p><em>Caption:</em> The Image Too Big</p>
+    <p><em>Caption:</em> The Image TOO BIG</p>
     <img
         slot="pic"
         src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
@@ -977,15 +977,14 @@ skip this last section!
 
 Sometimes you want to have the full, precise control of the browser's
 collecting of built-in DOM methods, and you want to be able to directly modify
-the browser's DOM, or document structure, at certain spots in your component.
+the browser's DOM (document structure), at certain spots in your component.
 This is where writing your own directives comes into play.  All the directives
-we've used so far (binding, events, data props, etc), all involve custom
-JavaScript code that gets activated when certain elements appear on the
-document. Then, this code runs various direct DOM manipulation in order to do
-what's needed to make those directives work (e.g. attach events, or copy JSON
-values).
+built-in directives (state.bind, events, and data props), all are built using
+JS functions or methods that activate when certain attributes are found on the
+document. You can leverage the same system for your own to do similar direct
+DOM manipulation (e.g. attaching events or manually modifying its content).
 
-Examine the following code:
+For example, examine the following code:
 
 ```
 <div [script.ready]>
@@ -994,19 +993,14 @@ Examine the following code:
 ```
 
 Note how in the same format as `[state.bind]`, we wrote `[script.ready]`.
-This will invoke a function like the following:
+This will invoke the corresponding `readyMount` function when the element
+appears, and `readyUnmount` when it is removed from the page:
 
 ```javascript
 function readyMount({ el }) {
     console.log('The element is ready:', el);
     el.innerHTML = '<h1>Hello DOM world!</h1>';
 }
-```
-
-This will get called as soon as that HTML element appears on the screen. If we
-want something to run when it disappears, we use the opposite of `Unmount`:
-
-```javascript
 function readyUnmount({ el }) {
     console.log('The element is about to go away:', el);
 }
@@ -1055,9 +1049,16 @@ When you should do direct DOM manipulation with directives?
 
 ------
 
+## Part 4: Summary
 
 
-##### Key terms
+We learned about Shadow DOM and isolating CSS from children using slots. We
+learned about events, and how to attach various operations to click events.  We
+learned a little bit about attaching JavaScript-powered script tags to our
+components, and then activating functions via either events or directives.
+
+
+### Key terms
 
 * **slot** - A placeholder for content to be inserted when a component is used.
   Useful for writing components that "wrap around" other content.
@@ -1078,11 +1079,8 @@ When you should do direct DOM manipulation with directives?
   attached as events
 * **Directive** - A special type of HTML attribute that "hooks in"
   functionality to otherwise plain HTML elements. 
-    - In this section we looked at how this in turn activates JavaScript
-      functions that do direct changes to the DOM in order to make the effect
-      necessary.
     - @click (shortcut for [component.event]) - attach event listener to element
-    - [script.customDirective] - custom defined directives for accessing DOM API directly
+    - [script.dostuff] - custom defined directives for accessing DOM API directly
 
 -----
 
