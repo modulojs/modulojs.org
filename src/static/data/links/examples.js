@@ -232,6 +232,31 @@
         },
         */
         {
+            file: "/static/demos/eg/MirrorEditor.html",
+            usage: `
+<x-MirrorEditor 
+    style="
+        height: 200px;
+        background-color: white;
+        --outline-color: #888888EA;
+        --outline-width: 3px;
+        --text-color: #151515;
+    "
+    value="
+# Syntax
+**This** is a
+[Modulo](#modulo) 
+_Component_ 
+
+## Mirror
+Syntax highlighting
+in a **textarea**
+using a _mirror_
+element.
+"></x-MirrorEditor>
+        `,
+        },
+        {
             file: "/static/demos/eg/MemoryGame.html",
         },
         {
