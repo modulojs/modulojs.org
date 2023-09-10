@@ -25,8 +25,10 @@ better explanations, and future sections are missing content.* 🐛
 **Start with Ramping Up** - This is the **second Modulo tutorial**. This
 tutorial recommends you first complete most if not all of the first in sequence
 Modulo tutorial before you start this one: [Ramping Up With
-Modulo](/tutorial/ramping-up/). In general, the following are prerequisites for
-taking this tutorial:
+Modulo](/tutorial/ramping-up/).
+
+
+In addition to that, the following are prerequisites for taking this tutorial:
 
 * **Software:** A local development server (see right), a code editor
   (such as Geany, Notepad++, or VSCode)
@@ -349,58 +351,6 @@ edit. In that case, conventional usage is to start splitting off larger CParts
 into their own files, until the HTML library file itself is just tie-ing
 everything together.
 
-## Directory structure
-
-### Learning Tip
-
-* If you want a deep dive into recommended directory structures, keep on
-  reading.  Otherwise, skip over to the _TRY IT NOW_ section below.
-
-#### Refactor #1: Inititial structure
-
-*Used here, in Building Apps: Part 1*
-
-- For Component definitions:
-    - `/static/index.html` for the _Component_ "header" file (e.g., just top level definitions)
-- For Component Parts (CParts):
-    - Name all CParts based on a reasonable extension, e.g. for `MyComponentName`:
-    - `/static/components/MyComponentName.html` (for _Template_)
-    - `/static/components/MyComponentName.css` (for _Style_)
-    - `/static/components/MyComponentName.js` (for _Script_)
-    - `/static/components/MyComponentName.json` (for _StaticData_)
-
-
-#### Refactor #2: Grouped each component
-
-*Used with templates in Building Apps: Part 2*
-
-- A possible solution would be to add further layers of directories, such as
-  one to group each component
-- e.g.  `/components/Page/Page.html` `/components/Page/Page.css`,
-  `/components/MainForm/MainForm.html`, and `/components/MainForm/MainForm.js`,
-  etc
-
-
-#### Refactor #3: Grouping into libraries
-
-*Not used in tutorial.*
-
-- Splitting components:
-    - If you have dozens of components, you might want to start grouping them
-      together into "libraries". 
-    - In this case you might have files like:
-      `/components/layout/Page/Page.html`, `/components/layout/Page/Page.css`,
-      `/components/forms/MainForm/MainForm.html`, and
-      `/components/forms/MainForm/MainForm.js`, etc
-- Splitting "header" file as well:
-    - If your `index.html` is getting too big, you can start spliting it into
-      libraries as well, and importing them with `<Modulo -src=...>` style
-      imports within your top-level `/index.html` (or, `<Library -src=...>`,
-      covered in Part 2). 
-    - In the previous example you might have a file at the top level like
-      `/components/index.html`, which in turn brings in
-      `/components/layout/index.html`, `/components/forms/index.html`, etc
-
 ##### Try It Now
 
 
@@ -684,6 +634,8 @@ Component entirely:
         <div [script.editor]></div>
     </Template>
     <Script>
+        // We can bring in classes registered this way as such
+        const { ClassicEditor } = modulo.registry.utils;
         function editorMount({ el }) {
             ClassicEditor.create(el) // Etc, same as before
         }

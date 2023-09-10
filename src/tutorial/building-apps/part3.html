@@ -383,16 +383,22 @@ components that you integrate into another website, such as a backend MVC app.
     - You can put it in `/showcase.html` to make it easy to find.
     - You can even put it in your `/static/` directory to keep it a bit more
       "hidden", e.g.  `/static/showcase/index.html`
+
 2. In your showcase file, import your Modulo header like any other file.
+
 3. Then, to "use" this workflow, work on developing an assortment of components
-in isolation on this file. 
+in isolation on this file.
+
 4. When you are ready to integrate it with the other app, export the JS and CSS
-file, and add script tags to your template of your other app. 
+file, and add script tags to your template of your other app.
+
 5. Then, in the other app, be sure to include the necessary tags:
-    ```html
-    <link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
-    <script async src="./modulo-bundle.(some hash goes here).js">/script>
-    ```
+
+```html
+<link rel="stylesheet" href="./modulo-bundle.(some hash goes here).css" />
+<script async src="./modulo-bundle.(some hash goes here).js">/script>
+```
+
 6. Now, Modulo components can be used to "spice up" your otherwise simple HTML
 templated app!
 

@@ -5,9 +5,10 @@ tutorial: Part 4
 # Shadow & Slots
 
 This next section in the tutorial switches gears a bit, and revisits our
-`<Component>` and `<Style>` definitions. It's also text-heavy. If you are in a
-hurry, [feel free to skip down to events section](#events), and come back when
-you hit a wall with CSS or component design. However, if you want to know the
+`<Component>` and `<Style>` definitions. It's also not needed for a lot of
+users, so if you are in a hurry and feel your CSS is in a good spot, [feel free
+to skip down to events section](#events), and come back when you hit a wall
+with isolating CSS or good component design. However, if you want to know the
 CSS tools available and how to use component children, continue reading on.
 
 ## Putting children elements into slots
@@ -34,29 +35,16 @@ frame's empty slot.
 _Slots_ allow there to be "empty spots" in your HTML that proceed to get filled
 by arbitrary content supplied when your component is used. Adding a slot is as
 simple as including a `<slot></slot>` HTML element in your component's
-_Template_ definition.
+_Template_ definition. To fill up a _slot_ with HTML content, add the content
+between the opening and closing tags of your HTML element.
 
-Here's an example that "wraps" a slot inside a div with a CSS class of
-"fancy-frame":
+Here's an example of both, has a slot inside a div:
 
 ```html
 <div class="fancy-frame">
     <slot></slot>
 </div>
-```
-
-> **Ergonomics** - When designing components, and making decisions like using
-> "Props" vs "slots", keep in mind who is going to use the component. If it's
-> yourself, what is easy for you? If months from now, after you forget
-> everything, what code would you be able to understand more simpily? If it's
-> a team member, what is easiest for them?  If it's an open source project,
-> what would people who have used similar projects expect?
-
-To fill up a _slot_ with HTML content, add the content between the opening and
-closing tags of your HTML element. Here's an example that might go with the
-above example:
-
-```html
+<!-- USAGE: -->
 <x-PictureFrame>
     <p>My cat:</p>
     <img src="./cat.jpg" />
@@ -64,8 +52,9 @@ above example:
 ```
 
 
-When the component is rendered, it will end up with everything combined like:
 
+When the component is rendered on the page, the slot gets filled with the img
+tag and a p tag:
 
 ```html
 <x-PictureFrame>
@@ -79,25 +68,35 @@ When the component is rendered, it will end up with everything combined like:
 ```
 
 
+> **Ergonomics** - When designing components, and making decisions like using
+> "Props" vs "slots", keep in mind who is going to use the component. If it's
+> yourself, what is easy for you? If months from now, after you forget
+> everything, what code would you be able to understand more simpily? If it's
+> a team member, what is easiest for them?  If it's an open source project,
+> what would people who have used similar projects expect?
+
 ### Why not just use _Props_?
 
-Some might point out that we could do the same thing with _Props_. For example,
-the following could replace the above, and behave exactly the same:
+Sometimes _Props_ and _slots_ are both options. For example, rewriting the
+above:
 
 ```html
 <div class="fancy-frame">
     {{ props.content|safe }}
 </div>
-<!-- ... -->
+<!-- USAGE: -->
 <x-PictureFrame content="
     <p>My cat:</p>
     <img src='./cat.jpg' />
 "></x-PictureFrame>
 ```
 
-This could be a good solution for some things. Sometimes it's easier just to
-put everythning in props. However, sometimes it's more ergonomic or natural to
-put content "within" an element, and thus the slots mechanic could be useful.
+This could be a good solution for some things. However, in some cases, CSS will
+behave differently (see next section on *Shadow DOM*), and in other cases, it
+simply saves time for future users of your components (including yourself!) 
+to put content "within" an element, since it makes it behave and "feel" more
+like other HTML elements, and you don't have to worry about syntax issues like
+nesting quotes.
 
 ### Slot features
 
@@ -106,22 +105,115 @@ slots. Modulo's behavior is intended to mirror the HTML spec as closely as
 possibly:
 
 - **Slots** - placeholder elements like `<slot></slot>`
-- **Filling slots** - slots get filled by moving children of the element into
-  the slot placeholder element, when the element is used
-- **Multiple slots** / **named slots** - slots can get a name attribute
-  (following HTML spec): `<slot name="artbody"></slot>`
-- **Filling named slots** - To fill named slots, add a slot attribute to
-  children elements when using the component, e.g. `<div slot="artbody">`
-- **Filling named slots multiple times** - If its the first time filling a
-  slot, the default (existing content) will be removed, but after that, it will
-  just append, so children will accumulate into that slot 
-- **Defaults** - Content inside of the slot will become the default content of
-  that slot, if no elements are included, e.g.: 
-  `<slot>Content here is a default</slot>`
-
+- **Filling slots** - when the element renders, it moves its
+  *original children* into its slots
+- **Defaults** - Specify default content inside of slot e.g.:
+  `<slot><em>None</em></slot>`
+- **Multiple slots** / **named slots** - slots can get a name attribute,
+  e.g. following HTML spec: `<slot name="artbody"></slot>`
+- **Filling named slots** - Slots are filled with `slot` attribute in children,
+  e.g. following HTML spec: `<div slot="artbody">...</div>`
+- **Slots accumulate** - They do not "replace", so you can do `slot=` multiple
+  times
 
 
 ##### Try it now
+
+Examine the following two examples of slots and then follow the **local file
+challenge** below.
+
+###### Example #1: Slots and Props
+
+```modulo_demo_example
+<Props
+    image
+></Props>
+<Template>
+    <div class="fancy-frame">
+        <img src="{{ props.image }}" />
+        <slot><em>No caption provided.</em></slot>
+    </div>
+</Template>
+<Style>
+    :host {
+        text-align: center;
+    }
+    img {
+        height: 50px;
+        width: 50px;
+    }
+    .fancy-frame {
+        display: inline-block;
+        border: 10px inset salmon;
+        padding: 10px;
+        margin: 10px;
+        width: 100px;
+        background: pink;
+    }
+</Style>
+<!--%%% PictureFrame %%%-->
+<x-PictureFrame image="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg">
+    <p><em>Caption:</em> The Return of the Hippo</p>
+</x-PictureFrame>
+```
+
+- *Hint:* To better examine the above sample code, try flipping to "USAGE"
+  editing mode (go to MENU button above RUN, then toggle EDIT USAGE). Do you
+  see the caption is the "content" of the tag? What happens when you don't
+  specify any content (i.e. what's the "default")?
+
+###### Example #2: Named Slots
+
+
+```modulo_demo_example
+<Props
+    image
+></Props>
+<Template>
+    <div class="fancy-frame">
+        <slot name="pic">
+            <em>No Image Provided</em>
+        </slot>
+        <slot><em>No caption provided.</em></slot>
+    </div>
+</Template>
+<Style>
+    :host {
+        text-align: center;
+    }
+    .fancy-frame {
+        display: inline-block;
+        border: 10px inset salmon;
+        padding: 10px;
+        margin: 10px;
+        width: 100px;
+        background: pink;
+    }
+</Style>
+<!--%%% PictureFrame %%%-->
+<x-PictureFrame>
+    <p><em>Caption:</em> The Return of the Hippo</p>
+    <img
+        slot="pic"
+        style="width: 50px; height: 50px"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
+    />
+</x-PictureFrame>
+```
+
+
+- *Hint:* To better examine the above sample code, try flipping to "USAGE"
+  editing mode (go to MENU button above RUN, then toggle EDIT USAGE). Do you
+  see how there are multiple slots in use this time? How did we specify a slot
+  for the `img`?
+
+- *Bonus Question:* Why is width and height "hard-coded" into a `style=`
+  attribute in this second example? 
+    - CSS in the Component _does not_ affect elements in the slots. The very
+      next section of this tutorial is on _Shadow DOM_, which will explain why.
+
+##### Try it now
+
 
 1.  **Local file challenge:** Edit one of your components to have a slot by
 adding an empty `<slot></slot>` placeholder element in your HTML.
@@ -146,7 +238,7 @@ the first part, `<Style>` components "isolate" themselves by "prefixing" all
 CSS with the component name. For an example, examine the following two snippets
 of code:
 
-```
+```css
 p { font-size: 1.3rem; }
 em.special { color: blue; }
 /* ..."prefixing" causes it to turn into... */
@@ -157,25 +249,26 @@ x-MyComponent em.special { color: blue; }
 This ensures that the `p` tags selected will only be contained within
 `x-MyComponent`. This prevents CSS from "leaking" into other components, and
 makes websites much easier to maintain, without causing CSS classes to get
-messy and convoluted.
+messy and convoluted.  This brings us to the default mode for _Component_
+definitions in Modulo: "regular" mode.
 
-However, there is still a lot of potential for leakage. For example, external,
-global styles can "leak" *into* the component. Similarly, the component's
-styles can "leak" *into* it's children, e.g. children created with _slots_ or
-_Props_.
-
-This is one of the uses of Component render modes, and their accompanying CSS
-isolation modes.  In general, it's not that often you need to specify anything
+In "regular" mode, it is the default. Component will render to the screen, CSS
+will be prefixed as described above. This mode is often what web designers
+expect when writing CSS: They want it to be "silo'ed", but not _too_ strictly.
+In general, it's not that often you need to specify anything
 other than the default rendering mode, but when you do need to use them, they
-can be super handy in fixing CSS bugs, so let's quickly review them now.
+can be super handy in fixing CSS bugs, so let's review them now.
 
 
+## Beyond "regular"
 
-### mode="regular"
+There is still a lot of potential for leakage. For example, external, global
+styles can "leak" *into* the component. Similarly, the component's styles can
+"leak" *into* it's children, e.g. children created with _slots_ or _Props_.
 
-This is the default. Component will render to the screen, CSS will be prefixed
-as described above.
-
+This is one of the uses of _Component_ render modes, and their accompanying
+_Style_ isolation modes: You can isolate your CSS with one of 2 techniques:
+*class*-based ("vanish") and *shadow*-based isolation.
 
 ### mode="vanish"
 
@@ -195,7 +288,7 @@ again.
 
 Second, class-based isolation will rewrite your CSS like the following:
 
-```
+```css
 div > h1 { font-size: 2.3rem; }
 a.special:hover { color: orange; }
 /* ..."vanish + class isolation" causes it to turn into... */
@@ -205,7 +298,7 @@ a.special:hover { color: orange; }
 
 This CSS will *not* affect children, but the CSS will "stop" at the immediately
 rendered template. Thus, "vanish" and class-based isolation isolates in one
-direction: Parent to children.  Another big difference is since Mode="vanish"
+direction: Parent to children.  Another big difference is since mode="vanish"
 removes the Component `:host` selector changes behavior. Instead, it will match
 all children, so you can still use it for CSS variables.
 
@@ -235,20 +328,80 @@ need to prefix, so CSS will be inserted as is.
 
 
 
-
-
-
-
-
 ##### Try it now
 
-**Local file challenge:** Try each of the different component modes
-and CSS isolation features on your local file.
+1. Examine the following demo of a "Shadow DOM" slot-based component, and then
+answer the questions below.
 
-##### Comprehension Question
+```modulo_demo_example
+<Props
+    image
+></Props>
+<Template>
+    <div class="fancy-frame">
+        <slot name="pic">
+            <em>No Image Provided</em>
+        </slot>
+        <slot><em>No caption provided.</em></slot>
+    </div>
+</Template>
+<Style>
+    :host {
+        text-align: center;
+    }
+    .fancy-frame {
+        display: inline-block;
+        border: 10px inset salmon;
+        padding: 10px;
+        margin: 10px;
+        width: 100px;
+        background: pink;
+    }
+    slot:first-child { /* slots can be styled like any HTML element */
+        overflow: hidden;
+        max-height: 50px;
+        display: block;
+    }
+</Style>
+<!--%%% PictureFrame %%%-->
+<x-PictureFrame>
+    <p><em>Caption:</em> The Image Too Big</p>
+    <img
+        slot="pic"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
+    />
+</x-PictureFrame>
+```
 
-Are there any CSS bugs you can think of that isolating a part of the page
-would help out your development?
+2. **Local file challenge:** Try each of the different component modes and CSS
+isolation features on your local file.
+
+
+##### Comprehension Questions
+
+
+- Why does the width and height in the CSS not apply to the img?
+    - **ANSWER:** CSS in the Component _does not_ affect elements in the slots.
+    - **Explanation:** The component is using "shadow DOM" to make it ONLY
+      apply to stuff within the component, but not in it's slots. You can
+      confirm this by going into "Inspect", and seeing how the `img` tag is
+      indeed outside of the `shadowRoot`. By default, when a component is in
+      shadow mode, it will only apply it's CSS to it's "own" elements (e.g. not
+      slotted).
+
+- How is this useful?
+    - **ANSWER:** You can write CSS that only affects what's in the component,
+      making it better isolated
+    - **Explanation:** This is another important difference between _slots_ and
+      using HTML strings (e.g. via Props): Slots are easier to isolate with
+      CSS.
+
+- How does the default isolation mode (*prefix* isolation) affect this?
+    - **ANSWER:** The default mode _will_ apply
+      it's CSS to slot content! 
+    - **Explanation:** Only in *shadow* (what's used by the modulo website) and
+      *class* (vanish) isolation modes, it will isolate. 
+
 
 ---------
 
@@ -375,10 +528,8 @@ Why do you think the component needs to "rerender"?
 
 Many methods that we want to activate upon an event require extra information
 about the event to be useful. This extra data is added with a "payload="
-attribute. 
-
-It's fastest to see with an example, in this case using the `Array.fill`
-method, which requires use of a payload:
+attribute.  For example, this button will activate the `Array.fill` method with
+a payload of `"X"``:
 
 ```
 <button
@@ -388,28 +539,17 @@ method, which requires use of a payload:
 ```
 
 This causes the "brands" Array to get each item replaced with the String `"X"`.
+Payloads can also have data props, so you can use different values, e.g. if you
+wanted a number type, you'd write `payload:=0`
 
-Payloads can also have data props, so you can use different values:
-
-```
-<button
-    @click:=state.counts.fill
-    payload:=0
->Reset all counts to 0 (starting count)</button>
-```
-
-In this example, the "counts" Array will get each item replaced with the Number
-`0`.
+*Let's practice events and payload by building up a shopping list app, which
+will use several Array methods, and many click events.*
 
 
-In the next "Try It Nows", you'll get a tour of the Array methods, and build up
-a little shopping list app using several Arrays and many click events.
+##### Try it now
 
-
-##### Try it now 
-
-1. Examine the following example, that changes our shopping list to a perhaps
-more unhealthy version:
+1. Examine the following example, that transforms our shopping list to
+something a bit less "balanced":
 
 ```modulo_demo
 <Template>
@@ -446,8 +586,8 @@ more unhealthy version:
 ></State>
 ```
 
-3. Now, we're we'll make it more advanced. We'll have a list of different items
-that can be added, and we'll generate the payloads from that:
+3. Examine the following code. It's more advanced. It has a list of different
+items, which it uses to generate the different buttons with different items:
 
 
 ```modulo_demo
@@ -469,9 +609,10 @@ that can be added, and we'll generate the payloads from that:
 ```
 
 
-4. Finally, we'll re-apply the same technique, but this time to make an HTML
-input for adding "item favorites", where we can write in a custom favorite and
-see it appear in the favorite list, and then use the favorite list to .
+4. Examine this next code. In this iteration, the same technique is reapplied
+to adding to this "item favorites" list. You can think of it as two shopping
+lists: The list itself and favorites, where the user adds to favorites, and
+favorites adds to the shopping list.
 
 
 ```modulo_demo
@@ -506,23 +647,23 @@ see it appear in the favorite list, and then use the favorite list to .
 
 ##### Usability
 
+This next iteration on the code will be bigger.
+
+
 This section mentioned "ergonomics" earlier, though from a coder or designer
 perspective. Perhaps it's very obvious, but the more important ergonomics is
 that the page itself is usable, and users (e.g. non-coders, website visitors,
 etc using the page) can understand how to use the app from a user perspective.
 
-For this last set of tweaks, we'll focus on improved usability, while learning
-an assortment of useful HTML and Modulo features. First, we'll use a feature of
-HTML: the `placeholder="Add to favorites"` attribute, that lets us add a
-"default placeholder" in HTML.  Then, we'll add the
-`{% empty %}` tag (a feature of for loops) to our `{% for %}` loop. This lets
-us add a more user-friendly message when we have an empty list, so we can start
-with an empty list.
-
-Finally we'll add two if-statements: One to prevent empty text from getting
-added, and the other with a helpful warning if someone is trying to add
-duplicate text. For simplicity, we'll just use the browser's built-in tooltip
-with a `title="..."` attribute on an HTML abbreviation tag (`abbr`).
+For this last set of tweaks, we'll learn HTML and Modulo features that make it
+easier to write more pleasant applications.  First, we'll use a feature of
+HTML: The `placeholder="Add to favorites"` attribute, that lets us add a
+"default placeholder" in HTML.  Then, we'll use the Modulo template tag `{%
+empty %}` to our `{% for %}` loop for a user-friendly message when we have an
+empty list.  Finally, we'll add two if-statements: One to stop empty text, and
+the to warn users trying to add duplicates. For simplicity, we'll just use the
+browser's built-in tooltip with a `title="..."` attribute on an HTML
+abbreviation tag (`abbr`).
 
 Examine the following final code transformation:
 
@@ -553,7 +694,7 @@ Examine the following final code transformation:
                 payload="{{ state.text }}"
             >+</button>
         {% else %}
-            <abbr title="{{ state.text }} already exists in favorites.">
+            <abbr title="{{ state.text }} already in favorites.">
                 [ ! ]
             </abbr>
         {% endif %}
@@ -947,11 +1088,15 @@ When you should do direct DOM manipulation with directives?
 
 #### Next step
 
-That's all for the *Ramping Up with Modulo tutorial*!
+That's all for the *Ramping Up with Modulo tutorial*!  However, that's far from
+all for Modulo in general.  Only some of Modulo's features have been covered by
+this tutorial, but it's merely the first in a series.
 
-1. Continue the Modulo tutorial series with the (*still incomplete*) [Building
-Apps with Modulo](/tutorial/building-apps/). That picks up where this leaves
-off, and is the best next thing to learn!
+*What's next for you?*
+
+
+1. [👷 🏗️ 📦  **Building Apps with Modulo** 👷 🏗️ 📦 ](/tutorial/building-apps/) -
+Continue the tutorial series and build a something bigger!
 2. Continue perusing the full [Modulo Documentation](/docs/) to focus learning
 on a particular topic
 

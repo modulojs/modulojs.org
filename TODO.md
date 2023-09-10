@@ -1,9 +1,8 @@
 Tasks
 -------------
-- Flesh out: Building Apps Tutorial
-    1. Part 1: Sources
-    2. Part 2: Going Big
-    3. Part 3: Building and Integrating
+- 0.0.64:
+    - Silence -name'd templates (or marked as primary:=true)
+    - innerDOM
 - Quick pages flat structure + config.js + site.css
 
 
