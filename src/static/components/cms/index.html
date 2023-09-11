@@ -87,7 +87,7 @@
                 </div>
                 {% if state.show %}
                     <ul>
-                        {% for item in props.toc %}
+                        {% for item in state.toc %}
                             {% if item.level lt 4 %}
                                 <li style="--level: {{ item.level }}">
                                       <a href="#{{ item.id }}">{{ item.title|safe }}</a>
@@ -100,9 +100,15 @@
         </nav>
     </Template>
     <State
+        toc:=[]
         sticky:=false
         show:=false
     ></State>
+    <Script>
+        function prepareCallback() {
+            state.toc = JSON.parse(props.toc);
+        }
+    </Script>
     <Style>
         :host {
             position: relative;

@@ -9,7 +9,7 @@
     >
         {% if page.toc|length gt 2 %}
             {# only show if 3 or more entries #}
-            <cms-MarkdownToC toc:='{{ page.toc|json }}'></cms-MarkdownToC>
+            <cms-MarkdownToC toc='{{ page.toc|json }}'></cms-MarkdownToC>
         {% endif %}
 
         <div class="markdown-body">
@@ -39,7 +39,7 @@
     >
         {% if page.toc|length gt 2 %}
             {# only show if 3 or more entries #}
-            <cms-MarkdownToC toc:='{{ page.toc|json }}'></cms-MarkdownToC>
+            <cms-MarkdownToC toc='{{ page.toc|json }}'></cms-MarkdownToC>
         {% endif %}
 
         <div class="markdown-body">
