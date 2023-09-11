@@ -80,13 +80,16 @@ explained later in this document.
 <!-- The data below was used to render the template above -->
 <State
     count:=42
-    articles:='[
-      {"headline": "Modulo released!",
-       "tease": "The most exciting news of the century."},
-      {"headline": "Can JS be fun again?"},
-      {"headline": "MTL considered harmful",
-       "tease": "Why constructing JS is risky business."}
-    ]'
+    articles:=[]
+    articles.0:={}
+    articles.1:={}
+    articles.2:={}
+    articles.0.headline="Modulo released"
+    articles.1.headline="Modulo released"
+    articles.2.headline="Modulo released"
+    articles.0.tease="The most exciting news of the century."
+    articles.1.tease="Can JS be fun again?"
+    articles.2.tease="Why constructing JS is risky business."
 ></State>
 
 <Script>

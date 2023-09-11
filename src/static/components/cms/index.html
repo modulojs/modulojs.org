@@ -37,6 +37,19 @@
         html = html.replace(/&amp;nbsp;/gi, '&nbsp;');
         html = html.replace(/&amp;apos;/gi, '&apos;');
         data.body = Object.assign(String(html), { safe: true });
+
+        // construct  the table of contents
+        const toc = [];
+        for (const [ match, level, attrs, title ] of data.body.matchAll(/<h([1-6])\s*([^>]*)>([^<]+)<.h[1-6]>/gi)) {
+            let id = null;
+            if (attrs && attrs.includes("id")) {
+                id = attrs.split('id="').pop().split('"').shift();
+            }
+            toc.push({ match, level: Number(level || 0), attrs, title, id });
+        }
+
+        // attach to data obj
+        data.toc = toc;
         return data;
     }
     modulo.register('util', getMarkdownData);
@@ -52,7 +65,89 @@
             // Remove any "script type=md" prefixes
             originalHTML = originalHTML.replace(/^<scri.t(.type=.?md.?)?>/i, '');
             originalHTML = originalHTML.replace(/&gt;/gi, '>').replace(/&lt;/gi, '<');
-            return modulo.registry.utils.getMarkdownData(originalHTML);
+            const data = modulo.registry.utils.getMarkdownData(originalHTML);
+            return data;
         }
     </Script>
+</Component>
+
+
+<!-- Togglable Markdown TOc-->
+<Component namespace="cms" name="MarkdownToC">
+    <Props
+        toc
+    ></Props>
+    <Template>
+        <nav class="{{ state.sticky|yesno:"sticky,regular" }}">
+            <div> </div>
+            <div>
+                <div style="text-align: right">
+                    <label>[ <input [state.bind] name="show" type="checkbox"> Table of Contents ]</label>
+                    <label title="Stick to upper right">[ <span alt="upper right arrow">↗</span> <input [state.bind] name="sticky" type="checkbox"> ]</label>
+                </div>
+                {% if state.show %}
+                    <ul>
+                        {% for item in props.toc %}
+                            {% if item.level lt 4 %}
+                                <li style="--level: {{ item.level }}">
+                                      <a href="#{{ item.id }}">{{ item.title|safe }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+    </Template>
+    <State
+        sticky:=false
+        show:=false
+    ></State>
+    <Style>
+        :host {
+            position: relative;
+            display: block;
+            z-index: 100;
+            width: 100%;
+        }
+
+        nav {
+            position: absolute;
+            display: grid;
+            right: 0;
+            top: 0;
+            grid-template-columns: 1fr auto;
+        }
+
+        nav.sticky {
+            position: fixed;
+            z-index: 100;
+        }
+        ul {
+            background: white;
+            padding: 10px;
+            border: 1px solid black;
+        }
+        li {
+            margin-left: calc(30px * var(--level));
+        }
+        a {
+            grid-column: span 6;
+            font-size: calc(1.0rem - var(--level) * 0.02rem);
+            font-weight: calc(800  - var(--level)  * 100);
+            color: var(--color-fg-semidark);
+        }
+
+
+        label {
+            background: #ddd;
+            font-size: 0.8rem;
+            padding: 0;
+            font-weight: bold;
+        }
+        label:hover {
+            opacity: 1;
+        }
+
+    </Style>
 </Component>

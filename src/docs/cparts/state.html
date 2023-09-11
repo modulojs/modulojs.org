@@ -19,6 +19,21 @@ from a "parent" component to a "child" components within the parent by passing
 it via a _Props_ attribute. In this case, the data should be considered
 read-only to the child component, like any other _Props_ data.
 
+## Example
+
+See below for a quick example, showing off an example of each of the 6 types of data:
+
+```
+<State
+    color="red"                   (String)
+    count:=1                      (Number)
+    loading:=false                (Boolean)
+    company:=null                 (Null)
+    items:=&apos;[ "abc", "def" ]&apos;     (Array)
+    obj:=&apos;{ "a": "b", "c": "d" }&apos; (Object)
+></State>
+```
+
 # Definition
 
 State is traditionally included in Component definitions below the _Template_
@@ -44,33 +59,12 @@ Two State variables specified, of type String and Number:
 
 ## Example 2
 
-Many State variables of different types:
-
-```
-<State
-    color="blue"      (String)
-    count:=1          (Number)
-    loading:=false    (Boolean)
-    speed:=null       (null value)
-    items:=&apos;[    (JSON Array)
-        "abc",
-        "def"
-    ]&apos;
-    obj:=&apos;{      (JSON Object)
-        "a": "b",
-        "c": "d"
-    }&apos;
-></State>
-```
-
-## Example 3
-
 Building up complicated JSON data with "." syntax:
 
 ```
 <State
     user:={}
-    user.name:=&apos;"gigasquid"&apos;
+    user.name="gigasquid"
     user.uid:=1313
     user.address:={}
     user.address.billable:=null
@@ -80,8 +74,9 @@ Building up complicated JSON data with "." syntax:
 
 
 Note that all "state variables" _must_ have an initial value. It's okay to make
-the initial value be `null` (as in the "speed" example above), or other some
-placeholder that will later be replaced.
+the initial value be `null` (as in the "billable" example above), or other some
+placeholder that will later be replaced. Undefined state variables are treated
+as errors.
 
 
 # Stores
@@ -169,6 +164,55 @@ State provides a single directive:
   variable ever changes, and if a user edits the input triggering a `"keyup"`
   or `"change"` event, the state variable will be updated (along with,
   typically, a re-render of the component).
+
+# Syntax Examples
+
+Examine below for how two different syntaxes can be used to construct data:
+Either the JSON style all in one go, or the somewhat more verbose (but perhapse
+easier to maintain) dataProp style:
+
+
+```modulo_demo
+<Template>
+    {% if state_a|json is state_b|json %}
+        <strong style="color: green">MATCH</strong>
+    {% else %}
+        <strong style="color: red">NOT MATCH</strong>
+        <pre>{{ state_a|json }}</pre>
+        <pre>{{ state_b|json }}</pre>
+    {% endif %}
+</Template>
+
+<State
+    -name="state_a"
+    count:=42
+    stuff:=null
+    articles:=[]
+    articles.0:={}
+    articles.1:={}
+    articles.2:={}
+    articles.0.headline="Modulo released!"
+    articles.1.headline="Can JS be fun again?"
+    articles.2.headline="MTL considered harmful"
+    articles.0.tease="The most exciting news of the century."
+    articles.2.tease="Why constructing JS is risky business."
+></State>
+
+<State
+    -name="state_b"
+    count:=42
+    stuff:=null
+    articles:='[
+      {"headline": "Modulo released!",
+       "tease": "The most exciting news of the century."},
+      {"headline": "Can JS be fun again?"},
+      {"headline": "MTL considered harmful",
+       "tease": "Why constructing JS is risky business."}
+    ]'
+></State>
+
+```
+
 
 # Binding Examples
 
@@ -289,6 +333,34 @@ State provides a single directive:
 ```
 
 
+### Example #3: Specifying events
+
+```modulo_demo
+<Template>
+    <p>Default (="change"):</p>
+    <input [state.bind]
+        name="c" type="range"
+        min="1" max="10" step="1" />
+    <p>Smooth (="input"):</p>
+    <input [state.bind]="input"
+        name="c" type="range"
+        min="1" max="10" step="1" />
+    <tt style="{% if state.c gt 7 %}color: green{% endif %}">
+        {{ state.c }}
+    </tt>
+</Template>
+<State
+    c:=5
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 60px 60px;
+    }
+</Style>
+```
+
+
 # Store Examples
 
 
@@ -299,7 +371,11 @@ State provides a single directive:
 <Template>
     <input [state.bind] name="a" />
     <input [state.bind] name="b" />
-    <input [state.bind] name="c" type="range" min="1" max="10" step="1" />
+    <input [state.bind] name="c" type="range"
+                        min="1" max="10" step="1" />
+    <tt style="{% if state.c gt 7 %}color: green{% endif %}">
+        {{ state.c }}
+    </tt>
 </Template>
 <State
     -store="my_global_info"
@@ -310,7 +386,7 @@ State provides a single directive:
 <Style>
     :host {
         display: grid;
-        grid-template-columns: 60px 60px 60px;
+        grid-template-columns: 60px 60px 60px 20px;
     }
 </Style>
 
@@ -325,7 +401,7 @@ State provides a single directive:
 ```
 
 
-### Example #2: Chat with some shared state and bound buttons
+### Example #2: Multiple States and bound buttons
 
 Here we have an incomplete "chat" component with two State CParts. This one
 shares state between instances of it. Note that "msg" is not shared (neither is

@@ -128,13 +128,13 @@
             file: "/static/demos/eg/GitHubAPI.html",
         },
         {
-            file: "/static/demos/eg/BindingSliders.html",
-        },
-        {
             file: "/static/demos/eg/ColorSelector.html",
         },
         {
             file: "/static/demos/eg/GradientPicker.html",
+        },
+        {
+            file: "/static/demos/eg/BindingSliders.html",
         },
         {
             file: "/static/demos/eg/TextStyler.html",

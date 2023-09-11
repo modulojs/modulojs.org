@@ -7,6 +7,11 @@
         navbreadcrumb="Tutorial - {{ page.tutorial }}"
         navdocs=y
     >
+        {% if page.toc|length gt 2 %}
+            {# only show if 3 or more entries #}
+            <cms-MarkdownToC toc:='{{ page.toc|json }}'></cms-MarkdownToC>
+        {% endif %}
+
         <div class="markdown-body">
             {{ page.body }}
         </div>
@@ -32,6 +37,11 @@
         navbreadcrumb="{{ page.title }}"
         navdocs=y
     >
+        {% if page.toc|length gt 2 %}
+            {# only show if 3 or more entries #}
+            <cms-MarkdownToC toc:='{{ page.toc|json }}'></cms-MarkdownToC>
+        {% endif %}
+
         <div class="markdown-body">
             {{ page.body }}
         </div>

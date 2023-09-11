@@ -30,7 +30,34 @@ into the HTML.
 of the Templating CPart.](/docs/templating/index.html)
 
 
-## Usage example
+# Example Usage
+
+## Example #1: Simple template
+
+```modulo_demo
+<Template>
+    {# Code in this format is a comment #}
+
+    {# Use state variables such as "state.count" as such #}
+    <p>The count is: <em>{{ state.count }}</em></p>
+
+    {# Using a |filter we can modfiy data on the fly #}
+    <p>The next count is: <em>{{ state.count|add:1 }}</em></p>
+
+    {# Using a "template tag" we check value #}
+    {% if state.count gt 9 %}
+        <p>The count has reached 10!</p>
+    {% endif %}
+</Template>
+
+<State
+    count:=42
+></State>
+```
+
+
+
+## Example #3: Complex template
 
 
 ```modulo_demo
@@ -57,6 +84,100 @@ of the Templating CPart.](/docs/templating/index.html)
       {"headline": "MTL considered harmful",
        "tease": "Why constructing JS is risky business."}
     ]'
+></State>
+```
+
+
+# Examples: Multiple
+
+
+## Example #1: Multiple templates with include
+
+Note that in a full example, you might consider loading all or some Templates
+using a `-src=` attribute, so you can edit the HTML files separately.
+
+Also note that in mutli-template components, one should have no name (or have `active:=true`).
+
+```modulo_demo
+<Template -name="header">
+    <p><strong>{{ state.title }}</strong></p>
+</Template>
+
+<Template -name="body">
+    {% for para in state.paras %}
+        <p>{{ para }}</p>
+    {% endfor %}
+</Template>
+
+<Template>
+  <div class="container">
+    <section>
+      <article>
+        <div>
+            {% include header %}
+        </div>
+        <main>
+            {% include body %}
+        </main>
+      <article>
+    </section>
+  </div>
+</Template>
+
+<State
+    title="Multi-Template World"
+    paras:='[ "A b c", "1 2 3", "Do re mi", "Togeprrrrri" ]'
+></State>
+
+<Style>
+  .container {
+    border: 1px solid gray;
+    margin: 5%;
+    padding: 5%;
+    background: white;
+    box-shadow: 5px 5px 5px #00000033;
+  }
+  section, article, main, div, p {
+    margin: 1%;
+    padding: 1%;
+    box-shadow: 0 0 2px #ff000033;
+  }
+</Style>
+```
+
+
+## Example #2: Multiple templates, chosen with slider
+
+```modulo_demo
+<Template -name="template_a">
+    <h1>First template</h1>
+    <p>AAA</p>
+</Template>
+
+<Template -name="template_b">
+    <h1>The second include</h1>
+    <p>BBB</p>
+</Template>
+
+<Template -name="template_c">
+    <h1>Final Include</h1>
+    <p>CCC</p>
+</Template>
+
+<Template>
+  <input [state.bind] name="val"
+      type="range" min="1" max="3" step="1" />
+  {% if state.val is 1 %}
+    {% include template_a %}
+  {% elif state.val is 2 %}
+    {% include template_b %}
+  {% else %}
+    {% include template_c %}
+  {% endif %}
+</Template>
+
+<State
+    val:=1
 ></State>
 ```
 

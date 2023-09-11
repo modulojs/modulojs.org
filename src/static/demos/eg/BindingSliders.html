@@ -1,6 +1,11 @@
 <Template>
-    <input [state.bind] name="width" type="range" min="1" max="130" />
-    <input [state.bind] name="height" type="range" min="1" max="130" />
+    <!-- Using [state.bind]="input"
+         we can get continuously activated
+         binding for range and others -->
+    <input [state.bind]="input" name="width"
+            type="range" min="1" max="130" />
+    <input [state.bind]="input" name="height"
+            type="range" min="1" max="130" />
     <div style="
         width: {{ state.width }}px;
         height: {{ state.height }}px;
@@ -20,7 +25,7 @@
         margin: 20px;
     }
     div {
-        background: black;
+        background: #5D655E;
         text-align: center;
     }
     p {
