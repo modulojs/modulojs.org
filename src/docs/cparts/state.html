@@ -12,11 +12,21 @@ API, or data that represents UI flow changes, such as the visibility of a
 modal. For more discussion of State, see 
 [Ramping Up with Modulo - Part 2](/tutorial/ramping-up/part2.html).
 
-By default (that is, with no `-store` attribute), state data is unique to every component instance, and components can never directly access sibling or parent data. It is possible to indirectly reference it, however, by passing state data from a "parent" component to a "child" components within the parent by passing it via a _Props_ attribute. In this case, the data should be considered read-only to the child component, like any other _Props_ data.
+By default (that is, with no `-store` attribute), state data is unique to every
+component instance, and components can never directly access sibling or parent
+data. It is possible to indirectly reference it, however, by passing state data
+from a "parent" component to a "child" components within the parent by passing
+it via a _Props_ attribute. In this case, the data should be considered
+read-only to the child component, like any other _Props_ data.
 
 # Definition
 
-State is traditionally included in Component definitions below the _Template_ tag, but above the _Script_ tag. This makes sense because functions in the _Script_ tag typically manipulate state in order to render new HTML in the _Template_, making _Script_ a sort of mutable bridge between _Script_ and _Template_. State is defined in a similar way to Props: Only defined with properties, but no contents.
+State is traditionally included in Component definitions below the _Template_
+tag, but above the _Script_ tag. This makes sense because functions in the
+_Script_ tag typically manipulate state in order to render new HTML in the
+_Template_, making _Script_ a sort of mutable bridge between _Script_ and
+_Template_. State is defined in a similar way to Props: Only defined with
+properties, but no contents.
 
 See below for an example of defining a _State_ CPart:
 
@@ -105,8 +115,6 @@ Sometimes, you'll only want to subscribe to certain attributes parts of a store:
 ></State>
 ```
 
-For a full example of `-store` in use, [see the Global Store
-demo](/static/demos/editor.html?file=/static/demos/advanced/global_store.html).
 
 # CPart properties
 
@@ -162,8 +170,97 @@ State provides a single directive:
   or `"change"` event, the state variable will be updated (along with,
   typically, a re-render of the component).
 
+# Binding Examples
 
+
+* *Useful resource:* Read this for a full list of input types. With the
+  exception of some of the ones listed below, they will all be "String" in
+  terms of the State CPart. [MDN input Element
+  documentation](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+
+### Example #1: Binding different input types
+
+```modulo_demo
+<Template>
+    <h3>Customize</h3>
+
+    <!-- text (default) -->
+    <input [state.bind] name="subject" />
+
+    <!-- textarea -->
+    <textarea [state.bind] name="body"></textarea>
+
+    <!-- checkbox -->
+    <label>Underlined: <input [state.bind] name="underlined"
+            type="checkbox" min="50" max="500" step="10" /></label>
+
+    <!-- select -->
+    <label>Font
+        <select [state.bind] name="font">
+            <option value="serif">Serif</option>
+            <option value="sans-serif">Sans-Serif</option>
+            <option value="monospace">Monospace</option>
+        </select>
+    </label>
+
+    <!-- button element -->
+    <!-- (Note that the event has to be specified) -->
+    <label>RESET
+        <button [state.bind]="click" name="subject" value="XXXXXXX">
+            SUBJ (XXXXXXX)
+        </button>
+        <button [state.bind]="click" name="body" value="XXXXXXX">
+            BODY (XXXXXXX)
+        </button>
+    </label>
+
+    <!-- number -->
+    <label>Padding: <input [state.bind] name="paddingSize"
+            type="number" min="1" max="10" step="1" /></label>
+
+    <!-- range -->
+    <label>Width: <input [state.bind] name="contentWidth"
+            type="range" min="50" max="500" step="10" /></label>
+
+    <!-- color -->
+    <label>Border: <input [state.bind] name="accentColor"
+            type="color" /></label>
+
+    <h3>Results</h3>
+    <h5 style="
+        {% if state.underlined %}
+            text-decoration: underline;
+        {% endif %}
+        font-family: {{ state.font }};
+        border: 5px solid {{ state.accentColor }};
+        padding: {{ state.padding-size }}px;
+        width: {{ state.content-width }}px;
+    ">{{ state.subject }} - {{ state.body }}</h5>
+</Template>
+<State
+    subject="Testing message..."
+    body="Welcome to my blog"
+    underlined:=false
+    font="monospace"
+    padding-size:=5
+    content-width:=70
+    accent-color="#ff3300"
+></State>
+
+<Style>
+    label {
+        display: block;
+        border: 1px solid black;
+        padding: 5px;
+    }
+</Style>
 ```
+
+
+### Example #2: Combining with filters
+
+
+```modulo_demo
 <Template>
 <div>
     <label>Username:
@@ -172,10 +269,10 @@ State provides a single directive:
         <input [state.bind] name="color" /></label>
     <label>Opacity: <input [state.bind]
         name="opacity"
-        type="number" min="0" max="1" step="0.1" /></label>
+        type="number" min="0" max="10" step="1" /></label>
 
     <h5 style="
-            opacity: {{ state.opacity }};
+            opacity: {{ state.opacity|multiply:'0.1' }};
             color: {{ state.color|allow:'green,blue'|default:'red' }};
         ">
         {{ state.username|lower }}
@@ -185,9 +282,95 @@ State provides a single directive:
 </Template>
 
 <State
-    opacity="0.5"
+    opacity:=5
     color="blue"
     username="Testing_Username"
 ></State>
 ```
+
+
+# Store Examples
+
+
+### Example #1: Store for simple state sharing
+
+
+```modulo_demo_example
+<Template>
+    <input [state.bind] name="a" />
+    <input [state.bind] name="b" />
+    <input [state.bind] name="c" type="range" min="1" max="10" step="1" />
+</Template>
+<State
+    -store="my_global_info"
+    a="A b c"
+    b="do re me"
+    c:=5
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 60px 60px 60px;
+    }
+</Style>
+
+<!-- %%% SharedState %%% -->
+
+<x-SharedState></x-SharedState>
+<hr />
+<x-SharedState></x-SharedState>
+<hr />
+<x-SharedState></x-SharedState>
+
+```
+
+
+### Example #2: Chat with some shared state and bound buttons
+
+Here we have an incomplete "chat" component with two State CParts. This one
+shares state between instances of it. Note that "msg" is not shared (neither is
+_Props_), but "messages" is shared.
+
+
+```modulo_demo_example
+<Props
+    username
+></Props>
+<Template>
+    {% for m in chat.messages %}
+        <em>{{ m.name }}</em><strong>{{ m.text }}</strong>
+    {% endfor %}
+    <input [state.bind] name="msg" />
+    <button
+        @click:=chat.messages.push
+        [chat.bind]messages="click"
+        payload:='{
+            "text": "{{ state.msg|escapejs }}",
+            "name": "{{ props.username|escapejs }}"
+        }'
+    >SEND</button>
+</Template>
+<State
+    msg=""
+></State>
+<State
+    -name="chat"
+    -store="chat"
+    messages:=[]
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 100px 100px;
+    }
+</Style>
+
+<!-- %%% StoreChat %%% -->
+
+<x-StoreChat username="ALICE"></x-StoreChat>
+<hr />
+<x-StoreChat username="BOB"></x-StoreChat>
+
+```
+
 

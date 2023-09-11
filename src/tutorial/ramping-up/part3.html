@@ -115,24 +115,21 @@ Examples of both are below:
 
 ##### Try It Now
 
-1. Examine the code below, and it's output.
+**Examine the code below, and it's output.** How does it demonstrate the
+difference between Strings and Numbers?
 
 ```modulo_demo
 <Template>
     Adding strings: {{ state.a|add:state.b }}<br />
-    Adding numbers: {{ state.d|add:state.e }}<br />
+    Adding numbers: {{ state.c|add:state.d }}<br />
 </Template>
 <State
     a="10"
     b="20"
-    d:=10
-    e:=20
+    c:=10
+    d:=20
 ></State>
 ```
-
-2. do you
-see how the code above shows the important difference between Numbers and
-Strings?
 
 ------
 
@@ -641,26 +638,40 @@ format source, such as a file or API. Unlike _State_, it is for "static" or
 unchanging data. When building or deploying, it will be bundled together for
 speedy look-ups.
 
-What are JSON files? Here's an example:
 
-<https://www.gov.uk/bank-holidays.json>
+## Intro to the JSON file format
 
+JSON files are a format for storing data. There are many editors and tools for
+using them -- your editor may already be able to!
+
+What are JSON files like? The best way to learn is by looking at one: <https://www.gov.uk/bank-holidays.json>
+
+If you click on that link, you'll see something like:
 
 ```js
-{"england-and-wales":{"division":"england-and-wales","events":[{"title":"New Year’s Day","date":"2018-01-01",....
+{"england-and-wales":{"division":"england-and-wales","events":[{"title":"New Year’s Day","date":"2018-01-01","notes":"","bunting":true},{"title":"Good Friday","date":"2018-03-30","notes":"","bunting":false},{"title":"Easter Monday", ...
 ```
-Okay, that's hard to read! But if you look closely through it, you recognize
-that it contains information about holidays in the UK, as provided by the
-government of the UK. That could be useful in a calendar app, or many other
-situations. In Modulo, it would be read like this:
+
+This is hard to read. But if you look closely through it, you recognize that it
+contains information about holidays in the UK, starting in the year 2018, as
+provided by the government of the UK. If used correctly, this data could be
+useful for quickly assembling a scheduling app, for example.
+
+In Modulo, we can use the _StaticData_ CPart to access this file:
 
     <StaticData
         -src="https://www.gov.uk/bank-holidays.json"
     ></StaticData>
 
 
-Combining that with the `|json:2` filter, we can display a formatted version of
-it this way:
+##### Try It Now
+
+1. Examine the JSON file below.
+
+2. Consider the discussion questions below.
+
+3. *Challenge:* Modify the code to correctly access data in the JSON file and
+display the first event title for England and Wales (e.g. `"New Years Day"`) (Solution below)
 
 ```modulo_demo
 <Template>
@@ -677,14 +688,51 @@ it this way:
 </Style>
 ```
 
-Okay, that's still hard to see, but it looks like "england-and-wales" is a
-_key_, as well as _events_ is a key. This means we can use `|get` to access
-just the events, which is what we care about:
+##### Comprehension Questions
+
+
+- How is it displaying the entire file, formatted like that?
+    - **Answer** - To display data from a file like this, we can use the
+      `|json` filter in a HTML pre-formatting `<pre></pre>` tag. Using the
+      `|json:2` argument gives us 2 spaces for indentation.
+
+- How do you identify _keys_ of this file?
+    - **Answer** - Names on the left of `:` are called "keys" and/or "properties".
+      They are labels for specific parts of the data set.
+    - **Examples** - `"england-and-wales":`, `"title":`, `"division":`, or
+      `"events":`
+
+- How do you spot the _values_ of this file?
+    - **Answer** - The things on the right of the `:` are called the "values".  These are
+      typically the data you actually want. You
+      can use the labels to the access the values.
+    - **Examples** - `: "New Years Day"`, `: "2018-01-01"`, or `: true`
+
+
+- How would you access the title of the first event?
+    - **Answer** - `|get:"england-and-wales.events.0.title"`
+    - **Explanation** - Why `england-and-wales`? Because it's the first key
+      behind the `:`. Why `.events`? Because it's the next key that lets us
+      access the big Array (hint, the `[` and `]`) of the "main data".  Why
+      `.0`?  Because programming languages start counting at 0, so the first
+      thing is accessed at index 0. Finally, the `.title` accesses the specific
+      value that we want.
+
+-----
+
+### Drilling down with |get
+
+
+So, to access the data we want, to "drill down" so-to-speak, we can use the
+`|get` filter. This lets us string together with dots (`.`) as many "keys" as
+we'd like to access what we want. For example, to access the first holiday,
+`|get:"england-and-wales.events.0.title"`. Example:
 
 
 ```modulo_demo
 <Template>
-    <pre>{{ staticdata|get:"england-and-wales.events"|json:2 }}</pre>
+    <p><strong>First event of the year in England:</strong>
+    {{ staticdata|get:"england-and-wales.events.0.title" }}</p>
 </Template>
 <StaticData
     -src="https://www.gov.uk/bank-holidays.json"
@@ -697,8 +745,13 @@ just the events, which is what we care about:
 </Style>
 ```
 
-With this information, we can combine it with the `for` template tag, to
-display all the holidays in a table in the next TRY IT NOW.
+Okay, that's good for accessing exactly 1 value. However, the more useful thing
+would be to go just to the level of the Array (e.g. `"events": [`) and then use
+a `{% for %}` loop to go through it all.
+
+
+**See how applying these techniques can create a table with a `{% for %}`
+template tag in this next TRY IT NOW.**
 
 ##### Try It Now
 
@@ -727,7 +780,6 @@ display all the holidays in a table in the next TRY IT NOW.
 ```
 
 
-
 1. Examine the code above.
 
 2. Do you understand how the `get` filter accesses the data we need, and then
@@ -753,9 +805,18 @@ Many more are available here: <https://github.com/public-apis/public-apis>
       values such as functions and/or primitive JavaScript data types in JSON
       syntax
     * `@click` \- attach event listener to element
+* **Data types** \- the collection of different types of data that JavaScript,
+  and thus Modulo, can read. They consist of: `String`, `Number`, `Boolean`, `Array`,
+  `Object`, and `null`
 * **Template tag** \- A more advanced type of Template code that lets us repeat
-  or optionally include other templat code based on data contained in state,
+  or optionally include other template code based on data contained in state,
   props, or from a static data CPart
+    * **if-statement** - template tags for optionally including portions of
+      template code
+    * **for-statement** - template tags for duplicating portiosn of template
+      code for every item in an Array
+* **JSON** \- A file format for storing data that Modulo can read
+* **StaticData** - The CPart for reading in JSON or CSV files
 
 
 -----

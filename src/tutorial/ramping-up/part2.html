@@ -492,7 +492,7 @@ The Modulo templating language has two core features: _filters_ (for formatting
 values), and _template-tags_ (for control-flow). We will learn the first of
 these now.
 
-## Template Filters
+## Basic filters
 
 Template _filters_ "format" or otherwise transform template variables. The
 template filter syntax consists of taking a template variable and adding a
@@ -501,6 +501,41 @@ following example will transform the text contained in the `props.name`
 template variable to make it all uppercase:
 
     Hello {{ props.name|upper }}
+
+Filters can be combined together, one after the other. Think of them like a
+"transformation pipeline". For example:
+
+    Hello {{ props.name|upper|reversed }}
+
+
+##### Try It Now
+
+
+```modulo_demo
+<Template>
+<input [state.bind] name="text" />
+<pre>
+|yesno     {{ state.text|yesno }}
+|capfirst  {{ state.text|capfirst }}
+|upper     {{ state.text|upper }}
+|lower     {{ state.text|lower }}
+|camelcase {{ state.text|camelcase }}
+</pre>
+|reverse
+<pre>{{ state.text|reversed }}</pre>
+|reverse|join
+<pre>{{ state.text|reversed|join }}</pre>
+</pre>
+</Template>
+
+<State
+    text="testing THIS-out!"
+></State>
+```
+
+
+## Template filter arguments
+
 
 Some filters can also take extra modifiers or options. This is called the
 template filter _argument_. Do you recall how our previous `x-ExampleBtn`
@@ -527,7 +562,7 @@ it "quickly reacts" or re-renders the username text in lower-case as you type?
 2.  Try also adjusting the "Size" input and "Color" inputs to see how it
 updates the appearance the text.
 3.  **Local file challenge:** Add a use of template filters somewhere in your
-local project.
+local project. Can you make a simple calculator?
 
 ```modulo_demo
 <Template>
@@ -545,7 +580,7 @@ local project.
             margin: {{ state.size }};
             font-size: {{ state.size|multiply:2|add:5 }}px;
         ">
-        {{ state.username|lower }}
+        {{ state.username|lower|default:"None entered." }}<br />
     </h5>
 </div>
 
