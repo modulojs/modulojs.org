@@ -2,6 +2,8 @@
 tutorial: Part 1
 ---
 
+# Introduction
+
 > **Prerequisites:** `HTML & CSS` -
 > Are you a _total newbie_ with coding? It's okay, we've all been there!  Learn
 > pre-requisites at Modulo's open source educational "sister site":
@@ -10,13 +12,13 @@ tutorial: Part 1
 > Familiarity with JavaScript, React, Vue, Redux, and other frontend tools is
 > helpful due to overlap in concepts, but not required.
 
-
 **Welcome to the *Ramping Up with Modulo* tutorial!**
 
 By following this 4 part tutorial, you can learn how to build interactive
 applications in Modulo, starting with the basics.
 
-### Ramping up?
+## Ramping up?
+
 
 Modulo was designed to overcome a sort of "skill cliff" in web development.
 Beginners dabbling in HTML and CSS can have a hard time getting into more
@@ -37,8 +39,7 @@ could be a more inviting way to learn the core concepts without getting bogged
 down in complex setup.
 
 
-
-### What is Modulo?
+## What is Modulo?
 
 Modulo is useful when using plain HTML and CSS is no longer sufficient. It has
 no dependencies, does not require a "build process" to get started, and does
@@ -59,11 +60,11 @@ in an HTML page will "enable" all the abilities of the Modulo framework on that
 page. It will allow us to start writing _Modulo definitions_ and use the
 framework in general.
 
-Thus, the first step to using Modulo is to include a Modulo script tag in your
+## Including Modulo
+
+The first step to using Modulo is to include a Modulo script tag in your
 HTML file. In general, you could 1) start with an empty file (see aside on HTML
 boilerplate), or 2) open up an existing HTML file:
-
-
 
 
 ```
@@ -97,14 +98,14 @@ the page's "Modulo definition". Also note that technically, either `modulo` or
 
 
 
-### Defining your first component
+## Defining and using a component
 
 Once you have included Modulo and activated it, you can fill it up with
 Component *definitions*, which are special tags in HTML format. These work like
 keywords or configuration settings in order to set-up the component and define
 it's apearance and behavior.
 
-#### Structure of definition
+### Definition
 
 Let's examine our first Modulo definition:
 
@@ -126,7 +127,7 @@ inspecting the DOM, browsers typically display them in `all-lowercase`,
 removing any capitalization.
 
 
-#### Usage
+### Usage
 
 
 Once defined, you can use a component by referring to it's name as though it
@@ -286,6 +287,8 @@ definition is really just a collection of CPart definitions. "Under the hood"
 of your component, each CPart will have a different role to contribute to the
 functionality of your component.
 
+## Template and Style
+
 Let's start with the two most basic CParts:
 
 1.  **Template** \- `<Template>`
@@ -308,6 +311,8 @@ Let's start with the two most basic CParts:
 > CSS file the regular way to style your components. However, many developers
 > prefer the simplicity of keeping everything in one place, e.g. the CSS with
 > the component definition that it styles.
+
+## Syntax notes
 
 Like Component naming, most CParts are technically case-insensitive (e.g.
 "`<style>`" will work the same as "`<Style>`"). However, it's important you
@@ -366,7 +371,9 @@ the beginnings of your component or layout.
       already use this class name?", "Did I accidentally just style ALL divs
       this way?" etc. Details on this so-called "prefix isolation" will be
       covered later, in [Part 4](part4.html) of this tutorial.
-
+- What does `:host` do?
+    - Answer: It lets us style the component itself (not only what's inside of
+      it)
 
 ---
 
@@ -390,7 +397,7 @@ purpose of _Props_ is to allow more flexibility in that second step: _Props_
 CPart defines the _properties_ that can be customized about a component each
 time it is reused.
 
-### Other people's components
+## Other people's components
 
 Before we learn how to use the _Props_ CPart itself, let's first get acquainted
 with a concept we haven't done before: Reusing components that were coded by
@@ -498,7 +505,7 @@ board with pieces in a specified setup?
 
 ----
 
-### Defining and using the Props CPart
+## Defining and using the Props CPart
 
 
 Let's "peel back the layers" and examine out how this `ExampleBtn` was written.
@@ -537,7 +544,7 @@ within the component: Either in the _Template_ CPart (what we'll cover next),
 or in the _Script_ CPart (covered later).
 
 
-### Template variables
+## Template variables
 
 
 Remember how CParts are supposed to "work together"?  Our discussion of props

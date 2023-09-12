@@ -2,10 +2,14 @@
 tutorial: Building Apps Part 1
 ---
 
-Welcome to the *Building Apps with Modulo* tutorial!  By following this short
-tutorial, you can learn how use Modulo to organize growing web application
-projects, inclduding single page apps and JAMStack-style multi-page static
-sites.
+
+# Introduction
+
+**Welcome to the *Building Apps with Modulo* tutorial!**
+
+By following this short tutorial, you can learn how use Modulo to organize
+growing web application projects, inclduding single page apps and
+JAMStack-style multi-page static sites.
 
 
 **DOCUMENTATION STUB NOTE:** *This tutorial is incomplete. This section needs
@@ -480,6 +484,8 @@ CPart. It will run before everything else, and is great for bringing in
 definitions using the `-src=` attribute.  These should go along side your
 components, above everything.
 
+### Registering a util with Confgiuration
+
 See this example, which is the code used by the template we'll use in _Part 2_:
 
 ```
@@ -500,6 +506,22 @@ See this example, which is the code used by the template we'll use in _Part 2_:
     <!-- ... etc ... -->
 </Component>
 ```
+
+### Registering as templateFilter
+
+Sometimes its very convenient to expose tools as template filters that you can
+directly use them in your HTML templates. This can require very little code.
+See below:
+
+```
+<script Configuration -src="https://unpkg.com/snarkdown">
+    modulo.register('templateFilter', snarkdown);
+/script>
+
+<!-- ... etc ... -->
+<Template>{{ state.text|snarkdown|safe }}</Template>
+```
+
 
 
 ## Integrating a frontend plugin
@@ -650,12 +672,16 @@ Component entirely:
 ## Part 1: Summary
 
 In this tutorial, we learned how to keep our components in a component library
-and then load that library into different HTML files. We finally wrapped up
-with trying Modulo's self-building feature.
+and then load that library into different HTML files.
 
 * `-src=` - A special attribute that allows content in Modulo to be loaded from
   separate files, making it easier to manage as projects grow.
 
+* *CDN* - A third-party server that hosts JavaScript for us, often notably NPM
+  packages that are ready for the brwoser
+
+* *Configuration* - A type of CPart that is run before everything else, and is
+  useful for registering things like new global functions or template filters
 
 Continue to Part 2:
 

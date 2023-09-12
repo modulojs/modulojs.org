@@ -129,16 +129,15 @@ editing each thing and see if you can cause the effects you intend.  **Relevant 
 > **What is Markdown?** - Markdown is a handy language for authoring large
 > documents in a langauge that is close to HTML, but easier to write. In other
 > words, if you are tired of typing `<p>` over and over, maybe writing in
-> Markdown and then converting that to HTML will save you effort and
-> frustration! Learn more at [Markdown
+> Markdown is for you! Markdown converts to HTML, and is intended to save
+> content authors effort and frustration with typing lots of HTML. Learn more
+> at [Markdown
 > Guide](https://www.markdownguide.org/getting-started/) and
 > [MarkdownTutorial.com](https://www.markdowntutorial.com/)
 
-_Markdown_ is one of the most popualr things to integrate into a static site
+_Markdown_ is one of the most popular tools to integrate into a static site
 generator. The JAMStack template we just installed has a Markdown system setup
-and ready to go. Go ahead and open up `/articles/example-article.html` in your
-text editor (and browser as well, for comparison). Examine  the HTML code,
-as you continue reading below.
+and ready to go.
 
 ## Markdow-HTML
 
@@ -150,15 +149,17 @@ It's a sort of miniature "dual file format" that is as portable as HTML and as
 easy-to-edit as Markdown, by being both simultaneously. Let's dig into how it
 works.
 
-These files rely on that browsers fill in unclosed tags. Thus, it imports
-Modulo and opens a tag at the top to start the page and start interpretting the
-rest as Markdown.  This lets it make a file which is simultaneously both a
-stand-alone HTML page and a valid Markdown document that can be read by a
-Markdown editor (e.g. even a GUI one, assuming that it allows configuring the
-"frontmatter delimiter").  They function as an HTML file, since these
-Markdown-HTML files can be "double clicked on" and opened with the browser's
-`file://` protocol, just like any other HTML file saved with the "SAVE" feature
-on this site.
+The format is straightforward: The top of the file imports Modulo and opens a
+tag at the top to start the page and start interpretting the rest of the file
+as Markdown. Browsers auto-close any unclosed tags, so the closing tags are not
+necessary.
+
+This becomes a file which is simultaneously both a stand-alone HTML page and,
+when the "frontmatter delimiter" is configured correctly, a valid Markdown
+document that can be read by a Markdown editor.  It functions as an easy-to-use
+HTML file, since these Markdown-HTML files can be "double clicked on" and
+opened with the browser's `file://` protocol, just like any other HTML file
+saved with the "SAVE" feature on this site.
 
 When opened in the browser, the user sees only the final rendered page (not the
 markdown source), complete with the markdown code converted into HTML, and any
@@ -166,7 +167,7 @@ templating, CSS, custom code, etc applied. When opened with a text editor,
 these files resemble Markdown files, as long as you ignore the first line. This
 means that true novice coders, who are only comfortable using text editors but
 not comfortable with HTML or CSS, can edit these files as long as they don't
-touch the first line. 
+touch the first line.
 
 Furthermore, graphical Markdown editors (notably Decap), can be configured to
 accept a custom "frontmatter" deliminator. That means if you configure them to
@@ -178,7 +179,7 @@ transparently edit these Markdown-HTML files as well, while enforcing that the
 
 ##### Try It Now
 
-1. Open up `/articles/example-article.html` in your text editor (and browser as
+1. Open up `src/articles/example-article.html` in your text editor (and browser as
 well, for comparison). Try making changes to the Markdown, to confirm it works.
 2. For convenience, the relevant bits are also excerpted the beginning below.
 It is displayed "word-wrapping" so you can see the first line in it's entirity.

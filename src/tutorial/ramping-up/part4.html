@@ -11,7 +11,7 @@ to skip down to events section](#events), and come back when you hit a wall
 with isolating CSS or good component design. However, if you want to know the
 CSS tools available and how to use component children, continue reading on.
 
-## Putting children elements into slots
+## Putting elements into slots
 
 > **The origin of slots** Slots are a feature of the "shadow DOM", a new-ish
 > feature of web browsers. Modulo replicates the same behavior of these
@@ -223,20 +223,24 @@ closing tags to "fill" the slot
 
 -------
 
-## Component modes, Shadow DOM, and CSS isolation
+## Intro to render mode
 
-Yet another feature of Modulo that is useful to know is component render mode,
-which lets you select different CSS isolation features, and different DOM
-behavior, so you can write powerful, ergonomic, and efficient components.
+Yet another feature of Modulo that is useful to know is component render mode.
+Each component render mode selects a different CSS isolation.  It will also
+change DOM behavior, so have even more tools to write powerful, ergonomic, and
+efficient components.
 
-### CSS "Leakage"
+### CSS Leakage
 
 Now that we have covered the ways for components to receive children, it's
 important to think about how CSS gets isolated, since we start to run into
 pitfalls where "parent" CSS "leaks" into "child" CSS.  As was established in
 the first part, `<Style>` components "isolate" themselves by "prefixing" all
-CSS with the component name. For an example, examine the following two snippets
-of code:
+CSS with the component name. 
+
+### Default isolation (regular)
+
+For an example, examine the following two snippets of code:
 
 ```css
 p { font-size: 1.3rem; }
@@ -252,12 +256,15 @@ makes websites much easier to maintain, without causing CSS classes to get
 messy and convoluted.  This brings us to the default mode for _Component_
 definitions in Modulo: "regular" mode.
 
-In "regular" mode, it is the default. Component will render to the screen, CSS
-will be prefixed as described above. This mode is often what web designers
-expect when writing CSS: They want it to be "silo'ed", but not _too_ strictly.
-In general, it's not that often you need to specify anything
-other than the default rendering mode, but when you do need to use them, they
-can be super handy in fixing CSS bugs, so let's review them now.
+
+#### Details
+
+Component will render to the screen, CSS will be prefixed as described above.
+This mode is often what web designers expect when writing CSS: They want it to
+be "silo'ed", but not _too_ strictly.  In general, it's not that often you need
+to specify anything other than the default rendering mode, but when you do need
+to use them, they can be super handy in fixing CSS bugs, so let's review them
+now.
 
 
 ## Beyond "regular"
@@ -346,6 +353,11 @@ answer the questions below.
     </div>
 </Template>
 <Style>
+    /* Why does it not work?? */
+    img {
+        height: 50px;
+        width: 50px;
+    }
     :host {
         text-align: center;
     }
@@ -397,10 +409,12 @@ isolation features on your local file.
       CSS.
 
 - How does the default isolation mode (*prefix* isolation) affect this?
-    - **ANSWER:** The default mode _will_ apply
-      it's CSS to slot content! 
+    - **ANSWER:** If you don't specify `mode=shadow` or `mode=vanish`, the
+      default behavior _will_ apply it's CSS to slot content! Often that _is_
+      desired, in fact (e.g. a modal component that neatly styles it's
+      content)
     - **Explanation:** Only in *shadow* (what's used by the modulo website) and
-      *class* (vanish) isolation modes, it will isolate. 
+      *class* (vanish) isolation modes, it will isolate it's slots.
 
 
 ---------
@@ -415,9 +429,9 @@ isolation features on your local file.
 
 
 
-Now for one of the biggest features of Modulo we haven't touched on yet:
-Attaching events. In Modulo, events are attached with the _event directive_,
-indicated by the `@` sign.
+Now for perhaps the most important framework feature for interactive
+applications: Attaching events. In Modulo, events are attached with the _event
+directive_, indicated by the `@` sign.
 
 ## The event directive
 
@@ -426,12 +440,11 @@ Component.   Under the hood, `[state.bind]` attaches something called an "event
 listener". This is a bit of JavaScript code that waits for user interaction.
 The _State_ CPart waits for the `keyup` event (e.g. when typing in an input) or
 the `change` event (e.g. when adjusting a slider).  This is good enough for a
-lot of cases, but sometimes we need to access the browser's event system
-directly to listen to more specific events.  There are also events for
-clicking, mouse motion, scrolling, resizing, and so on. These are "activated"
-or "triggered" by the web browser when a user of your web site does one of
-these actions (types on the keyboard, moves the mouse, etc.). We'll need to use
-event directives to access these other events.
+lot of cases, but often we want to listen to other sorts of events.  There are
+also events for clicking, mouse motion, scrolling, resizing, and so on. These
+are "activated" or "triggered" by the web browser when a user of your web site
+does one of these actions (types on the keyboard, moves the mouse, etc.). We'll
+need to use event directives to access these other events.
 
 The most used event is the `click` event. Here's an example a click event:
 
@@ -960,7 +973,7 @@ would you choose one over the other?
 
 ------
 
-## Direct DOM manipulation
+## Custom Directives
 
 **New to JavaScript?** You probably won't have much need for this. Feel free to
 skip this last section!
@@ -1049,7 +1062,7 @@ When you should do direct DOM manipulation with directives?
 
 ------
 
-## Part 4: Summary
+# Part 4: Summary
 
 
 We learned about Shadow DOM and isolating CSS from children using slots. We
@@ -1058,7 +1071,7 @@ learned a little bit about attaching JavaScript-powered script tags to our
 components, and then activating functions via either events or directives.
 
 
-### Key terms
+#### Key terms
 
 * **slot** - A placeholder for content to be inserted when a component is used.
   Useful for writing components that "wrap around" other content.
