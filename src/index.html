@@ -56,37 +56,30 @@
         </article>
     </x-TwoPanes>
 
+    <div style="border: 1px solid var(--color); margin-top: 20px; padding: 10px;">
+        <x-TwoPanes>
+            <article slot="left">
+                <h2 style="text-align :center">
+                    Modulo <x-ProjectVersion skipalpha=true></x-ProjectVersion>
+                </h2>
+                <a href="https://unpkg.com/mdu.js" download="Modulo.js" style="font-size: 1.3rem; margin-left: 20px">
+                    <span alt="Down arrow" style="font-size: 1.3rem">&#10515;</span>
+                    Modulo.js
+                </a>
+                <br />
+                <br />
+                <a href="/examples/#startingtemplate" style="font-size: 1.1rem; margin-left: 20px">
+                    <span alt="Down arrow" style="font-size: 1.1rem">&#10515;</span>
+                    Starting Templates...
+                </a>
+            </article>
 
-    <x-TwoPanes class="subtle">
-        <article slot="left">
-            <h2>Brand new? Take the tutorial!</h2>
-            <p style="max-width: 380px">Modulo is brand new in general, so it's
-            probably brand new to you as well! The Modulo tutorial goes through
-            Modulo basics, starting with HTML and CSS (part 1 and 2), and then
-            JavaScript (part 3).
-            </p>
-        </article>
-
-        <article slot="right">
-            <h2>Advanced usage</h2>
-            <h3>Using NPM to start a new project:</h2>
-            <p style="text-align:center"><code style="font-size: 1.5rem;">npm init modulo</code></p>
-            <p>Support for: Netlify-style SSR (Server Side Rendering, for fast
-            loads), Decap CMS (for online, graphical "blog"-style editing), and
-            more.</p>
-            <!--<p> Read the <code>create-modulo</code> documentation.</p>-->
-
-            <h3>Download Modulo.js directly:</h3>
-            <a href="https://unpkg.com/mdu.js" download="Modulo.js" style="font-size: 1.3rem; margin-left: 20px">
-                <span alt="Down arrow" style="font-size: 1.3rem">&#10515;</span>
-                Modulo.js (<x-ProjectVersion></x-ProjectVersion>)
-            </a>
-        </article>
-
-    </x-TwoPanes>
-
-    <h3 style="text-align: right">
-    </h3>
+            <article slot="right">
+                <h2 style="text-align :center">NPM</h2>
+                <p><code style="font-size: 1.5rem;">npm init modulo</code></p>
+            </article>
+        </x-TwoPanes>
+    </div>
 
     <a name="whymodulo"></a>
     <h1>Why Modulo?</h1>

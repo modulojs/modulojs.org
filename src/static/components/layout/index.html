@@ -89,12 +89,15 @@
 </Component>
 
 <Component name="ProjectVersion" mode="vanish">
+<Props
+    skipalpha
+></Props>
   <Template>
-    <a
+    {% if not props.skipalpha %}<a
         title="Modulo is still 'alpha' quality. Be on the lookout for bugs and
 glitches! Click to browser the issues page for a better idea of why."
         href="https://github.com/modulojs/modulo/issues"
-    >alpha</a>&nbsp;v{{ staticdata.version }}
+    >alpha</a>&nbsp;{% endif %}v{{ staticdata.version }}
   </Template>
   <StaticData -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"></StaticData>
   <Style>
