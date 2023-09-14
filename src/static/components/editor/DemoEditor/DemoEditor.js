@@ -11,6 +11,11 @@ function exampleMount({ el }) {
     element.exampleEditor = el;
 }
 
+function mountCallback() {
+    // TODO: Issue with hydrating, need to figure out:
+    element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
+}
+
 function _updateState() {
     if (element.editor) {
         state.value = element.editor.value;
