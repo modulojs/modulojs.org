@@ -11,11 +11,6 @@ function exampleMount({ el }) {
     element.exampleEditor = el;
 }
 
-function mountCallback() {
-    // TODO: Issue with hydrating, need to figure out:
-    element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
-}
-
 function _updateState() {
     if (element.editor) {
         state.value = element.editor.value;
@@ -72,6 +67,8 @@ function toggleMenu() {
 }
 
 function run() {
+    // TODO: Issue with hydrating, need to figure out, but in built version need this:
+    element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
     _updateState(); // Will auto-rerender, which will also auto run if changed
 }
 
