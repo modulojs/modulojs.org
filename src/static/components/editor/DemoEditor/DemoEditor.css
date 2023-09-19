@@ -136,7 +136,23 @@
     border-color: var(--color);
 }
 
+.usage-banner {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--color-alt);
+    padding: 5px 35px 5px 35px;
+    color: var(--color-bg);
+    font-weight: bolder;
+    border-radius: 2px;
+}
 
+.usage-border {
+    height: 100%;
+    border: 5px dashed var(--color-alt);
+    padding: 5px;
+    position: relative;
+}
 
 @media (max-width: 992px) {
     .pane-holder {

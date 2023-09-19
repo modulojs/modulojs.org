@@ -284,9 +284,43 @@ HTML Templates:
 </Component>
 ```
 
+## Integrating analytics
+
+If you have some custom analytics script to integrate, it can be done this way.
+Examine the following snippet that was taken from the Fathom Lite
+mini-analytics software:
 
 
+```
+<!-- Setup Fathom -->
+<script Configuration>
+     function setupFathom(code) {
+        const host = window.location.host;
+        // Check common things we skip -- ensure doesn't trigger during builds
+        if (host.startsWith('localhost') ||
+                host.includes('.local') ||
+                host.startsWith('127') ||
+                host.startsWith('192') ||
+                host.startsWith('dev--'))  {
+            return;
+        }
+        (function(f, a, t, h, o, m){
+            a[h]=a[h]||function(){
+                (a[h].q=a[h].q||[]).push(arguments)
+            };
+            o=f.createElement('script'),
+            m=f.getElementsByTagName('script')[0];
+            o.async=1; o.src=t; o.id='fathom-script';
+            m.parentNode.insertBefore(o,m)
+        })(document, window, '//ZZ.XXXXXXXX.YYY/tracker.js', 'fathom');
+        fathom('set', 'siteId', code);
+        fathom('trackPageview');
+    }
+    setupFathom('XXXXX');
+/script>
+```
 
+*(Note that `ZZ.XXXXXXXX.YYY` would be replaced with a real domain)*
 
 
 # Library
