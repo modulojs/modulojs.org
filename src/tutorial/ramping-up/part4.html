@@ -2,1113 +2,744 @@
 tutorial: Part 4
 ---
 
-# Shadow & Slots
 
-This next section in the tutorial switches gears a bit, and revisits our
-`<Component>` and `<Style>` definitions. It's also not needed for a lot of
-users, so if you are in a hurry and feel your CSS is in a good spot, [feel free
-to skip down to events section](#events), and come back when you hit a wall
-with isolating CSS or good component design. However, if you want to know the
-CSS tools available and how to use component children, continue reading on.
+In Part 4 of this tutorial, we'll start exploring code that permits individual
+components to store, modify, and link together data, allowing for complex
+behaviors. 
 
-## Putting elements into slots
+This is a challenging section! If you are new to JavaScript, try to understand
+as much as you can of this part of the tutorial, but don't feel bad if some
+parts seem extra hard.
 
-> **The origin of slots** Slots are a feature of the "shadow DOM", a new-ish
-> feature of web browsers. Modulo replicates the same behavior of these
-> "shadow" slots, making slots even easier to use without JavaScript.
+We'll learn how to use StaticData, that lets us import JSON files or CSV file
+types, or APIs that use these types, into our Modulo components, so that we can
+use template tags to explore 3rd party data.
 
-Let's get back to a basic feature. We've learned about Props, which enable us
-to "receive" information from a parent component by adding that information as
-attributes. We've gone this far without addressing how to make our components
-handle HTML *within* them, or contained as children.
+Before we get to these more powerful features of Modulo, we'll need to first
+explore Data Types, and how data props enable different JavaScript data types.
 
-As we explored when talking about _Props_, components are "define once, re-use
-many times" bits of code. Often, it's useful for a component to "wrap around"
-other HTML, or contain other HTML. For example, a stylized button component
-might wrap around text, or a stylish "modal dialog" component would wrap around
-paragraphs and other arbitrary HTML content. You can thus imagine the button or
-modal in these examples as having "empty spots" or _slots_ where this content
-would go. That is to say, the component is a sort of "empty picture fancy", and
-the web developer using the component would be able to "slide content" into the
-frame's empty slot.
+# Data Types
 
-_Slots_ allow there to be "empty spots" in your HTML that proceed to get filled
-by arbitrary content supplied when your component is used. Adding a slot is as
-simple as including a `<slot></slot>` HTML element in your component's
-_Template_ definition. To fill up a _slot_ with HTML content, add the content
-between the opening and closing tags of your HTML element.
+> **Other Directives** - All directives are "provided" by a CPart. That is,
+> including CParts in your component definition may "enable" more directives in
+> your HTML. Data-prop (`[component.dataProp]` or `:=`), for example, is a
+> built-in feature of the _Component_, which means it's always available.
+> Directives are not the main focus of this tutorial.  To learn more, including
+> how to author your own directives using JavaScript, [see
+> _Directives_](/docs/directives.html). However, for the purpose of this
+> tutorial we will have no need to use directives outside of the built-in
+> directives that come with Modulo.
 
-Here's an example of both, has a slot inside a div:
+Before we go any deeper into data types, however, we need to explore "data
+props", and before that, we need to review _directives_. The term _directives_
+in Modulo refers to special attributes that you add to HTML to add extra
+functionality.. You can recognize a _directive_ by spotting certain special
+characters in the attribute name. We've seen one in the previous tutorial
+section, `[state.bind]`. For example, `<input [state.bind] />` is an `input`
+HTML tag with a `[state.bind]` directive. Some directives will have a
+square-bracket syntax (e.g. `[ ]`), while others might use other special
+characters to set them apart from "normal" attributes (e.g.  `:=` syntax we'll
+learn next). While re-rendering, Modulo scans the resulting DOM to set-up or
+"mount" any directives it encounters.
 
-```html
-<div class="fancy-frame">
-    <slot></slot>
-</div>
-<!-- USAGE: -->
-<x-PictureFrame>
-    <p>My cat:</p>
-    <img src="./cat.jpg" />
-</x-PictureFrame>
+Directives are useful for a variety of tasks, ranging connecting CParts to each
+other, to more complicated modifications to DOM elements.
+
+## The dataProp directive
+
+We'll learn one more directive next: _data prop_  or `:=` syntax
+
+Typically, when we add attributes to anything, whether it is a CPart or even
+just in regular HTML, the attribute value can only be a string. This means when
+we did `<State count="1" ... >` previously, we made a mistake: The `count`
+variable didn't get assigned to `1` the _Number_, but rather `"1"` the
+_String_. To fix it, we do the following:
+
+    <State
+        count:=1
+        color="blue"
+    >&lt;/State&gt;
+
+> **Data type?** If you are new to coding, you might be confused by this term.
+> It's a little like a file format for variables: Instead of JPG, DOCX, and
+> ZIP, we have Numbers, Strings, Arrays, Objects, Booleans, etc. This
+> collection of types is what makes up the "JSON" format, which Modulo uses.
+
+This is called a _data prop_ directive. You can identify a _data prop_
+directive (`:=`), by spotting an attribute name that is suffixed with a colon
+right before the equal sign, like this: `attributeName:=value`.
+
+
+## The types of data
+
+Modulo uses the same data types as JavaScript and the JSON file format, which
+Modulo uses extensively. The remainder of this section will highlight the most
+useful types for new Modulo developers:
+
+> **Why don't we use "strings" for numbers?** Using strings of digits (i.e. in
+> quotes) instead of the numbers themselves means that things like arithmetic
+> won't work as intended. Example: If state variable `count="1"`, then
+> `state.count + 10` will result in `"110"` instead of the desired `11`, since
+> it's a string of digits, so `"1" + "10" = "110"`
+
+### Strings 
+
+
+
+String is the default.  If you use `=` like a regular HTML attribute, it will
+be a "plain old" String.  The word "String" refers to a "string of characters",
+and is used for text, whether it's a single letter, a word, a paragraph, or an
+entire book.
+
+### Numbers
+
+If you use the `:=` syntax followed by a number, like `:=10` or `:=32.4`, you
+create a value of the Number type.  This is useful for numeric data that you
+want to do calculations on.  That is to say, Numbers can actually "do math", as
+opposed to strings that you'd only combine end-to-end, but not "do math". For
+example, `5 + 5 = 10` for Numbers, while `"5" + "5" = "55"` for Strings.
+
+Examples of both Strings and Numbers are below:
+
+```
+<State
+    message="Hello world!"
+    longer="
+        Strings can be more
+        than one line.
+    "
+    count:=1
+    debt:=-2
+    x:=912.3
+    y:=123.234
+></State>
 ```
 
+##### Try It Now
 
+**Examine the code below, and it's output.** How does it demonstrate the
+difference between Strings and Numbers?
 
-When the component is rendered on the page, the slot gets filled with the img
-tag and a p tag:
-
-```html
-<x-PictureFrame>
-    <div class="fancy-frame">
-        <slot>
-            <p>My cat:</p>
-            <img src="./cat.jpg" />
-        </slot>
-    </div>
-</x-PictureFrame>
-```
-
-
-> **Ergonomics** - When designing components, and making decisions like using
-> "Props" vs "slots", keep in mind who is going to use the component. If it's
-> yourself, what is easy for you? If months from now, after you forget
-> everything, what code would you be able to understand more simpily? If it's
-> a team member, what is easiest for them?  If it's an open source project,
-> what would people who have used similar projects expect?
-
-### Why not just use _Props_?
-
-Sometimes _Props_ and _slots_ are both options. For example, rewriting the
-above:
-
-```html
-<div class="fancy-frame">
-    {{ props.content|safe }}
-</div>
-<!-- USAGE: -->
-<x-PictureFrame content="
-    <p>My cat:</p>
-    <img src='./cat.jpg' />
-"></x-PictureFrame>
-```
-
-This could be a good solution for some things. However, in some cases, CSS will
-behave differently (see next section on *Shadow DOM*), and in other cases, it
-simply saves time for future users of your components (including yourself!) 
-to put content "within" an element, since it makes it behave and "feel" more
-like other HTML elements, and you don't have to worry about syntax issues like
-nesting quotes.
-
-### Slot features
-
-Read the following list for a summary of the features and exact behavior of
-slots. Modulo's behavior is intended to mirror the HTML spec as closely as
-possibly:
-
-- **Slots** - placeholder elements like `<slot></slot>`
-- **Filling slots** - when the element renders, it moves its
-  *original children* into its slots
-- **Defaults** - Specify default content inside of slot e.g.:
-  `<slot><em>None</em></slot>`
-- **Multiple slots** / **named slots** - slots can get a name attribute,
-  e.g. following HTML spec: `<slot name="artbody"></slot>`
-- **Filling named slots** - Slots are filled with `slot` attribute in children,
-  e.g. following HTML spec: `<div slot="artbody">...</div>`
-- **Slots accumulate** - They do not "replace", so you can do `slot=` multiple
-  times
-
-
-##### Try it now
-
-Examine the following two examples of slots and then follow the **local file
-challenge** below.
-
-###### Example #1: Slots and Props
-
-```modulo_demo_example
-<Props
-    image
-></Props>
+```modulo_demo
 <Template>
-    <div class="fancy-frame">
-        <img src="{{ props.image }}" />
-        <slot><em>No caption provided.</em></slot>
-    </div>
+    Adding strings: {{ state.a|add:state.b }}<br />
+    Adding numbers: {{ state.c|add:state.d }}<br />
 </Template>
-<Style>
-    :host {
-        text-align: center;
-    }
-    img {
-        height: 50px;
-        width: 50px;
-    }
-    .fancy-frame {
-        display: inline-block;
-        border: 10px inset salmon;
-        padding: 10px;
-        margin: 10px;
-        width: 100px;
-        background: pink;
-    }
-</Style>
-<!--%%% PictureFrame %%%-->
-<x-PictureFrame image="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg">
-    <p><em>Caption:</em> The Return of the Hippo</p>
-</x-PictureFrame>
+<State
+    a="10"
+    b="20"
+    c:=10
+    d:=20
+></State>
 ```
 
-- *Hint:* To better examine the above sample code, try flipping to "USAGE"
-  editing mode (go to MENU button above RUN, then toggle EDIT USAGE). Do you
-  see the caption is the "content" of the tag? What happens when you don't
-  specify any content (i.e. what's the "default")?
+------
 
-###### Example #2: Named Slots
+### Boolean and null
+
+In addition to Strings and Numbers, there are 3 special "placeholder" or
+"on-off switch" values that can be used:
+
+- `true`, `false` (called Booleans)
+- `null`
+
+These have their uses, such as using `true` and `false` to store the value of
+checkboxes, or using `null` as a placeholder value.
+
+## Container types
 
 
-```modulo_demo_example
-<Props
-    image
-></Props>
+Continuing on our tour of data types, let's examine "container types" (ones
+that contain other data). In our case, container types are also "iterable
+types" (ones you can "loop on", e.g. with a for loop, as we'll learn later).
+
+
+### Arrays
+
+> **Iterables** - There are some types of data that are called "iterable". That
+> means you can "iterate" over them, or repeat code for them. A good rule of
+> thumb is if the data in question is "plural". Plural data is iterable. For
+> example, if you want to show a single profile picture, that's not plural. If
+> you want to show every profile picture (whether that is 0 or 100), that
+> matches a search result, that is "plural", and that is when we want to use an
+> iterable.
+
+*Warning: This stuff gets trickier!* Arrays are more complex data types, so it
+might take more practice to get the hang of them!
+
+Arrays are the most important type of "container type" or "iterable type" in
+JavaScript. This means, a type that can contain other types.  This means you
+can say it's an "Array of Numbers" (to refer to a certain collection of
+numbers, e.g. data you want to chart or graph), or an "Array of Strings" (to
+refer to a collection of items of text, e.g. the usernames of people who are
+present in a chat room).
+
+Eventually, we'll learn how to take this data and then
+display it, or manipulate it, in order to build applications,
+but for now let's start with the syntax. In this case, let's examine
+an *Array of Numbers* and two *Array of Strings*, called `dataset`, `cities`,
+and 'students' respectively:
+
+```
+<State
+    dataset:='[ 103, 32, 15, 100 ]'
+    cities:='[ "Berkeley", "Porto Alegre" ]'
+    students:='[ "Alice", "Bob", "Candace" ]'
+></State>
+```
+
+* Array syntax summary: `'[` (opening), `]'` (closing), and contents seperated
+  with comma: `,`
+
+
+### Objects
+
+Objects are like arrays in that they contain other data, but instead of having
+an ordered sequence of items, they have them behind "keys", which are strings
+designations or labels for values, which can be any other type. Objects are
+sometimes called "dictionaries" in other programming languages, because they
+are a lot like a dictionary, consisitng of a words of phrases (keys), followed
+by their "definitions" (values).
+
+The format for objects is like: `{ "key": "value", "key2": "another value" }`
+
+See below for a more complete example:
+
+```
+<State
+    info:='{
+        "title": "Roller coaster",
+        "ticketPrice": 123.5
+    }'
+></State>
+```
+
+* Object syntax summary: `'{` (opening), `}'` (closing), `:` (seperates the key
+  from the value) and `,` (seperates each entry)
+
+
+
+#### Arrays of Objects
+
+When we access real-world data, whether those are blog articles in a publishing
+site, or a data items in a dashboard, they often "arrive formatted" as what's
+called a JSON array of objects.
+
+This is a much more complicated data format that builds on the previous two
+data formats. We'll encounter it again in a moment, when we start using
+StaticData. Look over the following format containing some imaginary "traffic
+rating" about two train stations. Don't worry about understanding every aspect
+about the format, but focus instead on the big picture of what this data might
+be trying to express:
+
+```
+<State
+    stations:='[
+        {
+            "name": "Embarcadero Station - San Francisco",
+            "trafficRating": 1353
+        },
+        {
+            "name": "19th Street Station - Oakland",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+```
+
+
+#### Summary: JSON type list
+
+To summarize this, look at this list of JSON types, and see if you can
+understand the examples given of each type of data:
+
+- **String** - `"Hello!"`, `"how are you"`, `"f$J^&m$j"`, or the empty `""`
+- **Number** - `42` or `32.5`
+- **Array** - `[ ]` or `[ 1, "a", true ]` *(can contain other data)*
+- **Object** - `{ }` or `{ "a": 123, "b": "XYZ" }` *(can contain other data)*
+- **Boolean** - `true` and `false` *(no other possible values)*
+- *Other:* `null`
+
+
+## Final notes on Data Props
+
+-  Keep in mind that _data props_ directives are not the same as the _Props_
+   CPart. They are, however, related, in that the _Props_ CPart looks for both
+   regular attributes and data props: You can in fact set any _Props_
+   attributes with the `:=` syntax, for data other than Strings.
+-  There are a few more types as well: `null`, `true`, `false`, which are
+   simple types used to "flag" items, or set a property "on and off", or for
+   placeholder values
+-  _Data props_ support any JSON literal type. Technically, _data props_ values
+   can have double quotes just like normal String-based attributes.  However,
+   as a stylistic convention, you may omit the double quotes for any one-word
+   value, and should use only single quotes for complex types, such as
+   JSON-formatted Arrays or Objects. See below for stylistic examples of data
+   props with different types:
+
+
+
+##### Try It Now
+
+1. Let's see how we can use filters to "poke" at an Array. Examine the next bit
+of code. Do you see how you can access individual items in an Array using the
+`|get` filter? Do you see how `|json` is used to show State in JSON syntax, and five
+
+
+
+```modulo_demo
 <Template>
-    <div class="fancy-frame">
-        <slot name="pic">
-            <em>No Image Provided</em>
-        </slot>
-        <slot><em>No caption provided.</em></slot>
-    </div>
+    <p>Item at index 3:
+        <tt>{{ state.items|get:3 }}</tt>
+    </p>
+    <p>Items separated by a dash:
+        {{ state.items|join:"-" }}
+    </p>
+    <hr />
+    <input [state.bind] name="str1" />
+    <input [state.bind] name="str2" />
+    <input [state.bind] name="num"
+                        type="number" />
+    <p>
+        State in JSON format:
+        <pre>{{ state|json:2 }}</pre>
+    </p>
 </Template>
-<Style>
-    :host {
-        text-align: center;
-    }
-    .fancy-frame {
-        display: inline-block;
-        border: 10px inset salmon;
-        padding: 10px;
-        margin: 10px;
-        width: 100px;
-        background: pink;
-    }
-</Style>
-<!--%%% PictureFrame %%%-->
-<x-PictureFrame>
-    <p><em>Caption:</em> The Return of the Hippo</p>
-    <img
-        slot="pic"
-        style="width: 50px; height: 50px"
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
-    />
-</x-PictureFrame>
+<State
+    str1="hello"
+    str2="123"
+    items:='[
+        "toothbrush",
+        "umbrella",
+        "my bag",
+        "laptop",
+        "charger"
+    ]'
+    num:=10
+></State>
 ```
 
-
-- *Hint:* To better examine the above sample code, try flipping to "USAGE"
-  editing mode (go to MENU button above RUN, then toggle EDIT USAGE). Do you
-  see how there are multiple slots in use this time? How did we specify a slot
-  for the `img`?
-
-- *Bonus Question:* Why is width and height "hard-coded" into a `style=`
-  attribute in this second example? 
-    - CSS in the Component _does not_ affect elements in the slots. The very
-      next section of this tutorial is on _Shadow DOM_, which will explain why.
-
-##### Try it now
-
-
-1.  **Local file challenge:** Edit one of your components to have a slot by
-adding an empty `<slot></slot>` placeholder element in your HTML.
-2.  Edit your usage to include text or other HTML tags between your opening and
-closing tags to "fill" the slot
-3. Extra: Practice the other features of slot, such as using named slots.
-
--------
-
-## Intro to render mode
-
-Yet another feature of Modulo that is useful to know is component render mode.
-Each component render mode selects a different CSS isolation.  It will also
-change DOM behavior, so have even more tools to write powerful, ergonomic, and
-efficient components.
-
-### CSS Leakage
-
-Now that we have covered the ways for components to receive children, it's
-important to think about how CSS gets isolated, since we start to run into
-pitfalls where "parent" CSS "leaks" into "child" CSS.  As was established in
-the first part, `<Style>` components "isolate" themselves by "prefixing" all
-CSS with the component name. 
-
-### Default isolation (regular)
-
-For an example, examine the following two snippets of code:
-
-```css
-p { font-size: 1.3rem; }
-em.special { color: blue; }
-/* ..."prefixing" causes it to turn into... */
-x-MyComponent p { font-size: 1.3rem; }
-x-MyComponent em.special { color: blue; }
-```
-
-This ensures that the `p` tags selected will only be contained within
-`x-MyComponent`. This prevents CSS from "leaking" into other components, and
-makes websites much easier to maintain, without causing CSS classes to get
-messy and convoluted.  This brings us to the default mode for _Component_
-definitions in Modulo: "regular" mode.
-
-
-#### Details
-
-Component will render to the screen, CSS will be prefixed as described above.
-This mode is often what web designers expect when writing CSS: They want it to
-be "silo'ed", but not _too_ strictly.  In general, it's not that often you need
-to specify anything other than the default rendering mode, but when you do need
-to use them, they can be super handy in fixing CSS bugs, so let's review them
-now.
-
-
-## Beyond "regular"
-
-There is still a lot of potential for leakage. For example, external, global
-styles can "leak" *into* the component. Similarly, the component's styles can
-"leak" *into* it's children, e.g. children created with _slots_ or _Props_.
-
-This is one of the uses of _Component_ render modes, and their accompanying
-_Style_ isolation modes: You can isolate your CSS with one of 2 techniques:
-*class*-based ("vanish") and *shadow*-based isolation.
-
-### mode="vanish"
-
-> **How does vanish work?**- How can CSS still select, when the component
-> "vanishes" from the DOM? Well, the "secret to the vanishing act" is that
-> after that first render, the _Style_ CPart attaches the class to all
-> sub-elements that are referenced in CSS.
-
-When `<Component mode="vanish">` is activated, then the _Style_ CPart switch to
-`isolate="class"`, or class-based isolation. This behaves similarly to prefix
-based, but ends up having a few important differences.  First, and most
-importantly, `mode="vanish"` will cause the Component to vanish after
-rendering, or remove itself from the DOM. This means that it cannot ever
-"rerender": Vanishing components are one-time things, and if the parent
-component rerenders, the old vanishing component will be destroyed and rebuilt
-again.
-
-Second, class-based isolation will rewrite your CSS like the following:
-
-```css
-div > h1 { font-size: 2.3rem; }
-a.special:hover { color: orange; }
-/* ..."vanish + class isolation" causes it to turn into... */
-.MyComponent:is(div > h1) { font-size: 2.3rem; }
-.MyComponent:is(a.special:hover) { color: orange; }
-```
-
-This CSS will *not* affect children, but the CSS will "stop" at the immediately
-rendered template. Thus, "vanish" and class-based isolation isolates in one
-direction: Parent to children.  Another big difference is since mode="vanish"
-removes the Component `:host` selector changes behavior. Instead, it will match
-all children, so you can still use it for CSS variables.
-
-
-### mode="shadow"
-
-When `<Component mode="shadow">` is activated, then the component switches to
-using a somewhat new feature of HTML: the Shadow DOM. This dramatically named
-feature allows a Web Component to create a protected or hidden DOM fragment
-(e.g. portion of an HTML page) that can be manipulated, while "protecting it"
-from outside CSS. Like vanish, this will dramatically change how the component
-renders, since the browser will treat it quite differently, and all of it's
-children will be "removed" from the DOM in the hidden Shadow DOM, making it
-appear "empty" when inspected (but with more clicking, you can find the "shadow
-root" where the hidden content is).
-
-When a component is in shadow mode, and you launch your site or build your
-site, it's CSS *will NOT* be put into the main CSS file. That means that it
-will be stored in the JavaScript file and only added whenever that component
-appears on the screen.
-
-Furthermore, due to the what the browser works, the CSS will be fully isolated
-in both directions: Outside CSS won't affect your component's children, and
-inner CSS is incapable of affecting anythign else, and won't even be added
-until the component gets on the screen. Since it's fully isolated, there is no
-need to prefix, so CSS will be inserted as is.
-
-
-
-##### Try it now
-
-1. Examine the following demo of a "Shadow DOM" slot-based component, and then
-answer the questions below.
-
-```modulo_demo_example
-<Props
-    image
-></Props>
-<Template>
-    <div class="fancy-frame">
-        <slot name="pic">
-            <em>No Image Provided</em>
-        </slot>
-        <slot><em>No caption provided.</em></slot>
-    </div>
-</Template>
-<Style>
-    /* Why does it not work?? */
-    img {
-        height: 50px;
-        width: 50px;
-    }
-    :host {
-        text-align: center;
-    }
-    .fancy-frame {
-        display: inline-block;
-        border: 10px inset salmon;
-        padding: 10px;
-        margin: 10px;
-        width: 100px;
-        background: pink;
-    }
-    slot:first-child { /* slots can be styled like any HTML element */
-        overflow: hidden;
-        max-height: 50px;
-        display: block;
-    }
-</Style>
-<!--%%% PictureFrame %%%-->
-<x-PictureFrame>
-    <p><em>Caption:</em> The Image TOO BIG</p>
-    <img
-        slot="pic"
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
-    />
-</x-PictureFrame>
-```
-
-2. **Local file challenge:** Try each of the different component modes and CSS
-isolation features on your local file.
+2. *Extra:* Try using the following snippet in the different demos in this
+tutorial for "peaking" at state in JSON format:  `<pre>{{ state|json:2 }}</pre>`
 
 
 ##### Comprehension Questions
 
-
-- Why does the width and height in the CSS not apply to the img?
-    - **ANSWER:** CSS in the Component _does not_ affect elements in the slots.
-    - **Explanation:** The component is using "shadow DOM" to make it ONLY
-      apply to stuff within the component, but not in it's slots. You can
-      confirm this by going into "Inspect", and seeing how the `img` tag is
-      indeed outside of the `shadowRoot`. By default, when a component is in
-      shadow mode, it will only apply it's CSS to it's "own" elements (e.g. not
-      slotted).
-
-- How is this useful?
-    - **ANSWER:** You can write CSS that only affects what's in the component,
-      making it better isolated
-    - **Explanation:** This is another important difference between _slots_ and
-      using HTML strings (e.g. via Props): Slots are easier to isolate with
-      CSS.
-
-- How does the default isolation mode (*prefix* isolation) affect this?
-    - **ANSWER:** If you don't specify `mode=shadow` or `mode=vanish`, the
-      default behavior _will_ apply it's CSS to slot content! Often that _is_
-      desired, in fact (e.g. a modal component that neatly styles it's
-      content)
-    - **Explanation:** Only in *shadow* (what's used by the modulo website) and
-      *class* (vanish) isolation modes, it will isolate it's slots.
-
-
----------
-
-# Events
-
-> **How many events are there?** There are many, many events! We'll mostly just
-> use `click`, but sometimes you'll need other events, such as when adding
-> interactions for mouse motion, or adding in drag-and-drop. [Read MDN's list
-> of all
-> events](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
-
-
-
-Now for perhaps the most important framework feature for interactive
-applications: Attaching events. In Modulo, events are attached with the _event
-directive_, indicated by the `@` sign.
-
-## The event directive
-
-So far, we've learned how to use `[state.bind]` to add interactivity to a
-Component.   Under the hood, `[state.bind]` attaches something called an "event
-listener". This is a bit of JavaScript code that waits for user interaction.
-The _State_ CPart waits for the `keyup` event (e.g. when typing in an input) or
-the `change` event (e.g. when adjusting a slider).  This is good enough for a
-lot of cases, but often we want to listen to other sorts of events.  There are
-also events for clicking, mouse motion, scrolling, resizing, and so on. These
-are "activated" or "triggered" by the web browser when a user of your web site
-does one of these actions (types on the keyboard, moves the mouse, etc.). We'll
-need to use event directives to access these other events.
-
-The most used event is the `click` event. Here's an example a click event:
-
-```
-<Template>
-    <button @click:=state.items.reverse>
-        Reverse the items!
-    </button>
-</Template>
-<State
-    items:='[ "a", "b", "c" ]'
-></State>
-```
-
-
-> **Method? What methods are there?** All "container" types of data have
-> different "verbs" or "commands" you can do to it, which are called "methods".
-> For example, just like you can reverse a line of people in real life by
-> giving the command for everyone to turn around (so to speak), you can reverse
-> an Array of people's names by giving the `Array.reverse` command. These
-> enable different modifications to happen to the data contained within. By
-> default, JavaScript comes with several very handy ones attached to the
-> `Array` type, and we'll go over them all in this tutorial.  However, for a
-> full reference, you can refer to MDN's documentation:
-> [Array tutorial](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays),
-> [Full list of Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
-
-
-Let's break down the event directive in  detail:
-
-- `@click` - all event directives start with `@`, so `@click`, `@mouseover`,
-  `@drag` etc.
-- `:=` - this is a data prop directive, which allows us to access `state.items`
-- `state.items.reverse` - this is accessing the `items` Array, and then on
-  that, accessing the `Array.reverse` method, which will get activated when the
-  `click` event happens
-
-Just guessing, based on the text and the code you see here, what do you think
-this might do when a user clicks on the button? If you guessed it might
-"reverse" the state variable called "items", you would be correct!
-
-Let's now try it out.
-
-##### Try it now
-
-1. Examine the following code, and try the demo. What does clicking the button
-do?
-
-```modulo_demo
-<Template>
-    <p>Items: {{ state.items|join }}</p>
-    <button
-        @click:=state.items.reverse 
-    >Reverse the items!</button>
-</Template>
-<State
-    items:='[ "candy", "bread" ]'
-></State>
-```
-
-
-2. Examine the following code, and try the demo. What does each button do?
-
-```modulo_demo
-<Template>
-    <p>Items: {{ state.items|join }}</p>
-    <hr />
-    Remove last:
-    <button @click:=state.items.pop>Array.pop</button>
-    <hr />
-    Remove first:
-    <button @click:=state.items.shift>Array.shift</button>
-</Template>
-<State
-    items:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
-></State>
-```
-
-
-##### Comprehension Questions
-
-Do you see how clicking on the buttons causes the Array to be reversed or
-removed or otherwise modified, and the component to rerender with the new look?
-Why do you think the component needs to "rerender"?
-
-- Answer: Modulo is based on a "change state & rerender" philosophy. That is,
-  when you do an event, that should change the state, and then the component
-  will automatically rerender, showing the new appearance based on the new
-  values in the state. In this case, it's reversing the list.
+* **What do you think the `|json` filter is for?**
+    - Answer 1: It displays the given data into JSON format. It's useful to
+      quickly checking the exact content of a state variable, or data from any
+      other source.
+    - Answer 2: The output of this filter can be pasted into attributes with
+      the syntax of `data:='{ ... }'`, or into the content of a `StaticData`
+      (covered later).  This is useful for "saving" useful state configurations
+      during testing.
+* **Why do you think `|get:3` produces "laptop"?**
+    - Answer: Modulo  starts counting the "index" of Arrays at "index number
+      0". This is the same behavior as JavaScript.
+* **What is the purpose of JSON format?**
+    - JSON is a standard file format that Modulo can read in. Any (strictly)
+      JSON formatted data structure can be inserted in a Modulo dataProp, e.g.
+      `dataprop:='{"Hello": "World"}'`
 
 -----------
 
-## Event payload
-
-Many methods that we want to activate upon an event require extra information
-about the event to be useful. This extra data is added with a "payload="
-attribute.  For example, this button will activate the `Array.fill` method with
-a payload of `"X"``:
-
-```
-<button
-    @click:=state.brands.fill
-    payload="X"
->Change to "X"</button>
-```
-
-This causes the "brands" Array to get each item replaced with the String `"X"`.
-Payloads can also have data props, so you can use different values, e.g. if you
-wanted a number type, you'd write `payload:=0`
-
-*Let's practice events and payload by building up a shopping list app, which
-will use several Array methods, and many click events.*
 
 
-##### Try it now
+# The "for" loop template tag
 
-1. Examine the following example, that transforms our shopping list to
-something a bit less "balanced":
-
-```modulo_demo
-<Template>
-    <p>Shopping list: {{ state.items|join }}</p>
-    <hr />
-    <button
-        @click:=state.items.fill
-        payload="CANDY!!!!!!"
-    >MAKE IT ALL CANDY!!</button>
-</Template>
-<State
-    items:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
-></State>
-```
-
-2. Now, examine this next app, which offers the user two options to "push"
-(add) onto a Array that starts empty:
-
-```modulo_demo
-<Template>
-    <p>Shopping list: {{ state.items|join }}</p>
-    <hr />
-    <button
-        @click:=state.items.push
-        payload="oatmeal"
-    >Oatmeal</button>
-    <button
-        @click:=state.items.push
-        payload="CANDY!!!"
-    >Candy</button>
-</Template>
-<State
-    items:=[]
-></State>
-```
-
-3. Examine the following code. It's more advanced. It has a list of different
-items, which it uses to generate the different buttons with different items:
+As was introduced in the prevoius section,
+in addition to filters, the Modulo templating language also support powerful
+"template tags", which allow for more complicated custom behavior.  We looked at
+the `{% if %}` template tag previously. Nowe we'll practice the "for" template-tag,
+which allows for HTML to be repeated for each item of some given data.
 
 
-```modulo_demo
-<Template>
-    <h3>Shopping list | {{ state.items|length }}</h3>
-    <p>{{ state.items|join }}</p>
-    <hr />
-    {% for favorite in state.favorites %}
-        <button
-            @click:=state.items.push
-            payload="{{ favorite }}"
-        >{{ favorite|capfirst }}</button>
+## For loops: Applications
+
+Common example uses of for loops:
+
+- Each blog gets put into it's own `<li>` element
+- Each link in an Array gets it's own `<a>` element in a nav bar
+- Each student from a CSV file gets their grade listed
+- Each country from a JSON file gets a different tint based on per-capita CO2 emmissions
+- Each product from a backend-API powered database gets a tile in an e-commerce app, each with a different "buy now" link
+
+Did you notice any common English words between all these scenarios? These examples use the word start with "Each".
+
+Many programming languages and frameworks -- Modulo included -- concept call this concept a "for each loop", or simply a "for loop".
+In Modulo, a "for loop" is a type of template tag, that allows us to repeat a template for each item in a "plural" (collection) type of data.
+This lets us build websites that do all of the above things.
+
+
+
+## The for-tag
+
+The "for-tag" is for when we want to duplicate a bit of template over and over
+for a repetitive bit fo data. For example, if we want to template "for every
+article", or "for every pin in a world map", or "for every post in an article
+comment section". Each of these "for" statements refers to some plural thing
+that we want to have a similar style duplicated across, using the same HTML
+template for each item in that collection.
+
+For example, imagine showing a paragraph for every student in a class's roster
+(assuming data like in the `students:=`  _State_ data example above):
+
+    {% for name in state.students %}
+        <p>Name on roster: {{ name }}</p>
     {% endfor %}
-</Template>
-<State
-    items:=[]
-    favorites:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
-></State>
-```
 
 
-4. Examine this next code. In this iteration, the same technique is reapplied
-to adding to this "item favorites" list. You can think of it as two shopping
-lists: The list itself and favorites, where the user adds to favorites, and
-favorites adds to the shopping list.
+A for loop can also loop through other types of data, such as the very popular
+Array of Objects, formatting it in a reasonable way
+(assuming data like in the `stations:=`  _State_ data example above):
 
 
-```modulo_demo
-<Template>
-    <h3>Shopping list | {{ state.items|length }}</h3>
-    <p>{{ state.items|join }}</p>
-    <hr />
-    <h4>Favorites</h4>
-    {% for favorite in state.favorites %}
-        <button
-            @click:=state.items.push
-            payload="{{ favorite }}"
-        >{{ favorite|capfirst }}</button>
+    {% for station in state.stations %}
+        <p>{{ station.name }} | TRAFFIC SCORE: {{ station.trafficRating }}</p>
     {% endfor %}
-    <hr />
-    <input
-        [state.bind] name="text"
-        style="width: 60%"
-    />
-    <button
-        @click:=state.favorites.push
-        payload="{{ state.text }}"
-    >+</button>
-</Template>
-<State
-    items:=[]
-    favorites:='[ "oatmeal" ]'
-    text=""
-></State>
-```
 
 
-##### Usability
+In this example, the `{{ station.name }}` and `{{ station.trafficRating }}`
+refer to templating the individual values within the station object in the
+array of stations.
 
-This next iteration on the code will be bigger.
+Like the "if", for has an "endfor", which it uses to designate the portion of
+the temlpate it will repeat. Unlike "if", it can use the template it 0 times, 1
+time, or 2+ times (`if-tags` can use the template only 0 times or 1 time, but
+can never "duplicate" the template and use it 2+ times).
 
 
-This section mentioned "ergonomics" earlier, though from a coder or designer
-perspective. Perhaps it's very obvious, but the more important ergonomics is
-that the page itself is usable, and users (e.g. non-coders, website visitors,
-etc using the page) can understand how to use the app from a user perspective.
+### Template tag gotchas
 
-For this last set of tweaks, we'll learn HTML and Modulo features that make it
-easier to write more pleasant applications.  First, we'll use a feature of
-HTML: The `placeholder="Add to favorites"` attribute, that lets us add a
-"default placeholder" in HTML.  Then, we'll use the Modulo template tag `{%
-empty %}` to our `{% for %}` loop for a user-friendly message when we have an
-empty list.  Finally, we'll add two if-statements: One to stop empty text, and
-the to warn users trying to add duplicates. For simplicity, we'll just use the
-browser's built-in tooltip with a `title="..."` attribute on an HTML
-abbreviation tag (`abbr`).
+**Important syntax note:** Always put templating tags *inside* of attribute
+values. For example:
 
-Examine the following final code transformation:
-
-```modulo_demo
-<Template>
-    <h3>Shopping list | {{ state.items|length }}</h3>
-    <p>{{ state.items|join }}</p>
-    <hr />
-    <h4>Favorites</h4>
-    {% for favorite in state.favorites %}
-        <button
-            @click:=state.items.push
-            payload="{{ favorite }}"
-        >{{ favorite|capfirst }}</button>
-    {% empty %}
-        <em>(None yet! Use form below.)</em>
-    {% endfor %}
-    <hr />
-    <input
-        [state.bind] name="text"
-        placeholder="Add to favorites"
-        style="width: 60%"
-    />
-    {% if state.text %}
-        {% if state.text not in state.favorites %}
-            <button
-                @click:=state.favorites.push
-                payload="{{ state.text }}"
-            >+</button>
-        {% else %}
-            <abbr title="{{ state.text }} already in favorites.">
-                [ ! ]
-            </abbr>
-        {% endif %}
-    {% endif %}
-</Template>
-<State
-    items:=[]
-    favorites:='[]'
-    text=""
-></State>
-```
-
-
-
-
-##### Comprehension Question
-
-What good are click events for?
-
-- Answer: Most interactive applications rely on click events to have user interactivity via mouse.
-
-
-------
-
-
-
-# Script
-
-> **Developer Console?** - When using Modulo, you should have the JavaScript
-> Console open on your web browser.  This is available by right clicking (or
-> Command Clicking for macOS users), and selecting "Inspect".  Then, on the
-> right side or bottom (or in another location, with customization), there
-> should be a tab that says `Console`. Click on this one.  You should see a
-> big, friendly Modulo logo.
-
-
-Lastly, in our *Ramping Up* tutorial, it was mentioned it would end with a
-little peak into JavaScript.  If you are a total newbie when it comes to
-JavaScript, this last section might make less sense. However, still consider
-looking over it -- maybe you might find you like JavaScript, and could get
-curious to learn more. With JavaScript code, you can greatly expand what you
-can do with Modulo with custom functionality, create more interactive
-applications, games, better integrating APIs, process data, and more.
-
-While Modulo is designed to be a handy little tool for web developers even
-without use of embedded JavaScript or _Script_ parts, sometimes you just need
-access to that extra power of custom JavaScript code.
-
-##### Learning Tips
-
-* **Tip 1:** When developing with Modulo, especially if you are working with
-  JavaScript, remember to keep your JavaScript Console open, so you know if
-  there are errors!
-
-* **Tip 2:** This tutorial only covers a tiny bit of how to add some JavaScript
-  to your page. It does not go into much detail about the language. For this,
-  consider a different tutorial, such as [MDN's JavaScript
-  Basics](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics),
-  [MDN's Learn JavaScript tutorial
-  collection](https://developer.mozilla.org/en-US/docs/Learn/JavaScript), or [JavaScript.info](https://javascript.info/).
-
-------
-
-
-<!--We can deduce two things about this guessing game component. Deduction One:
-It used a _State_ CPart. We know that it used a _State_ CPart because it
-changes or mutates. Without a _State_ CPart, a component cannot "change state",
-or mutate or have dynamic content, and instead will be rendered the same way
-every time (that is, assuming it has the same _Props_). In other words, if a
-component needs to have dynamic content or change over time, then a _State_
-CPart is necessary to store this dynamic content. Now on to Deduction Two: It
-used a _Script_ CPart. Script CParts allow for complicated interactions and new
-behavior to be developed. Unfortunately, anything as complicated as this game
-logic requires a background in JavaScript to accomplish, meaning we will not
-cover the behavior in this tutorial.  However, if you are familiar with
-JavaScript, feel free to examine the [demo source code on the examples
-page](/examples/) to see how it works yourself!-->
-
-
-
-## The Script CPart
-
-
-To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
-contained within once, immediately upon loading the component. See this
-example:
-
-```
-<Script>
-    console.log("Hello JavaScript world!");
-/Script>
-```
-
-> **Event directives in detail** Let's break down the event directive once
-> again: `@click:=script.sayHello`. First, note the at-sign: `@`. This is
-> "syntactic sugar" for the `[component.event]` directive. This will attach a
-> "click" event listener to the given element when that element is first
-> mounted (i.e.  displayed on the screen), and remove the listener if it
-> leaves. In this case, we are using a `:=` style "data prop" style assignment,
-> to assign the click event to point to the sayHello function of the _Script_
-> CPart. All functions defined in a _Script_ CPart will automatically be
-> "exported" and available to click events, or in dataprops in general.
-
-
-In this above example, the _Script_ CPart will execute that JS code once, as
-soon as it's loaded, causing the "console.log" to log that message to the web
-browser's Developer Tools JavaScript Console exactly once.
-
-
-### Attaching click events
-
-Typically, it's more useful to execute code when a user performs an action. To
-do this, we must place the "console.log" into a function:
-
-```
-<Script>
-    function sayHello() {
-        console.log("Hello JavaScript world!");
-    }
-/Script>
-```
-
-Then, attach a "click" event directive to a HTML tag, such as, for example, a
-button element:
-
-```
-<button @click:=script.sayHello>Click me</button>
-```
-
-Now, whenever a user clicks on the button, it will run the "sayHello" function,
-logging the text into the JavaScript console.
-
-
-
-##### Try it now
-
-```modulo_demo
-<Template>
-    <button @click:="script.doLog">console.log a message</button>
-</Template>
-<Script>
-    console.log("COMPONENT GOT LOADED!");
-    function doLog() {
-        console.log("Hello Modulo Scripting World!");
-    }
-/Script>
-```
-
-1.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
-`Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
-you can right-click with your mouse and select "Inspect", and then go to the
-_Console_ tab.
-2.  Do you see the "COMPONENT GOT LOADED!" text displayed in the console? It is
-displayed once every time the component is loaded. By clicking "RUN", you can
-"reload" the component, causing that message to show (or count up) again.
-3.  Try now clicking on the button in the preview on the right. Do you see how
-every time you click it shows (or counts) the text of the console.log in the
-console?
-4.  _Extra:_ Any number of functions can be defined in a _Script_ CPart.
-Practice writing your own function that console logs a different message, and
-then attaching it to a new button (or the existing button).
-5.  _Extra:_ The "event" directive supports any event. Try changing "@click" to
-"@mouseover", and then move your mouse over the button (without clicking).
-
-
-------
-
-### Interacting with state
-
-The _Script_ CPart is like the _Template_ CPart in one way: You get variables
-referencing the other CParts. Within functions defined in the _Script_ CPart,
-variables will be available representing the other CParts that have been
-defined in the _Component_. As with the _Template_ CPart, the most useful
-variables are `state`, with the current data in _State_ CPart (the "data"
-Object), and `props`, with the value of the attributes that were passed to this
-component.
-
-Remember our "Holmes-style" detective work we did in the previous section? We
-looked at a button which incremented a value when clicked. The JavaScript code
-to increment a variable is `num++`, and for state data it can be:
-`state.num++`.  Also, by default, components will rerender after every event
-that you are listening to. With that in mind, examine the code of the Hello
-button:
-
-
-```modulo_demo
-<Template>
-    <button @click:="script.doCountup">Hello {{ state.num }}</button>
-</Template>
-<State
-    num:=42
-></State>
-<Script>
-    function doCountup() {
-        state.num++;
-    }
-/Script>
-```
-
-By clicking on the button, it will increment the state value. Since the
-component will rerender after the click, it will then change the DOM to show
-the new number.
-
-With the power of JavaScript, you can do all manner of things with the Script
-tag. The [Examples page](/examples/) has all sorts of examples of more
-complicated apps and applications. The typical use of a Script tag, thus, is to
-create custom logic that manipulates or "puppets" the state, which in turn is
-what controls the rendering of the component's HTML code by the Template CPart.
-
-Keep in mind that the Script CPart is intended to be limited. Serious
-JavaScript development should be split into separate JS files, or defined as
-custom CParts. Thus, think of the Script CPart as more "filling in the gaps"
-between CParts, which should do most of the heavy lifting (e.g. asynchronous
-code, complicated API calls or data transformation, etc).
-
-
-##### Try it now
-
-See if you can understand how this classic To-Do app operates, which interacts
-with state in two different ways (clearing an input, and pushing to a list).
-
-```modulo_demo
-<!-- The classic "To-Do" app in Modulo. The State CPart "binds" the input
-so it can be to be cleared or retrieved, and keeps track of the list. -->
-<Template>
-<ol>
-    {% for item in state.list %}
-        <li>{{ item }}</li>
-    {% endfor %}
-    <li>
-        <input [state.bind] name="text" />
-        <button @click:=script.addItem>Add</button>
-    </li>
-</ol>
-</Template>
-
-<State
-    list:='["Milk", "Bread", "Candy"]'
-    text="Coffee"
-></State>
-
-<Script>
-    function addItem() {
-        state.list.push(state.text); // add to list
-        state.text = ""; // clear input
-    }
-/Script>
-```
-
-##### Comprehension Question
-
-This To-Do app could be done without a _Script_ tag - we were building similar
-apps just before adding events that went directly to `state.list.push`. Why
-would you choose one over the other?
-
-- **Answer:** As with other questions - whatever is easiest! Typically, avoid
-  using a _Script_ until you have to, since this requires a lot more care,
-  since it's more flexible than just directly attaching an event, and thus has
-  more opportunities for bugs or confusing code. Often, you might encounter
-  something that cannot be done directly. Then, that's time for the _Script_
-  CPart and custom JavaScript.
-
-
-------
-
-## Custom Directives
-
-**New to JavaScript?** You probably won't have much need for this. Feel free to
-skip this last section!
-
-
-> **DOM Methods? What DOM methods are there?** All "DOM elements" (p, h1, etc)
-> also have methods or different "verbs" or "commands" you can do to it.
-> These enable different direct modifications to the DOM, and are how Modulo
-> itself implements many of its features.  Typically, you should just use
-> Templating, and only do direct DOM manipulation as a last resort.  However,
-> for a full reference, you can refer to MDN's documentation:
-> [DOM Introduction](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction),
-> [DOM-Node reference](https://developer.mozilla.org/en-US/docs/Web/API/Node)
-
-Sometimes you want to have the full, precise control of the browser's
-collecting of built-in DOM methods, and you want to be able to directly modify
-the browser's DOM (document structure), at certain spots in your component.
-This is where writing your own directives comes into play.  All the directives
-built-in directives (state.bind, events, and data props), all are built using
-JS functions or methods that activate when certain attributes are found on the
-document. You can leverage the same system for your own to do similar direct
-DOM manipulation (e.g. attaching events or manually modifying its content).
-
-For example, examine the following code:
-
-```
-<div [script.ready]>
-    Hey!
+```html
+<div class="{% if state.show %}visible{% endif %}">
+    ...hidden things...
 </div>
 ```
 
-Note how in the same format as `[state.bind]`, we wrote `[script.ready]`.
-This will invoke the corresponding `readyMount` function when the element
-appears, and `readyUnmount` when it is removed from the page:
+Do you see how the `class="..."` goes around the `if`? This is the correct way
+to do it. It is incorrect to make the entire attribute optional. That is to
+say, syntax like `{% if state.show %}class="visible"{% endif %}` is **incorrect**.
 
-```javascript
-function readyMount({ el }) {
-    console.log('The element is ready:', el);
-    el.innerHTML = '<h1>Hello DOM world!</h1>';
-}
-function readyUnmount({ el }) {
-    console.log('The element is about to go away:', el);
-}
-```
-
-Note that the naming is important: the directive name must be all lowercase,
-and the function must end with either `Mount` or `Unmount`.
+The risk is that  in some circumstances this can cause a lot of equals and
+quotes to appear in your code `=""`. Tthis has to do with how the browser
+mis-interprets the template tag syntax as empty attributes, and thus fills in
+the rest.
 
 
-##### Try it now
 
-One common use of directives might be to focus a particular input. Try
-uncommenting the `el.focus()` line of code (that is, removing the `//`
-prefixing it), and see what happens when you click RUN:
+##### Try It Now
+
+1. Examine the code below. Do you see how the `for` template-tag "duplicates"
+the inner template for every item in the array of items?
+
 
 ```modulo_demo
 <Template>
-    <label>Top: <input  /></label>
-    <label>Middle: <input [script.focus] /></label>
-    <label>Bottom: <input  /></label>
+    <ol>
+    {% for item in state.items %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    </ol>
 </Template>
-
-<Script>
-    function focusMount({ el }) {
-        el.value = 'Ready to type:';
-        // el.focus();
-    }
-/Script>
+<State
+    items:='[ "toothbrush", "umbrella", "my bag", "laptop", "charger" ]'
+></State>
 ```
 
 
-##### Comprehension Question
+2. Try adding `|reversed` filter to the `items`, so it becomes `{% for item in
+items|reversed %}`. What do you think this will do?
 
-What are uses of custom directives?
 
-- **Answer:** When core Modulo features are not enough, and you need to
-  directly use the browser's DOM methods.
 
-When you should do direct DOM manipulation with directives?
+##### Try It Now
 
-- **Answer:** Only do direct DOM manipulation as a last resort, such as when
-  you are following a tutorial that gives instructions this way, or are
-  combining Modulo with another framework that operates with direct DOM
-  references
+1. Examine the code below. Do you see how the `for` template-tag "duplicates"
+the inner template for each station, in the Array of Objects?
 
+
+```modulo_demo
+<Template>
+    {% for station in state.stations %}
+        <div>{{ station.name }}</div>
+        <div>{{ station.trafficRating }}</div>
+    {% endfor %}
+</Template>
+<State
+    stations:='[
+        {
+            "name": "Embarcadero",
+            "trafficRating": 1353
+        },
+        {
+            "name": "19th St",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+</Style>
+```
+
+
+2. Examine this modification. This shows a more data, and a combination of an
+`if` and a `for`.  It allows it to add a "highlight" on ones that meet a
+certain criteria. The `gt 800` means "greater than 800".
+
+```modulo_demo
+<Template>
+    <h3>Name</h3> <h3>City</h3> <h3>Use</h3>
+    {% for station in state.stations %}
+        <div>{{ station.name }}</div>
+        <div>[{{ station.city }}]</div>
+        <div class="{% if station.trafficRating gt 800 %}warning-alt{% endif %}">{{ station.trafficRating }}</div>
+    {% endfor %}
+</Template>
+<State
+    stations:='[
+        {
+            "name": "Embarcadero",
+            "city": "SF",
+            "trafficRating": 1253
+        },
+        {
+            "name": "West Oakland",
+            "city": "OAK",
+            "trafficRating": 695
+        },
+        {
+            "name": "12th St",
+            "city": "OAK",
+            "trafficRating": 853
+        },
+        {
+            "name": "19th St",
+            "city": "OAK",
+            "trafficRating": 732
+        }
+    ]'
+></State>
+<Style>
+    :host {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .warning-alt {
+        border: #ffeeee 2px solid;
+        background: #ffaaaa;
+    }
+</Style>
+```
+
+3. **Local file challenge:** This one is tricky, but think about if there's a
+way you can reduce your code size and reuse by "refactoring" repetitive code in
+your local project into a State data and a for-loop.
+
+-----------
+
+
+# StaticData
+
+_StaticData_ is a CPart used to import data from a JSON file format or CSV file
+format source, such as a file or API. Unlike _State_, it is for "static" or
+unchanging data. When building or deploying, it will be bundled together for
+speedy look-ups.
+
+
+## Intro to the JSON file format
+
+JSON files are a format for storing data. There are many editors and tools for
+using them -- your editor may already be able to!
+
+What are JSON files like? The best way to learn is by looking at one: <https://www.gov.uk/bank-holidays.json>
+
+If you click on that link, you'll see something like:
+
+```js
+{"england-and-wales":{"division":"england-and-wales","events":[{"title":"New Year’s Day","date":"2018-01-01","notes":"","bunting":true},{"title":"Good Friday","date":"2018-03-30","notes":"","bunting":false},{"title":"Easter Monday", ...
+```
+
+This is hard to read. But if you look closely through it, you recognize that it
+contains information about holidays in the UK, starting in the year 2018, as
+provided by the government of the UK. If used correctly, this data could be
+useful for quickly assembling a scheduling app, for example.
+
+In Modulo, we can use the _StaticData_ CPart to access this file:
+
+    <StaticData
+        -src="https://www.gov.uk/bank-holidays.json"
+    ></StaticData>
+
+
+##### Try It Now
+
+1. Examine the JSON file below.
+
+2. Consider the discussion questions below.
+
+3. *Challenge:* Modify the code to correctly access data in the JSON file and
+display the first event title for England and Wales (e.g. `"New Years Day"`) (Solution below)
+
+```modulo_demo
+<Template>
+    <pre>{{ staticdata|json:2 }}</pre>
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    pre {
+        height: 250px;
+        overflow: auto;
+    }
+</Style>
+```
+
+##### Comprehension Questions
+
+
+- How is it displaying the entire file, formatted like that?
+    - **Answer** - To display data from a file like this, we can use the
+      `|json` filter in a HTML pre-formatting `<pre></pre>` tag. Using the
+      `|json:2` argument gives us 2 spaces for indentation.
+
+- How do you identify _keys_ of this file?
+    - **Answer** - Names on the left of `:` are called "keys" and/or "properties".
+      They are labels for specific parts of the data set.
+    - **Examples** - `"england-and-wales":`, `"title":`, `"division":`, or
+      `"events":`
+
+- How do you spot the _values_ of this file?
+    - **Answer** - The things on the right of the `:` are called the "values".  These are
+      typically the data you actually want. You
+      can use the labels to the access the values.
+    - **Examples** - `: "New Years Day"`, `: "2018-01-01"`, or `: true`
+
+
+- How would you access the title of the first event?
+    - **Answer** - `|get:"england-and-wales.events.0.title"`
+    - **Explanation** - Why `england-and-wales`? Because it's the first key
+      behind the `:`. Why `.events`? Because it's the next key that lets us
+      access the big Array (hint, the `[` and `]`) of the "main data".  Why
+      `.0`?  Because programming languages start counting at 0, so the first
+      thing is accessed at index 0. Finally, the `.title` accesses the specific
+      value that we want.
+
+-----
+
+## Drilling down with |get
+
+
+So, to access the data we want, to "drill down" so-to-speak, we can use the
+`|get` filter. This lets us string together with dots (`.`) as many "keys" as
+we'd like to access what we want. For example, to access the first holiday,
+`|get:"england-and-wales.events.0.title"`. Example:
+
+
+```modulo_demo
+<Template>
+    <p><strong>First event of the year in England:</strong>
+    {{ staticdata|get:"england-and-wales.events.0.title" }}</p>
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    pre {
+        height: 250px;
+        overflow: auto;
+    }
+</Style>
+```
+
+Okay, that's good for accessing exactly 1 value. However, the more useful thing
+would be to go just to the level of the Array (e.g. `"events": [`) and then use
+a `{% for %}` loop to go through it all.
+
+
+**See how applying these techniques can create a table with a `{% for %}`
+template tag in this next TRY IT NOW.**
+
+##### Try It Now
+
+```modulo_demo
+<Template>
+    <h3>Title</h3><h3>Date</h3>
+    {% for event in staticdata|get:"england-and-wales.events" %}
+        <div>{{ event.title }}</div>
+        <div>{{ event.date }}</div>
+    {% endfor %}
+</Template>
+<StaticData
+    -src="https://www.gov.uk/bank-holidays.json"
+></StaticData>
+<Style>
+    :host {
+        height: 200px;
+        overflow: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    div {
+        font-size: 0.8rem;
+    }
+</Style>
+```
+
+
+1. Examine the code above.
+
+2. Do you understand how the `get` filter accesses the data we need, and then
+the `for` template-tag loops through that data showing it in a grid format
+(thanks to CSS `display: grid`)?
+
+3. **Local file challenge:** Try accessing other data sets you find.  Can you
+display a table or details of some data set or JSON-based API you find online?
+For example, if you are fan of the Pokemon franchise, you might enjoy using the
+[PokeAPI](https://pokeapi.co/). Or, [try using GitHub's
+API](https://docs.github.com/en/rest/guides/getting-started-with-the-rest-api).
+Many more are available here: <https://github.com/public-apis/public-apis>
 
 ------
 
 # Part 4: Summary
 
 
-We learned about Shadow DOM and isolating CSS from children using slots. We
-learned about events, and how to attach various operations to click events.  We
-learned a little bit about attaching JavaScript-powered script tags to our
-components, and then activating functions via either events or directives.
-
-
 #### Key terms
 
-* **slot** - A placeholder for content to be inserted when a component is used.
-  Useful for writing components that "wrap around" other content.
-* **Style isolation** - The _Style_ CPart has several "strategies" or modes for
-  isolating the CSS it contains to prevent it from affecting other  components
-  in ways you do not intend
-* **Component mode** - A way to set components to render in a certain way,
-  automatically setting Style to isolate in a certain way as well
-    * **mode="vanish"** - A way to make the component "vanish" after rendering,
-      and make the Style use classes instead of prefixes
-    * **mode="shadow"** - A browser-enforced way to isolate CSS to a component
-      so it can't affect other CSS and other CSS can't affect it
-* **Events** - Browsers generate events constantly when users interact with the page
-* **Event listening** - Listen to events to activate certain methods when they occur 
-* **methods** - All types of data has "methods" attached to it, enabling different modifcaations to happen
-* **Script** - CPart that enables embedding of arbitrary JavaScript code, and
-  allowing for easy access to CPart interface, and exposing JS functions to be
-  attached as events
-* **Directive** - A special type of HTML attribute that "hooks in"
-  functionality to otherwise plain HTML elements. 
-    - @click (shortcut for [component.event]) - attach event listener to element
-    - [script.dostuff] - custom defined directives for accessing DOM API directly
+* **Directive** \- A special type of HTML attribute that "hooks in"
+  functionality to otherwise plain HTML elements. Three built-in directives
+  include:
+    * `:=` \- "data-prop" assignment, allowing for assigning to JavaScript
+      values such as functions and/or primitive JavaScript data types in JSON
+      syntax
+    * `@click` \- attach event listener to element
+* **Data types** \- the collection of different types of data that JavaScript,
+  and thus Modulo, can read. They consist of: `String`, `Number`, `Boolean`, `Array`,
+  `Object`, and `null`
+* **Template tag** \- A more advanced type of Template code that lets us repeat
+  or optionally include other template code based on data contained in state,
+  props, or from a static data CPart
+    * **for-statement** - template tags for duplicating portiosn of template
+      code for every item in an Array
+* **JSON** \- A file format for storing data that Modulo can read
+* **StaticData** - The CPart for reading in JSON or CSV files
 
------
+
+
 
 #### Next step
 
-That's all for the *Ramping Up with Modulo tutorial*!  However, that's far from
-all for Modulo in general.  Only some of Modulo's features have been covered by
-this tutorial, but it's merely the first in a series.
+You're almost done with the tutorial! The last section goes deeper into
+attaching events, before finally dipping into use of the
+_Script_ CPart, which enables you to add JavaScript code into your components.
 
-*What's next for you?*
-
-
-1. [👷 🏗️ 📦  **Building Apps with Modulo** 👷 🏗️ 📦 ](/tutorial/building-apps/) -
-Continue the tutorial series and build a something bigger!
-2. Continue perusing the full [Modulo Documentation](/docs/) to focus learning
-on a particular topic
-
-
+[Part 5: Events and Scripts »](part5.html)

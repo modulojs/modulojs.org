@@ -1,0 +1,693 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+tutorial: Part 5
+---
+
+
+
+Early on in this *Ramping Up* tutorial, it was mentioned it would end with a
+little peak into JavaScript.  If you are a total newbie when it comes to
+JavaScript, this last section might make less sense. However, still consider
+looking over it -- maybe you might find you like JavaScript, and could get
+curious to learn more. With JavaScript code, you can greatly expand what you
+can do with Modulo with custom functionality, create more interactive
+applications, games, better integrating APIs, process data, and more.
+
+
+So far, our interactivity has been limited to binding state.
+In this final section, we will learn about connecting arbitrary events to methods,
+and also dipping our toes into the "full power" of JavaScript.
+
+# Events
+
+> **How many events are there?** There are many, many events! We'll mostly just
+> use `click`, but sometimes you'll need other events, such as when adding
+> interactions for mouse motion, or adding in drag-and-drop. [Read MDN's list
+> of all
+> events](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
+
+
+Now for perhaps the most important framework
+feature for interactive applications: Attaching arbitrary events.
+In Modulo, events are attached with the _event directive_, indicated by the `@` sign.
+
+## The event directive
+
+So far, we've learned how to use `[state.bind]` to add interactivity to a
+Component.   Under the hood, `[state.bind]` attaches something called an "event
+listener". This is a bit of JavaScript code that waits for user interaction.
+The _State_ CPart waits for the `keyup` event (e.g. when typing in an input) or
+the `change` event (e.g. when adjusting a slider).  This is good enough for a
+lot of cases, but often we want to listen to other sorts of events.  There are
+also events for clicking, mouse motion, scrolling, resizing, and so on. These
+are "activated" or "triggered" by the web browser when a user of your web site
+does one of these actions (types on the keyboard, moves the mouse, etc.). We'll
+need to use event directives to access these other events.
+
+The most used event is the `click` event. Here's an example a click event:
+
+```
+<Template>
+    <button @click:=state.items.reverse>
+        Reverse the items!
+    </button>
+</Template>
+<State
+    items:='[ "a", "b", "c" ]'
+></State>
+```
+
+
+> **Method? What methods are there?** All "container" types of data have
+> different "verbs" or "commands" you can do to it, which are called "methods".
+> For example, just like you can reverse a line of people in real life by
+> giving the command for everyone to turn around (so to speak), you can reverse
+> an Array of people's names by giving the `Array.reverse` command. These
+> enable different modifications to happen to the data contained within. By
+> default, JavaScript comes with several very handy ones attached to the
+> `Array` type, and we'll go over them all in this tutorial.  However, for a
+> full reference, you can refer to MDN's documentation:
+> [Array tutorial](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays),
+> [Full list of Array methods](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
+
+Let's break down the event directive in  detail:
+
+- `@click` - all event directives start with `@`, so `@click`, `@mouseover`,
+  `@drag` etc.
+- `:=` - this is a data prop directive, which allows us to access `state.items`
+- `state.items.reverse` - this is accessing the `items` Array, and then on
+  that, accessing the `Array.reverse` method, which will get activated when the
+  `click` event happens
+
+Just guessing, based on the text and the code you see here, what do you think
+this might do when a user clicks on the button? If you guessed it might
+"reverse" the state variable called "items", you would be correct!
+
+Let's now try it out.
+
+##### Try it now
+
+1. Examine the following code, and try the demo. What does clicking the button
+do?
+
+```modulo_demo
+<Template>
+    <p>Items: {{ state.items|join }}</p>
+    <button
+        @click:=state.items.reverse 
+    >Reverse the items!</button>
+</Template>
+<State
+    items:='[ "candy", "bread" ]'
+></State>
+```
+
+
+2. Examine the following code, and try the demo. What does each button do?
+
+```modulo_demo
+<Template>
+    <p>Items: {{ state.items|join }}</p>
+    <hr />
+    Remove last:
+    <button @click:=state.items.pop>Array.pop</button>
+    <hr />
+    Remove first:
+    <button @click:=state.items.shift>Array.shift</button>
+</Template>
+<State
+    items:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
+></State>
+```
+
+
+##### Comprehension Questions
+
+Do you see how clicking on the buttons causes the Array to be reversed or
+removed or otherwise modified, and the component to rerender with the new look?
+Why do you think the component needs to "rerender"?
+
+- Answer: Modulo is based on a "change state & rerender" philosophy. That is,
+  when you do an event, that should change the state, and then the component
+  will automatically rerender, showing the new appearance based on the new
+  values in the state. In this case, it's reversing the list.
+
+-----------
+
+## Event payload
+
+Many methods that we want to activate upon an event require extra information
+about the event to be useful. This extra data is added with a "payload="
+attribute.  For example, this button will activate the `Array.fill` method with
+a payload of `"X"``:
+
+```
+<button
+    @click:=state.brands.fill
+    payload="X"
+>Change to "X"</button>
+```
+
+This causes the "brands" Array to get each item replaced with the String `"X"`.
+Payloads can also have data props, so you can use different values, e.g. if you
+wanted a number type, you'd write `payload:=0`
+
+*Let's practice events and payload by building up a shopping list app, which
+will use several Array methods, and many click events.*
+
+
+##### Try it now
+
+1. Examine the following example, that transforms our shopping list to
+something a bit less "balanced":
+
+```modulo_demo
+<Template>
+    <p>Shopping list: {{ state.items|join }}</p>
+    <hr />
+    <button
+        @click:=state.items.fill
+        payload="CANDY!!!!!!"
+    >MAKE IT ALL CANDY!!</button>
+</Template>
+<State
+    items:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
+></State>
+```
+
+2. Now, examine this next app, which offers the user two options to "push"
+(add) onto a Array that starts empty:
+
+```modulo_demo
+<Template>
+    <p>Shopping list: {{ state.items|join }}</p>
+    <hr />
+    <button
+        @click:=state.items.push
+        payload="oatmeal"
+    >Oatmeal</button>
+    <button
+        @click:=state.items.push
+        payload="CANDY!!!"
+    >Candy</button>
+</Template>
+<State
+    items:=[]
+></State>
+```
+
+3. Examine the following code. It's more advanced. It has a list of different
+items, which it uses to generate the different buttons with different items:
+
+
+```modulo_demo
+<Template>
+    <h3>Shopping list | {{ state.items|length }}</h3>
+    <p>{{ state.items|join }}</p>
+    <hr />
+    {% for favorite in state.favorites %}
+        <button
+            @click:=state.items.push
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
+    {% endfor %}
+</Template>
+<State
+    items:=[]
+    favorites:='[ "zucchini", "oatmeal", "oranges", "apples", "candy", "bread" ]'
+></State>
+```
+
+
+4. Examine this next code. In this iteration, the same technique is reapplied
+to adding to this "item favorites" list. You can think of it as two shopping
+lists: The list itself and favorites, where the user adds to favorites, and
+favorites adds to the shopping list.
+
+
+```modulo_demo
+<Template>
+    <h3>Shopping list | {{ state.items|length }}</h3>
+    <p>{{ state.items|join }}</p>
+    <hr />
+    <h4>Favorites</h4>
+    {% for favorite in state.favorites %}
+        <button
+            @click:=state.items.push
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
+    {% endfor %}
+    <hr />
+    <input
+        [state.bind] name="text"
+        style="width: 60%"
+    />
+    <button
+        @click:=state.favorites.push
+        payload="{{ state.text }}"
+    >+</button>
+</Template>
+<State
+    items:=[]
+    favorites:='[ "oatmeal" ]'
+    text=""
+></State>
+```
+
+
+##### Usability
+
+This next iteration on the code will be bigger.
+
+
+This section mentioned "ergonomics" earlier, though from a coder or designer
+perspective. Perhaps it's very obvious, but the more important ergonomics is
+that the page itself is usable, and users (e.g. non-coders, website visitors,
+etc using the page) can understand how to use the app from a user perspective.
+
+For this last set of tweaks, we'll learn HTML and Modulo features that make it
+easier to write more pleasant applications.  First, we'll use a feature of
+HTML: The `placeholder="Add to favorites"` attribute, that lets us add a
+"default placeholder" in HTML.  Then, we'll use the Modulo template tag `{%
+empty %}` to our `{% for %}` loop for a user-friendly message when we have an
+empty list.  Finally, we'll add two if-statements: One to stop empty text, and
+the to warn users trying to add duplicates. For simplicity, we'll just use the
+browser's built-in tooltip with a `title="..."` attribute on an HTML
+abbreviation tag (`abbr`).
+
+Examine the following final code transformation:
+
+```modulo_demo
+<Template>
+    <h3>Shopping list | {{ state.items|length }}</h3>
+    <p>{{ state.items|join }}</p>
+    <hr />
+    <h4>Favorites</h4>
+    {% for favorite in state.favorites %}
+        <button
+            @click:=state.items.push
+            payload="{{ favorite }}"
+        >{{ favorite|capfirst }}</button>
+    {% empty %}
+        <em>(None yet! Use form below.)</em>
+    {% endfor %}
+    <hr />
+    <input
+        [state.bind] name="text"
+        placeholder="Add to favorites"
+        style="width: 60%"
+    />
+    {% if state.text %}
+        {% if state.text not in state.favorites %}
+            <button
+                @click:=state.favorites.push
+                payload="{{ state.text }}"
+            >+</button>
+        {% else %}
+            <abbr title="{{ state.text }} already in favorites.">
+                [ ! ]
+            </abbr>
+        {% endif %}
+    {% endif %}
+</Template>
+<State
+    items:=[]
+    favorites:='[]'
+    text=""
+></State>
+```
+
+
+
+
+##### Comprehension Question
+
+What good are click events for?
+
+- Answer: Most interactive applications rely on click events to have user interactivity via mouse.
+
+
+------
+
+
+
+# Script
+
+> **Developer Console?** - When using Modulo, you should have the JavaScript
+> Console open on your web browser.  This is available by right clicking (or
+> Command Clicking for macOS users), and selecting "Inspect".  Then, on the
+> right side or bottom (or in another location, with customization), there
+> should be a tab that says `Console`. Click on this one.  You should see a
+> big, friendly Modulo logo.
+
+
+
+While Modulo is designed to be a handy little tool for web developers even
+without use of embedded JavaScript or _Script_ parts, sometimes you just need
+access to that extra power of custom JavaScript code.
+
+##### Learning Tips
+
+* **Tip 1:** When developing with Modulo, especially if you are working with
+  JavaScript, remember to keep your JavaScript Console open, so you know if
+  there are errors!
+
+* **Tip 2:** This tutorial only covers a tiny bit of how to add some JavaScript
+  to your page. It does not go into much detail about the language. For this,
+  consider a different tutorial, such as [MDN's JavaScript
+  Basics](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics),
+  [MDN's Learn JavaScript tutorial
+  collection](https://developer.mozilla.org/en-US/docs/Learn/JavaScript), or [JavaScript.info](https://javascript.info/).
+
+------
+
+
+<!--We can deduce two things about this guessing game component. Deduction One:
+It used a _State_ CPart. We know that it used a _State_ CPart because it
+changes or mutates. Without a _State_ CPart, a component cannot "change state",
+or mutate or have dynamic content, and instead will be rendered the same way
+every time (that is, assuming it has the same _Props_). In other words, if a
+component needs to have dynamic content or change over time, then a _State_
+CPart is necessary to store this dynamic content. Now on to Deduction Two: It
+used a _Script_ CPart. Script CParts allow for complicated interactions and new
+behavior to be developed. Unfortunately, anything as complicated as this game
+logic requires a background in JavaScript to accomplish, meaning we will not
+cover the behavior in this tutorial.  However, if you are familiar with
+JavaScript, feel free to examine the [demo source code on the examples
+page](/examples/) to see how it works yourself!-->
+
+
+
+## The Script CPart
+
+
+To add JavaScript, use the _Script_ CPart. This CPart will execute the JS code
+contained within once, immediately upon loading the component. See this
+example:
+
+```
+<Script>
+    console.log("Hello JavaScript world!");
+/Script>
+```
+
+> **Event directives in detail** Let's break down the event directive once
+> again: `@click:=script.sayHello`. First, note the at-sign: `@`. This is
+> "syntactic sugar" for the `[component.event]` directive. This will attach a
+> "click" event listener to the given element when that element is first
+> mounted (i.e.  displayed on the screen), and remove the listener if it
+> leaves. In this case, we are using a `:=` style "data prop" style assignment,
+> to assign the click event to point to the sayHello function of the _Script_
+> CPart. All functions defined in a _Script_ CPart will automatically be
+> "exported" and available to click events, or in dataprops in general.
+
+
+In this above example, the _Script_ CPart will execute that JS code once, as
+soon as it's loaded, causing the "console.log" to log that message to the web
+browser's Developer Tools JavaScript Console exactly once.
+
+
+### Attaching click events
+
+Typically, it's more useful to execute code when a user performs an action. To
+do this, we must place the "console.log" into a function:
+
+```
+<Script>
+    function sayHello() {
+        console.log("Hello JavaScript world!");
+    }
+/Script>
+```
+
+Then, attach a "click" event directive to a HTML tag, such as, for example, a
+button element:
+
+```
+<button @click:=script.sayHello>Click me</button>
+```
+
+Now, whenever a user clicks on the button, it will run the "sayHello" function,
+logging the text into the JavaScript console.
+
+
+
+##### Try it now
+
+```modulo_demo
+<Template>
+    <button @click:="script.doLog">console.log a message</button>
+</Template>
+<Script>
+    console.log("COMPONENT GOT LOADED!");
+    function doLog() {
+        console.log("Hello Modulo Scripting World!");
+    }
+/Script>
+```
+
+1.  Bring up the console: Press `Control+Shift+J` (Linux, Windows) or
+`Command+Option+J` (macOS) on your keyboard to open the Console. Alternatively,
+you can right-click with your mouse and select "Inspect", and then go to the
+_Console_ tab.
+2.  Do you see the "COMPONENT GOT LOADED!" text displayed in the console? It is
+displayed once every time the component is loaded. By clicking "RUN", you can
+"reload" the component, causing that message to show (or count up) again.
+3.  Try now clicking on the button in the preview on the right. Do you see how
+every time you click it shows (or counts) the text of the console.log in the
+console?
+4.  _Extra:_ Any number of functions can be defined in a _Script_ CPart.
+Practice writing your own function that console logs a different message, and
+then attaching it to a new button (or the existing button).
+5.  _Extra:_ The "event" directive supports any event. Try changing "@click" to
+"@mouseover", and then move your mouse over the button (without clicking).
+
+
+------
+
+### Interacting with state
+
+The _Script_ CPart is like the _Template_ CPart in one way: You get variables
+referencing the other CParts. Within functions defined in the _Script_ CPart,
+variables will be available representing the other CParts that have been
+defined in the _Component_. As with the _Template_ CPart, the most useful
+variables are `state`, with the current data in _State_ CPart (the "data"
+Object), and `props`, with the value of the attributes that were passed to this
+component.
+
+Remember our "Holmes-style" detective work we did in the previous section? We
+looked at a button which incremented a value when clicked. The JavaScript code
+to increment a variable is `num++`, and for state data it can be:
+`state.num++`.  Also, by default, components will rerender after every event
+that you are listening to. With that in mind, examine the code of the Hello
+button:
+
+
+```modulo_demo
+<Template>
+    <button @click:="script.doCountup">Hello {{ state.num }}</button>
+</Template>
+<State
+    num:=42
+></State>
+<Script>
+    function doCountup() {
+        state.num++;
+    }
+/Script>
+```
+
+By clicking on the button, it will increment the state value. Since the
+component will rerender after the click, it will then change the DOM to show
+the new number.
+
+With the power of JavaScript, you can do all manner of things with the Script
+tag. The [Examples page](/examples/) has all sorts of examples of more
+complicated apps and applications. The typical use of a Script tag, thus, is to
+create custom logic that manipulates or "puppets" the state, which in turn is
+what controls the rendering of the component's HTML code by the Template CPart.
+
+Keep in mind that the Script CPart is intended to be limited. Serious
+JavaScript development should be split into separate JS files, or defined as
+custom CParts. Thus, think of the Script CPart as more "filling in the gaps"
+between CParts, which should do most of the heavy lifting (e.g. asynchronous
+code, complicated API calls or data transformation, etc).
+
+
+##### Try it now
+
+See if you can understand how this classic To-Do app operates, which interacts
+with state in two different ways (clearing an input, and pushing to a list).
+
+```modulo_demo
+<!-- The classic "To-Do" app in Modulo. The State CPart "binds" the input
+so it can be to be cleared or retrieved, and keeps track of the list. -->
+<Template>
+<ol>
+    {% for item in state.list %}
+        <li>{{ item }}</li>
+    {% endfor %}
+    <li>
+        <input [state.bind] name="text" />
+        <button @click:=script.addItem>Add</button>
+    </li>
+</ol>
+</Template>
+
+<State
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+
+<Script>
+    function addItem() {
+        state.list.push(state.text); // add to list
+        state.text = ""; // clear input
+    }
+/Script>
+```
+
+##### Comprehension Question
+
+This To-Do app could be done without a _Script_ tag - we were building similar
+apps just before adding events that went directly to `state.list.push`. Why
+would you choose one over the other?
+
+- **Answer:** As with other questions - whatever is easiest! Typically, avoid
+  using a _Script_ until you have to, since this requires a lot more care,
+  since it's more flexible than just directly attaching an event, and thus has
+  more opportunities for bugs or confusing code. Often, you might encounter
+  something that cannot be done directly. Then, that's time for the _Script_
+  CPart and custom JavaScript.
+
+
+------
+
+## Custom Directives
+
+**New to JavaScript?** You probably won't have much need for this. Feel free to
+skip this last section!
+
+
+> **DOM Methods? What DOM methods are there?** All "DOM elements" (p, h1, etc)
+> also have methods or different "verbs" or "commands" you can do to it.
+> These enable different direct modifications to the DOM, and are how Modulo
+> itself implements many of its features.  Typically, you should just use
+> Templating, and only do direct DOM manipulation as a last resort.  However,
+> for a full reference, you can refer to MDN's documentation:
+> [DOM Introduction](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction),
+> [DOM-Node reference](https://developer.mozilla.org/en-US/docs/Web/API/Node)
+
+Sometimes you want to have the full, precise control of the browser's
+collecting of built-in DOM methods, and you want to be able to directly modify
+the browser's DOM (document structure), at certain spots in your component.
+This is where writing your own directives comes into play.  All the directives
+built-in directives (state.bind, events, and data props), all are built using
+JS functions or methods that activate when certain attributes are found on the
+document. You can leverage the same system for your own to do similar direct
+DOM manipulation (e.g. attaching events or manually modifying its content).
+
+For example, examine the following code:
+
+```
+<div [script.ready]>
+    Hey!
+</div>
+```
+
+Note how in the same format as `[state.bind]`, we wrote `[script.ready]`.
+This will invoke the corresponding `readyMount` function when the element
+appears, and `readyUnmount` when it is removed from the page:
+
+```javascript
+function readyMount({ el }) {
+    console.log('The element is ready:', el);
+    el.innerHTML = '<h1>Hello DOM world!</h1>';
+}
+function readyUnmount({ el }) {
+    console.log('The element is about to go away:', el);
+}
+```
+
+Note that the naming is important: the directive name must be all lowercase,
+and the function must end with either `Mount` or `Unmount`.
+
+
+##### Try it now
+
+One common use of directives might be to focus a particular input. Try
+uncommenting the `el.focus()` line of code (that is, removing the `//`
+prefixing it), and see what happens when you click RUN:
+
+```modulo_demo
+<Template>
+    <label>Top: <input  /></label>
+    <label>Middle: <input [script.focus] /></label>
+    <label>Bottom: <input  /></label>
+</Template>
+
+<Script>
+    function focusMount({ el }) {
+        el.value = 'Ready to type:';
+        // el.focus();
+    }
+/Script>
+```
+
+
+##### Comprehension Question
+
+What are uses of custom directives?
+
+- **Answer:** When core Modulo features are not enough, and you need to
+  directly use the browser's DOM methods.
+
+When you should do direct DOM manipulation with directives?
+
+- **Answer:** Only do direct DOM manipulation as a last resort, such as when
+  you are following a tutorial that gives instructions this way, or are
+  combining Modulo with another framework that operates with direct DOM
+  references
+
+
+------
+
+# Part 5: Summary
+
+
+We learned about events, and how to attach various operations to click events.  We
+learned a little bit about attaching JavaScript-powered script tags to our
+components, and then activating functions via either events or directives.
+
+
+#### Key terms
+
+
+* **Events** - Browsers generate events constantly when users interact with the page
+* **Event listening** - Listen to events to activate certain methods when they occur 
+* **methods** - All types of data has "methods" attached to it, enabling different modifcaations to happen
+* **Script** - CPart that enables embedding of arbitrary JavaScript code, and
+  allowing for easy access to CPart interface, and exposing JS functions to be
+  attached as events
+* **Directive** - A special type of HTML attribute that "hooks in"
+  functionality to otherwise plain HTML elements. 
+    - @click (shortcut for [component.event]) - attach event listener to element
+    - [script.dostuff] - custom defined directives for accessing DOM API directly
+
+-----
+
+#### Next step
+
+That's all for the *Ramping Up with Modulo tutorial*!  However, that's far from
+all for Modulo in general.  Only some of Modulo's features have been covered by
+this tutorial, but it's merely the first in a series.
+
+*What's next for you?*
+
+
+1. [👷 🏗️ 📦  **Building Apps with Modulo** 👷 🏗️ 📦 ](/tutorial/building-apps/) -
+Continue the tutorial series and build a something bigger!
+2. Continue perusing the full [Modulo Documentation](/docs/) to focus learning
+on a particular topic
+
+
