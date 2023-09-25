@@ -5,17 +5,30 @@ title: Script - CParts
 
 # Script
 
-> **Custom vs Script CPart** \- The general rule of thumb is that _Script_ tags are for custom, component-specific behavior, or to fill in gaps in stitching together other CParts, while writing Custom CParts is for interfacing with async, APIs, or any time that a Script CPart gets too cumbersome. Modulo's philosophy is to allow separation of work between _component development_ (HTML, CSS, templating, and high-level behavior), and _CPart development_ (complex JavaScript and APIs).
+> **Custom vs Script CPart** - The general rule of thumb is that _Script_ tags
+> are for custom, component-specific behavior, or to fill in gaps in stitching
+> together other CParts, while writing Custom CParts is for interfacing with
+> async, APIs, or any time that a Script CPart gets too cumbersome. Modulo's
+> philosophy is to allow separation of work between _component development_
+> (HTML, CSS, templating, and high-level behavior), and _CPart development_
+> (complex JavaScript and APIs).
 
-_Script_ CParts allow you to define custom behavior for components using the full power of JavaScript. The most common use of _Script_ tags is to add more sophisticated interactive behavior. Instead of just relying on premade CParts, with a Script tag you can program any custom behavior into your component.
+_Script_ CParts allow you to define custom behavior for components using the
+full power of JavaScript. The most common use of _Script_ tags is to add more
+sophisticated interactive behavior. Instead of just relying on premade CParts,
+with a Script tag you can program any custom behavior into your component.
 
 ### Definition
 
-_Script_ is traditionally included in _Component_ definitions below the _State_ or _Template_ tag. _Script_ has no expected attributes, but instead only has a text-content.
+_Script_ is traditionally included in _Component_ definitions below the _State_
+or _Template_ tag. _Script_ has no expected attributes, but instead only has a
+text-content.
 
 #### Typical use
 
-The most common use of a _Script_ CPart is to specify custom JS code that is either run once after fulling loading all dependencies, or once each time the component renders. See below for a simple example:
+The most common use of a _Script_ CPart is to specify custom JS code that is
+either run once after fulling loading all dependencies, or once each time the
+component renders. See below for a simple example:
 
 
 ```
@@ -254,25 +267,5 @@ The Script CPart "exports" a variety of properties to the `renderObj`, all of wh
   `const myFunc = function () { ...` will also be ignored). That's not to say
   you can't declare your functions like this: However, you should only do so if
   you do not want them to be automatically exported.
-* `script.exports` \- This gives you fine-grained control, allowing you to
-  export arbitrary static variables, functions, or data. This is useful for
-  building up static data structures to be shared between all instances of this
-  component, which can then be accessed in the template. This _should not_ be
-  used as a store or state variable (use the _Store_ CPart for that). Also, it
-  should not be used for simply storing static data that requires no further
-  code or manipulation (use the _StaticData_ CPart for this). For example:
-
-```
-<Template>
-    <p>{% for item in script.exports.bigArray %}
-        {{ item }},
-    {% endfor %}</p>
-</Template>
-<Script>
-    script.exports.bigArray =
-        Array.from({ length: 100 })
-        .map((val, i) => `i liek ${i} turtles`);
-/Script>
-```
 
 

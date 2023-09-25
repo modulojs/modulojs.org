@@ -80,6 +80,7 @@
 
 
         {
+            //showHeader: 'Definitions',
             showHeader: 'Documentation',
             label: 'Component Parts',
             filename: '/docs/cparts/',
@@ -119,8 +120,40 @@
                 },
             ],
         },
+
         {
-            label: 'Templating',
+            label: 'Core Definitions',
+            filename: '/docs/core.html',
+            sections: [
+                {
+                    label: 'Artifact',
+                    fragment: 'artifact',
+                    keywords: ['bundle', 'build', 'custom builds'],
+                },
+                {
+                    label: 'Component',
+                    fragment: 'component',
+                    keywords: ['name', 'innerHTML', 'patches',
+                    'reconciliation', 'rendering mode', 'manual rerender',
+                    'shadow', 'vanish', 'vanish-into-document',
+                    'component.event', 'component.slot', 'component.dataProp'],
+                },
+                {
+                    label: 'Configuration',
+                    fragment: 'configuration',
+                    keywords: ['config', 'loading', 'unpkg', 'npm',
+                    'dependency', 'registering helpers','registering custom cparts'],
+                },
+                {
+                    label: 'Modulo',
+                    fragment: 'modulo',
+                    keywords: ['starting', 'mounting', 'custom loading', 'custom mounting'],
+                },
+            ],
+        },
+        {
+            //showHeader: 'Templating',
+            label: 'Templating Language',
             filename: '/docs/templating/index.html',
             sections: [
                 {
@@ -368,37 +401,7 @@
         },
 
         {
-            label: 'Core Definitions',
-            filename: '/docs/core.html',
-            sections: [
-                {
-                    label: 'Artifact',
-                    fragment: 'artifact',
-                    keywords: ['bundle', 'build', 'custom builds'],
-                },
-                {
-                    label: 'Component',
-                    fragment: 'component',
-                    keywords: ['name', 'innerHTML', 'patches',
-                    'reconciliation', 'rendering mode', 'manual rerender',
-                    'shadow', 'vanish', 'vanish-into-document',
-                    'component.event', 'component.slot', 'component.dataProp'],
-                },
-                {
-                    label: 'Configuration',
-                    fragment: 'configuration',
-                    keywords: ['config', 'loading', 'unpkg', 'npm',
-                    'dependency', 'registering helpers','registering custom cparts'],
-                },
-                {
-                    label: 'Modulo',
-                    fragment: 'modulo',
-                    keywords: ['starting', 'mounting', 'custom loading', 'custom mounting'],
-                },
-            ],
-        },
-
-        {
+            //showHeader: 'Component',
             label: 'Lifecycle',
             filename: '/docs/lifecycle.html',
             sections: [

@@ -2,7 +2,6 @@
 title: Templating Language
 ---
 
-
 This document explains the language syntax and functionality of the included
 Modulo template system.
 
@@ -22,7 +21,6 @@ This also means that most text editors already can highlight Modulo template
 code: Just configure your editor to syntax highlight _Django HTML templates_,
 and you'll be all set for editing Modulo template or library files. Thanks,
 Django!
-
 
 
 If you are used to frontend frameworks which permit mixing functions and
@@ -100,33 +98,64 @@ explained later in this document.
 
 # Variables
 
-Variables look like this: `{{ variable }}`. When the template engine encounters
-a variable, it evaluates that variable and replaces it with the result.
-Variable names consist of any combination of alphanumeric characters and the
-underscore ("_") but may not start with an underscore, and may not be a number.
-The dot (".") also appears in variable sections, although that has a different
-meaning, as indicated below. Importantly, you cannot have spaces or punctuation
-characters in variable names.
+Variables look like this: `{{ my-variable-name }}`. They may also look like `{{
+myVariable }}`. Variable names should start with an alphabetical character, and
+otherwise be alphanumeric (e.g., `A-Z` and `0-9`).  Importantly, variable names
+cannot have spaces (e.g. ` `), special characters (e.g. `#`), or punctuation
+characters outside of underscore (`_`), dash (`-`, described below in [Variable
+syntax](#VariableSyntax)), or the dot (`.`, described next).
 
-### The dot (.)
+### Drilling down: The dot (.)
 
-Use a dot (.) to access sub-properties of a variable. This syntax is much like JavaScript.
+When using template variables, you often want to access data that has been
+structured using the various JSON data structures. That is, you might be
+accessing arrays of numbers for a chart you are rendering on a dashboard, or an
+object containing user information from a database for a profile page.
 
-In the above example, `{{ state.count }}` will be replaced with the value of the "count" property of the state data. Similarly, `{{ script.exports.title }}` reaches even further, by first accessing the `script` variable, then the `exports` subproperty, then the `title` subproperty.
+"Digging" into different data structures to unearth the data you want is a
+process sometimes nicknamed "drilling down". In Modulo, the dot (`.`) character
+is used to "drill down", or access sub-properties of a variable. This syntax is
+much like JavaScript.
 
-If you use a variable that doesn't exist, the template system will insert the value of `undefined`, much like in JavaScript.
+In the above example, `{{ state.count }}` will be replaced with the value of
+the "count" property of the state data. Similarly, `{{ script.data.title }}`
+reaches even further, by first accessing the `script` variable, then the `data`
+subproperty, then the `title` subproperty.
 
-Note that "bar" in a template expression like `{{ foo.bar }}` will be interpreted as a literal string property of "foo', and not a variable "bar", even if one exists in the template context. If you wish to to do the opposite behavior, that is, actually resolve "bar" into it's own value, and then use that value to access a property of bar, consider using the `get` filter: `{{ foo|get:bar }}`. This is equivalent to the "square brackets" notation of JavaScript (e.g. `foo[bar]`), and thus is also useful for accessing numeric indices. For an example, if we have an array in our state like `foo:='["a", "b", "c"]'`, then we can access `"b"` as follows: `{{ state.foo|get:1 }}`.
+If you use a variable that doesn't exist, the template system will insert the
+value of `undefined`, much like in JavaScript.
 
-Variable attributes that begin with an underscore should generally not be accessed, as that can be used to indicate private.
+Note that "bar" in a template expression like `{{ foo.bar }}` will be
+interpreted as a literal string property of "foo', and not a variable "bar",
+even if one exists in the template context. If you wish to to do the opposite
+behavior, that is, actually resolve "bar" into it's own value, and then use
+that value to access a property of bar, consider using the `get` filter:
+`{{ foo|get:bar }}`. This is equivalent to the "square brackets" notation of
+JavaScript (e.g. `foo[bar]`), and thus is also useful for accessing numeric
+indices. For an example, if we have an array in our state like
+`foo:='["a", "b", "c"]'`, then we can access `"b"` as follows:
+`{{ state.foo|get:1 }}`.
+
+Variable attributes that begin with an underscore should generally not be
+accessed, as that can be used to indicate private.
 
 ### What variables are available
 
-Variables come from the component's `renderObj` that is produced in the `prepare` lifecycle phase. [More on the "renderObj" in the section on lifecycle.](/docs/directives.html#renderobj) In practicality, this is another way to say that most variables typically "come from" the CParts of a component. That is, `state` will provide the state values, `props` will provide the values passed down to this component, and finally `script` will provide variables from script tags. In other words, each CPart "decides" which variables it supplies to the Template based on it's "prepare" lifecycle behavior. See the "Variables from CParts" section below for a more thorough look at this.
+Variables come from the component's `renderObj` that is produced in the
+`prepare` lifecycle phase. [More on the "renderObj" in the section on
+lifecycle.](/docs/directives.html#renderobj) In practicality, this is another
+way to say that most variables typically "come from" the CParts of a component.
+That is, `state` will provide the state values, `props` will provide the values
+passed down to this component, and finally `script` will provide variables from
+script tags. In other words, each CPart "decides" which variables it supplies
+to the Template based on it's "prepare" lifecycle behavior. See the "Variables
+from CParts" section below for a more thorough look at this.
 
 ### Custom variables using the _Script_ "prepare" callback
 
-If you want to create computed variables (like in Vue.js), you can create a custom `prepare` lifecycle callback in your Script CPart tag as follows. Examine the following example:
+If you want to create computed variables (like in Vue.js), you can create a
+custom `prepare` lifecycle callback in your Script CPart tag as follows.
+Examine the following example:
 
 
 ```modulo_demo
@@ -178,6 +207,95 @@ Note how `athlete` declares a new variable, which can be reused in
 {% endfor %}
 ```
 
+
+## Variable Syntax
+
+
+### The quandary of kebab vs camel
+
+In naming variables in programming languages, there are several popular syntax
+options. One is nicknamed "camel case", which `looksLikeThis` (kind of like
+humps on a camel's back), and "kebab case", which `looks-like-this` (kind of
+like food on a kebab skewer). These silly nicknames might require some
+imagination, but hopefully they also make it easier to remember!
+
+The Modulo templating language supports either of these two options. It has to
+be flexible since it sits at the "crossroads" of HTML, which uses "kebab" while
+ignoring capital letters, and JavaScript, which respects capital letters and
+thus can use "camel" syntax.  For example, `data-results` (kebab) is a valid
+HTML attribute name, but not a valid JavaScript variable name, since `-` is
+forbidden. In JavaScript, it would be normal to use `dataResults` (camel)
+instead. However, since capitalization is ignored in both plain HTML and
+Component Part definitions, ignoring case means `dataResults` looks the same as
+`dataresults` and `DATARESULTS`, so there's no way to preserve that formatting.
+In other words, outside of _Script_ CParts, we should use `data-results` (kebab
+case) to keep it case-insensitive and HTML-friendly.
+
+
+### Examples
+
+#### Example #1: Automatic camel case
+
+Examine the following example. Note how in Templating, you can use either
+syntax, but in JavaScript, you can't write unquoted property names with `-`
+characters:
+
+```modulo_demo
+<Template>
+    <p>(State) Dashes: {{ state.i-like-long-variable-names }}</p>
+    <p>(State) Capitals: {{ state.iLikeLongVariableNames }}</p>
+    <p>(Script) Dashes: {{ script.also-here }}</p>
+    <p>(Script) Capitals: {{ script.alsoHere }}</p>
+</Template>
+<State
+    i-like-long-variable-names="ok"
+></State>
+<!-- Always incorrect: <State iLikeLongVariableNames="ok"> -->
+<Script>
+    function prepareCallback() {
+        return {
+            alsoHere: "ok",
+            // Always incorrect: also-here: "ok"
+        }
+    }
+/Script>
+```
+
+
+#### Example #2: Avoiding automatic camel case
+
+Sometimes, there is data in a JavaScript object that is written using the
+HTML-style kebab case. Even though it might be awkward to write like this in
+JavaScript, it's pretty common to encounter this in JSON files.  In this case,
+the solution is using the `|get` filter. It still supports `.` syntax to "drill
+down" to acceess properties, but does it does not do camel case transformation.
+See below:
+
+```modulo_demo
+<Template>
+    STAT: {{ staticdata|get:"database-query-results.0.query-status" }}
+</Template>
+<StaticData>
+{
+    "database-query-results": [
+        {
+            "query-status": "OK"
+        }
+    ]
+}
+</StaticData>
+```
+
+
+### Syntax best practices
+
+In _Templates_, use dash syntax as much as possible, since it "blends in" with the
+surrounding HTML and Component Part definitions (e.g. `{{ script.also-here }}`). Only use `|get` as a last
+resort, when the default syntax fails you (e.g. in Example #2).
+
+In _Scripts_, use capitalization syntax as much as possible sicne it "blends
+in" with the surounding JavaScript code.
+
 # Filters
 
 You can modify variables for display by using filters.
@@ -204,30 +322,45 @@ Modulo's templating language provides many built-in template filters.
 You can read all about them in the 
 [built-in filter reference](/docs/templating/filters.html).
 
-## Example filter: default
+## Common template filters
 
 To give you an idea of what a filter might be useful for, one popular filter to
 use as an example is the `|default` filter.  This filter shows the variable if
 it has a value. However, if a variable is false, empty, or 0, it will use a
-default value instead.  For example:
+default value instead.  For example, consider the following "profile card"
+snippet, and summary of template filters used:
 
 ```
-{{ value|default:"None specified." }}
+<div class="profile-card">
+    <p>Username: <tt>@{{ user.username|lower }}</tt></p>
+    <p>Real name: <tt>{{ user.namesArray|join:" " }}</tt></p>
+    <p>Pronouns: <tt>{{ user.pronouns|default:"(None specified)" }}</tt></p>
+</div>
 ```
 
-If value isn't provided or is empty, the above will display "nothing".
+* [|lower](/docs/templating/filters.html#lower) - This converts the text to
+  lowercase, in this case showing the username in all lowercase letters
+* [|join](/docs/templating/filters.html#join) - The join filter combines an
+  array, in this case the user's names (e.g. first, middle, and last names)
+* [|default](/docs/templating/filters.html#default) - Finally, the third
+  example shows off the usefulness of the `|default` filter, which helps you
+  add quick default values for fields that are sometimes unspecified, in this
+  case value of the pronouns field, unelss it is a falsy or undefined value, in
+  showing a more user-friendly placeholder message if a falsy value is in the
+  pronouns field
 
-
-Again, these are just a few examples; see the [built-in filter reference](/docs/template-reference.html#builtinfilters). for the complete list.
+These are just a few of the dozens of filters available. See the [Template
+Filter reference](/docs/templating/filters.html) for the complete list.
 
 
 ## Custom filters
 
-See below for an example of registering a custom filter:
-
+Registering custom filters requires little code, and can be done in a _Script_
+tags.  See below for two examples of registering a custom filter:
 
 ```modulo_demo
 <Template>
+    Total * 2: {{ state.total|twice }} <hr />
     A: {{ state.a|percent:state.total }}<br />
     B: {{ state.b|percent:state.total }}
 </Template>
@@ -239,30 +372,39 @@ See below for an example of registering a custom filter:
 ></State>
 
 <Script>
+    modulo.register('templateFilter', function twice(value) {
+        // This custom template filter has no arguments, and
+        // simply doubles the single expected input.
+        return value * 2;
+    });
+
     modulo.register('templateFilter', function percent(value, arg) {
-    	const number = (value / 100) * arg;
-        return  `${ number }% of ${ arg }`;
+        // This custom template filter has more complicated math 
+        // that takes the percentage of the value and formats it.
+    	const num = (value / 100) * arg;
+        return  `${ num }% of ${ arg }`;
     });
 /Script>
 ```
 
 # Tags
 
-Tags look like this: `{% tag %}` (except with the word "tag" replaced with something else). Tags can be more complex than variables: Some create text in the output, some control flow by performing loops or logic, and some load external information into the template to be used by later variables.
+Tags look like this: `{% tag %}` (except with the word "tag" replaced with
+something else). Tags can be more complex than variables: Some create text in
+the output, some control flow by performing loops or logic, and some load
+external information into the template to be used by later variables.
 
-Most built-in tags require beginning and ending tags, in the format of: `{% tag %}...contents...{% endtag %}`
+Most built-in tags require beginning and ending tags, in the format of:
+`{% tag %}...contents...{% endtag %}`
 
 Modulo ships with several built-in template-tags. You can read all about them
 in the [built-in template-tag reference](/docs/templating/tags.html).
 
 
-## Common Template-Tags
+## Common template tags
 
-Here are a couple commonly used template-tags:
-
-#### for
-
-Duplicate a block of HTML code for every item in a collection of items (e.g. an array). This allows a HTML code to be repeated while looping over each item in an array. For example, to display a list of athletes, assuming one was stored as an array of objects within `state.athletes`:
+For examples, here is an example and summary of **if** and **for**, the two
+most commonly used template-tags:
 
 ```
 <ul>
@@ -270,41 +412,69 @@ Duplicate a block of HTML code for every item in a collection of items (e.g. an 
         <li>{{ athlete.name }}</li>
     {% endfor %}
 </ul>
-```
-
-#### if
-
-Evaluates a variable, and if that variable is "true" the contents of the block are displayed:
-
-```
-{% if state.athletes %}
-    Number of athletes: {{ state.athletes|length }}
+{% if state.athletes.length is 10 %}
+    Team is full (10 max)
 {% endif %}
 ```
 
-In the above, if state.athletes is not empty, the number of athletes will be displayed by the `{{ state.athletes|length }}` variable.
+- **`{% for %}`** - _Summary:_ Duplicate a block of HTML code for every item in
+  a collection of items (e.g. an array). 
+    - Allows a HTML code to be repeated while "looping" over each item
+    - Example: In this case, it displayed a list of athletes, assuming each
+      athlete is an Object with a property `.name`, in an Array called
+      `state.athletes`
+- **`{% if %}`** - _Summary:_ Only shows a block of HTML code if the condition
+  is met or the variable is a true value
+    - Allows conditional rendering of HTML, or alternating appearances (e.g.
+      toggling collapsed and visible for a modal pop-up or accordian component)
+    - Example: In this case, it will only show "Team is full (10 max)" if there
+      are exactly 10 athletes in that Array
 
-You can also use filters and various operators in the if tag:
 
-```
-{% if state.athletes|length gt 1 %}
-   Team: {% for athlete in state.athletes %} ... {% endfor %}
-{% else %}
-   Athlete: {{ state.athletes|first }}
-{% endif %}
-```
+Again, these are just two of them, while the [rest are documented
+here](/docs/templating/tags.html).
 
-### Final notes on tags
 
-The most important difference between template tags and template filters are
-that template tags are interpreted at "compile-time" (when the template is
-first loaded or when you are building a JavaScript build or bundle), while
-filters are interpreted at "render-time" (when the component is outputting it's
-HTML into the DOM). This means that mistakes with template tags might stop the
-component from rendering at all (mistakes such as syntax typo or a buggy
-third-party template tag), while mistakes with filters may only be detected
-when it tries using it, and could even be overlooked if the filter doesn't get
-used, e.g. it's only within an if statement that you haven't tested.
+
+### Contrasting template tags and template filters
+
+The outward differences between tags and filters are the syntax and behavior:
+Tags have percent-sign syntax (e.g. `{% tag example %}`) and are usually for
+control flow, while template filters use curly brace and vertical pipe syntax
+(e.g. `{{ example|filter }}`) and are usually for modifying or preparing values
+for display.
+
+There is a big underlying behavioral difference, as well. The most important
+difference between template tags and template filters are that template tags
+are interpreted at "compile-time" while filters are interpreted at
+"render-time".
+
+
+#### Tags: Compile-time
+
+"Compile time" is when the template is first loaded, no matter if  it was
+embedded in a `<Template>` or using a `-src=`). Compile time only happens once,
+and will not happen ever if you are running a "build" or production version of
+a Modulo component bundle.
+
+The pluses of "compile time" involve efficiency: Your template tag code can be
+as complicated or inefficient as necessary, and as long as the code it outputs
+is efficient, the final bundled JavaScript can be lean and mean, possibly
+omitting the code used to generate it.  The caveats are that mistakes with
+template tags might stop the component from rendering or compiling JavaScript
+at all, e.g. mistakes such as syntax typo or a buggy third-party template tag.
+
+
+#### Filter: Render-time
+
+"Render time" when the component is outputting it's HTML into the DOM, after
+it's loaded. Mistakes with filters may only be detected when it tries using it,
+and could even be overlooked if the filter doesn't get used, e.g. it's only
+within an if statement that you haven't tested. 
+
+Filters should always get included in compiled bundles, since they get run each
+time the component rerenders. The pluses are they are much easier to write. The
+caveats are they might be less efficient, depending on the situation.
 
 
 ### Custom tags
@@ -398,20 +568,20 @@ code. Specifically, these five characters are escaped, since they are the ones
 that are "dangerous" for HTML and URL syntax: `>` (greater than), `<` (less
 than), `'` (single quote), `"` (double quote), `&` (ampersand). 
 
+## The purpose of escaping
+
 > **What is safe?** All data is considered "untrusted" by default, as in, you
 > can't trust that it's not from some person trying to hack a user on your
 > site, or inject spam onto a platform. It's up to the developer to choose what
 > is "trusted". You should only mark trusted data as `|safe`. You don't want
 > anyone trying to slip in malicious JS behavior! How to validate if a bit of
 > HTML is safe to include verbatim (e.g. when to use `|safe`) is outside the
-> scope of this document, but generally the only data you can fully trust is
-> HTML that is from a trusted source, e.g. yourself or a member of your team or
-> organization. Only user-supplied data  that has been generated or validated
-> on a backend web server or database management system, such as something that
-> allows only certain tags of HTML and strips away "red flags" like embedded
-> JavaScript code.  
-
-## The purpose of escaping
+> scope of this document, but in general, you can trust HTML from a trusted
+> source, e.g. yourself or a member of your team or organization, and,
+> sometimes, you can trust user-supplied data, when it has already been
+> generated or validated on a backend web server or database management system,
+> such as something that allows only certain tags of HTML and strips away
+> anything else.
 
 Since Modulo Templates generate HTML, which then gets intepreted into the DOM,
 there's there's a risk that a variable will include characters that affect the
@@ -444,31 +614,40 @@ variable, you need to "mark it as safe". That is, you are saying to Modulo
 Templating that this value may have special HTML characters, but it's safe
 to assume it's valid, trustworthy HTML. 
 
+### Examples
 
-Read the following example of use of the `|safe` filter:
+Escaping is sometimes easiest understood with examples. Try the following
+demonstrations for example use of the `|safe` filter.  
+
+#### Example #1: Escaping for tags and attributes
+
+Note how the `(1) ESCAPED` content shows the `<em>` tag, since it escapes the
+`<` and `>` symbols preventing them from being interpretted as HTML, and the
+`(2) SAFE` content ends the title attribute too early.
 
 ```modulo_demo
 <Template>
-  <p>ESCAPED: {{ state.content }}</p>
-  <p>MARKED SAFE: {{ state.content|safe }}</p>
-
-  {% comment %}
-  <p>ESCAPED: <tt title="{{ state.content }}">HOVER</tt></p>
-  <p>MARKED SAFE: <tt title="{{ state.content|safe }}">HOVER</tt></p>
-  {% endcomment %}
+    <p>(1) ESCAPED: {{ state.content }}</p>
+    <p>(1) SAFE: {{ state.content|safe }}</p>
+    <p>(2) ESCAPED: <tt title="{{ state.content }}">HOVER</tt></p>
+    <p>(2) SAFE: <tt title="{{ state.content|safe }}">HOVER</tt></p>
 </Template>
 <State
     content='There is no "there" <em>there</em>'
 ></State>
+<Style>
+    p {
+        font-size: 0.8rem;
+    }
+</Style>
 ```
 
 
-Note how the first ESCAPED content shows the `<em>` tag, since it escapes the
-`<` and `>` symbols preventing them from being interpretted as HTML, and the
-last MARKED SAFE content ends the title attribute too early.
+
+#### Example #2: Escaping user inputted data
+
 For a slightly more realistic example, where user message content is marked
 safe, while usernames are left to be escaped, examine the following:
-
 
 ```modulo_demo
 <Template>
