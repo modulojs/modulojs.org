@@ -112,7 +112,16 @@
 .page-footer {
     height: var(--footer-height);
     text-align: center;
-    padding-top: 30px
+    padding-top: 30px;
+    font-family: monospace;
+    letter-spacing: 4px;
+    font-size: 0.6rem;
+    margin-top: 20px;
+}
+
+.page-footer a {
+    color: #000000aa;
+    font-size: 0.6rem;
 }
 
 .breadcrumb {

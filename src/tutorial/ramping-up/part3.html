@@ -713,9 +713,9 @@ filter:
     <label>Show:
         <input [state.bind] name="active" type="checkbox" /></label>
     <section style="
-            display: {{ state.active|yesno:"block,none" }}
+            display: {{ state.active|yesno:'block,none' }}
         ">
-        <p>Showing!</p>
+        <p>(Showing!)</p>
     </section>
 </Template>
 <State

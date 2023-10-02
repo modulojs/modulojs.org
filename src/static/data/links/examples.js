@@ -2,21 +2,21 @@
     createModuloVersion: "0.0.36", // Update to change the version the .zip files are linked to
     starterTemplates: [
         {
-            title: "JAMStack (Static Site with Markdown and CMS)",
+            title: "Jamstack (Static Site with Markdown and CMS)",
             supports: [ "Graphical CMS (Decap / Netlify)", "3rd Party Auth (Decap / Netlify)", "Markdown (& more)" ],
             requires: "Server",
             file: "modulo-jamstack-cms.zip",
             image: "jamstack-cms.png",
         },
         {
-            title: "JAMStack (Static Site with Markdown)",
+            title: "Jamstack (Static Site with Markdown)",
             supports: [ "Markdown", "Components", "JSON-based Data", ],
             requires: "Server",
             file: "modulo-jamstack-cms.zip",
             image: "jamstack-md.png",
         },
         {
-            title: "JAMStack (Static Site)",
+            title: "Jamstack (Static Site)",
             supports: [ "Components", "JSON-based Data", ],
             file: "modulo-jamstack.zip",
             requires: "Server",

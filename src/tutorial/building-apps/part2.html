@@ -19,7 +19,7 @@ how do we keep them all straight?
 
 # 🏗️ Go Big! 🏗️
 
-In this section, we'll introduce the SSG / JAMStack template, which is a
+In this section, we'll introduce the SSG / Jamstack template, which is a
 template all set-up and ready to go to launch on servers like Netlify.
 
 
@@ -51,24 +51,28 @@ background might be useful.
   no "flicker", and is quick to load. We'll learn more about this process in
   Part 3, in addition to how the JS and CSS bundle automatically. 
 
-- *JAM Stack* is a nickname for an approach (stack) for building websites that
-  prioritizes JavaScript and Markup being delivered by static servers, with
-  (optional) backing in the form of serverless fucntions or custom API app
-  servers.  Modulo is a great little framework for this sort of setup, and this
-  section of the tutorial will walk through why.
+- *JAM Stack* or *Jamstack* (JavaScript And Markup Stack) are nicknames for an
+  approach (stack) for building websites that prioritizes JavaScript and Markup
+  being delivered by static servers, with (optional) backing in the form of
+  serverless fucntions or custom API app servers. Though the nickname only
+  caught on in the last few years, the general approach is much older, and is
+  praised for how much it simplifies managing both the design and content of
+  content-heavy websites, while still allowing full interactive capabilities
+  via JavaScript. Modulo is a great little framework for this sort of setup,
+  and this section of the tutorial will walk through why.
 
 - *CMS* is a "content management system". It allows users to contribute changes
   to the site without having to code. For example, Wordpress is a popular CMS.
-  We'll be using _Decap_ as a CMS, since it "plays well" with this JAMStack
+  We'll be using _Decap_ as a CMS, since it "plays well" with this Jamstack
   approach.
 
 
-# SSG / JAMStack
+# SSG / Jamstack
 
 ## Getting started
 
 
-Modulo has two different ways to start a new JAMStack project: Either a 1) zip
+Modulo has two different ways to start a new Jamstack project: Either a 1) zip
 file that you download and then put into a directory you then use a web server
 to serve, or 2) by using the `npm` command in the terminal that comes with the
 Node.js JavaScript runtime.
@@ -81,9 +85,9 @@ started:
 ##### Try it now
 
 
-1. Start a new JAMStack project in one of 2 ways:
+1. Start a new Jamstack project in one of 2 ways:
     - `.zip` - Go to [/Examples/#StartingTemplate](/examples/#StartingTemplate)
-      and download the *JAMStack (Static Site with Markdown and CMS)* zip file
+      and download the *Jamstack (Static Site with Markdown and CMS)* zip file
       template
     - **NPM:** - If you have NPM installed, and are comfortable using it, use the
       `create-modulo` script by running the following command (no prior install
@@ -136,14 +140,14 @@ editing each thing and see if you can cause the effects you intend.  **Relevant 
 > [MarkdownTutorial.com](https://www.markdowntutorial.com/)
 
 _Markdown_ is one of the most popular tools to integrate into a static site
-generator. The JAMStack template we just installed has a Markdown system setup
+generator. The Jamstack template we just installed has a Markdown system setup
 and ready to go.
 
 ## Markdow-HTML
 
-It's time for the Modulo JAMStack magician to reveal a trick! 🎩✨
+It's time for the Modulo Jamstack magician to reveal a trick! 🎩✨
 
-The Modulo JAMStack template uses something that could be thought of as a sort
+The Modulo Jamstack template uses something that could be thought of as a sort
 of magic trick, a file that is "magically" both an HTML file and Markdown file.
 It's a sort of miniature "dual file format" that is as portable as HTML and as
 easy-to-edit as Markdown, by being both simultaneously. Let's dig into how it
@@ -248,7 +252,7 @@ or third party components you want to integrate into your project.
 
 #### Refactor #2: Grouped each component
 
-*Used with the JAMStack / SSG template (here in Part 2)*
+*Used with the Jamstack / SSG template (here in Part 2)*
 
 - A possible solution would be to add further layers of directories, such as
   one to group each component
@@ -368,7 +372,7 @@ play, which is the first topic of the next tutorial.
 ## Part 2: Summary
 
 
-In this tutorial, we started by learning how to "go big" with a JAMStack or SSG
+In this tutorial, we started by learning how to "go big" with a Jamstack or SSG
 project template. We learned how to edit Markdown pages for an easier to
 maintain website. We learned how to keep our components in a component library
 and then load that library into different HTML files.
@@ -377,7 +381,7 @@ and then load that library into different HTML files.
 
 - *SSG* - Server-side Generated, pre-rendering HTML and CSS on the server
 
-- *JAMStack* - nickname for approach that prioritizes JavaScript and Markup
+- *Jamstack* - nickname for approach that prioritizes JavaScript and Markup
   being delivered by static servers
 
 - *CMS* - "content management systems" users to contribute changes
@@ -401,7 +405,7 @@ get bigger, but it also gets slower!
 * The question that remains: **How do we go big, but also, *go fast*?**
 
 The answer? By pre-building everything such as by using the automated build
-system that is setup with the JAMStack template. Learn more about this topic in
+system that is setup with the Jamstack template. Learn more about this topic in
 the next tutorial section:
 
 [Part 3: Building and Integrating »](part3.html)
