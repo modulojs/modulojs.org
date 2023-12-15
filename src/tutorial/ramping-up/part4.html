@@ -347,35 +347,37 @@ tutorial for "peaking" at state in JSON format:  `<pre>{{ state|json:2 }}</pre>`
 
 # The "for" loop template tag
 
-As was introduced in the prevoius section,
-in addition to filters, the Modulo templating language also support powerful
-"template tags", which allow for more complicated custom behavior.  We looked at
-the `{% if %}` template tag previously. Nowe we'll practice the "for" template-tag,
-which allows for HTML to be repeated for each item of some given data.
+As was introduced in the previous section, in addition to filters, the Modulo
+templating language also support powerful "template tags", which allow for more
+complicated custom behavior.  We looked at the `{% if %}` template tag
+previously. Now we'll practice the `{% for %}` template tag.
 
 
 ## For loops: Applications
 
 Common example uses of for loops:
 
-- Each blog gets put into it's own `<li>` element
+- Each blog post needs it's own `<li>` element
 - Each link in an Array gets it's own `<a>` element in a nav bar
-- Each student from a CSV file gets their grade listed
-- Each country from a JSON file gets a different tint based on per-capita CO2 emmissions
-- Each product from a backend-API powered database gets a tile in an e-commerce app, each with a different "buy now" link
+- Each student from a CSV file needs their grade listed in a table
+- Each country in a world map from a JSON file gets a different tint based on
+  per-capita CO2 emissions
+- Each product from a backend-API powered database has a tile in a e-commerce
+  web store app, each with a different "buy now" link
 
-Did you notice any common English words between all these scenarios? These examples use the word start with "Each".
-
-Many programming languages and frameworks -- Modulo included -- concept call this concept a "for each loop", or simply a "for loop".
-In Modulo, a "for loop" is a type of template tag, that allows us to repeat a template for each item in a "plural" (collection) type of data.
-This lets us build websites that do all of the above things.
+Note how every one of these examples start with the word "Each".  Many
+programming languages and frameworks -- Modulo included -- concept call this
+concept a "for each loop", or simply a "for loop".  In Modulo, a "for loop" is
+a type of template tag, that allows us to repeat a template for each item in a
+"plural" (collection) type of data.  This lets us build websites that do all of
+the above things.
 
 
 
 ## The for-tag
 
 The "for-tag" is for when we want to duplicate a bit of template over and over
-for a repetitive bit fo data. For example, if we want to template "for every
+for a repetitive bit of data. For example, if we want to template "for every
 article", or "for every pin in a world map", or "for every post in an article
 comment section". Each of these "for" statements refers to some plural thing
 that we want to have a similar style duplicated across, using the same HTML
@@ -422,12 +424,9 @@ values. For example:
 
 Do you see how the `class="..."` goes around the `if`? This is the correct way
 to do it. It is incorrect to make the entire attribute optional. That is to
-say, syntax like `{% if state.show %}class="visible"{% endif %}` is **incorrect**.
-
-The risk is that  in some circumstances this can cause a lot of equals and
-quotes to appear in your code `=""`. Tthis has to do with how the browser
-mis-interprets the template tag syntax as empty attributes, and thus fills in
-the rest.
+say, syntax like `{% if state.show %}class="visible"{% endif %}` is
+**incorrect**. Otherwise, you might see mysterious `=""` to appear in your code
+due to the browser misinterpreting the syntax.
 
 
 
@@ -559,7 +558,8 @@ speedy look-ups.
 JSON files are a format for storing data. There are many editors and tools for
 using them -- your editor may already be able to!
 
-What are JSON files like? The best way to learn is by looking at one: <https://www.gov.uk/bank-holidays.json>
+What are JSON files like? The best way to learn is by looking at one:
+<https://www.gov.uk/bank-holidays.json>
 
 If you click on that link, you'll see something like:
 
