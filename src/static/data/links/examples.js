@@ -96,8 +96,14 @@
         {
             file: "/static/demos/eg/ToDo.html",
         },
+        /*
+        // (Using JSONFile instead since it doesn't hang / use up API calls)
         {
             file: "/static/demos/eg/JSON.html",
+        },
+        */
+        {
+            file: "/static/demos/eg/JSONFile.html",
         },
         {
             file: "/static/demos/eg/JSONArray.html",
@@ -245,10 +251,10 @@
     value="
 # Syntax
 **This** is a
-[Modulo](#modulo) 
-_Component_ 
+[Modulo](#modulo)
+_Component_
 
-## Mirror
+## Demonstration
 Syntax highlighting
 in a **textarea**
 using a _mirror_

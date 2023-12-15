@@ -88,9 +88,9 @@ an example, but can be replaced. Read on to learn how it all works!
     function simpleExampleHiglight(text) {
         return modulo.registry.cparts
             .Template.prototype.escapeText(text)
-            .replace(/(#+)(\s*.+)/g,
-                '<strong style="text-decoration: ' +
-                'underline">$1$2</strong>')
+            .replace(/^(#+)(\s*.+)/gm,
+                '<strong style="background: #5D655E;' +
+                'color: #eee">$1$2</strong>')
             .replace(/\[([^\]]+)\]\(([^\)]+)\)/g,
                 '<span style="text-decoration: underline;' +
                 ' color: blue">[$1]($2)</span>')

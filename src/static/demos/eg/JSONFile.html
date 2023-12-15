@@ -1,0 +1,14 @@
+<!-- Use StaticData CPart to bundle-in JSON from an API or file -->
+<Template>
+    <p>
+        <strong>Name:</strong>
+        {{ staticdata.name }} (v{{ staticdata.version }})
+    </p>
+    <p>
+        <strong>Description:</strong>
+        <em>{{ staticdata.description }}</em>
+    </p>
+</Template>
+<StaticData
+    -src="https://raw.githubusercontent.com/modulojs/modulo/main/package.json"
+></StaticData>
