@@ -13,7 +13,7 @@ time. CSS written here will be automatically prefixed so that it will only
 apply to your component and/or any HTML that it generates, such as by the
 _Template_ CPart.
 
-### Usage
+## General usage
 
 In general, you can freely write any number of CSS rules for your components.
 They will be prefixed based on a few regular expression replacement steps, such
@@ -21,6 +21,74 @@ that they only apply to the elements within your component. For example, a rule
 like `a { color: blue }` in a component named `name="HelloBtn"` that has been
 imported with `namespace="mylib"` would result in the following, fully-prefixed
 rule: `mylib-HelloBtn a { color: blue }`
+
+### Typical usage
+
+```modulo_demo
+<Template>
+Hello <strong>Modulo</strong> World!
+<p class="neat">Any HTML can be here!</p>
+<Style>
+/* ...and any CSS here! */
+strong {
+    color: blue;
+}
+.neat {
+    font-variant: small-caps;
+}
+:host { /* styles the entire component */
+    display: inline-block;
+    background-color: cornsilk;
+    padding: 5px;
+    box-shadow: 10px 10px 0 0 turquoise;
+}
+</Style>
+```
+
+
+## Advanced usage
+
+If you want to go deeper, you might customize it with specifying a
+`url-replace` mode, or an `isolation-mode`.
+
+### URL Replacement
+
+By default (`url-replace:=true`), it will attempt to "fix" all relative URLs
+into absolute URLs, either with the host specified or without, if (and only if)
+you imported that _Style_ with a `-src=` attribute. To turn off this feature,
+specify `url-replace:=false` on your _Style_ component.
+
+#### URL replacement example
+
+To see the `url-replace` feature in action, see below:
+
+```modulo_demo
+<Template>
+Hello <strong>Modulo</strong> World!
+<p class="neat">This background works
+even when the CSS is bundled.</p>
+</Template>
+<!-- In sample.css, we have background: url('./example_image.jpg')
+    and its replaced with url('/static/data/eg/example_image.jpg') -->
+<Style
+    -src="/static/data/eg/sample.css"
+></Style>
+```
+
+#### Pitfalls of disabling the feature
+
+To see why it's necessary, try disabling the `url-replace` feature and note how
+the background no longer works (since it will use the relative URL given in the
+image, which is then relative to this page, instead of the CSS file):
+
+```modulo
+<Style
+    url-replace:=false
+    -src="/static/data/eg/sample.css"
+></Style>
+```
+
+
 
 ### Isolation modes
 
@@ -94,28 +162,4 @@ regular rendering mode, if you have the CSS `:host { color: red }` in a
 component named `name="MyChart"` that has been imported with
 `namespace="mylib"`, then it would create the following, fully-prefixed CSS
 rule: `mylib-MyChart { color: red }`
-
-### Usage Example
-
-```modulo_demo
-<Template>
-Hello <strong>Modulo</strong> World!
-<p class="neat">Any HTML can be here!</p>
-</Template>
-<Style>
-/* ...and any CSS here! */
-strong {
-    color: blue;
-}
-.neat {
-    font-variant: small-caps;
-}
-:host { /* styles the entire component */
-    display: inline-block;
-    background-color: cornsilk;
-    padding: 5px;
-    box-shadow: 10px 10px 0 0 turquoise;
-}
-</Style>
-```
 

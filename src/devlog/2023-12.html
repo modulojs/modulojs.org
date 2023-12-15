@@ -1,0 +1,70 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Winter Updates
+devlog: 2023-12
+---
+
+I'm happy to announce the release of Alpha 0.0.66, which brings quite a bit of
+code quality improvements, several bug fixes, more tests, and a few new really
+handy features, while still keeping it all under 2000 lines of code.
+
+## Alpha 66 - Builds and CSS improvements
+
+### Code quality improvements
+
+The code quality improvements will bring the quality of the project closer to
+the point where I can finally release the first beta (version 0.1.0). This is
+when I am confident that the Component Part and definition API won't change too
+much, and people can start extending Modulo as they see fit without fear of
+their plug-ins or extension breaking with the release of a future version.
+
+In particular, I refactored the _Template_ class, which will now begin to
+receive documentation, so you can use the Modulo templates outside of a Modulo
+project, or in a node.js application, or what have you. Furthermore, I
+refactored the command build system, and the _Artifact_ system, so you will be
+able to begin to fully customize builds. This enables Modulo to support things
+like split builds, plug-in minifiers, and even pre-built media artifacts.
+
+### New features
+
+The new features I'll outline below -- further documentation to follow:
+
+- Style: Relative `url()` replacement, bug fixes. Style is now capable of
+  replacing relative `url()` that it encounters, allowing for easy bundling of
+  CSS sheets that have `background: url(./myimage.png)` style syntax. It can
+  replace them with remote or absolute URLs, and this feature can be disabled
+  with `url-replace=:=false`.
+
+- Artifact: Artifact is now flexible and easily configurable for custom builds
+    - Simply by registering an Artifact (`<Artifact name="css">`, for example),
+      you can begin to customize or add CSS output
+    - By adding a `remove=` to your Artifact, you can scrub your HTML before
+      saving the built version, e.g. `remove="div.delete-me"` to remove all
+      divs with `delete-me` class.
+    - By adding a `bundle=` to your Artifact, you can specify which elements
+      get bundled, or disable it with `bundle:=false`
+    - Now you can register things like JavaScript, CSS, or HTML minifiers as
+      Template filters, and then include them into your build configurations
+    - Using the Modulo Template syntax allows for extremely precise control
+      over the exact JavaScript and CSS output.
+
+- Template: Template can now be instantiated easily from JavaScript
+
+- Node.js compatibility: The Modulo.js file can be easily imported
+
+## Node.js example
+
+Example:
+
+```javascript
+const { modulo, window } = require('mdu.js');
+const { Template } = modulo.registry.cparts;
+let myTemplate = new Template('Hello {{ example-var }} world!');
+let results = myTemplate.render({ exampleVar: 'node.js' });
+console.log('The results:', results);
+```
+
+Note that further use of `modulo` in a Node.js environment would require the
+`window` object be patched with expected properties (e.g. with a virtualized
+DOM library).
+
+

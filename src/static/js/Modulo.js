@@ -1992,6 +1992,6 @@ if (typeof window.moduloBuild === 'undefined') { // Not in a build, try loading
             modulo.preprocessAndDefine(modulo.registry.utils.showDevMenu);
         });
     } else if (typeof module !== 'undefined') { // Node.js
-        module.exports = { Modulo, modulo, window };
+        module.exports = { modulo, window, Modulo: window.Modulo };
     }
 }

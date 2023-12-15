@@ -1,0 +1,62 @@
+
+<template Modulo>
+    <script Configuration>
+        modulo.register('cpart', class Request extends modulo.registry.cparts.Template {
+            prepareCallback() {
+                const { url, isLoading, data, submit } = this;
+                return { url, isLoading, data, submit: submit.bind(this) };
+            }
+
+            renderCallback(renderObj) {
+                const rendered = this.render(renderObj); // Do render
+                if (this.url !== rendered && this.needsRefresh !== null) {
+                    this.needsRefresh = true;
+                }
+                this.url = rendered; // Stash away for 1) fetch, and 2) next comparison
+            }
+
+            escapeText(text) { // Strip all whitespace
+                return (text && text.safe) ? text : text.replace(/\s+/gi, '');
+            }
+
+            submit() {
+                this.isLoading = true;
+                window.fetch(this.url, this.attrs) // TODO: Way to keep replies in order?
+                    .then(response => response[this.conf.Response]())
+                    .then(data => {
+                        this.data = data;
+                        this.isLoading = false;
+                        this.needsRefresh = null; // Marking for refresh locked
+                        this.element.rerender();
+                    });
+            }
+            updateCallback(renderObj) {
+                const defaultConf = !this.attrs.mode && this.conf.Autorefresh === null;
+                if (this.needsRefresh && (this.conf.Autorefresh || defaultConf) {
+                    this.submit();
+                }
+                this.needsRefresh = false; // Always set to false after (unlocks nulls)
+            }
+        }, { Response: 'json', Autorefresh: null });
+    </script>
+
+    <Component name="RequestSearcher">
+        <Template>
+            Hello request world!
+        </Template>
+        <Request>
+            http://whatever.com/
+            are you
+            freaking
+            kiddin
+            me
+        </Request>
+    </Component>
+</template>
+
+
+<script src="https://unpkg.com/mdu.js@0.0.65/src/Modulo.js"></script>
+
+<hr />
+<x-RequestSearcher></x-RequestSearcher>
+<hr />
