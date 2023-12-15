@@ -111,17 +111,26 @@
 
 .page-footer {
     height: var(--footer-height);
-    text-align: center;
+    text-align: left;
     padding-top: 30px;
     font-family: monospace;
-    letter-spacing: 4px;
-    font-size: 0.6rem;
+    /*letter-spacing: 4px;*/
+    font-size: 0.8rem;
+    font-weight: lighter;
     margin-top: 20px;
+    color: #000000aa;
+}
+
+.page-footer a.mini-logo {
+    border: 1px solid #000000aa;
+    padding: 3px;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 .page-footer a {
+    font-size: 0.8rem;
     color: #000000aa;
-    font-size: 0.6rem;
 }
 
 .breadcrumb {
