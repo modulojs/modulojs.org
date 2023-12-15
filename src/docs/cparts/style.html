@@ -28,6 +28,7 @@ rule: `mylib-HelloBtn a { color: blue }`
 <Template>
 Hello <strong>Modulo</strong> World!
 <p class="neat">Any HTML can be here!</p>
+</Template>
 <Style>
 /* ...and any CSS here! */
 strong {
@@ -64,9 +65,8 @@ To see the `url-replace` feature in action, see below:
 
 ```modulo_demo
 <Template>
-Hello <strong>Modulo</strong> World!
-<p class="neat">This background works
-even when the CSS is bundled.</p>
+    Hello <strong>Modulo</strong> World! <p class="neat">This
+    background works even when the CSS is bundled.</p>
 </Template>
 <!-- In sample.css, we have background: url('./example_image.jpg')
     and its replaced with url('/static/data/eg/example_image.jpg') -->
@@ -75,7 +75,7 @@ even when the CSS is bundled.</p>
 ></Style>
 ```
 
-#### Pitfalls of disabling the feature
+##### Without url-replace
 
 To see why it's necessary, try disabling the `url-replace` feature and note how
 the background no longer works (since it will use the relative URL given in the
@@ -88,7 +88,7 @@ image, which is then relative to this page, instead of the CSS file):
 ></Style>
 ```
 
-
+-----
 
 ### Isolation modes
 
