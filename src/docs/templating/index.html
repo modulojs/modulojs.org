@@ -674,3 +674,46 @@ safe, while usernames are left to be escaped, examine the following:
 ```
 
 
+## Direct usage of Template interface
+
+Modulo's Template language can be used as a regular JavaScript class with the
+`new` constructor syntax as well. For example:
+
+```javascript
+const { Template } = modulo.registry.cparts;
+let myTemplate = new Template('Hello {{ example-var }} world!');
+let results = myTemplate.render({ exampleVar: 'node.js' });
+console.log('The results:', results);
+```
+
+One use of this interface is enabling users to not only edit HTML (as with
+`|safe`, described earlier), but also be able to edit template tags themselves.
+Note that this will enable users to write and evaluate (potentially buggy)
+custom JavaScript code, and thus should be used with even more caution than the
+`|safe` filter.  An example of using this to allow users to program their own
+templates is below:
+
+
+```modulo_demo
+<Template>
+    <input [state.bind] name="data.name" />
+    <input [state.bind] name="data.user" />
+    <textarea [state.bind] name="template"></textarea>
+    <div>{{ script.results|safe }}</div>
+</Template>
+<State
+    template="Hello <em>{{ name }}</em><br />Username: <tt>{{ user }}</tt>"
+    data:={}
+    data.name="Pedro"
+    data.user="pramirez"
+></State>
+<Script>
+    const { Template } = modulo.registry.cparts;
+    function prepareCallback() {
+        const myTemplate = new Template(state.template);
+        const results = myTemplate.render(state.data);
+        return { results };
+    }
+/Script>
+```
+

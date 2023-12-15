@@ -10,7 +10,7 @@ handy features, while still keeping it all under 2000 lines of code.
 
 ## Alpha 66 - Builds and CSS improvements
 
-### Code quality improvements
+## Code quality improvements
 
 The code quality improvements will bring the quality of the project closer to
 the point where I can finally release the first beta (version 0.1.0). This is
@@ -24,6 +24,16 @@ project, or in a node.js application, or what have you. Furthermore, I
 refactored the command build system, and the _Artifact_ system, so you will be
 able to begin to fully customize builds. This enables Modulo to support things
 like split builds, plug-in minifiers, and even pre-built media artifacts.
+
+```javascript
+# Now, Template has a JavaScript-friendly interface as well
+const { Template } = modulo.registry.cparts;
+let myTemplate = new Template('Hello {{ example-var }} world!');
+let results = myTemplate.render({ exampleVar: 'node.js' });
+console.log('The results:', results);
+```
+
+## New features
 
 The new features I'll outline below -- further documentation to follow:
 
