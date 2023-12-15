@@ -1,5 +1,5 @@
 {
-    createModuloVersion: "0.0.36", // Update to change the version the .zip files are linked to
+    createModuloVersion: "0.0.37", // Update to change the version the .zip files are linked to
     starterTemplates: [
         {
             title: "Jamstack (Static Site with Markdown and CMS)",
