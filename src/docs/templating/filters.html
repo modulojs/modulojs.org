@@ -628,23 +628,40 @@ The `|yesno` filter converts the data into a string. The `|yesno` filter is a
 handy shortcut with many practical uses when generating HTML and displaying
 values from the database.
 
+### Typical usage
+
+Without an argument, it will simply convert booleans to the words "yes" and
+"no".  When an argument is provided, this will be used instead, and can end up
+being simpler than a full if statement. Examples of both below:
+
+```modulo_demo
+<Template>
+    <input [state.bind] name="active" type="checkbox" />
+    <p class="{{ state.active|yesno:'p-act' }}">
+        Checked? {{ state.active|yesno }}
+    </p>
+</Template>
+<State
+    active:=null
+></State>
+<Style>
+    .p-act {
+        color: green;
+    }
+</Style>
+```
+
+### All behavior options
+
 By default, it will convert `true` and other true values into "yes", `false`
 and other false values, and the "placeholder" `null` type into a "" (blank),
 since that is often used to designate something that is not yet defined (such
-as a null value in a database).
-
-When arguments are provided, these substitute these 3 options, as designated by
-commas.
-
-If a single argument is provided, then both "no" and "null" options get
-combined into "", and only "truthy" values will cause the given argument to
-show. This is useful for optionally adding a class, and can end up being
-simpler than a full if statement. For example, you can quickly add an "active"
-class like: `<div class="{{ state.visible|yesno:'active' }}">`
-
-With two arguments, the default behavior is replaced with the two alternaties.
-With 3 arguments, then a value is presented for the undefined third value as
-well.
+as a null value in a database). When arguments are provided, these substitute
+these 3 options, as designated by commas. If a single argument is provided,
+then both "no" and "null" options get combined into "", and only "truthy"
+values will cause the given argument to show. With two arguments, the default
+behavior is replaced with the two alternaties.  With 3 arguments, then a value
+is presented for the undefined third value as well.
 
 
 

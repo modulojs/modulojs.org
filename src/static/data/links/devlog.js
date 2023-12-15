@@ -1,6 +1,10 @@
 {
     articles: [
         {
+            file: "devlog/2023-12.html",
+            title: "winter update"
+        },
+        {
             file: "devlog/2023-08.html",
             title: "new website",
         },

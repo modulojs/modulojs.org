@@ -7,6 +7,7 @@ I'm happy to announce the release of Alpha 0.0.66, which brings quite a bit of
 code quality improvements, several bug fixes, more tests, and a few new really
 handy features, while still keeping it all under 2000 lines of code.
 
+
 ## Alpha 66 - Builds and CSS improvements
 
 ### Code quality improvements
@@ -23,8 +24,6 @@ project, or in a node.js application, or what have you. Furthermore, I
 refactored the command build system, and the _Artifact_ system, so you will be
 able to begin to fully customize builds. This enables Modulo to support things
 like split builds, plug-in minifiers, and even pre-built media artifacts.
-
-### New features
 
 The new features I'll outline below -- further documentation to follow:
 
@@ -49,22 +48,6 @@ The new features I'll outline below -- further documentation to follow:
 
 - Template: Template can now be instantiated easily from JavaScript
 
-- Node.js compatibility: The Modulo.js file can be easily imported
-
-## Node.js example
-
-Example:
-
-```javascript
-const { modulo, window } = require('mdu.js');
-const { Template } = modulo.registry.cparts;
-let myTemplate = new Template('Hello {{ example-var }} world!');
-let results = myTemplate.render({ exampleVar: 'node.js' });
-console.log('The results:', results);
-```
-
-Note that further use of `modulo` in a Node.js environment would require the
-`window` object be patched with expected properties (e.g. with a virtualized
-DOM library).
+- Node.js compatibility: The Modulo.js file can now be imported
 
 

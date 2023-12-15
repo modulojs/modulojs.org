@@ -6,6 +6,58 @@ This document explains the language syntax and functionality of the included
 Modulo template system.
 
 
+# Templates
+
+A "template" is the text within a Template CPart. Most Components defined
+within Modulo will also define a Template CPart in order to render their
+contents.
+
+A template contains variables, which get replaced with values when the template
+is evaluated, and tags, which control the logic of the template.
+
+Below is an example template that shows off several features of templates. Each
+element will be explained later in this document.
+
+```modulo_demo
+<Template>
+<h1>{{ script.title }}</h1>
+<p>There are <em>{{ state.count }}
+  {{ state.count|pluralize:"articles,article" }}.</em></p>
+
+{# Show the articles #}
+{% for article in state.articles %}
+    <h4 style="color: tomato">{{ article.headline|upper }}</h4>
+    {% if article.tease %}
+      <p>{{ article.tease|truncate:30 }}</p>
+    {% endif %}
+{% endfor %}
+</Template>
+
+<!-- The data below was used to render the template above -->
+<State
+    count:=42
+    articles:=[]
+    articles.0:={}
+    articles.1:={}
+    articles.2:={}
+    articles.0.headline="Modulo released"
+    articles.1.headline="The experts ask"
+    articles.2.headline="Contraversy ahead"
+    articles.0.tease="The most exciting news of the century."
+    articles.1.tease="Can HTML be fun again?"
+    articles.2.tease="Why constructing JS is risky business."
+></State>
+
+<Script>
+    function prepareCallback() {
+        return {
+            title: "Modulo News",
+        }
+    }
+/Script>
+```
+
+
 ##### Approach
 
 
@@ -42,58 +94,6 @@ familiar to backend developers more familiar with string-based templating in
 general (such as Ruby, Python, or PHP developers).
 
 ----
-
-
-# Templates
-
-A "template" is the text within a Template CPart. Most Components defined
-within Modulo will also define a Template CPart in order to render their
-contents.
-
-A template contains variables, which get replaced with values when the template
-is evaluated, and tags, which control the logic of the template.
-
-Below is a minimal template that illustrates a few basics. Each element will be
-explained later in this document.
-
-```modulo_demo
-<Template>
-<h1>{{ script.title }}</h1>
-<p>There are <em>{{ state.count }}
-  {{ state.count|pluralize:"articles,article" }}.</em></p>
-
-{# Show the articles #}
-{% for article in state.articles %}
-    <h4 style="color: tomato">{{ article.headline|upper }}</h4>
-    {% if article.tease %}
-      <p>{{ article.tease|truncate:30 }}</p>
-    {% endif %}
-{% endfor %}
-</Template>
-
-<!-- The data below was used to render the template above -->
-<State
-    count:=42
-    articles:=[]
-    articles.0:={}
-    articles.1:={}
-    articles.2:={}
-    articles.0.headline="Modulo released"
-    articles.1.headline="Modulo released"
-    articles.2.headline="Modulo released"
-    articles.0.tease="The most exciting news of the century."
-    articles.1.tease="Can JS be fun again?"
-    articles.2.tease="Why constructing JS is risky business."
-></State>
-
-<Script>
-    function prepareCallback() {
-        return {
-            title: "Modulo News",
-        }
-    }
-/Script>
-```
 
 
 # Variables
@@ -151,10 +151,10 @@ script tags. In other words, each CPart "decides" which variables it supplies
 to the Template based on it's "prepare" lifecycle behavior. See the "Variables
 from CParts" section below for a more thorough look at this.
 
-### Custom variables using the _Script_ "prepare" callback
+### Custom variables using the Script "prepare" callback
 
 If you want to create computed variables (like in Vue.js), you can create a
-custom `prepare` lifecycle callback in your Script CPart tag as follows.
+custom `prepareCallback` lifecycle callback in your Script CPart tag as follows.
 Examine the following example:
 
 
