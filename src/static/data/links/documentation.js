@@ -111,7 +111,7 @@
                 {
                     label: 'Style',
                     filename: 'style.html',
-                    keywords: ['CSS', 'styling', 'prefixing', 'isolation', ':host', 'shadowDOM'],
+                    keywords: ['CSS', 'styling', 'prefixing', 'isolation', ':host', 'shadowDOM', 'url-replace', 'absolute', 'relative', 'background url' ],
                 },
                 {
                     label: 'Template',

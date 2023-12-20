@@ -681,9 +681,8 @@ Modulo's Template language can be used as a regular JavaScript class with the
 
 ```javascript
 const { Template } = modulo.registry.cparts;
-let myTemplate = new Template('Hello {{ example-var }} world!');
-let results = myTemplate.render({ exampleVar: 'node.js' });
-console.log('The results:', results);
+let myTemplate = new Template('Hi {{ msg }}!');
+console.log(myTemplate.render({ msg: 'there' })); // "Hi there!"
 ```
 
 One use of this interface is enabling users to not only edit HTML (as with

@@ -151,8 +151,6 @@ window.Modulo.INVALID_WORDS = new Set((`
     typeof var let void  while with await async true false
 `).split(/\s+/ig));
 
-// TODO: Condense window.moduloBuild into window.modulo as well, gets "hydrated"
-//window.modulo = Object.assign(new Modulo(), window.modulo || {});
 // Create a new modulo instance to be the global default instance
 window.modulo = new window.Modulo();
 if (typeof modulo === "undefined" || modulo.id !== window.modulo.id) {
@@ -284,7 +282,7 @@ modulo.register('core', class DOMLoader {
             }
         }
         if (!(tagsLower.includes(defType))) { // Were any discovered?
-            if (defType === 'testsuite') { return null; } /* XXX Remove and add recipe to stub / silence TestSuite not found errors */
+            if (defType === 'testsuite') { return null; } /* TODO Remove and add recipe to stub / silence TestSuite not found errors */
             if (!quiet) { // Invalid def / cPart: This type is not allowed here
                 console.error(`"${ defType }" is not one of: ${ tagsLower }`);
             }
@@ -515,7 +513,8 @@ modulo.config.component = {
     DefBuilders: [ 'CustomElement', 'CodeTemplate' ],
     DefFinalizers: [ 'MainRequire' ],
     BuildCommandBuilders: [ 'Prebuild|BuildLifecycle', 'BuildLifecycle' ],
-    Directives: [ 'slotLoad', 'eventMount', 'eventUnmount', 'dataPropMount', 'dataPropUnmount' ],
+    //Directives: [ 'slotLoad', 'eventMount', 'eventUnmount', 'dataPropMount', 'dataPropUnmount' ],
+    Directives: [ 'eventMount', 'eventUnmount', 'dataPropMount', 'dataPropUnmount' ],
     CodeTemplate: `
         const def = modulo.definitions['{{ def.DefinitionName }}'];
         class {{ def.className }} extends {{ def.baseClass|default:'window.HTMLElement' }} {
@@ -567,7 +566,7 @@ modulo.register('coreDef', class Component {
         for (const [ node, method, arg ] of this._mountPatchset || []) {
             const { rawName, el } = arg || {}; // Extract needed directive info
             const count = el ? nodes.filter(e => e.contains(el)).length : 0;
-            if (count) { // The element exists, and is contained by 1 or more
+            if (count) { // count = number of steps in tree hierarchy (or 0)
                 const existing = el.getAttribute(PRE + 'patches') || '';
                 if (!existing.includes(count + ',' + rawName)) { // Not a dupe
                     const value = existing + '\n' + count + ',' + rawName;
@@ -588,13 +587,6 @@ modulo.register('coreDef', class Component {
         //this.element.renderObj = null; // ?rendering is over, set to null
     }
 
-    scriptTagLoad({ el }) {
-        const newScript = el.ownerDocument.createElement('script');
-        newScript.src = el.src; // TODO: Possibly copy other attrs?
-        el.remove(); // delete old element
-        this.element.ownerDocument.head.append(newScript);
-    }
-
     initializedCallback(renderObj) {
         const { makeDiv } = this.modulo.registry.utils;
         const opts = { directiveShortcuts: [], directives: [] };
@@ -605,19 +597,8 @@ modulo.register('coreDef', class Component {
                 opts.directives[dirName] = cPart;
             }
         }
-        const addHead = ({ el }) => this.element.ownerDocument.head.append(el);
         if (this.attrs.mode === 'shadow') {
             this.element.attachShadow({ mode: 'open' });
-        } else { // TODO: Refactor logic here
-            opts.directives.slot = this;
-            this.slotTagLoad = this.slotLoad.bind(this); // TODO switch to only slotTagLoad
-            if (this.attrs.mode === 'vanish-into-document') {
-                opts.directives.script = this;
-                for (const headTag of [ 'link', 'title', 'meta' ]) {
-                    opts.directives[headTag] = this;
-                    this[headTag + 'TagLoad'] = addHead;
-                }
-            }
         }
         this.reconciler = new this.modulo.registry.engines.Reconciler(this.modulo, opts);
         this.resolver = new this.modulo.registry.core.ValueResolver(this.modulo);
@@ -656,27 +637,53 @@ modulo.register('coreDef', class Component {
     domCallback(renderObj) {
         let { root, innerHTML, innerDOM } = renderObj.component;
         if (innerHTML !== null && !innerDOM) {
-            innerDOM = this.reconciler.loadString(innerHTML, this.localNameMap);
+            innerDOM = this.modulo.registry.utils.makeDiv(innerHTML);
             this.reconciler.patches = []; // clear
+        }
+        if (innerDOM && this.attrs.mode === 'vanish-into-document') { // <head>
+            for (const el of innerDOM.querySelectorAll('script,link,title,meta')) {
+                let newScript = null; // Used if it's a script tag
+                if (el.tagName === 'SCRIPT') {
+                    newScript = window.document.createElement('script');
+                    newScript.src = el.src; // TODO: Possibly copy all attrs
+                }
+                el.remove(); // Remove element from old location (dom fragment)
+                this.element.ownerDocument.head.append(newScript || el);
+            }
+        }
+        if (innerDOM && this.attrs.mode !== 'shadow') { // Handle <slot> logic
+            for (const domSlot of innerDOM.querySelectorAll('slot')) {
+                const attr = (elem, name) => elem.getAttribute ? // Get elem att
+                        (elem.getAttribute(name) || null) : null; // Coerce null
+                for (const child of this.element.originalChildren) {
+                    if (attr(child, 'slot') === attr(domSlot, 'name')) {
+                        if (!domSlot._moduloSlotLoaded) { // Loaded this render?
+                            domSlot.innerHTML = ''; // If first encounter, clear
+                            domSlot._moduloSlotLoaded = true; // ...and mark.
+                        }
+                        domSlot.append(child); // Finally, place into slot elem
+                    }
+                }
+            }
         }
         return { root, innerHTML, innerDOM };
     }
 
     reconcileCallback(renderObj) {
         let { innerHTML, innerDOM, patches, root } = renderObj.component;
-        this.mode = this.attrs.mode || 'regular';
-        if (innerHTML !== null) {
-            if (this.mode === 'regular' || this.mode === 'vanish') {
-                root = this.element; // default, use element as root
-            } else if (this.mode === 'shadow') {
-                root = this.element.shadowRoot;
-            } else if (this.mode === 'vanish-into-document') {
-                root = this.element.ownerDocument.body; // render into body
-            } else {
-                this.modulo.assert(this.mode === 'custom-root', 'Invalid mode');
-            }
-            const rival = innerDOM || innerHTML || '';
-            patches = this.reconciler.reconcile(root, rival, this.localNameMap);
+        if (this.attrs.mode === 'regular' || this.attrs.mode === 'vanish') {
+            root = this.element; // default, use element as root
+        } else if (this.attrs.mode === 'shadow') {
+            root = this.element.shadowRoot; // render into attached shadow
+        } else if (this.attrs.mode === 'vanish-into-document') {
+            root = this.element.ownerDocument.body; // render into body
+        } else if (!root) {
+            this.modulo.assert(this.attrs.mode === 'custom-root', 'Bad mode')
+        }
+        if (innerDOM) {
+            this.reconciler.patches = []; // Reset reconciler patches
+            this.reconciler.reconcileChildren(root, innerDOM); // Copy innerDOM
+            patches = this.reconciler.patches;
         }
         return { patches, innerHTML }; // TODO remove innerHTML from here
     }
@@ -687,10 +694,8 @@ modulo.register('coreDef', class Component {
             this._mountPatchset = this._mountPatchset || patches; // 1st render
             this.reconciler.applyPatches(patches);
         }
-        if (!this.element.isMounted && (this.mode === 'vanish' ||
-                                        this.mode === 'vanish-into-document')) {
-            // First time initialized, and is one of the vanish modes
-            this.element.replaceWith(...this.element.childNodes); // Replace self
+        if (this.attrs.mode === 'vanish') { // If we need to vanish, do it now
+            this.element.replaceWith(...this.element.childNodes);
         }
     }
 
@@ -703,16 +708,12 @@ modulo.register('coreDef', class Component {
         }
     }
 
-    slotLoad({ el, value }) {
-        let chosenSlot = value || el.getAttribute('name') || null;
-        const getSlot = c => c.getAttribute ? (c.getAttribute('slot') || null) : null;
-        let childs = this.element.originalChildren;
-        childs = childs.filter(child => getSlot(child) === chosenSlot);
-        if (!el.moduloSlotHasLoaded) { // clear innerHTML if this is first load
-            el.innerHTML = '';
-            el.moduloSlotHasLoaded = true;
-        }
-        el.append(...childs);
+    ignoreMount({ el }) {
+        el._moduloReconcilerIgnore = true;
+    }
+
+    ignoreUnmount({ el }) {
+        delete el['_moduloReconcilerIgnore'];
     }
 
     eventMount({ el, value, attrName, rawName }) {
@@ -900,7 +901,7 @@ modulo.register('core', class FetchQueue {
     }
 
     fetch(src) {
-        const label = 'testlabel'; // XXX rm label concept
+        const label = 'testlabel'; // TODO rm label concept
         //if (src in this.data) { // Already found, resolve immediately
         //    const then = resolve => resolve(this.data[src], label, src);
         //    return { then, catch: () => {} }; // Return synchronous Then-able
@@ -1514,7 +1515,7 @@ modulo.register('cpart', class State {
 
     bindUnmount({ el, attrName }) {
         const name = attrName || el.getAttribute('name');
-        if (!(name in this.boundElements)) { // XXX HACK
+        if (!(name in this.boundElements)) { // TODO HACK
             return console.log('Modulo ERROR: Could not unbind', name);
         }
         const remainingBound = [];
@@ -1703,7 +1704,7 @@ modulo.register('engine', class Reconciler {
         this.directives = opts.directives || {};
         this.tagTransforms = opts.tagTransforms;
         this.directiveShortcuts = opts.directiveShortcuts || [];
-        if (this.directiveShortcuts.length === 0) { // XXX horrible HACK
+        if (this.directiveShortcuts.length === 0) { // TODO Remove this when tested
             this.directiveShortcuts = this.modulo.config.reconciler.directiveShortcuts; // OLD TODO global modulo
         }
         this.patch = this.pushPatch;
@@ -1711,11 +1712,9 @@ modulo.register('engine', class Reconciler {
     }
 
     parseDirectives(rawName, directiveShortcuts) { //, foundDirectives) {
-        if (/^[a-z0-9-]$/i.test(rawName)) {
-            return null; // if alpha-only, stop right away
-            // TODO: If we ever support key= as a shortcut, this will break
+        if (/^[a-z0-9-]+$/i.test(rawName)) {
+            return null; // if alphanumeric-only, stop right away
         }
-
         // "Expand" shortcuts into their full versions
         let name = rawName;
         for (const [regexp, directive] of directiveShortcuts) {
@@ -1726,7 +1725,6 @@ modulo.register('engine', class Reconciler {
         if (!name.startsWith('[')) {
             return null; // There are no directives, regular attribute, skip
         }
-
         // There are directives... time to resolve them
         const { cleanWord, stripWord } = this.modulo.registry.utils; // old TODO global modulo
         const arr = [];
@@ -1740,70 +1738,6 @@ modulo.register('engine', class Reconciler {
         return arr;
     }
 
-    loadString(rivalHTML, tagTransforms) {
-        this.patches = [];
-        const rival = this.modulo.registry.utils.makeDiv(rivalHTML);
-        const transforms = Object.assign({}, this.tagTransforms, tagTransforms);
-        this.applyLoadDirectives(rival, transforms);
-        return rival;
-    }
-
-    reconcile(node, rival, tagTransforms) {
-        if (typeof rival === 'string') {
-            rival = this.loadString(rival, tagTransforms);
-        }
-        this.reconcileChildren(node, rival);
-        this.cleanRecDirectiveMarks(node);
-        return this.patches;
-    }
-
-    applyLoadDirectives(elem, tagTransforms) {
-        this.patch = this.applyPatch; // Apply patches immediately
-        for (const node of elem.querySelectorAll('*')) {
-            // legacy -v, TODO rm
-            const newTag = tagTransforms[node.tagName.toLowerCase()];
-            //console.log('this is tagTransforms', tagTransforms);
-            if (newTag) {
-                this.modulo.registry.utils.transformTag(node, newTag);
-            }
-            ///////
-
-            const lowerName = node.tagName.toLowerCase();
-            if (lowerName in this.directives) {
-                this.patchDirectives(node, `[${lowerName}]`, 'TagLoad');
-            }
-
-            for (const rawName of node.getAttributeNames()) {
-                // Apply load-time directive patches
-                this.patchDirectives(node, rawName, 'Load');
-            }
-        }
-        this.markRecDirectives(elem); // TODO rm
-        this.patch = this.pushPatch;
-    }
-
-    markRecDirectives(elem) {
-        // TODO remove this after we reimplement [component.ignore]
-        // Mark all children of modulo-ignore with mm-ignore
-        for (const node of elem.querySelectorAll('[modulo-ignore] *')) {
-            // TODO: Very important: also mark to ignore children that are
-            // custom!
-            node.setAttribute('mm-ignore', 'mm-ignore');
-        }
-
-        // TODO: hacky / leaky solution to attach like this
-        //for (const rivalChild of elem.querySelectorAll('*')) {
-        //    rivalChild.moduloDirectiveContext = this.directives;
-        //}
-    }
-
-    cleanRecDirectiveMarks(elem) {
-        // Remove all mm-ignores
-        for (const node of elem.querySelectorAll('[mm-ignore]')) {
-            node.removeAttribute('mm-ignore');
-        }
-    }
-
     applyPatches(patches) {
         for (const patch of patches) { // Simply loop through given iterable
             this.applyPatch(patch[0], patch[1], patch[2], patch[3]);
@@ -1811,7 +1745,7 @@ modulo.register('engine', class Reconciler {
     }
 
     reconcileChildren(childParent, rivalParent) {
-        // Nonstandard nomenclature: "The rival" is the node we wish to match
+        // Nonstandard nomenclature: "rival" is node we wish "child" to match
         const cursor = new this.modulo.registry.engines.DOMCursor(childParent, rivalParent);
         while (cursor.hasNext()) {
             const [ child, rival ] = cursor.next();
@@ -1844,10 +1778,9 @@ modulo.register('engine', class Reconciler {
                     }
                 } else if (!child.isEqualNode(rival)) { // sync if not equal
                     this.reconcileAttributes(child, rival);
-                    if (rival.hasAttribute('modulo-ignore')) {
+                    if (rival.hasAttribute('modulo-ignore')) { // Don't descend
                         // console.log('Skipping ignored node');
                     } else if (child.isModulo) { // is a Modulo component
-                        // TODO: Possibly add directive resolution context to rival / child.originalChildren?
                         this.patch(child, 'rerender', rival);
                     } else if (!this.shouldNotDescend) {
                         cursor.saveToStack();
@@ -1870,11 +1803,6 @@ modulo.register('engine', class Reconciler {
         } else if (method.startsWith('directive-')) {
             method = method.substr('directive-'.length); // TODO: RM prefix (or generalizze)
             node[method].call(node, arg); // invoke directive method
-        } else if (method.startsWith('weak-')) {
-            method = method.substr('weak-'.length);
-            if (document.body.contains(node)) {
-                node[method].call(node, arg);
-            }
         } else {
             node[method].call(node, arg); // invoke method
         }
@@ -1917,7 +1845,6 @@ modulo.register('engine', class Reconciler {
             if (myAttrs.has(rawName) && node.getAttribute(rawName) === attr.value) {
                 continue; // Already matches, on to next
             }
-
             if (myAttrs.has(rawName)) { // If exists, trigger Unmount first
                 this.patchDirectives(node, rawName, 'Unmount');
             }
@@ -1936,20 +1863,15 @@ modulo.register('engine', class Reconciler {
     }
 
     patchAndDescendants(parentNode, actionSuffix) {
-        if (parentNode.nodeType !== 1) { // cannot have descendants
-            return;
+        if (parentNode.nodeType !== 1) {
+            return; // Skip anything that isn't a regular HTML element
         }
-        let nodes = [ parentNode ]; // also, patch self (but last)
-        if (!this.shouldNotDescend) {
-            nodes = Array.from(parentNode.querySelectorAll('*')).concat(nodes);
+        for (const rawName of parentNode.getAttributeNames()) {
+            this.patchDirectives(parentNode, rawName, actionSuffix);
         }
-        for (let rival of nodes) { // loop through nodes to patch
-            if (rival.hasAttribute('mm-ignore')) {
-                continue; // Skip any marked to ignore
-            }
-            for (const rawName of rival.getAttributeNames()) {
-                // Loop through each attribute patching foundDirectives as necessary
-                this.patchDirectives(rival, rawName, actionSuffix);
+        for (const child of parentNode.children) { // Loop through children
+            if (!child.hasAttribute('modulo-ignore')) { // Skip ignored
+                this.patchAndDescendants(child, actionSuffix); // Recurse
             }
         }
     }
@@ -1992,6 +1914,6 @@ if (typeof window.moduloBuild === 'undefined') { // Not in a build, try loading
             modulo.preprocessAndDefine(modulo.registry.utils.showDevMenu);
         });
     } else if (typeof module !== 'undefined') { // Node.js
-        module.exports = { modulo, window, Modulo: window.Modulo };
+        module.exports = { modulo, window };
     }
 }

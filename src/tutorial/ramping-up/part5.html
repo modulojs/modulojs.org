@@ -13,9 +13,10 @@ can do with Modulo with custom functionality, create more interactive
 applications, games, better integrating APIs, process data, and more.
 
 
-So far, our interactivity has been limited to binding state.
-In this final section, we will learn about connecting arbitrary events to methods,
-and also dipping our toes into the "full power" of JavaScript.
+So far, our interactivity has been limited to binding state.  In this final
+section, we will learn about connecting arbitrary events to methods, and also
+dipping our toes into the "full power" of JavaScript.
+
 
 # Events
 
@@ -578,14 +579,13 @@ skip this last section!
 > [DOM Introduction](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction),
 > [DOM-Node reference](https://developer.mozilla.org/en-US/docs/Web/API/Node)
 
-Sometimes you want to have the full, precise control of the browser's
-collecting of built-in DOM methods, and you want to be able to directly modify
-the browser's DOM (document structure), at certain spots in your component.
-This is where writing your own directives comes into play.  All the directives
-built-in directives (state.bind, events, and data props), all are built using
-JS functions or methods that activate when certain attributes are found on the
-document. You can leverage the same system for your own to do similar direct
-DOM manipulation (e.g. attaching events or manually modifying its content).
+Sometimes you need to be able to directly modify the browser's DOM (document
+structure) at certain spots in your component.  This is where writing your own
+directives comes into play.  All the directives built-in directives
+(`[state.bind]`, events, and data props), are built using JS functions or
+methods that activate when certain attributes are found on the document. You
+can leverage the same system for your own to do similar direct DOM manipulation
+(e.g. attaching events or manually modifying its content).
 
 For example, examine the following code:
 
@@ -645,9 +645,9 @@ What are uses of custom directives?
 When you should do direct DOM manipulation with directives?
 
 - **Answer:** Only do direct DOM manipulation as a last resort, such as when
-  you are following a tutorial that gives instructions this way, or are
-  combining Modulo with another framework that operates with direct DOM
-  references
+  you run into something that Modulo seems incapable of, or when you are are
+  combining Modulo with another framework or tutorial that operates with direct
+  DOM references
 
 
 ------
