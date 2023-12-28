@@ -17,10 +17,12 @@
     position: relative;
 }
 
+/*
 .page-navdocs > :first-child {
     position: sticky;
     top: 5px;
 }
+*/
 
 /* For content pages with navdocs, change the style */
 .page-container--navdocs .page-content .markdown-body {

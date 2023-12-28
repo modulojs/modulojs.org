@@ -7,6 +7,10 @@ function initializedCallback() {
     }
 }
 
+function wrapperMount({ el }){
+    element.wrapper = el;
+}
+
 function textMount({ el }){
     // Mounting of the actual <textarea>, which functions as the main
     // "initialized" callback where everything gets set-up and rerendered with
@@ -133,19 +137,29 @@ function keyDown(ev) {
 
 function updateDimensions() {
     // Updates the backing div to mirror the textarea
-    const { textarea } = element;
+    const { textarea, wrapper } = element;
     if (!textarea) {
         return;
     }
+    let _needsRerender = false;
     const { scrollLeft, scrollTop, clientWidth, clientHeight } = textarea;
-    if (state.scrollLeft !== scrollLeft ||
-        state.scrollTop !== scrollTop ||
-            state.width !== clientWidth ||
-            state.height !== clientHeight) {
+    if (state.scrollLeft !== scrollLeft || state.scrollTop !== scrollTop) {
+        // Scrolled textarea, update state to reflect
         state.scrollTop = scrollTop;
         state.scrollLeft = scrollLeft;
+        if (wrapper) {
+            wrapper.style['left'] = `-${ scrollLeft }px`;
+            wrapper.style['top'] = `-${ scrollTop }px`;
+        } else {
+            _needsRerender = true;
+        }
+    }
+    if (state.width !== clientWidth || state.height !== clientHeight) {
         state.width = clientWidth;
         state.height = clientHeight;
+        _needsRerender = true;
+    }
+    if (_needsRerender) {
         element.rerender();
     }
 }

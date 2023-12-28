@@ -117,22 +117,22 @@
         -src="../../data/links/examples.js"
     ></StaticData>
     <Script>
-    	function getTitle(s) {
+        function getTitle(s) {
             const parts = s.split('.')[0].split('/');
             return parts[parts.length - 1];
         }
         modulo.register('templateFilter', getTitle);
         function showDemo(demoFileName) {
             state.selected = demoFileName;
+            /*
             setTimeout(() => {
                 // Messy hack to force it to run + rerender when selected
-                /*
-            	const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
+                const editor = element.querySelector('x-DemoEditor#de_for_' + getTitle(demoFileName));
                 const synEditor = editor.querySelector('x-SyntaxEditor');
                 editor.cparts.modulosandbox.editor = synEditor;
                 editor.cparts.modulosandbox.run();
-                */
             }, 0);
+            */
         }
         function prepareCallback() {
             const examples = [];

@@ -1,4 +1,15 @@
-<ul>
+<div class="toolbar-container">
+    <label 
+        class="toolbar-toggle"
+        title="Keep table of contents 'sticky' as I scroll">[<input [state.bind] name="sticky" type="checkbox" />&uarr;]</label>
+</div>
+
+<ul style="{% if not props.showall %}
+        {% if state.sticky %}
+            position: sticky;
+            top: -4rem;
+        {% endif %}
+    {% endif %}">
     {% if not props.showall %}
         <a href="/docs/#TableOfContents">
             <h1>%</h1>

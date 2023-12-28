@@ -174,15 +174,15 @@
         /*
         {
             file: "/static/demos/eg/Components.html",
-            includes: "/static/demos/usedby/DemoModal.html,/static/demos/usedby/DemoChart.html",
+            includes: "/static/demos/eg/DemoModal.html,/static/demos/eg/DemoChart.html",
         },
         {
             file: "/static/demos/eg/ComponentsLoop.html",
-            includes: "/static/demos/usedby/DemoModal.html",
+            includes: "/static/demos/eg/DemoModal.html",
         },
         {
             file: "/static/demos/eg/OscillatingGraph.html",
-            includes: "/static/demos/usedby/DemoChart.html",
+            includes: "/static/demos/eg/DemoChart.html",
         },
         */
         {
@@ -206,7 +206,7 @@
             `
         },
         {
-            file: "/static/demos/usedby/DemoModal.html",
+            file: "/static/demos/eg/DemoModal.html",
             usage: `<x-DemoModal button="Example Button" title="Example Title">
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg" />
     <p>Example paragraph #1</p>
@@ -215,7 +215,7 @@
         },
 
         {
-            file: "/static/demos/usedby/DemoChart.html",
+            file: "/static/demos/eg/DemoChart.html",
             usage: "<x-DemoChart data='[1, 2, 3, 5, 8]'></x-DemoChart>",
         },
         {
