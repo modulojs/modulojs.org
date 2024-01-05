@@ -1,0 +1,45 @@
+<!-- By using StaticData and Template Filters,
+we can load a CSV file and show it as a table -->
+<Template>
+  <!-- Set column widths for CSS Grid to match data,
+      with "Supply Chain" columns at 2x as wide -->
+  <section style="
+    grid-template-columns:
+          {% for header in staticdata|first %}
+              {% if header is 'Supply Chain' %}
+                  2fr
+              {% else %}
+                  1fr
+              {% endif %}
+          {% endfor %}
+      ">
+
+    <!-- Display column headers (|first row) -->
+    {% for header in staticdata|first %}
+        <div><strong>{{ header }}</strong></div>
+    {% endfor %}
+
+    <!-- Show table body (remaining rows) -->
+    {% for row in staticdata|skipfirst %}
+        {% for col in row %}
+            <div>{{ col }}</div>
+        {% endfor %}
+    {% endfor %}
+  </section>
+</Template>
+
+<StaticData
+    -src="https://modulojs.org/static/data/eg/co2.csv"
+></StaticData>
+
+<Style>
+    section {
+        display: grid;
+        width: 500px;
+    }
+    div {
+        font-size: 10px;
+        border-bottom: 1px dotted gray;
+        padding: 2px;
+    }
+</Style>

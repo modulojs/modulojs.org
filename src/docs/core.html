@@ -173,6 +173,42 @@ lifecycle.
   empty, then no patches will be applied.
 
 
+### Examples of patches
+
+Using `console.table(component.patches);`, you can easily inspect the
+exact order of DOM operations that Modulo will do for every operation.
+This produces useful results in both Firefox and Chromium-based browsers.
+
+```modulo_demo
+<Template>
+    <label><input [state.bind] name="enabled" type="checkbox" /> Show patches in Developer Console</label> <br />
+    <hr />
+    <h3>To Do example:</h3>
+    <ol>{% for item in state.list %} <li>{{ item }}</li> {% endfor %}</ol>
+    <p>
+        <input [state.bind] name="text" />
+        <button @click:=state.list.push payload="{{ state.text }}">+</button>
+    </p>
+</Template>
+<State
+    num:=42
+    enabled:=false
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+<Script>
+    function updateCallback() {
+        if (state.enabled) {
+            console.table(component.patches);
+        }
+    }
+    function countUp() {
+        state.num++;
+    }
+/Script>
+```
+
+
 ## attrs
 
 Components use their attributes to set several configuration options.

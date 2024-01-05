@@ -88,7 +88,7 @@
 
     components: [
         {
-            file: "/static/demos/eg/HelloCount.html",
+            file: "/static/demos/eg/HelloModulo.html",
         },
         {
             file: "/static/demos/eg/SimpleStyle.html",
@@ -101,13 +101,10 @@
         {
             file: "/static/demos/eg/JSON.html",
         },
-        */
         {
             file: "/static/demos/eg/JSONFile.html",
         },
-        {
-            file: "/static/demos/eg/JSONArray.html",
-        },
+        */
         {
             file: "/static/demos/eg/SimpleTable.html",
         },
@@ -130,6 +127,12 @@
             file: "/static/demos/eg/DataTable.html",
         },
         */
+        {
+            file: "/static/demos/eg/CSVTable.html",
+        },
+        {
+            file: "/static/demos/eg/JSONArray.html",
+        },
         {
             file: "/static/demos/eg/GitHubAPI.html",
         },
