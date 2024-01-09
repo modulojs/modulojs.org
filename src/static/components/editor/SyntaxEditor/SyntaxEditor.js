@@ -44,8 +44,8 @@ function textMount({ el }){
 }
 
 function renderCallback(renderObj) {
-    if (element.hasAttribute('modulo-original-html')) {
-        element.removeAttribute('modulo-original-html');
+    if (element.hasAttribute('modulo-mount-html')) {
+        element.removeAttribute('modulo-mount-html');
         renderObj.component.innerHTML = null; // lock if original HTML was set
     }
 }

@@ -55,8 +55,8 @@ function updateCallback(renderObj) {
         return;
     }
     /*
-    if (element.hasAttribute('modulo-original-html')) {
-        element.removeAttribute('modulo-original-html');
+    if (element.hasAttribute('modulo-mount-html')) {
+        element.removeAttribute('modulo-mount-html');
         return; // lock if original HTML was set
     }
     */
