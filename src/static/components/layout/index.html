@@ -14,18 +14,31 @@
     <Template
         -src="./Page/Page.html"
     ></Template>
+
     <Style
         -auto-isolate="vanish"
         -src="./Page/Page.css"
     ></Style>
+
     <Style
         -auto-isolate="vanish"
         -src="./Page/Page-navdocs.css"
     ></Style>
+
+    <!-- Bring in the "page-content" stylesheet, that styles various non-markdown content pages -->
     <Style
-        -auto-isolate="vanish"
+        -auto-isolate="regular"
+        prefix=".page-content"
+        -src="./Page/Page-content.css"
+    ></Style>
+
+    <!-- Bring in the "markdown-body" stylesheet, that styles most pages (see cms-MarkdownPage) -->
+    <Style
+        -auto-isolate="regular"
+        prefix=".markdown-body"
         -src="./Page/Page-markdownbody.css"
     ></Style>
+
     <Script
         -src="./Page/Page.js"
     ></Script>
@@ -110,7 +123,8 @@ glitches! Click to browser the issues page for a better idea of why."
   </Style>
 </Component>
 
-<Component name="TwoPanes" mode="vanish">
+<!--<Component name="TwoPanes" mode="vanish">-->
+<Component name="TwoPanes">
     <Props
         class
     ></Props>
@@ -121,7 +135,6 @@ glitches! Click to browser the issues page for a better idea of why."
         </section>
     </Template>
     <Style
-        -auto-isolate="vanish"
         -src="./TwoPanes/TwoPanes.css"
     ></Style>
 </Component>

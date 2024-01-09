@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!-- (These are unused examples, used while developing) -->
+
+<template Modulo>
+    <Component name="ButtonExample1">
+        <Props
+            txt
+        ></Props>
+        <Template>
+            <h1>{{ script.lol }}</h1>
+            <button @click:=script.clicky><em>{{ props.txt }}</em></button>
+            <hr />
+            <x-ButtonExample2 txt="Go 2">
+              <p>lol <strong>okay 2</strong></p>
+            </x-ButtonExample2>
+            <hr />
+        </Template>
+        <def Script>
+            console.log('script is getting run! (1)');
+            let lol = 0;
+            function prepareCallback() {
+                return { lol, array: Array.from({ length: lol }) };
+            }
+            function clicky() {
+                console.log('clicky! (1)');
+                lol++;
+            }
+        </def>
+        <StaticData>
+        {
+          "thing": "okay"
+        }
+        </StaticData>
+        <Style>
+            :host {
+              display: block;
+              border: 5px solid tomato;
+              margin: 10px;
+              padding: 10px;
+            }
+            em { background-color: tomato }
+        </Style>
+    </Component>
+
+    <Component name="ButtonExample2">
+        <Props
+            txt
+        ></Props>
+        <Template>
+            <h1>{{ script.lol }}</h1>
+            <button @click:=script.clicky><em>{{ props.txt }}</em></button>
+            <div><slot></slot></div>
+            <!--<h1>{{ staticdata.thing }}</h1>-->
+        </Template>
+        <def Script>
+            console.log('script is getting run (2)!');
+            let lol = 0;
+            function prepareCallback() {
+                return { lol };
+            }
+            function clicky() {
+                console.log('clicky (2)!');
+                lol++;
+            }
+        </def>
+        <StaticData>
+        {
+          "thing": "okay"
+        }
+        </StaticData>
+        <Style>
+            :host {
+              display: block;
+              border: 5px solid green;
+              margin: 10px;
+              padding: 10px;
+            }
+            em { background-color: green }
+        </Style>
+    </Component>
+</template>
+<script src="/static/js/dev-mdu.js"></script>
+<!--<script src="https://unpkg.com/mdu.js@0.0.68/src/Modulo.js"></script>-->
+
+<x-ButtonExample1 txt="Go">
+  <p>lol okay 1</p>
+</x-ButtonExample1>
+
