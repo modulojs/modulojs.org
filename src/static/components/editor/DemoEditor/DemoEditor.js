@@ -3,6 +3,16 @@ const LOCAL_STORAGE_PREFIX = 'mdufs-';
 const { toEmbed } = modulo.registry.cparts.ModuloDemo; // Retrieve helper funcs
 const { saveFileAs } = modulo.registry.utils;
 
+const DEFAULT_EXPORT_TEMPLATE = (`
+<!DOCTYPE html>
+<template Modulo>{{ includes|safe }}
+  <Component name="{{ name }}">{{ indentText|safe }}
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+{{ usage|safe }}
+`).trim();
+
 function editorMount({ el }) {
     element.editor = el;
 }
@@ -21,16 +31,43 @@ function _updateState() {
     if (element.hasAttribute('modulo-value') && !state.value) {
         state.value = element.getAttribute('modulo-value');
     }
-    if (state.showExample === null) {
-        state.showExample = !!props.editex; // Default to if it's an "example editor"
+    if (state.showAltEditor === null) {
+        state.showAltEditor = !!props.editex; // Default to if it's an "example editor"
     }
     state.showEditor = !props.collapsed;
     state.componentName = getComponentName();
-    if (element.exampleEditor) { // Use user-supplied example code
-        state.exampleCode = element.exampleEditor.value;
-    }
+
     if (!state.exampleCode) { // Init with props if available
         state.exampleCode = props.example || `<x-${ state.componentName }></x-${ state.componentName }>`;
+    }
+    if (!state.exportCode) { // Init with props if available
+        state.exportCode = props.exptemplate || DEFAULT_EXPORT_TEMPLATE;
+    }
+
+    if (state.showAltEditor) { // Handle updating alt-editor stuff
+        //state.altEditorList = [ 'Usage', 'Includes', 'Export' ];
+        //state.altEditorList = [ 'Usage', 'Export' ];
+        state.altEditorList = null; // disabled for now
+        if (state.altEditorSelected === 'Export') {
+            state.altEditorCode = state.exportCode;
+        } else if (state.altEditorSelected === 'Includes') {
+            state.altEditorCode = state.includesCode;
+        } else {
+            state.altEditorCode = state.exampleCode;
+        }
+    }
+
+    if (element.exampleEditor) { // Use user-supplied example code
+        if (state.altEditorSelected === 'Export') {
+            // Update the export template
+            state.exportCode = element.exampleEditor.value;
+        } else if (state.altEditorSelected === 'Includes') {
+            // Update with includes code
+            state.includesCode = element.exampleEditor.value;
+        } else {
+            // In all other cases, just use exampleCode
+            state.exampleCode = element.exampleEditor.value;
+        }
     }
 }
 
@@ -75,14 +112,14 @@ function run() {
 function save() {
     // Saves as HTML
     _updateState();
-    const fullText = toEmbed(state.value, state.componentName, state.exampleCode);
+    const fullText = toEmbed(state.value, state.componentName, state.exampleCode, state.includesCode, state.exportCode);
     saveFileAs(`Modulo_${ state.componentName }.html`, fullText);
 }
 
 function open() {
     // Opens in ACE editor
     _updateState();
-    const fullText = toEmbed(state.value, state.componentName, state.exampleCode);
+    const fullText = toEmbed(state.value, state.componentName, state.exampleCode, state.includesCode, state.exportCode);
     const path =`/demo/${ state.componentName }.html`
     localStorage.setItem(LOCAL_STORAGE_PREFIX + path, fullText);
     window.location.href = (EDITOR_LOCATION + '?ls=' + path);

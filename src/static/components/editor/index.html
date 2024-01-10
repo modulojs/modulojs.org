@@ -14,18 +14,32 @@
         includes
     ></Props>
     <Template
+        -name="template_demo"
+        -src="./DemoEditor/DemoEditor-demo.html"
+    ></Template>
+    <Template
+        -name="template_toolbar"
+        -src="./DemoEditor/DemoEditor-toolbar.html"
+    ></Template>
+    <Template
         -src="./DemoEditor/DemoEditor.html"
     ></Template>
     <State
         divider:=310
+        font-size:=16
         demo=""
         value=""
         component-name=""
         example-code=""
+        export-code=""
+        includes-code=""
+        alt-editor-code:=""
         is-fetching:=null
         show-editor:=null
         show-menu:=null
-        show-example:=null
+        show-alt-editor:=null
+        alt-editor-selected="Usage"
+        alt-editor-list:=null
     ></State>
     <Script
         lifecyle="initialized"
@@ -65,6 +79,7 @@
         fast
         spellcheck
         component
+        fontsize
         debounce-time
     ></Props>
     <Template

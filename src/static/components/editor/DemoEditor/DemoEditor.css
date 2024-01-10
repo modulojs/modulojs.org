@@ -71,7 +71,8 @@
 }
 
 .toolbar button,
-.toolbar label {
+.toolbar label,
+.toolbar .control-section {
     color: var(--color-fg);
     font-weight: bolder;
     display: inline-block;
@@ -89,6 +90,17 @@
                 border-color 0.2s;
 }
 
+.toolbar .control-section {
+    padding: 0;
+    padding-bottom: 3px;
+    display: flex;
+    flex-direction: row;
+}
+.toolbar .control-section label {
+    flex-direction: row;
+    display: flex;
+}
+
 .toolbar button {
     cursor: pointer;
 }
@@ -97,6 +109,22 @@
     font-weight: lighter;
     font-size: 1.5rem;
     line-height: 1;
+}
+
+span.icon {
+    overflow: hidden;
+    height: 20px;
+    width: 80px;
+    margin-left: 10px;
+    display: block;
+    border-radius: 10px;
+    text-align: center;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    border: 2px solid var(--color-fg);
+    font-weight: 200;
+    font-size: 2.5rem;
+    line-height: 0.5;
 }
 
 .toolbar--small button {
@@ -112,8 +140,25 @@
 .toolbar.toolbar--settings label,
 .toolbar.toolbar--settings button {
     padding: 6px;
+    border-color: var(--color-fg-light);
 }
 
+.toolbar.toolbar--settings .font-preview {
+    overflow: hidden;
+    height: 20px;
+    width: 80px;
+    margin-left: 10px;
+    display: block;
+    border-radius: 10px;
+    text-align: center;
+    color: var(--color-fg);
+    border: 2px solid var(--color-fg);
+}
+
+.toolbar.toolbar--settings .font-preview > span {
+    display: block;
+    padding-top: 4px;
+}
 
 .toolbar button:visited,
 .toolbar button:active,
@@ -154,6 +199,17 @@
     position: relative;
 }
 
+
+/* Active styles: */
+.toolbar.toolbar--settings label:active span.icon,
+.toolbar.toolbar--settings label:active .font-preview {
+    background: var(--color-alt);
+}
+
+.toolbar--selected {
+    background: var(--color-alt) !important;
+}
+
 @media (max-width: 992px) {
     .pane-holder {
         min-height: 350px;
@@ -168,6 +224,9 @@
         border-right: none;
         padding: 0;
     }
+    .toolbar .control-section {
+        flex-direction: column;
+    }
 
     .toolbar button {
         opacity: 1 !important;
@@ -177,6 +236,17 @@
     .toolbar--small button {
         font-size: 1rem;
     }
+
+    .label--divider {
+        display: none;
+    }
+
+    /*
+    .toolbar.toolbar--settings .font-preview {
+        height: auto;
+        display: block;
+    }
+    */
 }
 
 

@@ -1,4 +1,5 @@
 {% if state.showEditor %}
+
     <div class="pane-holder" style="
             --right-width: {{ state.divider|multiply:'-1'|add:550 }}px;
             --divider-width: 45px;
@@ -6,33 +7,20 @@
             --demo-height: 120px;
         ">
         <div class="pane pane--left">
-
             {% if state.showMenu %}
-                <div class="toolbar toolbar--settings">
-                    <label>
-                        <input [state.bind] type="checkbox" name="showExample" />
-                        Edit Usage
-                    </label>
-                    <label>
-                        <input [state.bind]="input" name="divider" type="range" min="50" max="500" step="10" />
-                        Size
-                    </label>
-                    <button @click:=script.open>
-                        Switch to ACE Editor
-                        <span alt="Pencil edit icon">&#10000;</span>
-                    </button>
-                </div>
-
-            {% elif state.showExample %}
+                {# See DemoEditor-toolbar.html #}
+                {% include template_toolbar %}
+            {% elif state.showAltEditor %}
                 <!-- Add a little styling around the example editor to distinguish -->
                 <div class="usage-border">
                     <div class="usage-banner">
-                        USAGE
+                        {{ state.altEditorSelected|upper }}
                     </div>
                     <x-SyntaxEditor
                         [script.example]
                         style="height: 100%"
-                        value="{{ state.exampleCode }}"
+                        fontsize="{{ state.fontSize }}"
+                        value="{{ state.altEditorCode }}"
                     ></x-SyntaxEditor>
                 </div>
 
@@ -40,6 +28,7 @@
                 <x-SyntaxEditor
                     [script.editor]
                     style="height: 100%"
+                    fontsize="{{ state.fontSize }}"
                     value="{{ state.value }}"
                 ></x-SyntaxEditor>
 
@@ -51,37 +40,24 @@
 
         <div class="pane pane--divider">
             <div class="toolbar toolbar--small {% if not state.showMenu %}toolbar--autohide{% endif %}">
-                <button @click:=script.toggleMenu><span alt="Dots menu icon">&#x22EF;</span> Menu</button>
+                <button
+                    @click:=script.toggleMenu
+                    class="{% if state.showMenu %}toolbar--selected{% endif %}"
+                ><span alt="Dots menu icon">&#x22EF;</span> Menu</button>
                 <button @click:=script.run><span alt="Refresh arrow in circle">&#x27F3;</span> Run</button>
                 <button @click:=script.save><span alt="Download arrow downward">&#10515;</span> Save</button>
             </div>
         </div>
-        <div class="pane pane--right">
-            <div class="demo-area">
-                {% if state.value %}
-                    <x-DemoBox
-                        value="{{ state.value }}"
-                        component="{{ state.componentName }}"
-                        example="{{ state.exampleCode }}"
-                    ></x-DemoBox>
-                {% endif %}
-            </div>
-        </div>
+
+        {# Include the demo section on the right #}
+        {# See DemoEditor-demo.html #}
+        {% include template_demo %}
     </div>
+
 {% else %}
-    <!-- Collapsed view -->
+    <!-- Collapsed view (e.g. used in DemoGrid) -->
     <div class="pane-holder pane-holder--collapsed">
-        <div class="pane pane--right">
-            <div class="demo-area">
-                {% if state.value %}
-                    <x-DemoBox
-                        value="{{ state.value }}"
-                        component="{{ state.componentName }}"
-                        example="{{ state.exampleCode }}"
-                    ></x-DemoBox>
-                {% endif %}
-            </div>
-        </div>
+        {% include template_demo %}
     </div>
 {% endif %}
 

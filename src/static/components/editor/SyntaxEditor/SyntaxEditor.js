@@ -44,9 +44,15 @@ function textMount({ el }){
 }
 
 function renderCallback(renderObj) {
+    if (!element.isMounted) {
+        // We are doing a first render, need to clear originalHTML to prevent
+        // it from messing up with hydration
+        element.originalHTML = '';
+        element.originalChildren = [];
+    }
     if (element.hasAttribute('modulo-mount-html')) {
         element.removeAttribute('modulo-mount-html');
-        renderObj.component.innerHTML = null; // lock if original HTML was set
+        renderObj.component.innerHTML = null; // lock first render if original HTML was set
     }
 }
 

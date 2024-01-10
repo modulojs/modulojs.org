@@ -46,5 +46,5 @@ body.dark-mode {
 ** border-box. This forces elements to specify font-size. */
 * {
     box-sizing: border-box;
-    font-size: 1rem;
+    /*font-size: 1rem;*/
 }

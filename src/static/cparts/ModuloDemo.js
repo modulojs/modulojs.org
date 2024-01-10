@@ -6,18 +6,26 @@ modulo.config.modulodemo = {
 
 
 modulo.registry.cparts.ModuloDemo = class ModuloDemo {
-    static toEmbed(codeText, componentName, usage = '') {
+    static toEmbed(codeText, componentName, usage = '', includes = '', exportTemplate = '') {
+        const { Template } = modulo.registry.cparts;
         const name = componentName || 'App';
         if (!usage) {
             usage = `\n\n<!-- Example usage: -->\n<x-${name}></x-${name}>`;
         }
         const indentText = ('\n' + codeText.trim()).replace(/\n/g, '\n    ');
-        const fullText = `<!DOCTYPE html>\n<template Modulo>\n` +
+        let fullText = '';
+        if (exportTemplate) {
+            const tmplt = new Template(exportTemplate);
+            const ctx = { componentName, name, codeText, indentText, componentName, usage, includes };
+            fullText = tmplt.render(ctx);
+        } else {
+            fullText = `<!DOCTYPE html>\n<template Modulo>\n` +
                           `  <Component name="${ name }">` + indentText + '\n' +
                           '  </Component>\n' +
                           '</template>\n' +
                           '<script src="https://unpkg.com/mdu.js"></script>\n' +
                           usage;
+        }
         return fullText;
     }
 

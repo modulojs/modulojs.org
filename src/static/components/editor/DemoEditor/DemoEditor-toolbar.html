@@ -1,0 +1,54 @@
+<div class="toolbar toolbar--settings">
+    <div class="control-section">
+        <label>
+            <input [state.bind] type="checkbox" name="showAltEditor" />
+            Edit {{ state.altEditorSelected }}
+        </label>
+        {% if state.showAltEditor %}
+            {% if state.altEditorList %}
+                <label
+                  style="align-self: flex-end"
+                  title="Advanced option: You can use this to edit other, less frequently used aspects of this component."
+                >
+                    <select [state.bind] name="altEditorSelected">
+                        {% for item in state.altEditorList %}
+                            <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div class="control-section">
+        <label>
+            <input [state.bind]="input" name="fontSize" type="range" min="8" max="40" step="2"
+              title="Font Size"
+            />
+            <div class="font-preview">
+                <span style="margin-top: -{{ state.fontSize|multiply:'0.3' }}px; font-size: {{ state.fontSize }}px !important;">
+                    {{ state.fontSize }}PX
+                </span>
+            </div>
+        </label>
+
+        <label class="label--divider" title="Divider location">
+            <input [state.bind]="input" name="divider" type="range" min="0" max="450" step="10" />
+            <span class="icon" alt="Side-to-side arrow icon">&#x21f9;</span>
+        </label>
+
+        {% comment %}
+        <label class="label--divider" title="Minimum height">
+            <input [state.bind]="input" name="minheight" type="range" min="0" max="450" step="10" />
+            <span class="icon" alt="Up-and-down arrow icon">&#x21D3;</span>
+        </label>
+        {% endcomment %}
+
+    </div>
+    <div class="control-section">
+        <button @click:=script.open>
+            Switch to ACE Editor
+            <span alt="Pencil edit icon">&#10000;</span>
+        </button>
+    </div>
+</div>
+

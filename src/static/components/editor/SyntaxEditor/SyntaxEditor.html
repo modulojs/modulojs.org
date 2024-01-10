@@ -16,7 +16,7 @@
                 value="{{ state.value }}"
                 number="{{ props.number|default:'on' }}"
                 style="
-                    font-size: 16px;
+                    font-size: {{ props.fontsize|default:"16" }}px !important;
                     font-family: monospace;
                     text-align: start;
                     resize: none;
@@ -39,6 +39,7 @@
         name="{{ props.name|default:'editor' }}"
         spellcheck="{{ props.spellcheck|default:'false' }}"
         style="
+          --font-size: {{ props.fontsize|default:"16" }}px;
           {% if props.wrap %}
               white-space: pre-wrap;
               overflow-wrap: break-word;
