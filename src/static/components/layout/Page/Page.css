@@ -107,8 +107,12 @@
     display: inline-block;
 }
 
+a.breadcrumb {
+    color: var(--color-fg);
+}
+
 .breadcrumb--selected {
-    color: var(--color-fg-semi);
+    /*color: var(--color-fg-semi);*/
 }
 
 .page-nav ul div.logo {

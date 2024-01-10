@@ -4,6 +4,7 @@ li, ul, ol {
     margin-left: 20px;
     margin-top: 5px;
     line-height: 1.7;
+    font-size: 1rem;
 }
 
 
@@ -122,6 +123,7 @@ a:active {
     color: var(--color-content-bg);
 }
 
+
 h1 {
     font-size: 1.5rem;
     color: var(--color-fg-semidark);
@@ -135,6 +137,10 @@ h1 {
         linear-gradient(to right, #00000000 0%, #00000000 25%, white 25.00001%, white 75%, #00000000 75.00001%, #00000000 100%),
         linear-gradient(to bottom, white 0%, white 49%, black 49.00001%, black 53%, white 53.00001%, white 100%)
     ;
+}
+
+h2 {
+    font-size: 1rem;
 }
 
 @media (min-width: 700px) {

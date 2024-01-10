@@ -1,3 +1,4 @@
+/* Note: This one gets prefixed, so we can set general content rules */
 
 :host {
     background: var(--color-content-bg);
@@ -22,6 +23,7 @@
 
 :host code {
     border-bottom: 1px dashed gray;
+    display: inline-block;
 }
 
 :host a {
@@ -33,6 +35,53 @@
 
 :host a:hover {
     border-bottom: 1px solid var(--color);
+}
+
+x-SyntaxHighlighter {
+    font-size: 1rem;
+}
+
+
+/* For content pages with navdocs, change the style */
+.page-container--navdocs .page-content .markdown-body {
+    border: none;
+    margin: 0;
+    text-align: left;
+}
+
+
+h5 {
+    font-variant: uppercase;
+    border-left: 5px solid var(--color);
+    padding: 2px;
+    padding-left: 10px;
+    background: var(--color-fg-semilight);
+    color: var(--color-fg);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+h6 {
+    font-size: 0.9rem;
+    font-variant: uppercase;
+}
+
+h5 em {
+    text-transform: none;
+    margin-left: 10px;
+    font-weight: 400;
+}
+
+hr {
+    background: var(--color-fg-semilight);
+    height: 8px;
+    margin: 5px;
+    border: none;
+    border-left: 5px solid var(--color);
+}
+
+/* Last paragraphs shouldn't leave space */
+p:last-child {
+    margin-bottom: 5px;
 }
 
 

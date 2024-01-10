@@ -215,14 +215,43 @@ out"
 
 Retrieve the first item in an Array:
 
+<!--Note that it's the opposite of [#skipfirst]. This means by combining these two filters, you can slice up your data for either displaying tables (as shown with the [#skipfirst] example), or even combine both on the same data to select. Tip for SQL developers: `LIMIT` and `OFFSET` correspond in behavior to `|first` and `|skipfirst`.-->
+<!--TODO: Need to implement argument to make it symetrical, along with "last" <p>Top two: {{ state.cities|first:2 }}</p>-->
 
 ```modulo_demo
 <Template>
-    <p>{{ state.athletes|first }}</p>
+    <p>Biggest city: {{ state.cities|first }}</p>
 </Template>
 
 <State
-  athletes:='["Neymar", "Maradona"]'
+  cities:='[ "Montevideo", "Salto", "Rocha", "Chuy" ]'
+></State>
+```
+
+
+## get
+
+The "get" filter is very versatile. It's used for traversing complex data
+structures to retrieve values based on given "property path", or access
+properties based on the value of variables. Note that for _Array_ types, it
+will use JavaScript logic of starting counting at 0 (e.g. counting index as 0,
+1, 2 ... ). Also note that it treats _Array_ and _Object_ types interchangeably:
+You can use dot (`.`) notation for either (see [Ramping Up: Part 4 / State -
+Drilling Down with |get](/tutorial/ramping-up/part4.html#drillingdownwithget)).
+
+
+The following demonstrates 3 uses:
+
+```modulo_demo
+<Template>
+    <p>Basic: {{ state.cities|get:2 }}</p>
+    <p>Another variable: {{ state.cities|get:state.my-num }}</p>
+    <p>Drill down: {{ state.complex-data|get:'a.b.c.2' }}</p>
+</Template>
+<State
+  my-num:=3
+  cities:='["Oakland", "Berkeley", "Richmond", "Concord"]'
+  complex-data:='{ "a": { "b": { "c": [ "x", "y", "z" ] } } }'
 ></State>
 ```
 
@@ -363,6 +392,35 @@ Performs the mathematical operation of "multiplication" of the given numbers.
 
 
 
+## number
+
+Converts a String type to a Number type, so numeric comparisons can be made.
+Otherwise, the String type will default to alphabetically comparisons and
+operations.
+
+See below for an example of using it to force numeric operations. In this
+example it's necessary since "5" comes after "1" alphabetically (e.g. just as
+`"Jo"` comes after `"Anderson"` alphabetically, despite `"Jo"` being shorter,
+"50" comes after "1000", even if, when read numerically, `1000` is greater than
+`50`).
+
+```modulo_demo
+<Template>
+    {% if state.a gt state.b %} A is greater than B alphabetically
+    {% else %}B is greater than A alphabetically {% endif %}
+    <p><em>However...</em></p>
+    {% if state.a|number gt state.b|number %} A is greater than B numerically
+    {% else %}B is greater than A numerically {% endif %}
+</Template>
+<State
+    a="1000"
+    b="50"
+></State>
+```
+
+
+
+
 ## pluralize
 
 Allows for convenient pluralization in many human languages. This is for words
@@ -424,12 +482,16 @@ See below for example:
 
 ## skipfirst
 
-Does the opposite of "first" -- takes all except for the first element. It's
-useful for skipping over data you don't need to process.
+Takes all except for the first element. It's useful for skipping over data you
+don't need to process.  You can skip more than one by specifying the optional
+argument. For example, "`|skipfirst:10`" will cause
+it to "skip the first 10".
 
-
-You can skip more than one by specifying the optional argument. For example,
-with the syntax: `|skipfirst:10`, e.g. "skip the first 10".
+Note that it's the opposite of [|first](#first). This means by combining these
+two filters, you can slice up your data for either displaying tables (as shown
+below), or even combine both on the same data to select. Tip for SQL
+developers: `LIMIT` and `OFFSET` correspond in behavior to `|first` and
+`|skipfirst`.
 
 ```modulo_demo
 <Template>
@@ -568,7 +630,10 @@ Note that the child template will be isolated or "sandboxed" to _only_ have acce
 
 ## reversed
 
-Reverses the given input. Typically, this is used to reverse Arrays, such as when you want to iterate over an Array in the opposite direction using a `{% for %}` template-tag. If the input is a String or another data type, it will attempt to first convert to an Array.
+Reverses the given input. Typically, this is used to reverse Arrays, such as
+when you want to iterate over an Array in the opposite direction using
+a `{% for %}` template-tag. If the input is a String or another data type, it
+will attempt to first convert to an Array.
 
 
 ```modulo_demo
