@@ -1,0 +1,99 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Component
+---
+
+
+# Configuration
+
+
+Use a Configuration definition to configure Modulo at the global level, or
+extend Modulo's functionality with JavaScript.
+
+
+For example, suppose you wanted to configure Modulo to allow Components and
+Libraries to be defined "loose" within the head of an HTML document, along with
+the Modulo definition.  Here is an example of setting the
+`modulo.config.domloader.topLevelTags` configuration attribute to do so:
+
+```
+<Configuration
+    domloader.top-level-tags:=&apos;["component", "library", "modulo"]&apos;
+></Configuration>
+```
+
+
+Configuration can also be used as a script tag for more fine-grained
+control. This will only be run once, within an isolated context, so temporary
+variables are discarded.
+
+
+```
+<script Configuration>
+    modulo.config.domloader.topLevelTags.push("library");
+    modulo.config.domloader.topLevelTags.push("component");
+    var myVar = "stuff"; // Note: not global
+/script>
+```
+
+
+Configuration's use as a Script tag becomes useful for integrating third
+party libraries, as a sort of simple module and adapter system. Examine the
+following for a complete example of registering the "snarkdown" module from NPM
+as a templateFilter, allowing it to be used by components as a filter in the
+HTML Templates:
+
+```
+<script Configuration -src="https://unpkg.com/snarkdown">
+    modulo.register("templateFilter", snarkdown);
+/script>
+<Component name="HelloWorld">
+    <Template>
+        <textarea [state.bind] name="text"></textarea>
+        <div>{{ state.text|snarkdown|safe }}</div>
+    </Template>
+    <State
+        text="Hello *markdown* _world_"
+    ></State>
+    <Style>:host { display: flex; }</Style>
+</Component>
+```
+
+## Integrating analytics
+
+If you have some custom analytics script to integrate, it can be done this way.
+Examine the following snippet that was taken from the Fathom Lite
+mini-analytics software:
+
+
+```
+<!-- Setup Fathom -->
+<script Configuration>
+     function setupFathom(code) {
+        const host = window.location.host;
+        // Check common things we skip -- ensure doesn't trigger during builds
+        if (host.startsWith('localhost') ||
+                host.includes('.local') ||
+                host.startsWith('127') ||
+                host.startsWith('192') ||
+                host.startsWith('dev--'))  {
+            return;
+        }
+        (function(f, a, t, h, o, m){
+            a[h]=a[h]||function(){
+                (a[h].q=a[h].q||[]).push(arguments)
+            };
+            o=f.createElement('script'),
+            m=f.getElementsByTagName('script')[0];
+            o.async=1; o.src=t; o.id='fathom-script';
+            m.parentNode.insertBefore(o,m)
+        })(document, window, '//ZZ.XXXXXXXX.YYY/tracker.js', 'fathom');
+        fathom('set', 'siteId', code);
+        fathom('trackPageview');
+    }
+    setupFathom('XXXXX');
+/script>
+```
+
+*(Note that `ZZ.XXXXXXXX.YYY` would be replaced with a real domain)*
+
+

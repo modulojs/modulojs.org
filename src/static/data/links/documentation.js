@@ -123,30 +123,35 @@
 
         {
             label: 'Core Definitions',
-            filename: '/docs/core.html',
+            filename: '/docs/core/',
             sections: [
                 {
                     label: 'Artifact',
-                    fragment: 'artifact',
+                    filename: 'artifact.html',
                     keywords: ['bundle', 'build', 'custom builds'],
                 },
                 {
+                    label: 'Configuration',
+                    filename: 'configuration.html',
+                    keywords: ['config', 'loading', 'unpkg', 'npm',
+                    'dependency', 'registering helpers','registering custom cparts'],
+                },
+                {
                     label: 'Component',
-                    fragment: 'component',
+                    filename: 'component.html',
                     keywords: ['name', 'innerHTML', 'patches',
                     'reconciliation', 'rendering mode', 'manual rerender',
                     'shadow', 'vanish', 'vanish-into-document',
                     'component.event', 'component.slot', 'component.dataProp'],
                 },
                 {
-                    label: 'Configuration',
-                    fragment: 'configuration',
-                    keywords: ['config', 'loading', 'unpkg', 'npm',
-                    'dependency', 'registering helpers','registering custom cparts'],
+                    label: 'Library',
+                    filename: 'library.html',
+                    keywords: ['namespace', 'tag alias'],
                 },
                 {
                     label: 'Modulo',
-                    fragment: 'modulo',
+                    fragment: 'modulo.html',
                     keywords: ['starting', 'mounting', 'custom loading', 'custom mounting'],
                 },
             ],

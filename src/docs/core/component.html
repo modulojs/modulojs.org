@@ -1,0 +1,232 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Component
+---
+
+
+# Component
+
+> **Low-level interface** - Component developers will typically
+only need to use the `name="..."` attribute on *Component*,
+and sometimes `mode="vanish-into-document"` for  page-level
+components. Similarly, none of the `renderObj.component` properties
+are typically useful for component developers. Instead, they are used
+internally by CParts (notably *Template*) in order to move along the
+rendering cycle.
+
+The *Component* definition is the most central to Modulo. It's how we register
+components to be mounted on the page, and define the CParts that go inside
+those Components. It's also what stitches together the "machinery" that makes
+reconciliation and rendering even possible. In other words, the *Component*  is
+what handles the "low-level" operations of mounting, reconciling to generate
+patches, and applying those patches to rerender, and the interface described
+here allows for low-level manipulation of this process for unusual
+circumstances when it's needed.
+
+
+## renderObj
+
+The Component reads several properties from the `renderObj`, at different
+lifecycle phases. Read below on how to interface with it.
+
+
+* `component.originalHTML` - *Read-only* - This contains the
+  initial HTML that the element had when mounted on the page.
+
+* `component.innerHTML` - *Write-only* -
+Assign to this to cause the *Component* to attempt to
+reconcile the current HTML with the target HTML provided.
+It functions a little bit like HTML's built-in *"element.innerHTML"*:
+Assign a string containing HTML code to this property to see the HTML
+appear on the page. This is what the *Template* does behind
+the scenes. Unlike HTML's built-in *"element.innerHTML"*, assigning
+to this renderObj property will not cause an full update, overwriting
+everything that exists, but instead will cause the *Component* to
+employ the "reconciler" specified to generate a patches list (see next). By
+default, it will then also apply those patches in the `update`
+lifecycle.
+
+* `component.patches` - Between the `reconcile` and `update` stages, the
+  "patches" property is exposed to allow access to or modification of the
+  patches that the Component intends to apply. This is an advanced feature that
+  gives fine-grained control to how rendering works, and thus is only useful in
+  rare situations where that control is needed. For example, you could use this
+  property to "intercept" the patches that are about to be applied to your
+  component while re-rendering, and, for an example, forbid the removal of
+  attributes by deleting all patches with *"removeAttribute"*. This is in the
+  format of an Array. Each item in the Array is itself a 4-Array (Array of
+  length 4), in the following format: `[element, method, arg1, arg2]`.  For
+  example, to do a *"removeAttribute"* patch on an "id" attribute for a given
+  "target element" (a real DOM node on the page somewhere), it might be `[(ref
+  to "target element"), "removeAttribute", "id", undefined]` If the Array is
+  empty, then no patches will be applied.
+
+
+### Examples of patches
+
+Using `console.table(component.patches);`, you can easily inspect the
+exact order of DOM operations that Modulo will do for every operation.
+This produces useful results in both Firefox and Chromium-based browsers.
+
+```modulo_demo
+<Template>
+    <label><input [state.bind] name="enabled" type="checkbox" /> Show patches in Developer Console</label> <br />
+    <hr />
+    <h3>To Do example:</h3>
+    <ol>{% for item in state.list %} <li>{{ item }}</li> {% endfor %}</ol>
+    <p>
+        <input [state.bind] name="text" />
+        <button @click:=state.list.push payload="{{ state.text }}">+</button>
+    </p>
+</Template>
+<State
+    num:=42
+    enabled:=false
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+<Script>
+    function updateCallback() {
+        if (state.enabled) {
+            console.table(component.patches);
+        }
+    }
+    function countUp() {
+        state.num++;
+    }
+/Script>
+```
+
+
+## attrs
+
+Components use their attributes to set several configuration options.
+They take the following attributes:
+
+
+### name
+
+`name` - *REQUIRED* - The "name" of the component.  Conventionally, it should
+be written in camel or dromedary case, like how class names are written in
+JavaScript: `LikeThis`.  Technically, it's case insensitive, so a component
+named like `LikeThis`, imported with an `x-` namespace, could also be used like
+`x-likethis` or `X-LIKETHIS`.
+
+
+### rerender
+
+`rerender` - *default is `rerender="event"`*.  Specify mode to change the
+render mode of this component.  A detailed discussion of valid options are
+below:
+
+* `rerender="event"` - The default behavior, where the the component will
+   rerender after ever event it handles (e.g. after every user interaction).
+   This is typically desirable since usually every user interaction will cause
+   some visual change that needs to be reflected.
+* `rerender="manual"` - Modulo will not auto-rerender in any situation.  This
+  Note that if this is set, you will have to manually rerender, such as in a
+  *Script* CPart (`element.rerender()`), or in a custom CPart
+  (`this.element.rerender()`) is invoked. This is useful if there are many
+  events that don't cause changes (e.g. mouse movement), but you have
+  discovered that the extra rerender invocations are impacting performance,
+  even though they aren't generating patches to modify the DOM.
+
+
+
+### mode
+
+`mode` - *default is `mode="regular"`*.  Specify mode to change the DOM root
+render mode of this component. This changes what is considered to be the root
+of the element, and thus where the content of the Template goes during
+reconciliation. In "regular" and "vanish", it's the custom component itself
+(which will be removed after rendering with "vanish"), in "shadow", it uses an
+attached shadow DOM as the root, and with "vanish-into-document" it replaces
+the entire page.  This allows you to isolate outside CSS from your component
+using "shadow", do one-time renders only with "vanish", or make your component
+replace the entire document with "vanish-into-document". A detailed discussion
+of valid options are below:
+* `mode="regular"` - The default behavior, where the content generated by this
+  the element will be attached to the regular DOM, as the element itself. This
+  means that CSS stylesheets attached the normal way (e.g. with a "link" tag)
+  will affect the contents of this component. *Style* CParts are, however,
+  automatically scoped to the component, so a selector like `p {...}` will
+  get prefixed like `x-MyComp {...}` when CSS files are being
+  generated from *Style* CParts. Keep in mind the normal CSS rules will still
+  apply, meaning that auto-scoped "p" tag will also affect children,
+  grandchildren, etc of sub-components (unless those are "shadow" based).
+
+* `mode="shadow"` - Use the so-called "shadow DOM" to render the content
+  generated by this component. While the *shadow DOM* may sound like a sci-fi
+  villain, it's a mechanism browsers provide for custom elements to isolate
+  their contents from CSS selectors or other JavaScript libraries. This
+  isolation means means that CSS stylesheets attached the normal way (e.g. with
+  a "link" tag) *will not* affect the contents of this element. Note that other
+  than the isolation provided, the shadow mode should work exactly the same as
+  regular. That said, *Style* CParts will still be automatically scoped to the
+  component, but will use the shadowDOM feature to more strictly enforce that
+  scoping. Note that shadowDOM CSS will *not* get included in the CSS file
+  bundle, but instead will be bundled in the JavaScript source code. For a
+  component by itself, switching from "shadow" to "regular" or vice-versa
+  shouldn't change behavior at all. It's only useful when CSS from one
+  component or a third party CSS library is "getting inside" your other
+  components in an undesirable way, and you want to isolate them.
+
+* `mode="vanish"` - This less-used setting causes the component to "vanish"
+  after rendering, or replace itself with it's children. Setting this will
+  cause the component to remove itself after the first time it renders,
+  effectively using the component as a simple template. All CParts will become
+  useless after the first rendering, so CParts like *Script* or *State* are
+  rarely useful in combination with this mode. This "one-time render" feature
+  is most useful for static pages when you don't want your custom components to
+  get in the way of the DOM that is generated, and for creating static-site
+  generators, when you just want to generate plain HTML, with no Modulo JS or
+  behavior in the end.
+
+* `mode="vanish-into-document"` - This setting is useful in one situation: When
+  you want to create a "page" level component that changes tags that belong in
+  the document head, such as `&lt;title&gt;`. Like with `mode="vanish"`
+  described above, setting this will cause the component to remove itself after
+  the first time it renders. However, with vanish-into-document, it will
+  instead replace the entire page.  It will also attempt to correctly insert
+  all tags that belong in the document head (meta, title, link, script to be
+  specific), causing link and script tags alike (e.g.  `&lt;script
+  src=".."&gt;&lt;/script&gt;`) to load.  Finally, the document will be wiped,
+  and anything else it finds will be put directly into the document's body, for
+  a clean DOM structure that removes itself entirely during this "one-time
+  render".
+
+* `mode="custom-root"` - This is rarely useful, but allows for setting some
+  other DOM element as the new root element for the component to target for
+  rendering it's content. This is done by assigning a value to
+  `renderObj.component.root` before reconciliation. If no `.root` value is set,
+  an error will occur.
+
+
+## Directives
+
+The *Component* defines 3 directives:
+
+* `[component.event]` (*shortcut:* `@`) -
+Attach event listeners to DOM elements, and remove them when the DOM
+elements are removed. (For jQuery users, this is used for similar purposes
+as "live" (delegated) events, but is faster.)</li>
+
+* `[component.dataProp]` (*shortcut:* `:`) -
+Attach data to a DOM element's `.dataProp` object, which can be
+used to directly pass `renderObj` values as *Props* or
+events</li>
+
+
+## Slots
+
+Reattach the original child elements that this component had when it was first
+mounted to a new DOM element.  (For React users, this is similar to doing
+`{this.props.children}`.)  For more on the slot interface, see Mozilla's
+[https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot](The Web
+Component Slot element).  Note that Modulo uses this interface for both
+`mode="shadow"` (e.g. using `shadowRoot` as the root element for
+reconciliation) and all the other DOM rendering modes (e.g.  `mode="regular"`,
+`mode="vanish-into-document"`). For Shadow DOM, it will fall-back on Browser
+behavior. For everything else, it will detach any nodes it finds and reattach
+the nodes just before the beginning of the reconciliation process (it's DOM
+load-directive).
+

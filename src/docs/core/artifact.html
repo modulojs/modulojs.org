@@ -1,0 +1,105 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+title: Artifact
+---
+
+# Artifact
+
+The *Artifact* definition is how you can specify custom build
+artifacts. When the build command is run, Modulo loops through all defined
+Artifacts and outputs the files they generate. This is how the JS, CSS, and
+HTML files get generated whenever you run build by default. For most users,
+this is enough--this website uses the default Artifacts, for example. However,
+if you want to create custom build outputs for advanced usage in building a
+SSG-powered site, then you can use this feature to create as many extra files
+per HTML file you SSG as you'd like. For example, you could loop through
+images, generating a "thumbnail" page for each one. It's very versatile, and
+gives you the full power of the Modulo templating language for JS, CSS, and
+prerendered / SSR'ed HTML.
+
+It manages to be this versatile by functioning as a mini-scripting system
+for specifying and configuring builds, allowing for easy addition of
+minification, split bundles, or other file types. This gives very fine-grained
+control over output in a declarative way.
+
+## Overview
+
+- Simply by registering an Artifact (`<Artifact name="css">`, for example), you can begin
+  to customize or add CSS output
+- By adding a `remove=` to your Artifact, you can scrub your HTML before saving
+  the built version, e.g. `remove="div.delete-me"` to remove all divs with
+  `delete-me` class.
+- By adding a `bundle=` to your Artifact, you can specify which elements get
+  bundled, or disable it with `bundle:=false`
+- Now you can register things like JavaScript, CSS, or HTML minifiers as
+  Template filters, and then include them into your build configurations
+- Using the Modulo Template syntax allows for extremely precise control over
+  the exact JavaScript and CSS output.
+
+## Defaults
+
+
+### CSS
+
+This is how the default CSS build artifact is generated. Registering a
+similarly named one can let you override or tweak it's behavior:
+
+```modulo
+<Artifact name="css" bundle="link[rel=stylesheet]">
+    {% for elem in bundle %}
+        {{ elem.bundledContent|default:''|safe }}
+    {% endfor %}
+    {% for css in assets.cssAssetsArray %}
+        {{ css|safe }}
+    {% endfor %}
+</Artifact>
+```
+
+### JS
+
+This is how the default JS build artifact is generated. Registering a
+similarly named one can let you override or tweak it's behavior:
+
+```modulo
+<Artifact name="js" bundle="script[src]">
+    window.moduloBuild = window.moduloBuild || { modules: {}, nameToHash: {} };
+    {% for name, hash in assets.nameToHash %}
+        {% if hash in assets.moduleSources %}{% if name|first is not "_" %}
+            window.moduloBuild.modules["{{ hash }}"] = function {{ name }} (modulo) {
+                {{ assets.moduleSources|get:hash|safe }}
+            };
+            window.moduloBuild.nameToHash.{{ name }} = "{{ hash }}";
+        {% endif %}{% endif %}
+    {% endfor %}
+    window.moduloBuild.definitions = {
+        {% for name, value in definitions %}
+            {% if name|first is not "_" %}{{ name }}: {{ value|json|safe }},{% endif %}
+        {% endfor %}
+    };
+    {% if bundle %}
+        {% for elem in bundle %}{{ elem.bundledContent|default:''|safe }}{% endfor %}
+        modulo.assets.modules = window.moduloBuild.modules;
+        modulo.assets.nameToHash = window.moduloBuild.nameToHash;
+        modulo.definitions = window.moduloBuild.definitions;
+    {% endif %}
+    {% for name in assets.mainRequires %}
+        modulo.assets.require("{{ name|escapejs }}");
+    {% endfor %}
+</Artifact>
+```
+
+
+### HTML
+
+This is how the default HTML build artifact is generated. Registering a
+similarly named one can let you override or tweak it's behavior:
+
+```html
+<Artifact name="html" url-name="index.html" remove="script[src],link[href],[modulo-asset],template[modulo],script[modulo],modulo">
+    {{ htmlPrefix|safe }}
+    <link rel="stylesheet" href="{{ definitions._artifact_css.OutputPath }}" />
+    {{ htmlInterfix|safe }}
+    <script src="{{ definitions._artifact_js.OutputPath }}">/script>
+    {{ htmlSuffix|safe }}
+</Artifact>
+```
+
