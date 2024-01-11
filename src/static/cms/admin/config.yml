@@ -2,7 +2,7 @@ local_backend: true
 backend:
   name: git-gateway
   branch: main
-media_folder: "static/cms/uploads"
+media_folder: "static/uploads"
 collections:
   - label: "DevLog"
     name: "devlog"
@@ -10,7 +10,7 @@ collections:
     extension: "html"
     format: "yaml-frontmatter"
     frontmatter_delimiter: [
-        '<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage>---',
+        '<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage>---',
         '---',
     ]
     create: true

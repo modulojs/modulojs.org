@@ -1,0 +1,20 @@
+<nav class="{{ state.sticky|yesno:"sticky,regular" }}">
+    <div> </div>
+    <div>
+        <div style="text-align: right">
+            <label>[ <input [state.bind] name="show" type="checkbox"> Table of Contents ]</label>
+            <label title="Stick to upper right">[ <span alt="upper right arrow">↗</span> <input [state.bind] name="sticky" type="checkbox"> ]</label>
+        </div>
+        {% if state.show %}
+            <ul>
+                {% for item in state.toc %}
+                    {% if item.level lt 4 %}
+                        <li style="--level: {{ item.level }}">
+                                <a href="#{{ item.id }}">{{ item.title|safe }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</nav>

@@ -1,7 +1,6 @@
-<!-- The classic "To-Do" app in Modulo. The State CPart "binds" the input
-so it can be to be cleared or retrieved, and keeps track of the list. -->
+<!-- The classic "To-Do" app in Modulo -->
 <Template>
-<ol>
+  <ol>
     {% for item in state.list %}
         <li>{{ item }}</li>
     {% endfor %}
@@ -9,7 +8,7 @@ so it can be to be cleared or retrieved, and keeps track of the list. -->
         <input [state.bind] name="text" />
         <button @click:=script.addItem>Add</button>
     </li>
-</ol>
+  </ol>
 </Template>
 
 <State

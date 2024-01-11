@@ -1,58 +1,68 @@
-<!-- A much more complicated example application -->
+<!-- A much more complicated example application. Note it's
+ use of multiple Templates, and more complicated script tag. -->
 <Template>
-{% if not state.cards.length %}
-    <h3>The Symbolic Memory Game</h3>
+    {# If the cards array has been populated, show game #}
+    {% if state.cards.length %}
+        {% include game_template %}
+    {% else %}
+        {% include menu_template %}
+    {% endif %}
+</Template>
+
+<Template -name="menu_template">
+    <h3>Memory Game</h3>
     <p>Choose your difficulty:</p>
-    <button @click:=script.setup click.payload=8>2x4</button>
-    <button @click:=script.setup click.payload=16>4x4</button>
-    <button @click:=script.setup click.payload=36>6x6</button>
-{% else %}
-    <div class="board {% if state.cards.length > 16 %}
-        hard{% endif %}">
-    {# Loop through each card in the "deck" (state.cards) #}
+    <button @click:=script.setup payload:=8>2x4</button>
+    <button @click:=script.setup payload:=16>4x4</button>
+    <button @click:=script.setup payload:=36>6x6</button>
+</Template>
+
+<Template -name="game_template">
+  <div class="board
+        {% if state.cards.length gt 16 %}hard{% endif %}
+    ">{# Loop through each card in the "deck" (state.cards) #}
     {% for card in state.cards %}
         <div
             @click:=script.flip
-            click.payload="{{ card.id }}"
-            class="card {% if card.id in state.revealed %}
-                flipped{% endif %}"
+            payload:="{{ card.id }}"
+            class="card
+                {% if card.id in state.revealed %}flipped{% endif %}"
             style="{% if state.win %}
                 {# The cascading effect uses ids as offsets #}
                 animation: flipping 0.5s infinite alternate;
                 animation-delay: {{ card.id }}.{{ card.id }}s;
-            {% endif %}"
-            >
+            {% endif %}">
             {% if card.id in state.revealed %}
                 {{ card.symbol }}
             {% endif %}
         </div>
     {% endfor %}
-    </div>
-    <p style="{% if state.failed %}
-                color: red{% endif %}">
-        {{ state.message }}</p>
-{% endif %}
+  </div>
+  <p style="{{ state.failed|yesno:'color: red' }}">
+    {{ state.message }}
+  </p>
 </Template>
 
 <State
     message="Good luck!"
     win:=false
     cards:=[]
-    revealed:=[]
+    revealed:={}
     last:=null
     failed:=null
 ></State>
 
 <Script>
 const symbolsStr = "%!@#=?&+~÷≠∑µ‰∂Δƒσ"; // 16 options
-function setup(payload) {
-    const count = Number(payload);
-    let symbols = symbolsStr.substr(0, count/2).split("");
+
+function setup(count) {
+    // This function takes the number of "cards" the user
+    // selected (see payload=), and populates state.cards
+    let symbols = symbolsStr.substr(0, count / 2).split("");
     symbols = symbols.concat(symbols); // duplicate cards
     let id = 0;
     while (id < count) {
-        const index = Math.floor(Math.random()
-                                    * symbols.length);
+        const index = Math.floor(Math.random() * symbols.length);
         const symbol = symbols.splice(index, 1)[0];
         state.cards.push({symbol, id});
         id++;
@@ -60,10 +70,9 @@ function setup(payload) {
 }
 
 function failedFlipCallback() {
-    // Remove both from revealed array & set to null
-    state.revealed = state.revealed.filter(
-            id => id !== state.failed
-                    && id !== state.last);
+    // Remove both from revealed obj & set to null
+    delete state.revealed[state.failed];
+    delete state.revealed[state.last];
     state.failed = null;
     state.last = null;
     state.message = "";
@@ -74,32 +83,39 @@ function flip(id) {
     if (state.failed !== null) {
         return;
     }
-    id = Number(id);
-    if (state.revealed.includes(id)) {
-        return; // double click
-    } else if (state.last === null) {
-        state.last = id;
-        state.revealed.push(id);
+    if (id in state.revealed) {
+        return; // Double click, ignore
+    } else if (state.last === null) { // First click
+        state.revealed[id] = true;
+        state.last = id; // Record this ID number
     } else {
-        state.revealed.push(id);
-        const {symbol} = state.cards[id];
-        const lastCard = state.cards[state.last];
-        if (symbol === lastCard.symbol) {
-            // Successful match! Check for win.
-            const {revealed, cards} = state;
-            if (revealed.length === cards.length) {
-                state.message = "You win!";
-                state.win = true;
-            } else {
-                state.message = "Nice match!";
-            }
-            state.last = null;
+        state.revealed[id] = true; // Otherwise 2nd click
+        const last = state.cards[state.last];
+        const current = state.cards[id];
+        if (current.symbol === last.symbol) { // Did it match?
+            checkForWinCondition();
         } else {
-            state.message = "No match.";
-            state.failed = id;
-            setTimeout(failedFlipCallback, 1000);
+            showMessageAndFlipBack(id);
         }
     }
+}
+
+function checkForWinCondition() {
+    // Successful match! Check for win.
+    const { revealed, cards } = state;
+    if (Object.keys(revealed).length === cards.length) {
+        state.message = "You win!";
+        state.win = true; // Show win animation
+    } else {
+        state.message = "Nice match!";
+    }
+    state.last = null; // Forget our last match
+}
+
+function showMessageAndFlipBack(id) {
+    state.message = "No match.";
+    state.failed = id; // Save id so we can flip it later
+    setTimeout(failedFlipCallback, 1000);
 }
 </Script>
 

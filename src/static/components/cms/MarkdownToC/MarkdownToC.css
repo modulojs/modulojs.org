@@ -1,0 +1,49 @@
+:host {
+    position: relative;
+    display: block;
+    z-index: 100;
+    width: 100%;
+}
+
+nav {
+    position: absolute;
+    display: grid;
+    right: 0;
+    top: 0;
+    grid-template-columns: 1fr auto;
+}
+
+nav.sticky {
+    position: fixed;
+    z-index: 100;
+}
+
+ul {
+    background: white;
+    padding: 10px;
+    border: 1px solid black;
+}
+
+li {
+    margin-left: calc(30px * var(--level));
+}
+
+a {
+    grid-column: span 6;
+    font-size: calc(1.0rem - var(--level) * 0.02rem);
+    font-weight: calc(800  - var(--level)  * 100);
+    color: var(--color-fg-semidark);
+}
+
+
+label {
+    background: #ddd;
+    font-size: 0.8rem;
+    padding: 0;
+    font-weight: bold;
+}
+
+label:hover {
+    opacity: 1;
+}
+

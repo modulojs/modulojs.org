@@ -55,8 +55,6 @@
     modulo.register('util', getMarkdownData);
 </script>
 
-<!-- Load the base components as well -->
-<Library namespace="x" -src="/static/"></Library>
 <Component namespace="cms" name="MarkdownPage" mode="vanish-into-document">
     <Template -src="./MarkdownPage/MarkdownPage.html"></Template>
     <Script -name="page">
@@ -77,28 +75,9 @@
     <Props
         toc
     ></Props>
-    <Template>
-        <nav class="{{ state.sticky|yesno:"sticky,regular" }}">
-            <div> </div>
-            <div>
-                <div style="text-align: right">
-                    <label>[ <input [state.bind] name="show" type="checkbox"> Table of Contents ]</label>
-                    <label title="Stick to upper right">[ <span alt="upper right arrow">↗</span> <input [state.bind] name="sticky" type="checkbox"> ]</label>
-                </div>
-                {% if state.show %}
-                    <ul>
-                        {% for item in state.toc %}
-                            {% if item.level lt 4 %}
-                                <li style="--level: {{ item.level }}">
-                                      <a href="#{{ item.id }}">{{ item.title|safe }}</a>
-                                </li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-        </nav>
-    </Template>
+    <Template
+        -src="./MarkdownToC/MarkdownToC.html"
+    ></Template>
     <State
         toc:=[]
         sticky:=false
@@ -106,54 +85,21 @@
     ></State>
     <Script>
         function prepareCallback() {
-            state.toc = JSON.parse(props.toc);
+            state.toc = JSON.parse(props.toc || '[]');
+
+            // Add in via slot / child interface
+            for (const child of component.originalChildren) {
+                if (!child.hasAttribute || !child.hasAttribute('name')) {
+                    continue;
+                }
+                const level = Number(child.tagName.replace(/[^0-9]/g, '') || '0');
+                const title = child.textContent;
+                const id = child.getAttribute('name');
+                state.toc.push({ level, title, id });
+            }
         }
     </Script>
-    <Style>
-        :host {
-            position: relative;
-            display: block;
-            z-index: 100;
-            width: 100%;
-        }
-
-        nav {
-            position: absolute;
-            display: grid;
-            right: 0;
-            top: 0;
-            grid-template-columns: 1fr auto;
-        }
-
-        nav.sticky {
-            position: fixed;
-            z-index: 100;
-        }
-        ul {
-            background: white;
-            padding: 10px;
-            border: 1px solid black;
-        }
-        li {
-            margin-left: calc(30px * var(--level));
-        }
-        a {
-            grid-column: span 6;
-            font-size: calc(1.0rem - var(--level) * 0.02rem);
-            font-weight: calc(800  - var(--level)  * 100);
-            color: var(--color-fg-semidark);
-        }
-
-
-        label {
-            background: #ddd;
-            font-size: 0.8rem;
-            padding: 0;
-            font-weight: bold;
-        }
-        label:hover {
-            opacity: 1;
-        }
-
-    </Style>
+    <Style
+        -src="./MarkdownToC/MarkdownToC.css"
+    ></Style>
 </Component>

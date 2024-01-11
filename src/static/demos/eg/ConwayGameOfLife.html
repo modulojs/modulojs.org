@@ -1,3 +1,4 @@
+<!-- A simple implementation of Conway's classic game -->
 <Template>
   <div class="grid">
     {% for i in script.exports.range %}
@@ -23,7 +24,7 @@
     {% endif %}
 
     <button @click:=script.randomize alt="Randomize">RND</button>
-    <button @click:=script.clear alt="Randomize">CLR</button>
+    <button @click:=script.clear alt="Clear">CLR</button>
     <label>Spd: <input [state.bind]
         name="speed"
         type="number" min="1" max="10" step="1" /></label>

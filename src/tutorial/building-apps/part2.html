@@ -1,4 +1,4 @@
-<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/components/cms/"></script><cms-MarkdownPage><script type=md>---
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
 tutorial: Building Apps Part 2
 ---
 
@@ -114,7 +114,7 @@ editing each thing and see if you can cause the effects you intend.  **Relevant 
     - `npm start`
         - Starts a simple HTTP server for convient testing: <http://127.0.0.1:3334/>
     - `npm run startcms`
-        - Runs proxy for Decap CMS: <http://127.0.0.1:3334/static/cms/admin/>
+        - Runs proxy for Decap CMS: <http://127.0.0.1:3334/static/admin/>
         - This is intended for local content editing (it is NOT a live, public site)
         - Note: Run this at the same time as `npm start` (e.g. in another terminal)
     - `npm run build`
@@ -194,7 +194,7 @@ editable like Markdown!
 **The first line:**
 
 ```
-<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/cms/">/script><x-ArticlePage><script type=md>---
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/">/script><x-ArticlePage><script type=md>---
 ```
 
 
@@ -215,7 +215,7 @@ Here is some lorem ipsum:
 ```
 
 - **Bonus Challenge:** To see how Decap was configured to accept this custom
-  frontmatter, examine `/static/cms/admin/config.yml`
+  frontmatter, examine `/static/admin/config.yml`
 
 
 
