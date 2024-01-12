@@ -17,7 +17,7 @@ during the `render` [lifecycle phase](/docs/lifecycle.html), and
 store the results in `renderObj.component.innerHTML`. The _Component_ CPart
 will read this HTML code during the `reconcile` phase and then "reconcile",
 modify it's contents to resemble the target innerHTML. (More on this is in [the
-Component CPart documentation above](/docs/core.html#component).)
+Component CPart documentation above](/docs/core/component.html).)
 
 Every time a Component renders, the Template will render using the _renderObj_
 as a "template context", or, in other words, using the various CPart's
@@ -85,9 +85,6 @@ of the Templating CPart.](/docs/templating/index.html)
     ]'
 ></State>
 ```
-
-
-# Examples: Multiple
 
 
 ## Example #3: Multiple templates with include
@@ -179,4 +176,62 @@ Also note that in mutli-template components, one should have no name (or have `a
     val:=1
 ></State>
 ```
+
+## Example #4: Style templates
+
+By defining a `<style Template>`, can use the Modulo templating language to
+apply "templating" to CSS:
+
+
+```modulo_demo
+<Template>
+    <section style="display: grid; grid-template-columns: 1fr 2fr">
+      <label>Color</label>
+      <input [state.bind] name="bg" type="color" /> 
+      {% for key, value in state.shape %}
+          <label>{{ key|capfirst }}</label>
+          <input [state.bind] name="shape.{{ key }}" type="range" min="1" max="50" />
+      {% endfor %}
+    </section>
+    <div style="{% include div_style %}">LOREM IPSUM</div>
+    <pre>div { {% include div_style %} }</pre>
+</Template>
+
+<style Template -filter-content="trim:'x {,}'" -name="div_style">
+x {
+
+    color: white;
+    background-color: {{ state.bg }};
+{% for key, value in state.shape %}    {{ key }}: {{ value }}px;
+{% endfor %}
+
+}
+</style>
+
+<State
+    bg="#308330"
+    shape:={}
+    shape.width:=50
+    shape.height:=30
+    shape.padding:=5
+    shape.margin:=2
+></State>
+```
+
+
+Note the following two unusual aspects of this example. Both of these are
+optional, but only intended to make the CPart easier to read, and for editors
+to automatically apply syntax highlighting as expected.
+
+- Observe how in the example below we use `-filter-content=` in order to "trim"
+  away our placeholder CSS (`x { ... }`). This makes editing this _Template_
+  CPart easier to read, since it will follow standard `<style>` syntax rule,
+  thus the `x` just functioning as a purely cosmetic placeholder element.
+
+- Observe how we use this dual tag format (`<style Template>`). To Modulo, this
+  is the same as doing `<Template>`. However, using a `style` tag makes it
+  easier to read, and syntax highlighting will work automatically. Thus, in
+  this case we can use the Modulo feature that lets the first attribute instead
+  determine the CPart name instead of the actual tag name.
+
 

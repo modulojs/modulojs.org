@@ -48,6 +48,68 @@
     };
 </script>
 
+<script Configuration>
+    // Adds a CPart for interfacing with GET params
+    // TODO: Finish this class!
+    class Params {
+        prepareCallback() {
+            this.boundElems = this.boundelems || [];
+            this.data = Object.assign({
+                GET: new URLSearchParams(window.location.search),
+                History: window.history, // Expose underlying history API
+            }, this.postData || {});
+            for (const [ key, defValue ] of Object.entries(this.attrs)) {
+                const meth = this.conf.Plural.includes(key) ? 'getAll' : 'get';
+                this.data[key] = this.data.GET[meth](key, defValue);
+            }
+            return this.data;
+        }
+
+        navigate(data, postData = {}) {
+            for (const [ key, value ] of data) {
+                const method = this.conf.Plural.includes(key) ? 'append' : 'set';
+                this.data.GET[method](key, value);
+            }
+            this.postData = Object.assign({ }, postData);
+            const newPath = `${ window.location.pathname }?${ this.data.GET }`;
+            this.data.History[this.conf.NavMethod](postData, '', newPath); 
+        }
+
+        navMount({ el, name, value }) {
+            const navigateFunction = (ev) => {
+                ev.preventDefault();
+                const form = el.tagName === 'FORM' && new FormData(el).entries();
+                if ((el.getAttribute('method') || '').toUpperCase() === 'POST') {
+                    this.navigate([ ], Object.fromEntries(form));
+                } else if (form) { // Submitting an entire form
+                    this.navigate(Array.from(form));
+                } else {
+                    this.navigate([ [ name, value ] ]); // Setting a single item
+                }
+            };
+            // TODO: hydrate form with initial data
+            const eventName = el.tagName === 'FORM' ? 'submit' : this.conf.NavEvent;
+            el.addEventListener(evName, navigateFunction);
+            this.boundElems.push([ el, eventName, navigateFunction ]);
+            this.data.History.addEventListener('PopStateEvent', ev => {
+                this.postData = ev.state;
+            });
+        }
+
+        navUnmount({ el, name, value }) {
+            for (const [ boundElem, eventName, func ] of this.boundElems) {
+                if (el === boundElem) {
+                    el.removeEventListener(eventName, func);
+                }
+            }
+        }
+    }
+    modulo.register('cpart', Params, {
+        NavEvent: 'click',
+        NavMethod: 'pushState',
+        Plural: '',
+    });
+</script>
 <!-- Setup Fathom -->
 <script Configuration>
      function setupFathom(code) {
@@ -81,3 +143,4 @@
 <Library -src="./components/layout/"></Library>
 <Library -src="./components/editor/"></Library>
 <Library -src="./components/cms/"></Library>
+<Library -src="./components/ide/"></Library>

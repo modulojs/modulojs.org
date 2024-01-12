@@ -88,7 +88,7 @@
             state.toc = JSON.parse(props.toc || '[]');
 
             // Add in via slot / child interface
-            for (const child of component.originalChildren) {
+            for (const child of element.originalChildren) {
                 if (!child.hasAttribute || !child.hasAttribute('name')) {
                     continue;
                 }

@@ -1,0 +1,246 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+title: Definition Processors
+---
+
+# Processors
+
+**Definition processors** are a feature of Modulo that allows for component
+parts and other definitions to have allow for special attributes that trigger
+certain behavior. They are commonly used for configuring, loading, or
+tranforming definitions.
+
+Definition processors are conventionally prefixed with a dash (that is, `-`).
+This distinguishes them from regular attributes. Some processors can only be
+used with a certain type of component parts or definitions. For example,
+examine the `-store=` processor for _State_:
+
+```
+<State
+    -store="userdata"
+    username="crash0veride"
+></State>
+```
+
+Others are supported by all component parts. For example, examine the `-src=`
+processor for loading content from external files.
+
+
+```modulo
+<Template -src="my-template.html"></Template>
+<Style -src="fancy-look.css"></Style>
+```
+
+
+
+## Behavior
+
+Definition processors have two important rules of behavior:
+
+- Definition processors are applied _before_ anything else is loaded. That is,
+  _every_ processor finishes its tasks before any components are mounted on the
+  screen.
+
+- Definition processors are _not_ run in built or packed scripts. That is, the
+  definitions stored in the compiled JS file are "pre-processed", and thus the
+  processor only will run during development or when building.
+
+
+
+# Built-in Processors
+
+
+> **Why no dash for `<Component name="...">`?** Note that for _Component_, you
+> use `name=` (without the `-`), and use a valid JavaScript identifier as the
+> Web Component name. However, that behavior is specific to the _Component_
+> definition, and is not available on Component Parts or other definitions.
+> Definition types (e.g. [core definitions](/docs/core/) like _Library_ or a
+> [component parts](/docs/cparts/) like _State_) can each specify their own,
+> unique behavior for processors.
+
+
+
+## -name
+
+* Supported by: **All Definitions** 
+
+The `-name` directive allows you to override the default name that Modulo will
+generate with something else. This allows you to have multiple Component Parts
+of the same type without conflict.
+
+For a simple example, see below:
+
+```modulo
+<Template -name="footer_template">
+```
+
+### Example: `-name` for multiple Component Parts
+
+Note that _Template_ has special behavior around `-name`. If you specify a
+name, it will _not_ by default still render, since it will assume you are going
+to include it somewhere else.
+
+
+
+
+```modulo_demo
+<Template>
+    {# This becomes the "primary template" (named "template") #}
+    <h3>Welcome to my blog</h3>
+    <p>Things I like: {{ likes_data }}</p>
+    <p>Things I dislike: {{ dislikes_data }}</p>
+    {% include footer_template %}
+</Template>
+<Template -name="footer_template">
+    {# This becomes a non-primary template (named "footer_template") #}
+    <p>(C) 2095 Tux the Penguin</p>
+</Template>
+<StaticData -name="likes_data">
+    [ "Fish", "radishes", "hackable software" ]
+</StaticData>
+<StaticData -name="dislikes_data">
+    [ "Wet towels" ]
+</StaticData>
+```
+
+
+
+## -src
+
+* Supported by: **All Definitions**
+
+```modulo
+<Template
+    -src="./MyComponent/MyComponent.html"
+></Template>
+<Script -src="https://unpkg.com/snarkdown">
+   modulo.register("templateFilter", snarkdown);
+/Script>
+<Style
+    -src="./MyComponent/MyComponent.css"
+></Style>
+```
+
+
+
+Note that the -src= combines the retrieved content with whatever is embedded
+between the opening and closing tag. It _does not_ replace the embedded
+content, but instead places the retrieved content before content _BEFORE_ the
+embedded content. This ordering is important, since it allows the internal
+content to "extend" the content that is being brought in. 
+
+### -src for extension
+
+The `-src` attribute is designed to allow for many types of "inheritence" or a
+sort of primitive extension, depending on the CPart. For example, _Components_
+can "inherit" CParts of base components (e.g., the _Template_ and _Script_
+could be the same across two _Components_, but they only differ in _Style_), or
+_Style_ can "inherit" another style file, but get to append some modifications
+to the end.  (e.g., loading from a third party, then override certain
+properties). Similarly, _Library_ or _Modulo_ can load entire Modulo libraries,
+and then apply _Configuration_ scripts at the end to modify configuration
+settings within that other libraries' execution context.
+
+
+## -filter-content
+
+* Supported by: **Template** (Alpha 71), **StaticData**, **Style** (Alpha 72+)
+
+
+Allows you to apply [template filters](/templating/filters.html) at load time.
+
+
+### Example 1: Trim excess code
+
+For example, you could use `trim` to remove excess characters from a
+_Template_. For example, here we load content from an external document file,
+and then use `|trim` to remove "boilerplate" that we know exists at the
+beginning of the file that we don't want to include:
+
+```modulo
+<Template
+    -src="/my-html-doc.html"
+    -filter-content="trim:'<!doctype><html>,</html>'"
+></Template>
+```
+
+
+### Example 2: Style template with trim
+
+
+By defining a `style Template`, we can template style for inclusion. By using
+`trim` we can use a placeholder of `x { .. }` to make editing this CSS easier
+to read. Note that this is, in fact, a _Template_ CPart, however, we will use a
+`style` initial tag to make it easier to read and syntax highlight.
+
+See below for a concrete example of how to use this technique for making a
+quick button designer component:
+
+```modulo_demo
+<Template>
+    <label><input [state.bind] name="bg" type="color" /> Color</label>
+    <label><input [state.bind] name="size" type="range" min="5" max="20" /> Size</label>
+    <button style="{% include button_style %}">Sample Button</button>
+    <pre>button { {% include button_style %} }</pre>
+</Template>
+
+<style Template -filter-content="trim:'x {,}'" -name="button_style">
+x {
+    background-color: {{ state.bg }};
+    font-size: {{ state.size }}px;
+}
+</style>
+
+<State
+    bg="#a0caa0"
+    size:=10
+></State>
+```
+
+
+
+### Example 3: Tagswap for `<table>`
+
+
+Modulo uses HTML syntax for most everything. This, unfortunately, means that
+`<table>` tags can behave differently when it comes to how content is processed
+and loaded, causing content to "escape" when you are still just assembling the
+initial Template's DOM. Similarly, the closing `script` tag can have special
+meanings as well. To get around limitations like this, we can use the
+`|tagswap` to convert innocuous placeholder tags into other ones:
+
+
+```modulo_demo
+<Template -filter-content="tagswap:'t=table r=tr d=td'">
+    <t>
+        <r> <d>Col 1</d> <d>Col 2</d> <d>Col 3</d> </r>
+        <r> <d>A</d> <d>B</d> <d>C</d> </r>
+        <r> <d>1</d> <d>2</d> <d>3</d> </r>
+        <r> <d>X</d> <d>Y</d> <d>Z</d> </r>
+    </t>
+</Template>
+<Style>
+    table {
+        border: 2px solid Tomato;
+    }
+    td {
+        border: 1px dotted Tomato;
+        padding: 2px;
+    }
+</Style>
+```
+
+This will be applied at load time, so there are ultimately no performance
+penalties, as the final JavaScript file will have the tag transpositions "baked
+in" (and with no trace of the original template, either).
+
+
+### Gotcha: Applied at runtime
+
+Remember that it is applied "pre-baked" to the content itself during initial
+content load, and NOT at _Template_ run time, meaning it will affect (and
+potentially disrupt) the tempting language itself as well (e.g. using
+`-filter-content="upper"` will cause `{{ state.stuff }}` to become `{{
+STATE.STUFF }}`, which _will not_ work since capitalization matters in this
+case).
+
+

@@ -539,6 +539,55 @@ Subtracts the argument from the value. Example:
 ```
 
 
+## tagswap
+
+Given a string of HTML code, this will transform that HTML code by doing a
+simple find-and-replace operation, swapping given one or more HTML tags for
+other HTML tags. This is mostly useful when applied to templates (e.g. see
+[renderas filter](#renderas) below), or for doing things like making previews
+of HTML (e.g., substituting real HTML tags with components that generate
+previews). The result will be automatically marked as safe, since the only
+purpose of this tag is to output HTML.
+
+The argument can be in the format of a String (using `=` to indicate
+substitution, separating each one by a space) or an Object. Examples of both
+below:
+
+
+```modulo_demo
+<Template>
+    <p>{{ state.html-code|tagswap:"a=del b=a" }}</p>
+    <p>{{ state.html-code|tagswap:state.tags }}</p>
+</Template>
+
+<State
+    html-code="<a>abc</a><b>123</b><A>def</a>"
+    tags:='{ "a": "del" }'
+></State>
+```
+
+
+## trim
+
+Trims away whitespace and other unwanted text from the start and/or end
+of the given _String_. By default, it will only trim whitespace, but if given
+an argument, it will attempt to remove both whitespace, and what is specified,
+with a comma to separate beginning or end of the string. Example:
+
+```modulo_demo
+<Template>
+    <pre>Without: {{ state.country }}</pre>
+    <pre>Default: {{ state.country|trim }}</pre>
+    <pre>Extras:  {{ state.country|trim:'[,]()' }}</pre>
+</Template>
+
+<State
+    country="  
+[Türkiye]()   "
+></State>
+```
+
+
 ## truncate
 
 Cut off the given string after a number of characters specified by the argument. If it has to cut off the string, it will append an "ellipsis" character.
@@ -587,16 +636,37 @@ is a Number, instead of a String.
 ```
 
 
+
+
+> **renderas Sandboxing** - Note that the child template will be isolated or
+> "sandboxed" to _only_ have access to properties of the one, specified object,
+> meaning no CParts (e.g. _state_, _props_, etc.) will be available, unless
+> those are explicitly included in the specified object. This is to simplify
+> the child templates.  However, sometimes it is desirable for the child
+> template to behave just like the parent so you can quickly split up
+> templates. To simply include another template without any sandboxing, use the
+> [include template-tag](/templating/tags.html).
+
+
 ## renderas
 
+
+
 A highly useful filter that allows use of re-usable template snippets.
+Typically in the format of `{{ state.data|renderas:trow }}`, where `state.data`
+is some Object, and there exists a template like with the `-name` "trow" that
+renders that object.  The typical usage of this is to take complicated bits of
+template code and refactor them into another smaller, more isolated, and less
+complicated helper, "child" template, that are referenced within the main
+template.
 
-Typically in the format of `{{ state.data|renderas:trow }}`, where `state.data` is some Object, and there exists a template like with the `-name` "trow" that renders that object. The typical usage of this is refactoring templates to conveniently render complex data. This allows you to take complicated bits of template code and refactor it into another smaller, helper, "child" template that is then used within the main template.
-
-The "input" to renderas should always be an Object. The keys and values of that object will populate the "template variables" for that template, meaning you can access them directly as template variables within the child template. As an example, if we `renderas` with an Object like `{altTitle: "Newest entry"}`, then within the child template the "altTitle" becomes a "top-level" variable, and we can use syntax like `{{ altTitle }}` (no need for "." syntax).
-
-Note that the child template will be isolated or "sandboxed" to _only_ have access to properties of the specified object. State, props, script, etc will not be accessible as template variables. This sandboxing is usually good and helps reduce bugs and makes child templates much easier to read. However, sometimes you just want to quickly spit up and refactor a template, meaning you want the child template to behave just like the parent, and you want global variables available, just as they were available to the parent. To include another template without any sandboxing, consider using the `include` template-tag.
-
+The "input" to renderas should always be an Object. The keys and values of that
+object will populate the "template variables" for that template, meaning you
+can access them directly as template variables within the child template. As an
+example, if we `renderas` with an Object like `{ "myTitle": "Newest entry" }`,
+then within the child template the "myTitle" becomes a "top-level" variable.
+This means we can directly use syntax like `{{ myTitle }}` or `{{ my-title }}`
+(no need for "." syntax). Example:
 
 ```modulo_demo
 <Template -name="trow">

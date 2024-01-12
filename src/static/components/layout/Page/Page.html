@@ -65,10 +65,16 @@
     </nav>
 
     <div class="page-container container {% if props.shownews %}articles-container{% endif %} 
-        {% if props.navdocs %}page-container--navdocs{% endif %}">
+        {% if props.navdocs %}page-container--navdocs{% endif %}
+        {% if props.navslot %}page-container--navdocs{% endif %}">
         {% if props.navdocs %}
             <nav class="page-navdocs">
                 <x-TableOfContents value="{{ props.navdocs }}"></x-TableOfContents>
+            </nav>
+        {% endif %}
+        {% if props.navslot %}
+            <nav class="page-navdocs">
+                <slot name="navslot"></slot>
             </nav>
         {% endif %}
         <main class="page-content">
@@ -149,13 +155,12 @@
     </main>
 
     <footer class="page-footer">
-        <a href="https://modulojs.org/">https://modulojs.org/</a> |
         <a href="/index.html" class="mini-logo">%</a>
         <a href="/index.html#start">START</a> 
         <a href="/docs/">DOCS</a>
         <a href="/examples/">EXAMPLES</a> |
-        &copy; {{ script.currentYear }} MICHAEL BETHENCOURT
-        <a rel="license" 
+        <a href="https://modulojs.org/">https://modulojs.org/</a> |
+        &copy; {{ script.currentYear }} <a href="https://michaelb.org/" style="text-decoration: none">MICHAELB</a> <a rel="license" 
         href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
         <abbr  style="font-size: 0.6rem" title="Documentation text is under CC BY-SA 4.0. Demonstration code (e.g. the code in the little editors, or the example components on the EXAMPLES page) is free to use under either BSD 3 Clause or Public Domain.">*</abbr>
     </footer>

@@ -77,10 +77,7 @@
             ],
         },
 
-
-
         {
-            //showHeader: 'Definitions',
             showHeader: 'Documentation',
             label: 'Component Parts',
             filename: '/docs/cparts/',
@@ -156,8 +153,8 @@
                 },
             ],
         },
+
         {
-            //showHeader: 'Templating',
             label: 'Templating Language',
             filename: '/docs/templating/index.html',
             sections: [
@@ -304,12 +301,14 @@
                   "fragment": "divisibleby",
                   "label": "divisibleby"
                 },
-                /*
                 {
                   "fragment": "dividedinto",
                   "label": "dividedinto"
                 },
-                */
+                {
+                  "fragment": "entries",
+                  "label": "entries"
+                },
                 {
                   "fragment": "escapejs",
                   "label": "escapejs"
@@ -329,6 +328,10 @@
                 {
                   "fragment": "json",
                   "label": "json"
+                },
+                {
+                  "fragment": "keys",
+                  "label": "keys"
                 },
                 {
                   "fragment": "last",
@@ -355,12 +358,24 @@
                   "label": "pluralize"
                 },
                 {
+                  "fragment": "safe",
+                  "label": "safe"
+                },
+                {
                   "fragment": "skipfirst",
                   "label": "skipfirst"
                 },
                 {
                   "fragment": "subtract",
                   "label": "subtract"
+                },
+                {
+                  "fragment": "tagswap",
+                  "label": "tagswap"
+                },
+                {
+                  "fragment": "trim",
+                  "label": "trim"
                 },
                 {
                   "fragment": "truncate",
@@ -390,23 +405,27 @@
                   "fragment": "yesno",
                   "label": "yesno"
                 },
-                {
-                  "fragment": "safe",
-                  "label": "safe"
-                },
-                {
-                  "fragment": "keys",
-                  "label": "keys"
-                },
-                {
-                  "fragment": "entries",
-                  "label": "entries"
-                }
             ],
         },
 
         {
-            //showHeader: 'Component',
+            label: 'Processors',
+            filename: '/docs/processors.html',
+            sections: [
+                {
+                    label: 'Processors',
+                    fragment: 'directives',
+                    keywords: ['definition processors', 'behavior', 'ordering'],
+                },
+                {
+                    label: 'Built-In Processors',
+                    fragment: 'directives',
+                    keywords: [ '-name', '-src', '-filter-content' ],
+                },
+            ],
+        },
+
+        {
             label: 'Lifecycle',
             filename: '/docs/lifecycle.html',
             sections: [
