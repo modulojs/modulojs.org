@@ -1,4 +1,4 @@
-// Copyright 2024 MichaelB | https://modulojs.org | Modulo v0.0.71 | LGPLv3
+// Copyright 2024 MichaelB | https://modulojs.org | Modulo v0.0.72 | LGPLv3
 // Modulo LGPLv3 NOTICE: Any direct modifications to the Modulo.js source code
 // must be LGPL or compatible. It is acceptable to distribute dissimilarly
 // licensed code built with the Modulo framework bundled in the same file for
@@ -12,9 +12,12 @@ window.moduloPrevious = window.modulo;
 window.Modulo = class Modulo {
     constructor() {
         window._moduloID = (window._moduloID || 0) + 1;
+        this.window = window;
         this.id = window._moduloID; // Every Modulo instance gets a unique ID.
         this._configSteps = 0; // Used to check for an infinite loop during load
-        this.registry = { registryCallbacks: {} }; // All classes and functions
+        this.registry = { cparts: { }, coreDefs: { }, utils: { }, core: { },
+                           engines: { }, commands: { }, templateFilters: { },
+                           templateTags: { }, processors: { }, elements: { } };
         this.config = {}; // Default confs for classes (e.g. all Components)
         this.definitions = {}; // For specific definitions (e.g. one Component)
         this.stores = {}; // Global data store (by default, only used by State)
@@ -75,11 +78,11 @@ window.Modulo = class Modulo {
     }
 
     preprocessAndDefine(cb, prefix = 'Def') {
-        this.fetchQueue.wait(() => {
+        this.fetchQueue.enqueue(() => {
             this.repeatProcessors(null, prefix + 'Builders', () => {
                 this.repeatProcessors(null, prefix + 'Finalizers', cb || (() => {}));
             });
-        });
+        }, true); // The "true" causes it to wait for all
     }
 
     loadString(text, parentName = null) { // TODO: Refactor this method away
@@ -102,7 +105,7 @@ window.Modulo = class Modulo {
                 //changed = changed || this.applyProcessors(def, processors);
                 const result = this.applyNextProcessor(def, processors);
                 if (result === 'wait') { // TODO: Refactor logic here & 
-                    changed = null; // null always triggers an enqueueAll
+                    changed = null; // null always triggers an enqueue
                     break;
                 }
                 changed = changed || result;
@@ -114,7 +117,7 @@ window.Modulo = class Modulo {
                 cb(); // Synchronous path
             }
         } else {
-            this.fetchQueue.enqueueAll(repeat);
+            this.fetchQueue.enqueue(repeat);
         }
     }
 
@@ -156,13 +159,7 @@ window.modulo = new window.Modulo();
 if (typeof modulo === "undefined" || modulo.id !== window.modulo.id) {
     var modulo = window.modulo; // TODO: RM when global modulo is cleaned up
 }
-
-window.modulo.registry = Object.fromEntries([
-    'cparts', 'coreDefs', 'utils', 'core', 'engines', 'commands',
-    'templateFilters', 'templateTags', 'processors', 'elements',
-].map(registryType => ([ registryType, {} ]))); // Build {} for each
-
-window.modulo.registry.registryCallbacks = {
+window.modulo.registry.registryCallbacks = { // Set up default registry hooks
     commands(modulo, cls) {
         window.m = window.m || {}; // Avoid overwriting existing truthy m
         window.m[cls.name] = () => cls(modulo); // Attach shortcut to global "m"
@@ -303,7 +300,7 @@ modulo.register('processor', function src (modulo, def, value) {
 
 modulo.register('processor', function srcSync (modulo, def, value) {
     modulo.registry.processors.src(modulo, def, value);
-    return true; // Only difference is return "true" for "wait"
+    return true; // Only difference is return "true" for "wait" (TODO: Refactor to "return def.SrcSync ? false" then specify on Configuration)
 });
 
 modulo.register('processor', function defTarget (modulo, def, value) {
@@ -451,7 +448,7 @@ modulo.register('coreDef', class Artifact {
             targetElem.querySelectorAll(remove).forEach(elem => elem.remove());
         }
         this.templateContext = this.getTemplateContext(targetElem); // Queue up
-        this.modulo.fetchQueue.enqueueAll(() => { // Drain queue before continue
+        this.modulo.fetchQueue.enqueue(() => { // Drain queue before continue
             const tmplt = new Template(Content); // Render file Artifact content
             const content = tmplt.render(this.templateContext);
             def.FileName = `modulo-build-${ hash(content) }.${ name }`;
@@ -501,7 +498,7 @@ modulo.config.component = {
     tagAliases: { }, //tagAliases: { 'html-table': 'table', 'html-script': 'script' }, // shortcut for syntax issues
     mode: 'regular',
     rerender: 'event',
-    engine: 'Reconciler', // TODO: rm, once test is fixed
+    engine: 'Reconciler', // TODO: RM, dead code
     Contains: 'cparts',
     CustomElement: 'window.HTMLElement',
     DefinedAs: 'name',
@@ -604,7 +601,7 @@ modulo.register('coreDef', class Component {
                 opts.directives[dirName] = cPart;
             }
         }
-        this.reconciler = new this.modulo.registry.engines.Reconciler(this.modulo, opts);
+        this.reconciler = new this.modulo.registry.core.Reconciler(this.modulo, opts);
         this.resolver = new this.modulo.registry.core.ValueResolver(this.modulo);
         const html = this.element.getAttribute('modulo-mount-html'); // Hydrate?
         this._mountRival = html === null ? this.element : newNode(html);
@@ -783,7 +780,7 @@ modulo.register('util', function stripWord (text) {
                .replace(/[^a-zA-Z0-9$_\.]$/, '');
 });
 
-modulo.register('util', function clone (el) {
+modulo.register('util', function clone (el) { // Clones an element
     const newElement = window.document.createElement(el.tagName);
     for (const attr of el.attributes) { // Copy all attributes from old elem
         newElement.setAttributeNode(attr.cloneNode(true)); // ...to new elem
@@ -899,71 +896,67 @@ modulo.register('core', class AssetManager {
 });
 
 modulo.register('core', class FetchQueue {
-    constructor(modulo) {
-        this.modulo = modulo;
-        this.queue = {};
-        this.data = {};
-        this.waitCallbacks = [];
+    constructor(modulo, queue = {}, data = {}) {
+        Object.assign(this, { modulo, queue, data });
+        this.wait = callback => this.enqueue(callback, true); // TODO: RM this alias
     }
 
-    fetch(src) { // Returns "thennable" that resembles window.fetch
-        const then = (resolve, reject) => {
-            if (src in this.data) { // Already found, resolve immediately
-                resolve(this.data[src], src);
-            } else if (!(src in this.queue)) { // First time, make queue
-                this.queue[src] = [ resolve ];
-                // TODO: Think about if we want to keep cache:no-store
+    fetch(src) {  // Returns "thennable" that somewhat resembles window.fetch
+        return { then: callback => this.request(src, callback, console.error) };
+    }
+
+    request(src, resolve, reject) { // Do fetch & do enqueue
+        if (src in this.data) { // Cached data found
+            resolve(this.data[src], src); // (sync route)
+        } else if (!(src in this.queue)) { // No cache, no queue
+            this.queue[src] = [ resolve ]; // First time, create the queue Array
+            const { force, callbackName } = this.modulo.config.fetchqueue;
+            if ((!force && src.startsWith('file:/')) || force === 'file') {
+                window[callbackName] = str => { this.__data = str };
+                const elem = window.document.createElement('SCRIPT');
+                elem.onload = () => this.receiveData(this.__data, src);
+                elem.src = src + (src.endsWith('/') ? 'index.html' : '');
+                elem.setAttribute('modulo-asset', 'y'); // Stay out of build
+                window.document.head.append(elem); // Actually execute request
+            } else { // Otherwise, use normal fetch transport method
                 window.fetch(src, { cache: 'no-store' })
                     .then(response => response.text())
                     .then(text => this.receiveData(text, src))
                     .catch(reject);
-            } else {
-                this.queue[src].push(resolve); // add to end of src queue
             }
-        };
-        return { then };
+        } else { // Otherwise: Already requested, only enqueue function
+            this.queue[src].push(resolve);
+        }
     }
 
-    receiveData(text, src) {
-        this.data[src] = text; // load data
-        const queue = this.queue[src];
-        delete this.queue[src]; // delete queue
-        queue.forEach(func => func(text, src));
-        this.checkWait();
+    receiveData(text, src) { // Receive data, optionally trimming padding
+        const { prefix, suffix } = this.modulo.config.fetchqueue.filePadding;
+        if (text && text.startsWith(prefix) && prefix && text.trim().endsWith(suffix)) {
+            text = text.trim().slice(prefix.length, 0 - suffix.length); // Clean
+        }
+        this.data[src] = text; // Keep retrieved data cached here for sync route
+        const resolveCallbacks = this.queue[src];
+        delete this.queue[src];
+        for (const dataCallback of resolveCallbacks) { // Loop through callbacks
+            dataCallback(text, src);
+        }
     }
 
-    enqueueAll(callback) {
-        const allQueues = Array.from(Object.values(this.queue));
+    enqueue(callback, waitForAll = false) { // Wait for _current_ queue (or all)
+        const allQueues = Array.from(Object.values(this.queue)); // Copy array
         if (allQueues.length === 0) {
             return callback();
+        } else if (waitForAll) { // Doing a "wait()" -- need to re-enqueue
+            return this.enqueue(() => Object.keys(this.queue).length === 0 ?
+                                      callback() : this.enqueue(callback, true));
         }
-        let callbackCount = 0;
-        for (const queue of allQueues) {
-            queue.push(() => {
-                callbackCount++;
-                if (callbackCount >= allQueues.length) {
-                    callback();
-                }
-            });
-        }
+        let count = 0; // Using count we only do callback() when ALL returned
+        const check = () => ((++count >= allQueues.length) ? callback() : 0);
+        allQueues.forEach(queue => queue.push(check)); // Add to every queue
     }
-
-    wait(callback) {
-        // NOTE: There is a bug with this vs enqueueAll, specifically if we are
-        // already in a wait callback, it can end up triggering the next one
-        // immediately
-        //console.log({ wait: Object.keys(this.queue).length === 0 }, Object.keys(this.queue));
-        this.waitCallbacks.push(callback); // add to end of queue
-        this.checkWait(); // attempt to consume wait queue
-    }
-
-    checkWait() {
-        if (Object.keys(this.queue).length === 0) {
-            while (this.waitCallbacks.length > 0) {
-                this.waitCallbacks.shift()(); // clear while invoking
-            }
-        }
-    }
+}, {
+    callbackName: 'DOCTYPE_MODULO',
+    filePadding: { prefix: '!DOCTYPE_MODULO(`', suffix: '`)' },
 });
 
 modulo.register('cpart', class Props {
@@ -994,7 +987,7 @@ modulo.config.style = {
     isolateClass: null, // By default, it does not use class isolation
     prefix: null, // Used to specify prefix-based isolation (most common)
     corePseudo: ['before', 'after', 'first-line', 'last-line' ],
-    DefBuilders: [ 'AutoIsolate', 'Content|ProcessCSS' ],
+    DefBuilders: [ 'FilterContent', 'AutoIsolate', 'Content|ProcessCSS' ],
 };
 modulo.register('cpart', class Style {
     static AutoIsolate(modulo, def, value) {
@@ -1274,7 +1267,8 @@ modulo.config.template.defaultFilters = (function () {
         for (const row of arg) { // Loop through each replacement pair
             const [ tag, val ] = typeof row === 'string' ? row.split('=') : row;
             const swap = (a, prefix, suffix) => prefix + val + suffix;
-            s = s.replace(RegExp('(</?)' + tag + '(\s|>)', 'gi'),  swap);
+            //s = s.replace(RegExp('(</?)' + tag + '(\s|>)', 'gi'),  swap);
+            s = s.replace(RegExp('(</?)' + tag + '(\\s|>)', 'gi'),  swap);
         }
         return safe(s); // Always mark as safe, since for HTML tags
     };
@@ -1414,7 +1408,7 @@ modulo.register('cpart', class StaticData {
 }, {
     DataType: '?', // Default behavior is to guess based on Src ext
     RequireData: 'DefinitionName',
-    DefLoaders: [ 'DefTarget', 'DefinedAs', 'DataType', 'Src' ],
+    DefLoaders: [ 'DefTarget', 'DefinedAs', 'DataType', 'Src', 'FilterContent' ],
     DefBuilders: [ 'ContentCSV', 'ContentTXT', 'ContentJSON', 'ContentJS', 'Code', 'RequireData' ],
 });
 
@@ -1591,7 +1585,7 @@ modulo.register('cpart', class State {
     Store: null,
 });
 
-modulo.register('engine', class DOMCursor {
+modulo.register('utils', class DOMCursor {
     constructor(parentNode, parentRival, slots) {
         this.slots = slots || {}; // Slottables keyed by name (default is '')
         this.instanceStack = []; // Used for implementing DFS non-recursively
@@ -1727,16 +1721,11 @@ modulo.config.reconciler = {
     directiveShortcuts: [ [ /^@/, 'component.event' ],
                           [ /:$/, 'component.dataProp' ] ],
 };
-modulo.register('engine', class Reconciler {
-    constructor(modulo, def) {
+modulo.register('core', class Reconciler {
+    constructor(modulo, def = {}) {
         this.modulo = modulo;
-        this.constructor_old(def);
-    }
-    constructor_old(opts) {
-        opts = opts || {};
-        this.shouldNotDescend = !!opts.doNotDescend;
-        this.directives = opts.directives || {};
-        this.directiveShortcuts = opts.directiveShortcuts || [];
+        this.directives = def.directives || {};
+        this.directiveShortcuts = def.directiveShortcuts || [];
         if (this.directiveShortcuts.length === 0) { // TODO Remove this when tested
             this.directiveShortcuts = this.modulo.config.reconciler.directiveShortcuts;
         }
@@ -1778,7 +1767,7 @@ modulo.register('engine', class Reconciler {
 
     reconcileChildren(childParent, rivalParent, slots) {
         // Nonstandard nomenclature: "rival" is node we wish "child" to match
-        const cursor = new this.modulo.registry.engines.DOMCursor(childParent, rivalParent, slots);
+        const cursor = new this.modulo.registry.utils.DOMCursor(childParent, rivalParent, slots);
         while (cursor.hasNext()) {
             const [ child, rival ] = cursor.next();
             const needReplace = child && rival && (
@@ -1814,7 +1803,7 @@ modulo.register('engine', class Reconciler {
                         // console.log('Skipping ignored node');
                     } else if (child.isModulo) { // is a Modulo component
                         this.patch(child, 'rerender', rival);
-                    } else if (!this.shouldNotDescend) {
+                    } else { //} else if (!this.shouldNotDescend) {
                         cursor.saveToStack();
                         cursor.initialize(child, rival);
                     }
