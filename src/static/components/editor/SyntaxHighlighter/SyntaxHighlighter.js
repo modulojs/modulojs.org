@@ -33,7 +33,7 @@ function initializedCallback() {
         }
     }
 
-    e.setAttribute('value', valueAttr);
+    e.setAttribute('value', valueAttr); // Assign value to the cleaned text, with "/script" tags expanded
     e.setAttribute('class', element.getAttribute('class')); // copy class attr
     if (extra) {
         if (exampleAttr) { // Set example attribute with this one
@@ -43,7 +43,7 @@ function initializedCallback() {
             e.setAttribute('component', componentName);
         }
         if (extra === 'examplefirst') { // Should show the example first
-            e.setAttribute('editex', 'true');
+            //e.setAttribute('editex', 'true');
         }
     }
     element.replaceWith(e);
@@ -54,14 +54,14 @@ function updateCallback(renderObj) {
     if (element.wasReplaced) {
         return;
     }
-    /*
-    if (element.hasAttribute('modulo-mount-html')) {
+
+    /* if (element.hasAttribute('modulo-mount-html')) {
         element.removeAttribute('modulo-mount-html');
         return; // lock if original HTML was set
-    }
-    */
+    } */
+
     let text = props.value || element.originalHTML;
-    // Undo exceccive HTML encoding
+    // Undo excessive HTML encoding
     if (props.fix === 'html_encoding') {
         text = text
           .replace(/&gt;/gi, '>')
