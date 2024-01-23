@@ -1,10 +1,11 @@
 <div class="pane pane--right">
     <div class="demo-area">
-        {% if state.value %}
+        {# TODO: Add more types of demos ... #}
+        {% if state.demo-box %}
             <x-DemoBox
-                value="{{ state.value }}"
-                component="{{ state.componentName }}"
-                example="{{ state.exampleCode }}"
+                value="{{ state.demo-box.value }}"
+                component="{{ state.demo-box.component }}"
+                example="{{ state.demo-box.example }}"
             ></x-DemoBox>
         {% endif %}
     </div>

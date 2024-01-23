@@ -39,11 +39,11 @@ function initializedCallback() {
         if (exampleAttr) { // Set example attribute with this one
             e.setAttribute('example', exampleAttr);
         }
-        if (componentName) { // Set example attribute with this one
+        if (componentName) { // Ensure component name is set
             e.setAttribute('component', componentName);
         }
         if (extra === 'examplefirst') { // Should show the example first
-            //e.setAttribute('editex', 'true');
+            e.setAttribute('editex', 'true');
         }
     }
     element.replaceWith(e);

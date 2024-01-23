@@ -50,6 +50,49 @@
     ></Style>
 </Component>
 
+<Component name="DemoEditor2">
+    <Props
+        value
+        src
+        preview
+        example
+        editex
+        component
+        collapsed
+        includes
+    ></Props>
+    <Template
+        -name="template_demo"
+        -src="./DemoEditor/DemoEditor-demo.html"
+    ></Template>
+    <Template
+        -name="template_toolbar"
+        -src="./DemoEditor/DemoEditor-toolbar.html"
+    ></Template>
+    <Template
+        -src="./DemoEditor/DemoEditor2.html"
+    ></Template>
+    <State
+        buffers:=[]
+        selected-buffer:=-1
+        divider:=310
+        font-size:=16
+        component-name=""
+        is-fetching:=null
+        show-editor:=null
+        show-menu:=null
+    ></State>
+    <Script
+        lifecyle="initialized"
+        -src="./DemoEditor/DemoEditor2.js"
+    ></Script>
+    <Style
+        -src="./DemoEditor/DemoEditor.css"
+    ></Style>
+</Component>
+
+
+
 <Component name="DemoBox">
     <Props
         value
@@ -94,7 +137,9 @@
         value=""
         received-value:=null
     ></State>
+    <!-- TODO -- is initialized needeD? -->
     <Script
+        lifecyle="initialized"
         -src="./SyntaxEditor/SyntaxEditor.js"
     ></Script>
     <Style

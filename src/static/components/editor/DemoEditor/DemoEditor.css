@@ -20,6 +20,21 @@
     background: var(--color-bg);
 }
 
+
+.pane--subpane-holder {
+    position: relative;
+}
+
+
+.subpane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+}
+
 .demo-area {
     height: 100%;
     width: 100%;

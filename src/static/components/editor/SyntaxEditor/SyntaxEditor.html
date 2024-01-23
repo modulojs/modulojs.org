@@ -12,7 +12,7 @@
                 {% if state.scrollLeft %} left: -{{ state.scrollLeft }}px; {% endif %}
                 {% if state.width %}    width: {{ state.width }}px; {% endif %}
             ">
-            <{{ props.component|default:"x-SyntaxHighlighter" }}
+            <x-SyntaxHighlighter
                 value="{{ state.value }}"
                 number="{{ props.number|default:'on' }}"
                 style="
@@ -28,7 +28,7 @@
                     {% endif %}
                     box-sizing: border-box;
                 "
-            ></{{ props.component|default:"x-SyntaxHighlighter" }}>
+            ></x-SyntaxHighlighter>
         </div>
     </div>
 

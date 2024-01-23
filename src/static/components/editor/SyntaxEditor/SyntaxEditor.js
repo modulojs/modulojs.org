@@ -1,12 +1,5 @@
 const SIGIL = String.fromCharCode(160); // NBSP (non-breaking space)
 
-function initializedCallback() {
-    // Bring in state.value if this gets called before stateChangedCallback is ready
-    if (element.value) {
-        state.value = element.value;
-    }
-}
-
 function wrapperMount({ el }){
     element.wrapper = el;
 }
@@ -30,6 +23,7 @@ function textMount({ el }){
     // Parent components can bind this as though it were a normal textarea
     element.stateChangedCallback = (name, val, originalEl) => {
         textarea.value = val;
+        // Keep cursor and/or selection at correct location:
         textarea.setSelectionRange(state.selectionStart, state.selectionStart);
         setStateAndRerender(textarea);
     };
@@ -52,6 +46,7 @@ function renderCallback(renderObj) {
     }
     if (element.hasAttribute('modulo-mount-html')) {
         element.removeAttribute('modulo-mount-html');
+        console.info('Rerendering LOCKED!');
         renderObj.component.innerHTML = null; // lock first render if original HTML was set
     }
 }
@@ -151,19 +146,19 @@ function updateDimensions() {
     const { scrollLeft, scrollTop, clientWidth, clientHeight } = textarea;
     if (state.scrollLeft !== scrollLeft || state.scrollTop !== scrollTop) {
         // Scrolled textarea, update state to reflect
-        state.scrollTop = scrollTop;
+        state.scrollTop = scrollTop; // update state to reflect
         state.scrollLeft = scrollLeft;
-        if (wrapper) {
+        if (wrapper) { // Possibly a quick update path: Just update scroll, nothing else
             wrapper.style['left'] = `-${ scrollLeft }px`;
             wrapper.style['top'] = `-${ scrollTop }px`;
         } else {
-            _needsRerender = true;
+            _needsRerender = true; // More complicated (wrapper hasn't mounted), force rerender
         }
     }
     if (state.width !== clientWidth || state.height !== clientHeight) {
-        state.width = clientWidth;
+        state.width = clientWidth; // textarea was resized, need to update state size
         state.height = clientHeight;
-        _needsRerender = true;
+        _needsRerender = true; // More complicated (resize happened), force rerender
     }
     if (_needsRerender) {
         element.rerender();
@@ -175,6 +170,10 @@ function setStateAndRerender(textarea) {
     if (state.value !== textarea.value) {
         state.value = textarea.value;
         element.value = state.value;
+        if ('_onEditorValueChange' in element) { // quick hack for an easy callback
+            //element.dispatchEvent(new window.Event('change')); // Dispatch change event
+            element._onEditorValueChange(state.value);
+        }
         element.rerender();
     }
 }

@@ -1,23 +1,27 @@
 <div class="toolbar toolbar--settings">
     <div class="control-section">
-        <label>
-            <input [state.bind] type="checkbox" name="showAltEditor" />
-            Edit {{ state.altEditorSelected }}
-        </label>
-        {% if state.showAltEditor %}
-            {% if state.altEditorList %}
-                <label
-                  style="align-self: flex-end"
-                  title="Advanced option: You can use this to edit other, less frequently used aspects of this component."
-                >
-                    <select [state.bind] name="altEditorSelected">
-                        {% for item in state.altEditorList %}
-                            <option value="{{ item }}">{{ item }}</option>
-                        {% endfor %}
-                    </select>
-                </label>
+        {% for index, buffer in state.buffers %}
+            {% if not buffer.is-hidden %}
+                <button
+                    @click:=script.readyBuffer
+                    payload:='{{ index }}'
+                    title="Click to edit {{ buffer.title|default:buffer.name }}"
+                    >{% if index|number is state.selected-buffer %}
+                      <span alt="Circle indicator icon">&bull;</span>
+                    {% else %}
+                      <span alt="Empty space indicator icon">&nbsp;</span>
+                    {% endif %}
+                    {{ buffer.name }}</button>
             {% endif %}
-        {% endif %}
+        {% endfor %}
+        <label title="Currently selected editor: "{{ state.buffers|get:state.selectedBuffer|get:'name' }}"">
+            <div class="font-preview">
+                <span>
+                    <span alt="Pencil icon">&#10000;</span>
+                    <small>{{ state.buffers|get:state.selectedBuffer|get:'title'|default:'' }}</small>
+                </span>
+            </div>
+        </label>
     </div>
     <div class="control-section">
         <label>
@@ -30,25 +34,22 @@
                 </span>
             </div>
         </label>
-
+    </div>
+    <div class="control-section">
         <label class="label--divider" title="Divider location">
             <input [state.bind]="input" name="divider" type="range" min="0" max="450" step="10" />
             <span class="icon" alt="Side-to-side arrow icon">&#x21f9;</span>
         </label>
-
         {% comment %}
         <label class="label--divider" title="Minimum height">
             <input [state.bind]="input" name="minheight" type="range" min="0" max="450" step="10" />
             <span class="icon" alt="Up-and-down arrow icon">&#x21D3;</span>
         </label>
-        {% endcomment %}
-
-    </div>
-    <div class="control-section">
         <button @click:=script.open>
             Switch to ACE Editor
             <span alt="Pencil edit icon">&#10000;</span>
         </button>
+        {% endcomment %}
     </div>
 </div>
 

@@ -7,48 +7,32 @@
             --demo-height: 120px;
         ">
         <div class="pane pane--left pane--subpane-holder">
-            <strong style="display: {{ state.value|yesno:'none,block' }}">Loading...</strong>
-            <div class="subpane usage-border">
-                <div class="usage-banner">
-                    {{ state.altEditorSelected|upper }}
+            {# Loop through each buffer, creating a "subpane" for each #}
+            {% for index, buffer in state.buffers %}
+                <div class="subpane {% if buffer.subpane-class %}usage-border {{ buffer.subpane-class }}{% endif %}"
+                    style="display: {% if index|number is state.selected-buffer %}block{% else %}none{% endif %}">
+                    <div class="{% if buffer.banner-class %}usage-banner {{ buffer.banner-class }}{% endif %}">
+                        {{ buffer.title|default:''|upper }}
+                    </div>
+                    <strong style="display: {% if buffer.is-fetching %}block{% else %}none{% endif %}">[ Loading ]</strong>
+                    {# Embed a SyntaxEditor in each subpane #}
+                    <x-SyntaxEditor
+                        [state.bind]
+                        name="buffers.{{ index }}.value"
+                        [script.editor]="{{ index }}"
+                        style="height: 100%;"
+                        fontsize="{{ state.fontSize }}"
+                        value="{{ buffer.value }}"
+                    ></x-SyntaxEditor>
                 </div>
-                <x-SyntaxEditor
-                    [script.editor]
-                    style="height: 100%;"
-                    fontsize="{{ state.fontSize }}"
-                    value="{{ state.value }}"
-                ></x-SyntaxEditor>
-            </div>
-            <div class="subpane">
+            {% endfor %}
+            {# Add a subpane at the end for the menu #}
+            <div class="subpane" style="display: {% if state.show-menu %}block{% else %}none{% endif %}">
                 {% if state.showMenu %}
                     {# See DemoEditor-toolbar.html #}
                     {% include template_toolbar %}
                 {% endif %}
             </div>
-
-            {% comment %}
-            {% if state.showMenu %}
-                {# See DemoEditor-toolbar.html #}
-                {% include template_toolbar %}
-            {% elif state.showAltEditor %}
-                <!-- Add a little styling around the example editor to distinguish -->
-                <div class="usage-border">
-                    <div class="usage-banner">
-                        {{ state.altEditorSelected|upper }}
-                    </div>
-                    <x-SyntaxEditor
-                        [script.example]
-                        style="height: 100%"
-                        fontsize="{{ state.fontSize }}"
-                        value="{{ state.altEditorCode }}"
-                    ></x-SyntaxEditor>
-                </div>
-
-            {% elif state.value %}
-            {% else %}
-                <em>Loading...</em>
-            {% endif %}
-            {% endcomment %}
         </div>
 
         <div class="pane pane--divider">
