@@ -2,55 +2,8 @@
     Component definitions for the embedded editor and syntax highlighter are
     contained here.
 -->
-<Component name="DemoEditor">
-    <Props
-        value
-        src
-        preview
-        example
-        editex
-        component
-        collapsed
-        includes
-    ></Props>
-    <Template
-        -name="template_demo"
-        -src="./DemoEditor/DemoEditor-demo.html"
-    ></Template>
-    <Template
-        -name="template_toolbar"
-        -src="./DemoEditor/DemoEditor-toolbar.html"
-    ></Template>
-    <Template
-        -src="./DemoEditor/DemoEditor.html"
-    ></Template>
-    <State
-        divider:=310
-        font-size:=16
-        demo=""
-        value=""
-        component-name=""
-        example-code=""
-        export-code=""
-        includes-code=""
-        alt-editor-code:=""
-        is-fetching:=null
-        show-editor:=null
-        show-menu:=null
-        show-alt-editor:=null
-        alt-editor-selected="Usage"
-        alt-editor-list:=null
-    ></State>
-    <Script
-        lifecyle="initialized"
-        -src="./DemoEditor/DemoEditor.js"
-    ></Script>
-    <Style
-        -src="./DemoEditor/DemoEditor.css"
-    ></Style>
-</Component>
 
-<Component name="DemoEditor2">
+<Component name="DemoEditor">
     <Props
         value
         src
@@ -92,7 +45,6 @@
 </Component>
 
 
-
 <Component name="DemoBox">
     <Props
         value
@@ -123,7 +75,7 @@
         spellcheck
         component
         fontsize
-        debounce-time
+        readonly
     ></Props>
     <Template
         -src="./SyntaxEditor/SyntaxEditor.html"
@@ -203,4 +155,57 @@
         -src="./EditorGrid/EditorGrid.css"
     ></Style>
 </Component>
+
+
+
+
+<!--
+<Component name="DemoEditor">
+    <Props
+        value
+        src
+        preview
+        example
+        editex
+        component
+        collapsed
+        includes
+    ></Props>
+    <Template
+        -name="template_demo"
+        -src="./DemoEditor/DemoEditor-demo.html"
+    ></Template>
+    <Template
+        -name="template_toolbar"
+        -src="./DemoEditor/DemoEditor-toolbar.html"
+    ></Template>
+    <Template
+        -src="./DemoEditor/DemoEditor.html"
+    ></Template>
+    <State
+        divider:=310
+        font-size:=16
+        demo=""
+        value=""
+        component-name=""
+        example-code=""
+        export-code=""
+        includes-code=""
+        alt-editor-code:=""
+        is-fetching:=null
+        show-editor:=null
+        show-menu:=null
+        show-alt-editor:=null
+        alt-editor-selected="Usage"
+        alt-editor-list:=null
+    ></State>
+    <Script
+        lifecyle="initialized"
+        -src="./DemoEditor/DemoEditor.js"
+    ></Script>
+    <Style
+        -src="./DemoEditor/DemoEditor.css"
+    ></Style>
+</Component>
+-->
 

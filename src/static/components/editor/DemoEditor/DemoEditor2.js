@@ -14,46 +14,25 @@ const DEFAULT_EXPORT_TEMPLATE = (`
 `).trim();
 
 function editorMount({ el, value }) {
-    element.bufferEditors = element.bufferEditors || {};
-    element.bufferEditors[value] = el; // attach based on buffer index
+    element.editor = el;
     el._onEditorValueChange = bufferValue => {
-        state.buffers[value].value = bufferValue;
+        state.buffers[state.selectedBuffer].value = bufferValue;
     };
-    console.log('bufferEditors',element.bufferEditors);
+    el.rerender(); // Force editor immediate rerender, so the stateChangedCallback gets attached
+    el.stateChangedCallback(null, state.buffers[state.selectedBuffer].value, null); // Force update
+}
+
+function editorUnmount({ el, value }) {
+    delete el._onEditorValueChange; // tidy up references
+    delete element.editor;
 }
 
 function newBuffersFromElement({ value, src, example, exptemplate }, elem) {
-    let defaultBufferValue = value || ''; // Start as empty string (which is also falsy, so we can upgrade)
-    let isFetching = false; // 
-    if (elem.hasAttribute('modulo-value') && !defaultBufferValue) {
-        defaultBufferValue = elem.getAttribute('modulo-value');
-    }
-    if (src && !defaultBufferValue) {
-        isFetching = true;
-        defaultBufferValue = null;
-        window.fetch(src)
-            .then(response => response.text())
-            .then(text => {
-                const b = elem.cparts.state.data.buffers[0];
-                delete b.isFetching; // Clear fetching status
-                delete b.isStale; // Clear stale status
-                delete b.staleValue; // no need for this either
-                b.value = text; // update the text with fetch results
-                elem.setAttribute('modulo-value', text); // store in DOM for built page
-                elem.rerender(); // Force container rerender
-                const bEditor = elem.bufferEditors[0]; // Get the specific buffer editor element and force refresh
-                bEditor.cparts.state.data.value = text; //  Force assign to editor's state
-                bEditor.stateChangedCallback(null, text, null); // Force editor rerender
-                bEditor.rerender(); // Force editor rerender
-            });
-    }
-    return [
+    let isFetching = false;
+    const buffers = [
         {
             name: 'default',
-            value: '',
-            isStale: true, // mark all as stale by default
-            isFetching: isFetching,
-            staleValue: defaultBufferValue,
+            value: value,
         },
         {
             title: 'Usage',
@@ -61,55 +40,36 @@ function newBuffersFromElement({ value, src, example, exptemplate }, elem) {
             subpaneClass: true,
             bannerClass: true,
             value: example || `<x-${ state.componentName }></x-${ state.componentName }>`,
-            //value: '',
-            /*
-            isStale: true,
-            staleValue: example || `<x-${ state.componentName }></x-${ state.componentName }>`,
-            */
         },
         {
-            title: 'Export',
+            title: 'Export Template (Read Only)',
             name: 'export',
             subpaneClass: true,
             bannerClass: true,
-            value: exptemplate || DEFAULT_EXPORT_TEMPLATE,
-            /*
-            isHidden: true, // prevent editing, by default
-            value: '',
-            isStale: true,
-            staleValue: exptemplate || DEFAULT_EXPORT_TEMPLATE,
-            */
+            //isHidden: true, // (implemented)
+            isReadOnly: true,
+            value: DEFAULT_EXPORT_TEMPLATE,
         },
     ];
+    if (elem.hasAttribute('modulo-value') && !value) {
+        buffers[0].value = elem.getAttribute('modulo-value');
+    }
+    if (src && !buffers[0].value) {
+        buffers[0].isFetching = true;
+        window.fetch(src)
+            .then(response => response.text())
+            .then(text => {
+                delete buffers[0].isFetching; // Clear fetching status
+                buffers[0].value = text; // update the text with fetch results
+                elem.setAttribute('modulo-value', text); // store in DOM for built page
+                elem.rerender(); // Force container rerender
+            });
+    }
+    return buffers;
 }
 
-function readyBuffer(index, skipSet = false) {
-    if (!skipSet) {
-        state.selectedBuffer =  index;
-    }
-
-    // Non-null staleValues are "cached" values, and get "popped" into their
-    // real value when the buffer gets "ready". This is a little hack to delay
-    // rerendering or re-processing of a value (e.g. treat buffers as empty
-    // strings until then)
-    const buffer = state.buffers[index];
-    /*
-    if (buffer.isStale && ('staleValue' in buffer) && buffer.staleValue !== null) {
-        buffer.value = buffer.staleValue; // "pop" stale value"
-        delete buffer.staleValue; // delete old one to prevent using again
-    }
-    */
-
-    // Now, prep demo stuff as necessary
-    state.demoBox = {
-        value: getDemoValue('value'),
-        component: getDemoValue('component'),
-        example: getDemoValue('example'),
-    };
-
-    if (!skipSet) {
-        console.log('thsi si textarea', element.querySelectorAll('textarea'));
-    }
+function setBuffer(index) {
+    state.selectedBuffer =  index;
 }
 
 function getDemoValue(name) {
@@ -120,7 +80,7 @@ function getDemoValue(name) {
     const i = ['value', 'example', 'export' ].indexOf(name);
     modulo.assert(i > -1, 'Not expected: ' + name);
     const buffer = state.buffers[i];
-    return buffer.value || buffer.value.staleValue || '';
+    return buffer.value || '';
 }
 
 function _updateState() {
@@ -128,17 +88,26 @@ function _updateState() {
     state.componentName = getComponentName();
     if (state.buffers.length === 0) { // No buffers! Populate from props and element
         state.buffers = newBuffersFromElement(props, element);
+        state.selectedBuffer = props.editex ? 1 : 0; // First time, set to 0 if not an example editor
     }
-    if (state.selectedBuffer === -1) {
-        state.selectedBuffer =  0;
-        readyBuffer(0, true); // No selected buffer! Default to 0
-    } else {
-        readyBuffer(state.selectedBuffer, true);
-    }
+    state.demoBox = { // "Transform" the buffers into the expected demo arrangement
+        value: getDemoValue('value'),
+        component: getDemoValue('component'),
+        example: getDemoValue('example'),
+    };
 }
 
 function prepareCallback() {
     _updateState();
+    const buffer = state.buffers[state.selectedBuffer];
+    return { buffer };
+}
+
+function renderCallback() {
+    if (element.hasAttribute('modulo-mount-html')) {
+        element.removeAttribute('modulo-mount-html');
+        renderObj.component.innerHTML = null; // Lock first render when re-hydrating
+    }
 }
 
 function getComponentName(src = false) {
@@ -159,12 +128,17 @@ function toggleMenu() {
 
 function run() {
     // TODO: Issue with hydrating, need to figure out, but in built version need this:
-    //element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
+    element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
     _updateState(); // Will auto-rerender, which will also auto run if changed
 }
 
 function save() {
     // Saves as HTML
+    // TODO: Add different save template options:
+    //    -  Editor: Includes <Modulo -src="https://modulojs.org/static/components/editor/"></Modulo>
+    //        then embeds editor in exact current state as this one
+    //    -  Embed: Saves a single HTML file with all scripts inlined (can be with above, as well)
+    //    -  Embed with Editor: (Combo of above)
     _updateState();
     const { component, value, example } = state.demoBox;
     const includesCode = '';

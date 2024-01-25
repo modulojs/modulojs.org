@@ -8,7 +8,10 @@ function textMount({ el }){
     // Mounting of the actual <textarea>, which functions as the main
     // "initialized" callback where everything gets set-up and rerendered with
     // the value provided
-    const value = (element.getAttribute('value') || state.value || '').trim();
+    let value = (element.getAttribute('value') || state.value || '').trim();
+    if (element.hasAttribute('readonly-value')) {
+        value = element.getAttribute('readonly-value');
+    }
     const textarea = el;
     element.textarea = textarea;
     textarea.value = value;
@@ -22,6 +25,9 @@ function textMount({ el }){
     // The stateChangedCallback is required for [state.bind] compatibility:
     // Parent components can bind this as though it were a normal textarea
     element.stateChangedCallback = (name, val, originalEl) => {
+        if (element.hasAttribute('readonly-value')) {
+            val = element.getAttribute('readonly-value');
+        }
         textarea.value = val;
         // Keep cursor and/or selection at correct location:
         textarea.setSelectionRange(state.selectionStart, state.selectionStart);
@@ -38,7 +44,7 @@ function textMount({ el }){
 }
 
 function renderCallback(renderObj) {
-    if (!element.isMounted) {
+    if (!element.isMounted) { // TODO -- Probably not necessary any more?
         // We are doing a first render, need to clear originalHTML to prevent
         // it from messing up with hydration
         element.originalHTML = '';
@@ -46,7 +52,6 @@ function renderCallback(renderObj) {
     }
     if (element.hasAttribute('modulo-mount-html')) {
         element.removeAttribute('modulo-mount-html');
-        console.info('Rerendering LOCKED!');
         renderObj.component.innerHTML = null; // lock first render if original HTML was set
     }
 }
@@ -167,11 +172,13 @@ function updateDimensions() {
 
 function setStateAndRerender(textarea) {
     state.selectionStart = textarea.selectionStart;
+    if (props.readonly) {
+        textarea.value = element.getAttribute('readonly-value');
+    }
     if (state.value !== textarea.value) {
         state.value = textarea.value;
         element.value = state.value;
         if ('_onEditorValueChange' in element) { // quick hack for an easy callback
-            //element.dispatchEvent(new window.Event('change')); // Dispatch change event
             element._onEditorValueChange(state.value);
         }
         element.rerender();

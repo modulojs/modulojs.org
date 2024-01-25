@@ -3,7 +3,7 @@
         {% for index, buffer in state.buffers %}
             {% if not buffer.is-hidden %}
                 <button
-                    @click:=script.readyBuffer
+                    @click:=script.setBuffer
                     payload:='{{ index }}'
                     title="Click to edit {{ buffer.title|default:buffer.name }}"
                     >{% if index|number is state.selected-buffer %}

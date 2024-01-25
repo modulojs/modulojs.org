@@ -38,15 +38,7 @@
         data-gramm="false"
         name="{{ props.name|default:'editor' }}"
         spellcheck="{{ props.spellcheck|default:'false' }}"
-        style="
-          --font-size: {{ props.fontsize|default:"16" }}px;
-          {% if props.wrap %}
-              white-space: pre-wrap;
-              overflow-wrap: break-word;
-          {% else %}
-              white-space: pre;
-          {% endif %}
-        "
-    ></textarea>
+        style="--font-size: {{ props.fontsize|default:"16" }}px;{% if props.wrap %}
+          white-space: pre-wrap; overflow-wrap: break-word;
+          {% else %}white-space: pre;{% endif %}"></textarea>
 </div>
-
