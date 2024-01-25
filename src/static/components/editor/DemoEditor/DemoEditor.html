@@ -1,5 +1,5 @@
 {% if state.showEditor %}
-
+    {# Split view (editor on left, divider with 3 buttons, demo on right) #}
     <div class="pane-holder" style="
             --right-width: {{ state.divider|multiply:'-1'|add:550 }}px;
             --divider-width: 45px;
@@ -7,68 +7,60 @@
             --demo-height: 120px;
         ">
         <div class="pane pane--left pane--subpane-holder">
-            <strong style="display: {{ state.value|yesno:'none,block' }}">Loading...</strong>
-            <div class="subpane usage-border">
-                <div class="usage-banner">
-                    {{ state.altEditorSelected|upper }}
-                </div>
-                <x-SyntaxEditor
-                    [script.editor]
-                    style="height: 100%;"
-                    fontsize="{{ state.fontSize }}"
-                    value="{{ state.value }}"
-                ></x-SyntaxEditor>
-            </div>
-            <div class="subpane">
-                {% if state.showMenu %}
+            {% if state.show-menu %}
+                <div class="subpane">
                     {# See DemoEditor-toolbar.html #}
                     {% include template_toolbar %}
-                {% endif %}
-            </div>
-
-            {% comment %}
-            {% if state.showMenu %}
-                {# See DemoEditor-toolbar.html #}
-                {% include template_toolbar %}
-            {% elif state.showAltEditor %}
-                <!-- Add a little styling around the example editor to distinguish -->
-                <div class="usage-border">
-                    <div class="usage-banner">
-                        {{ state.altEditorSelected|upper }}
-                    </div>
-                    <x-SyntaxEditor
-                        [script.example]
-                        style="height: 100%"
-                        fontsize="{{ state.fontSize }}"
-                        value="{{ state.altEditorCode }}"
-                    ></x-SyntaxEditor>
                 </div>
-
-            {% elif state.value %}
+            {% elif not script.buffer.is-fetching %}
+                <div class="subpane {% if script.buffer.subpane-class %}usage-border {{ script.buffer.subpane-class }}{% endif %}">
+                    {% if script.buffer.banner-class %}
+                        <div class="{% if script.buffer.banner-class %}usage-banner {{ script.buffer.banner-class }}{% endif %}">
+                            {{ script.buffer.title|default:''|upper }}
+                        </div>
+                    {% endif %}
+                    {% if script.buffer.is-read-only %}
+                        {# Render a "readonly" SyntaxEditor #}
+                        <x-SyntaxEditor
+                            [script.editor]
+                            readonly="readonly"
+                            readonly-value="{{ script.buffer.value }}"
+                            style="height: 100%;"
+                            fontsize="{{ state.fontSize }}"
+                        ></x-SyntaxEditor>
+                    {% else %}
+                        {# Add a SyntaxEditor, directly bound to the state's value #}
+                        <x-SyntaxEditor
+                            [script.editor]
+                            [state.bind]
+                            name="buffers.{{ state.selected-buffer }}.value"
+                            style="height: 100%;"
+                            fontsize="{{ state.fontSize }}"
+                        ></x-SyntaxEditor>
+                  {% endif %}
+                </div>
             {% else %}
-                <em>Loading...</em>
+                <strong style="display: block; text-align: right; opacity: 0.3">[ Loading ]</strong>
             {% endif %}
-            {% endcomment %}
         </div>
 
         <div class="pane pane--divider">
-            <div class="toolbar toolbar--small {% if not state.showMenu %}toolbar--autohide{% endif %}">
+            <div class="toolbar toolbar--small {% if not state.show-menu %}toolbar--autohide{% endif %}">
                 <button
                     @click:=script.toggleMenu
-                    class="{% if state.showMenu %}toolbar--selected{% endif %}"
+                    class="{% if state.show-menu %}toolbar--selected{% endif %}"
                 ><span alt="Dots menu icon">&#x22EF;</span> Menu</button>
                 <button @click:=script.run><span alt="Refresh arrow in circle">&#x27F3;</span> Run</button>
                 <button @click:=script.save><span alt="Download arrow downward">&#10515;</span> Save</button>
             </div>
         </div>
 
-        {# Include the demo section on the right #}
         {# See DemoEditor-demo.html #}
         {% include template_demo %}
     </div>
 
 {% else %}
-    <!-- Collapsed view (e.g. used in DemoGrid) -->
+    {# Collapsed view, no editor at all (e.g. used in DemoGrid) #}
     <div class="pane-holder pane-holder--collapsed">
         {% include template_demo %}
     </div>

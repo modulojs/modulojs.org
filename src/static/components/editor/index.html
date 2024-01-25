@@ -23,7 +23,7 @@
         -src="./DemoEditor/DemoEditor-toolbar.html"
     ></Template>
     <Template
-        -src="./DemoEditor/DemoEditor2.html"
+        -src="./DemoEditor/DemoEditor.html"
     ></Template>
     <State
         buffers:=[]
@@ -37,7 +37,7 @@
     ></State>
     <Script
         lifecyle="initialized"
-        -src="./DemoEditor/DemoEditor2.js"
+        -src="./DemoEditor/DemoEditor.js"
     ></Script>
     <Style
         -src="./DemoEditor/DemoEditor.css"
@@ -155,57 +155,4 @@
         -src="./EditorGrid/EditorGrid.css"
     ></Style>
 </Component>
-
-
-
-
-<!--
-<Component name="DemoEditor">
-    <Props
-        value
-        src
-        preview
-        example
-        editex
-        component
-        collapsed
-        includes
-    ></Props>
-    <Template
-        -name="template_demo"
-        -src="./DemoEditor/DemoEditor-demo.html"
-    ></Template>
-    <Template
-        -name="template_toolbar"
-        -src="./DemoEditor/DemoEditor-toolbar.html"
-    ></Template>
-    <Template
-        -src="./DemoEditor/DemoEditor.html"
-    ></Template>
-    <State
-        divider:=310
-        font-size:=16
-        demo=""
-        value=""
-        component-name=""
-        example-code=""
-        export-code=""
-        includes-code=""
-        alt-editor-code:=""
-        is-fetching:=null
-        show-editor:=null
-        show-menu:=null
-        show-alt-editor:=null
-        alt-editor-selected="Usage"
-        alt-editor-list:=null
-    ></State>
-    <Script
-        lifecyle="initialized"
-        -src="./DemoEditor/DemoEditor.js"
-    ></Script>
-    <Style
-        -src="./DemoEditor/DemoEditor.css"
-    ></Style>
-</Component>
--->
 
