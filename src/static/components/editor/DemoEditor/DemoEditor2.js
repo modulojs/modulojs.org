@@ -14,6 +14,9 @@ const DEFAULT_EXPORT_TEMPLATE = (`
 `).trim();
 
 function editorMount({ el, value }) {
+    if (state.buffers.length === 0) {
+        _updateState(); // getting called from hydrating mount
+    }
     element.editor = el;
     el._onEditorValueChange = bufferValue => {
         state.buffers[state.selectedBuffer].value = bufferValue;
@@ -106,7 +109,7 @@ function prepareCallback() {
 function renderCallback() {
     if (element.hasAttribute('modulo-mount-html')) {
         element.removeAttribute('modulo-mount-html');
-        renderObj.component.innerHTML = null; // Lock first render when re-hydrating
+        component.innerHTML = null; // Lock first render when re-hydrating
     }
 }
 
