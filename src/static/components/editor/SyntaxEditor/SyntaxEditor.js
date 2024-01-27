@@ -8,9 +8,13 @@ function textMount({ el }){
     // Mounting of the actual <textarea>, which functions as the main
     // "initialized" callback where everything gets set-up and rerendered with
     // the value provided
-    let value = (element.getAttribute('value') || state.value || '').trim();
-    if (element.hasAttribute('readonly-value')) {
+    let value =  (state.value || '').trim();
+    if (element.hasAttribute('modulo-mount-text')) {
+        value = element.getAttribute('modulo-mount-text');
+    } else if (element.hasAttribute('readonly-value')) {
         value = element.getAttribute('readonly-value');
+    } else if (element.hasAttribute('value')) {
+        value = element.getAttribute('value');
     }
     const textarea = el;
     element.textarea = textarea;
@@ -43,15 +47,16 @@ function textMount({ el }){
     }
 }
 
+function buildCallback() {
+    element.removeAttribute('modulo-mount-html');
+    element.setAttribute('modulo-mount-text', state.value);
+}
+
 function renderCallback(renderObj) {
-    if (!element.isMounted) { // TODO -- Probably not necessary any more?
-        // We are doing a first render, need to clear originalHTML to prevent
-        // it from messing up with hydration
-        element.originalHTML = '';
-        element.originalChildren = [];
-    }
-    if (element.hasAttribute('modulo-mount-html')) {
-        element.removeAttribute('modulo-mount-html');
+    if (element.hasAttribute('modulo-mount-text')) {
+        state.value = element.getAttribute('modulo-mount-text');
+        element.removeAttribute('modulo-mount-text');
+        element.textarea.value = state.value;
         renderObj.component.innerHTML = null; // lock first render if original HTML was set
     }
 }

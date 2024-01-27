@@ -56,8 +56,7 @@ function newBuffersFromElement({ value, src, example, exptemplate }, elem) {
     ];
     if (elem.hasAttribute('modulo-value') && !value) {
         buffers[0].value = elem.getAttribute('modulo-value');
-    }
-    if (src && !buffers[0].value) {
+    } else if (src && !buffers[0].value) {
         buffers[0].isFetching = true;
         window.fetch(src)
             .then(response => response.text())

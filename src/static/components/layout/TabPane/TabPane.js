@@ -24,7 +24,18 @@ function prepareCallback() {
     return { tabElements };
 }
 
+
+function renderCallback() {
+    /*
+    if (element.hasAttribute('modulo-mount-html')) {
+        element.removeAttribute('modulo-mount-html');
+        component.innerHTML = null; // Lock first render when re-hydrating
+    }
+    */
+}
+
 function updateCallback() {
+    /*
     setTimeout(() => {
         const editor = element.querySelector('.tab-region-inner--selected x-DemoEditor');
         const sandbox = editor && editor.cparts && editor.cparts.modulosandbox;
@@ -32,6 +43,7 @@ function updateCallback() {
             sandbox.forceActivate();
         }
     }, 10);
+    */
 }
 
 

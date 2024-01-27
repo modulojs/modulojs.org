@@ -3,6 +3,9 @@
     <div class="tab-btns">
         {% for child in script.tabElements %}
             <button 
+                role="tab"
+                aria-selected="{{ child.isSelected }}"
+                aria-controls="tab_{{ child.tabKey }}"
                 @click:=script.selectTab
                 payload="{{ child.tabKey }}"
                 class="{% if child.isSelected %}selected{% else %}unselected{% endif %}"
@@ -11,7 +14,9 @@
     </div>
     <div class="tab-region">
         {% for child in script.tabElements %}
-            <div style="
+            <div 
+                id="tab_{{ child.tabKey }}"
+                style="
                     {% if child.isSelected %} display: block; height: 100%;
                     {% else %} display: none; height: 0; {% endif %}
                     width: 100%;
