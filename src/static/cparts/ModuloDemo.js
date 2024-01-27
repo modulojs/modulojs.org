@@ -57,6 +57,7 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
         this.componentName = this.modulo.registry.utils.get(renderObj, this.conf.component) || 'App';
         //console.log('this is component name', this.componentName, renderObj.props.component);
         this.example = this.modulo.registry.utils.get(renderObj, this.conf.example);
+        this.runcount = this.modulo.registry.utils.get(renderObj, this.conf.runcount);
         this.checkForRun();
     }
 
@@ -64,10 +65,11 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
         if (typeof this.value === 'undefined') {
             return; // don't have a value assigned yet, skip
         }
-        if (!this.demoElement.innerHTML || this._lastValue !== this.value || this._lastExample !== this.example) {
+        if (!this.demoElement.innerHTML || this._lastValue !== this.value || this._lastExample !== this.example || this._lastRuncount !== this.runcount) {
             // Blank, or changed (either value or example): Record values to detect changes & run
             this._lastValue = this.value;
             this._lastExample = this.example;
+            this._lastRuncount = this.runcount;
             this.run().then(componentUseExample => { // Update demo element with HTML
                 this.demoElement.innerHTML = componentUseExample;
             });
@@ -110,6 +112,14 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
         const definitionCode = `<Component namespace="${ ns }" name="${ this.componentName }"` +
                                 ` mode="shadow">\n${ this.value }\n</Component>`;
         const componentUseExample = this.getComponentUseExample(ns);
+        const handleError = (errorMsg, url, lineNumber, colNo, error) => {
+            if (!url) {
+                // TODO: Guess that it might be script, use lineNumber + colNo to signal back to editor
+            }
+            this.demoElement.innerHTML = `<pre>${ url }:${ lineNumber }\nERROR: ${ errorMsg }</pre>`;
+            console.error('DEMO ERROR:', errorMsg, url, lineNumber);
+        };
+        window.onerror = handleError;
         const runCode = (resolve, reject) => {
             // Load under _component prefix, only allowing component defs
             try {
@@ -122,9 +132,7 @@ modulo.registry.cparts.ModuloDemo = class ModuloDemo {
                     resolve(componentUseExample);
                 });
             } catch (error) {
-                console.error('DEMO ERROR: loadString failed');
                 console.log('DEMO ERROR: Could not load definition');
-                console.log('---------------------------');
                 console.log(error);
                 reject(error);
             }

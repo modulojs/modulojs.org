@@ -29,6 +29,7 @@
         buffers:=[]
         selected-buffer:=-1
         divider:=310
+        runcount:=0
         font-size:=16
         component-name=""
         is-fetching:=null
@@ -50,6 +51,7 @@
         value
         component
         example
+        runcount
     ></Props>
     <Template>
         <div [modulodemo.demo]></div>
@@ -59,6 +61,7 @@
         value="props.value"
         component="props.component"
         example="props.example"
+        runcount="props.runcount"
     ></ModuloDemo>
     <!--
     <Style

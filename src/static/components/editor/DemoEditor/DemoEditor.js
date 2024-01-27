@@ -49,7 +49,7 @@ function newBuffersFromElement({ value, src, example, exptemplate }, elem) {
             name: 'export',
             subpaneClass: true,
             bannerClass: true,
-            //isHidden: true, // (implemented)
+            isHidden: true, // (implemented)
             isReadOnly: true,
             value: DEFAULT_EXPORT_TEMPLATE,
         },
@@ -129,8 +129,16 @@ function toggleMenu() {
 }
 
 function run() {
-    // TODO: Issue with hydrating, need to figure out, but in built version need this:
-    element.editor = element.editor || element.querySelector('x-SyntaxEditor') || null;
+    // TODO: Issue with hydrating, need to figure out why, but in built version need this:
+    if (!element.editor && element.querySelector('x-SyntaxEditor')) {
+        element.editor = element.querySelector('x-SyntaxEditor');
+        const newVal = element.editor.value; // did we get a value already?
+        if (newVal) {
+            state.buffers[0].value = newVal;
+        }
+        element.cparts.state.bindMount({ el: element.editor }); // ensure bound
+    }
+    state.runcount++; // increment run count
     _updateState(); // Will auto-rerender, which will also auto run if changed
 }
 
