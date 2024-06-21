@@ -3,6 +3,11 @@ function prepareCallback() {
         console.error('invalid article list');
         return;
     }
+    if (element.hasAttribute('modulo-mount-html')) {
+        state.loading = false;
+        state.ready = true;
+        return; // assume already built
+    }
     if (state.loading === null) {
         state.loading = true;
         state.ready = false;
