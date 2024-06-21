@@ -1,0 +1,87 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Making a gradient picker tool
+description: In previous "2000 line challenge" tutorials, I showed how to use Modulo.js features such as the...
+published: true
+published_at: 2023-12-12T16:25:21.453Z
+slug: the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1
+path: /michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1
+url: https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1
+published_timestamp: 2023-12-12T16:25:21Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fzqj90m8g2qggi3gi7bxh.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1
+reading_time_minutes: 3
+---
+In previous "2000 line challenge" tutorials, I showed how to use Modulo.js features such as the [-store= attribute](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80) and [JSON and APIs](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80)  to quickly assemble small web components without any custom JavaScript. This tutorial goes for something much more relevant to front-end developers: Let's build a frontend development tool to allow us to better visualize CSS, and come up with better HTML & CSS styles!
+
+[Modulo.js](https://modulojs.org/) is the perfect tool for this job: It's made for making embeddable web components without the need of using JavaScript, Node.js, or node_modules (although it works with those too!). If you are new to Modulo.js, then read the next section. Otherwise, jump down to the "good stuff" below.
+
+## Wait, what is this 2000-line framework, Modulo.js?
+
+> Modulo.js is a solution to a hard challenge: How can we build frontend tools that are much, much simpler, so it's easier for static site builders, Rails, PHP, Python, and Wordpress users, or coding students? Basically, how do we build frameworks which are appealing to modern JS developers while not being mysterious labyrinths of node_module dependencies? Modulo's goal is to do this in only 2000-lines of code, functioning as a sort of "Vue-lite / Svelte-lite / React-lite" framework.
+> Modulo is HTML-first, and browser-first, meaning it integrates with only a few lines of code in any HTML file. It immediately enables you to write productive Web Components with many modern features. Check it out: [ModuloJS.org](https://modulojs.org/)
+
+## Starting out with a basic color picker
+
+In this tutorial, we'll create a gradient picker. Let's start with a basic color picker:
+
+```django
+<Template>
+    <input [state.bind] name="from" type="color" />
+</Template>
+<State
+    from="#AABAAA"
+></State>
+```
+
+Here, we have a input of type `color`. This will cause a color picker to show in the browser. It's hooked up (bound) to a _State_ CPart. We use the `name="from"` attribute to tell the _State_ CPart which state variable should be "assigned" (bound) to this input. The `[state.bind]` directive is what actually triggers the binding.
+
+Note: To learn more on the State CPart, consider trying it our on the extensive free / interactive tutorial on the Modulo JS website: [Modulo JS - Ramping Up Part 2: State](https://modulojs.org/tutorial/ramping-up/part2.html#state)
+
+## Previewing the color
+
+Let's build on the previous _Template_ just a little bit:
+
+```django
+<Template>
+    <input [state.bind] name="from" type="color" />
+    <div style="
+          height: 100px;
+          width: 200px;
+          background: {{ state.from }};
+        ">
+    </div>
+</Template>
+```
+
+Here, we've added a new `<div>` element, with a background and width and height specified via a `style=` attribute. You might ask: Why use the `style=` attribute instead of the _Style_ CPart? Well, the reason is we need to use templating in the style attribute. This will allow us to insert the `state` variable right into the `div` element's style. That way, as the component updates, we'll get a live preview of the color
+
+## Adding another color, percent, and changing to gradient
+
+This last iteration we will add another input (just like the first) in order to be the "to" color of the gradient. Then, we'll be able to select both the "to" and the "from" colors, thus being able to pick both sides of the gradient. The only last thing we need to customize is the location of the transition. For this, we will use a range slider which we'll call `percent`. Finally, we'll need to alter the `style=` attribute to take into account the new `to` color, and the new `percent` range slider. Putting everything together, we have the following example:
+
+```django
+<Template>
+    <input [state.bind] name="from" type="color" />
+    &rarr; <input [state.bind] name="to" type="color" />
+    <input [state.bind] name="percent" type="range" min="0" max="100" step="1" />
+    <div style="height: 100px; width: 200px;
+         background: linear-gradient(to right,
+         {{ state.from }} {{ state.percent }}%, {{ state.to }});
+     "></div>
+</Template>
+<State
+    from="#AABAAA"
+    to="#5D655E"
+    percent:=50
+></State>
+```
+
+
+## Conclusion
+
+
+[If you find this example helpful, then definitely check out the Modulo JS Examples page, which has examples similar to this one you can demo / try out.](https://modulojs.org/examples/)
+
+Hope this code is useful. Next time I'll be going over similar topics, exploring more ways to make little tools and web components like this!

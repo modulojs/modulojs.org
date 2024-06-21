@@ -1,0 +1,165 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Creating CPart classes for actions and state binding
+description: In this quick tutorial, I'll show how to create a StateActions Component Part which is a great way to...
+published: true
+published_at: 2023-11-03T13:24:16.250Z
+slug: building-a-custom-re-usable-component-part-to-implement-generic-actions-and-with-state-binding-in-modulo-js-180a
+path: /michaelpb/building-a-custom-re-usable-component-part-to-implement-generic-actions-and-with-state-binding-in-modulo-js-180a
+url: https://dev.to/michaelpb/building-a-custom-re-usable-component-part-to-implement-generic-actions-and-with-state-binding-in-modulo-js-180a
+published_timestamp: 2023-11-03T13:24:16Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fn2u3n61dkgpx1mo1ytr0.png
+tag_list: frontend,webdev,javascript,tutorial
+canonical_url: https://dev.to/michaelpb/building-a-custom-re-usable-component-part-to-implement-generic-actions-and-with-state-binding-in-modulo-js-180a
+reading_time_minutes: 3
+---
+In this quick tutorial, I'll show how to create a `StateActions` [Component
+Part](https://modulojs.org/docs/cparts/) which is a great way to create
+versatile, common, re-usable actions across all your [Modulo JS
+components](https://modulojs.org/tutorial/ramping-up/part1.html). The end
+result is already useful, and also gives you a useful structure to continue
+writing more  actions. Best of all, the actions you define are _generic_,
+meaning they can be applied to future components regardless of what specific
+state variables they are using.
+
+
+
+
+So, let's get down to business!
+
+## Step 1 - Creating a CPart
+
+Creating and registering a CPart:
+
+```javascript
+class StateActions {
+    // TODO ...
+}
+
+modulo.register('cpart', StateActions);
+```
+
+To include this CPart in a Modulo project (at the top level, e.g. your `/static/index.html`):
+
+```html
+<Configuration -src="./js/StateActions.js"></Configuration>
+```
+
+
+## Step 2 - Using in a Component
+
+
+Adding a method, and then using the CPart and attaching it as a click function:
+
+
+```javascript
+class StateActions {
+    setToThree(key, value) {
+        this.element.cparts.state.data.num = 3;
+    }
+}
+
+modulo.register('cpart', StateActions);
+```
+
+And how to use in your Component definitions:
+
+
+```html
+<Template>
+  <button @click:=stateactions.setToThree>Num: {{ state.num }}</button>
+</Template>
+<State
+  num:=1
+></State>
+<!-- Here is where we actually include the State Actions: -->
+<StateActions></StateActions>
+```
+
+
+## Step 3 - Making generic
+
+The most complicated step is next: Transforming the specific method into a generic action. We'll use the `this.attrs` so that the user of our generic CPart can specify which State variables they wish to modify. Now, instead of having to hardcode the value, let's make it more configurable, so it can be a "generic" action that can apply to _any value_:
+
+```javascript
+class StateActions {
+    initializedCallback() {
+        const results = {};
+        // Loop through all configuration attributes:
+        for (let [ key, methodName ] of Object.entries(this.attrs)) {
+            results[key] = this.set.bind(this, key); // Bind "set" method with "key", so it remembers this
+        }
+        return results;
+    }
+    set(key, value) {
+        this.element.cparts.state.data[key] = value;
+        // "Propagate" is added so bound forms, components, etc get rerendered
+        this.element.cparts.state.propagate(key, value);
+    }
+}
+
+modulo.register('cpart', StateActions);
+```
+
+And to use:
+
+```html
+<Template>
+  <button @click:=stateactions.num payload:=3>Num: {{ state.num }}</button>
+</Template>
+<State
+  num:=1
+></State>
+<StateActions
+  num
+></StateActions>
+```
+
+## Step 4 - Adding another generic method
+
+Cleaning up and final results with a default value, and adding "push" generic action:
+
+```javascript
+class StateActions {
+    initializedCallback() {
+        const results = {};
+        for (let [ key, methodName ] of Object.entries(this.attrs)) {
+            methodName = methodName || 'set'; // Default to set
+            results[key] = this[methodName].bind(this, key);
+        }
+        return results;
+    }
+    set(key, value) {
+        this.element.cparts.state.data[key] = value;
+        this.element.cparts.state.propagate(key, value);
+    }
+    push(key, value) {
+        const arr = this.element.cparts.state.data[key];
+        arr.push(value);
+        this.element.cparts.state.propagate(key, arr);
+    }
+}
+
+modulo.register('cpart', StateActions);
+```
+
+
+```html
+<Template>
+  <button @click:=stateactions.num payload=3>Num: {{ state.num }}</button>
+  <button @click:=stateactions.list payload="bread">Add to list: {{ state.list }}</button>
+</Template>
+<State
+  num:=1
+  list:=[]
+></State>
+<StateActions
+  num
+  list=push
+></StateActions>
+```
+
+----
+
+
+Hopefully this tutorial will help you add re-usable JavaScript actions to your next Modulo JS project. If you found this interesting and are new to [Modulo JS](https://modulojs.org/), then consider taking [the interactive tutorial](https://modulojs.org/tutorial/ramping-up/), or just playing around with some [examples](https://modulojs.org/examples/) to get a better idea of what you can do with this mighty little 2000 line framework. Either way, feel free to follow me here for more tutorials like this. Thanks for reading!

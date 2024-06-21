@@ -42,7 +42,7 @@ element will be explained later in this document.
     articles.2:={}
     articles.0.headline="Modulo released"
     articles.1.headline="The experts ask"
-    articles.2.headline="Contraversy ahead"
+    articles.2.headline="Controversy ahead"
     articles.0.tease="The most exciting news of the century."
     articles.1.tease="Can HTML be fun again?"
     articles.2.tease="Why constructing JS is risky business."
@@ -264,11 +264,11 @@ characters:
 
 #### Example #2: Avoiding automatic camel case
 
-Sometimes, there is data in a JavaScript object that is written using the
+Sometimes there is data in a JavaScript object that is written using the
 HTML-style kebab case. Even though it might be awkward to write like this in
 JavaScript, it's pretty common to encounter this in JSON files.  In this case,
 the solution is using the `|get` filter. It still supports `.` syntax to "drill
-down" to acceess properties, but does it does not do camel case transformation.
+down" to access properties, but does it does not do camel case transformation.
 See below:
 
 ```modulo_demo
@@ -344,10 +344,10 @@ snippet, and summary of template filters used:
   array, in this case the user's names (e.g. first, middle, and last names)
 * [|default](/docs/templating/filters.html#default) - Finally, the third
   example shows off the usefulness of the `|default` filter, which helps you
-  add quick default values for fields that are sometimes unspecified, in this
-  case value of the pronouns field, unelss it is a falsy or undefined value, in
-  showing a more user-friendly placeholder message if a falsy value is in the
-  pronouns field
+  add quick default values for fields that are sometimes unspecified. In this
+  case value, if the value of the pronouns field is a falsy or undefined value
+  it will showing a more human-friendly placeholder message instead of just
+  `undefined`, `null`, or `false`
 
 These are just a few of the dozens of filters available. See the [Template
 Filter reference](/docs/templating/filters.html) for the complete list.

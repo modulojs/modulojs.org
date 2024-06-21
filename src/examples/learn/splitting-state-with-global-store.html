@@ -1,0 +1,146 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Quickly splitting state into global stores
+description: In the previous tutorial, I showed how to use the -store= attribute. In this tutorial, I'll show how...
+published: true
+published_at: 2023-11-10T17:51:25.200Z
+slug: the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80
+path: /michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80
+url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80
+published_timestamp: 2023-11-10T17:51:25Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F5wlaottulvt39bydvve6.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80
+reading_time_minutes: 3
+---
+In the [previous tutorial](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf), I showed how to use the `-store=` attribute. In this tutorial, I'll show how to have multiple State CParts in a single Component so that you can mix private state data with a public state store that you subscribe to.
+
+If you are new to Modulo.js, then read the next section. Otherwise, jump down to the "good stuff" below.
+
+## Wait, what is this 2000-line framework, Modulo.js? 
+
+Modulo.js is a solution to a hard challenge: How can we make a very tiny, robust, useful framework in 2000 lines of understandable code? Basically, how do we build frameworks that aren't mysterious labyrinths of node_module dependencies? A Vue/Svelte/React-lite framework a single, easy-to-read file is appealing to beginners and wizened old-head hackers alike! Modulo.js is a single 2000 line file without any dependencies. It is HTML-first, and browser-first, and integrates with only a few lines of code in any HTML file. It immediately enables you to write productive Web Components with many modern features. Check it out: [ModuloJS.org](https://modulojs.org)
+
+---
+
+## Splitting private state into pseudo-global store
+
+As with the previous tutorial, let's take the "MVC TODO" app in Modulo. 
+
+### Doing the split
+
+For a TODO app hooked up to a global store, the _State_ looks like this:
+
+```html
+<State
+    -store="shopping_list"
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+```
+
+Now, let's split the store into two CParts using the `-name=` preprocessor attribute to give a custom name to one of them:
+
+```django
+<State
+   text="Coffee"
+></State>
+<State
+    -store="shopping_list"
+    -name="shopping_list"
+    list:='["Milk", "Bread", "Candy"]'
+></State>
+```
+
+Now we have two CParts total, one for the text (which we keep private, since that's the default when you don't have a `-name`), and one for the list (which we'll keep as a public store).
+
+
+## Patching up references
+
+
+### Steps
+
+There are the two steps for whenever you want to give a custom name to a CPart.
+
+- Step 1: Use the `-name` attribute to rename, and
+- Step 2: Change all references to the new name in the _Template_, _Script_, and other Component Parts
+
+### Patching up the Script CPart
+
+We can use these steps to start patching up references:
+
+```django
+<Script>
+    function addItem() {
+        shopping_list.list.push(state.text); // add to list
+        state.text = ""; // clear input
+    }
+</Script>
+```
+
+To recap, the two important things we did with this split: 1) the `-name=` attribute to rename the second shopping list, and 2) that the shopping list then gets used as `shopping_list.list.push()` in the `addItem` function in the `Script` tag.
+
+### Patching up the Template CPart
+
+So, we've already patched up _Script_, let's now patch up _Template_. We'll need to change it in only one spot: The `{% for %}` template-tag loop. This is because the other reference to `state` (notably, the `[state.bind]` directive) is fine, since it is referring to the default / private state anyway.  See below:
+
+```django
+<Template>
+  <ol>
+    {% for item in shopping_list.list %}
+      <li>{{ item }}</li>
+    {% endfor %}
+    <li>
+      <input [state.bind] name="text" />
+      <button @click:=script.addItem>Add</button>
+    </li>
+  </ol>
+</Template>
+```
+---
+
+## All together: Web components which mix private state and public shared store data
+
+For a complete example, try saving the snippet below as an HTML file, then open using your browser. Since it has no dependencies other than the 2000 line JS file, you can try out the demo without anything else (not even a test server is needed).
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="ToDoList">
+    <Template>
+      <ol>{% for item in shopping_list.list %}<li>{{ item }}</li>{% endfor %}
+        <li><input [state.bind] name="text" /><button @click:=script.addItem>Add</button></li>
+      </ol>
+    </Template>
+    <State
+       text="Coffee"
+    ></State>
+    <State
+        -store="shopping_list"
+        -name="shopping_list"
+        list:='["Milk", "Bread", "Candy"]'
+    ></State>
+    <Script>
+        function addItem() {
+            shopping_list.list.push(state.text); // add to list
+            state.text = ""; // clear input
+        }
+    </Script>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<h1>Shopping list #1:</h1> <x-TodoList></x-TodoList>
+<h1>Shopping list #2:</h1> <x-TodoList></x-TodoList>
+```
+
+**And in the browser:**
+
+
+![Firefox Dev Tools showing the components that share one state variable but not the others](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/wm9qsatc9ic13tfelke1.png)
+
+
+## Conclusion
+
+
+
+Hope this code is useful! Next time I'll start going over the many ways to bring in extra data or code using another preprocessor: `-src=`

@@ -103,3 +103,30 @@
         -src="./MarkdownToC/MarkdownToC.css"
     ></Style>
 </Component>
+
+
+
+<!-- Article List visible on Learn by Example -->
+<Component namespace="cms" name="ArticleList">
+    <Props
+        show
+    ></Props>
+    <Template
+        -src="./ArticleList/ArticleList.html"
+    ></Template>
+    <State
+        results:={}
+        paths:=[]
+        loading:=null
+        ready:=null
+    ></State>
+    <StaticData
+        -src="../../data/pages.txt"
+    ></StaticData>
+    <Script
+        -src="/static/components/cms/ArticleList/ArticleList.js"
+    ></Script>
+    <Style
+        -src="./ArticleList/ArticleList.css"
+    ></Style>
+</Component>

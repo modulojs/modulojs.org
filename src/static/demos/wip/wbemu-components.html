@@ -1,0 +1,68 @@
+
+<Component name="WhisperEmu" namespace="wbemu">
+    <Template>
+        {% for print in state.prints %}
+            <div class="printout"><div class="printout-thermal
+              {% if state.thermal-effect %}thermal-effect{% endif %}">{{ print }}</div></div>
+        {% endfor %}
+    </Template>
+    <State
+        thermal-effect:=true
+        prints:='["Hello print world"]'
+    ></State>
+    <WBMachine
+    ></WBMachine>
+    <Style -src="http://whisperbox.org/static/fonts/all_stylesheet.css"></Style>
+    <Style>
+        :host {
+            --paper-width: 57mm;
+            --paper-padding: 2mm;
+            --paper-font-size: 4mm;
+            --threshold: 2%;
+        }
+        .printout {
+            --bwidth: 2px;
+            border: var(--bwidth) solid #00000066;
+            padding: var(--paper-padding);
+            width: calc(var(--paper-width) + var(--bwidth));
+            display: block;
+            box-sizing: border-box;
+            background: #F5FFF9;
+            margin: 5px;
+            font-family: "Latin Modern", serif;
+        }
+        .printout-thermal {
+            background: #F5FFF966;
+            color: black;
+            font-size: var(--paper-font-size);
+        }
+        .thermal-effect {
+            filter: brightness(calc(100% + var(--threshold))) grayscale(100%) contrast(1000%);
+        }
+    </Style>
+</Component>
+
+<Component name="WhisperBox" namespace="wbemu">
+    <Template>
+        <img @click:=script.showEmu src="" />
+        <div style="display: {{ state.emuvisible|yesno:'block,none' }}">
+            <wbemu-WhisperEmu></wbemu-WhisperEmu>
+        </div>
+        <span @click:=script.showEmu style="font-size: 200px">🗳️ </span>
+    </Template>
+    <State
+        emuvisible:=true
+    ></State>
+    <Style>
+        :host {
+            display: block;
+            border: 1px solid black;
+        }
+    </Style>
+    <Script>
+        function showEmu () {
+            state.emuvisible = true;
+        }
+    </Script>
+</Component>
+

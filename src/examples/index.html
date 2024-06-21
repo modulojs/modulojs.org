@@ -8,8 +8,9 @@
 
     <cms-MarkdownToC>
         <x1 name="demogrid">Demo Grid</x1>
-        <x1 name="startingtemplate">Starting Template</x1>
+        <x1 name="learn">Learn by Example</x1>
         <x1 name="advancedusage">Advanced Usage</x1>
+        <x1 name="startingtemplate">Starting Template</x1>
     </cms-MarkdownToC>
 
     <a name="demogrid"></a>
@@ -21,15 +22,14 @@
     <x-EditorGrid></x-EditorGrid>
 
 
-    <a name="startingtemplate"></a>
-    <h1>Starting Template</h1>
-    <p>Starting a new project, or looking for a bigger example of an entire
-    website? Download or use the following starter templates for examples on
-    how to integrate with a variety of other services and libraries.</p>
+    <a name="learn"></a>
+    <h1>Learn by Example</h1>
+    <p><strong>Quick component tutorials:</strong> Learn how to make these
+    components in simple, step-by-step tutorials. Each tutorial will only take
+    5-10 minutes, so it's a great way to learn Modulo techniques while building
+    up little projects.</p>
 
-    <!--<a href="https://unpkg.com/create-modulo@0.0.32/build/quick-pages/index.html">Demo</a>-->
-
-    <x-ExampleList list="starterTemplates"></x-ExampleList>
+    <cms-ArticleList show="learn"></cms-ArticleList>
 
     <a name="advancedusage"></a>
     <h1>Advanced Usage</h1>
@@ -42,6 +42,16 @@
     they become fully recommended.</p>
 
     <x-ExampleList list="advanced"></x-ExampleList>
+
+    <a name="startingtemplate"></a>
+    <h1>Starting Template</h1>
+    <p>Starting a new project, or looking for a bigger example of an entire
+    website? Download or use the following starter templates for examples on
+    how to integrate with a variety of other services and libraries.</p>
+
+    <!--<a href="https://unpkg.com/create-modulo@0.0.32/build/quick-pages/index.html">Demo</a>-->
+
+    <x-ExampleList list="starterTemplates"></x-ExampleList>
 
     <!--
     <a href="showcase"></a>

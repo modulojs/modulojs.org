@@ -78,6 +78,7 @@ function updateCallback(renderObj) {
     // Add in colors for Modulo tag names / attributes
     let html = syntaxHighlight(text, opts);
     html = html.replace(/"hljs-name">([A-Z])/g, '"hljs-modulo-deftype">$1');
+    html = html.replace(/"hljs-attr">(-[a-z])/g, '"hljs-modulo-defprocessor">$1'); // lowercase, dash prefixed
     html = html.replace(/"hljs-attr">([A-Z])/g, '"hljs-modulo-deftype-attr">$1');
     html = html.replace(/"hljs-name">([a-z]+-[A-Z])/g, '"hljs-modulo-component-tag">$1');
     html = html.replace(/"hljs-string">(true|false|null)/g, '"hljs-modulo-attr-value-lit">$1');

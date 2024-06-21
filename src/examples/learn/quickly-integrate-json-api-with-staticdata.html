@@ -1,0 +1,183 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Quickly integrating a JSON API with StaticData
+description: In this tutorial I will show how StaticData can be used to very quickly assemble web components that...
+published: true
+published_at: 2023-11-16T14:53:36.485Z
+slug: the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771
+path: /michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771
+url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771
+published_timestamp: 2023-11-16T14:53:36Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F86sek34wmuge5lz62o0i.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771
+reading_time_minutes: 5
+---
+
+In this tutorial I will show how `StaticData` can be used to very quickly
+assemble web components that bring in JSON data or API data and mount it on the
+web. This can work with any JSON or API data, and can even support other
+formats as well (e.g. certain CSV formats are supported out-of-the-box!)
+
+## When to use Modulo.js for templating APIs or JSON
+
+This is something that Modulo.js does really well, since it's one of the most
+common tasks that frontend engineers have to do. Basically, have you ever been
+in the following situation?
+
+- I want to make a basic static site, but I wish I could keep one part of it
+  automatically updating from a JSON or API source (e.g. an event calendar, or
+  AirTable, or Google Sheet)
+- I am using a complex and heavily customized framework (e.g. Wordpress,
+  Drupal, or even Rails), but it's much harder to insert API data in any way
+  they suggest. I wish I could just stick _this_ API data right _here_, with
+  just a snippet I can copy and paste into the template!
+- I am a new developer or student who wants to know the easiest, least complex
+  way to get practice combining HTML with data (perhaps the most important
+  frontend skill to learn)
+
+**If one of those seem like your situation, then this is the tutorial for
+you!**
+
+
+## Starting out with a component
+
+In this tutorial, we'll use the GitHub API. Why? [It's
+well-documented](https://docs.github.com/en/rest/overview/comparing-githubs-rest-api-and-graphql-api?apiVersion=2022-11-28),
+and no token is needed for up to 60 requests per hour. However, any JSON and
+many CSV APIs should work. Also, files saved on a static server will behave the
+same, so if you have a data set, use a converter to export whatever file format
+it's in now into the JSON format, and save that file somewhere in order to
+follow this tutorial.
+
+
+Let's start with a very basic component:
+
+```html
+<Template>
+    <strong>Name:</strong>  <br />
+    <strong>Site:</strong>  <br />
+    <strong>Tags:</strong> 
+</Template>
+```
+
+The next step is identifying the API or JSON URL we want to use. For example,
+to get information on the Modulo framework itself, we would do:
+`https://api.github.com/repos/modulojs/modulo`. Or, a personal repo (user
+`michaelpb` and repo `whiteboard`) might look like this:
+`https://api.github.com/repos/michaelpb/whiteboard`
+
+Once you've identified the URL and confirmed it works, then adding with a
+`StaticData` CPart is the easiest part, since it takes only 3 lines of
+component code (put after the _Template_):
+
+```html
+<StaticData
+    -src="https://api.github.com/repos/modulojs/modulo"
+></StaticData>
+```
+
+To explain: `StaticData` brings in and parses a data source based on extension
+(defaulting to JSON), and will also bundle the data when compiled or built (so
+no more requests are needed).
+
+## Adding template variables to show data
+
+Now that we've added the _StaticData_ CPart, we can add references to it in the
+_Template_ to show the data itself:
+
+```django
+<Template>
+    <strong>Name:</strong> {{ staticdata.name }} <br />
+    <strong>Site:</strong> {{ staticdata.homepage }} <br />
+    <strong>Topics:</strong> {{ staticdata.topics }}
+</Template>
+```
+
+To dissect what we did: `staticdata` is the name of the data we bring in (note
+that it's `lowercase`), and `.` is used to access "inside" of that data (just
+like in JavaScript). Thus, `.name` accesses the `"name":` JSON data property,
+and so on.
+
+However, the `topics` is all "smooshed" together. We want to make it better
+styled. Let's now practice making it in separate paragraphs.
+
+## Using a for loop to loop through "plural" data
+
+We'll convert the simple variable substitution syntax (that is `{{ ... }}`)
+into the more appropriate for-loop template repetition syntax (that is,
+`{% for ... in ... %}...{% endfor %}`. We'll combine that with HTML syntax for
+`<ul>` and `<li>` to make an unordered list. Observe: 
+
+```django
+<Template>
+    <strong>Name:</strong> {{ staticdata.name }} <br />
+    <strong>Site:</strong> {{ staticdata.homepage }} <br />
+    <strong>Topics:</strong>
+    <ul>
+      {% for topic in staticdata.topics %} 
+        <li>{{ topic }}</li>
+      {% endfor %}
+    </ul>
+</Template>
+```
+
+
+## Adding bootstrapping code
+
+Finally, if you are new to ModuloJS, you might be wondering how we can actually
+use this code. Well, the boilerplate for Modulo is just a few lines, and since
+it has no dependencies other than the 2000 line JS file, we can build out the
+demo without anything else (not even a test server is needed).
+
+The boilerplate looks like:
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+   <!-- Component definitions go here... -->
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+```
+
+
+##  All together: Web components which bring in JSON API data and mix it with HTML
+
+
+So, combining the code above with this boilerplate, and a `<Component
+name="DisplayAPI">` definintion so we can mount it on the page, and we have a
+complete working example! Try  the code below as an HTML file for a complete
+example, then open using your browser. 
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="DisplayAPI">
+    <Template>
+        <strong>Name:</strong> {{ staticdata.name }} <br />
+        <strong>Site:</strong> {{ staticdata.homepage }} <br />
+        <strong>Topics:</strong>
+        <ul>
+          {% for topic in staticdata.topics %} 
+            <li>{{ topic }}</li>
+          {% endfor %}
+        </ul>
+    </Template>
+    <StaticData
+        -src="https://api.github.com/repos/modulojs/modulo"
+    ></StaticData>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+
+<!-- to use it: -->
+<x-DisplayAPI></x-DisplayAPI>
+```
+
+**In the browser:**
+
+
+![Browser showing the results of Template code, showing how Name and Site etc
+are filled in with data from the
+API](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/d9n6psvi94bqp9rss5zo.png)
+

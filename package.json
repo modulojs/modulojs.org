@@ -7,7 +7,9 @@
     "scripts": {
         "help": "modulocli help",
         "start": "npm exec -y http-server -- -p 3334 -e html src/",
+        "start-3335": "npm exec -y http-server -- -p 3335 -e html src/",
         "startcms": "cd src && npm exec -y netlify-cms-proxy-server",
+        "rebuild-pages": "find src/examples/ src/docs src/devlog src/tutorial -iname *.html > src/static/data/pages.txt",
         "clean": "rm -r build/*",
         "build": "modulocli ssg -f -v"
     },

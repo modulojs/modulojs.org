@@ -1,0 +1,173 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Quickly making a font picker tool
+description: In previous "2000 line challenge" tutorials, I showed how to use Modulo.js to create a gradient...
+published: true
+published_at: 2023-12-23T16:47:48.811Z
+slug: making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d
+path: /michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d
+url: https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d
+published_timestamp: 2023-12-23T16:47:48Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fixwj43r2eb989umwjav6.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d
+reading_time_minutes: 4
+---
+In previous tutorials, I showed how to use Modulo.js to create [a gradient picker](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), [-store= attribute](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80), and [JSON and APIs](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80) to quickly assemble small web components without any custom JavaScript. This tutorial is a continuation of this, a task very relevant to front-end developers:  Let's build a font picker or text designer tool, to better visualize CSS, or expose to our users in a theme or style customizing interface.
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the bottom and simply copy the ~40 lines of HTML code into any local HTML file, then open that in your browser to see the result locally. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+---- 
+
+## What we're building
+
+Let's create a font selector and previewer tool. A picture is worth a thousand words, so let's see the final result below:
+
+![Post designer](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/i261n2f0i0bqcro5qefo.png)
+
+This could form the basis of a theme customizer screen, or a template customizer, or maybe a user settings page. Alternatively, like the previous tools we looked at, it could be form the basis of internal tools for a design team, especially if one modifies it to only select from pre-approved font pairings or selections according to your style guides. [Modulo.js](https://modulojs.org/) is the perfect tool for this job. It's a tiny 2000 line framework with zero dependencies, and an online tutorial with a huge library of examples: [ModuloJS.org/Examples](https://modulojs.org/examples/)
+
+
+----
+
+
+## Starting out with a basic font-weight picker
+
+This tutorial consists of several select boxes, and previewing the style of each. Let's start with getting font-weight to work, and then go from there:
+
+```django
+<Template>
+    <label for="weight">Weight</label>
+    <select [state.bind] name="weight">
+        <option value="200">200 (Light)</option>
+        <option value="400">400 (Regular)</option>
+        <option value="800">800 (Bold)</option>
+    </select>
+    {{ state.weight }}
+</Template>
+<State
+    weight="200"
+></State>
+```
+
+Here, we have a `select` input. This will cause a drop-down selector to show in the browser. It's hooked up (bound) to a _State_ CPart. We use the `name="weight"` attribute to tell the _State_ CPart which state variable should be "assigned" (bound) to this input. The `[state.bind]` directive is what actually triggers the binding. Make sense? If not, to learn more on the State CPart, consider trying this interactive tutorial on the Modulo JS website: [Modulo JS - Ramping Up Part 2: State](https://modulojs.org/tutorial/ramping-up/part2.html#state)
+
+Now, the next step is actually making this "font-weight" style a paragraph tag:
+
+```django
+<p style="font-size: 34px; font-weight: {{ state.weight }};">Testing 123</p>
+```
+
+See how the `{{ state.weight }}` is now in a `style=` attribute? This lets us preview the weight directly.
+
+
+## Tweaking appearance & adding custom text
+
+Right now things are all misaligned. Let's add a `Style` CPart so we can style the `:host` (root element of the entire component) using a CSS grid styling so the `<label>` tags end up on the left and the inputs end up on the right:
+
+```html
+    <Style>
+        :host {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+        }
+    </Style>
+```
+
+Now, let's add the customizable text. We'll start by tweaking the `p` tag. Note that we also added a grid-column so it spans both sides:
+
+```django
+<p style="grid-column: 1 / 2; font-size: 34px; font-weight: {{ state.weight }};">
+    {{ state.text }}
+</p>
+```
+
+Now, we'll add the new State variable & input:
+
+```django
+{# (In the Template...) #}
+    <label for="text">Text</label>
+    <input [state.bind] name="text" />
+{# (In the State...) #}
+    text="Testing 123"
+```
+
+
+## Adding the remaining font selectors
+
+
+Note that with these form fields, we are just following the same pattern as before. Binding to _State_ is the same regardless of if it's a `input` or a `select`. This means we'll just "rinse and repeat for the remaining fields as well. 
+
+Examine the following code snippet. Do you see the pattern of how to make bound `<select>` elements in Modulo?
+
+```django
+        <select [state.bind] name="family">
+            <option value="serif">Serif</option>
+            {# ... more options ... #}
+        <select [state.bind] name="style">
+            <option value="regular">Regular</option>
+            {# ... more options ... #}
+```
+
+## x-FontPreviewer: The Final Result
+
+Once we repeat the same pattern of HTML code, and add the necessary CSS tweaks to the `style=` attribute, we end up with the final result:
+
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="FontPreviewer">
+    <Template>
+        <label for="text">Text</label>
+        <input [state.bind] name="text" />
+        <label for="weight">Weight</label>
+        <select [state.bind] name="weight">
+            <option value="200">200 (Light)</option>
+            <option value="400">400 (Regular)</option>
+            <option value="800">800 (Bold)</option>
+        </select>
+        <label for="family">Family</label>
+        <select [state.bind] name="family">
+            <option value="serif">Serif</option>
+            <option value="sans-serif">Sans-Serif</option>
+            <option value="monospace">Monospace</option>
+        </select>
+        <label for="style">Style</label>
+        <select [state.bind] name="style">
+            <option value="regular">Regular</option>
+            <option value="italic">Italic</option>
+            <option value="oblique">Oblique</option>
+        </select>
+        <p style="
+                grid-column: 1 / span 2;
+                font-size: 34px;
+                font-style: {{ state.style }};
+                font-family: {{ state.family }};
+                font-weight: {{ state.weight }};
+            ">
+            {{ state.text }}
+        </p>
+    </Template>
+    <State
+        family="sans-serif"
+        style="regular"
+        weight="400"
+        text="Testing 123"
+    ></State>
+    <Style>
+        :host {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+        }
+    </Style>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-FontPreviewer></x-FontPreviewer>
+```
+
+
+
+**Try it out now (30 seconds):** Copy and paste the above code into an empty file, save with a `.html` extension, then open directly in your browser.  I hope you enjoyed that tutorial!

@@ -1,0 +1,113 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Using two-way state binding and the global store
+description: In this tutorial I will quickly show how to use the -store= attribute on the State Component Part to...
+published: true
+published_at: 2023-11-07T19:50:54.241Z
+slug: the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf
+path: /michaelpb/the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf
+url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf
+published_timestamp: 2023-11-07T19:50:54Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fnatt233rrxrqrxvoog1q.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf
+reading_time_minutes: 4
+---
+
+In this tutorial I will quickly show how to use the `-store=` attribute on the `State` Component Part to enable Modulo.js web components that have named, pseudo-global stores. On top of that, it allows these web components to share state.
+
+In the next tutorial, I'll show how to have multiple _State_ CParts in a single _Component_ so that you can mix private state data with a public state store that you subscribe to. This allows, for example, for a form component to both show global store data (e.g. user login info), and also private state data (e.g. the current form status). So... stay tuned for that!
+
+
+
+## Wait, what is this 2000-line framework, Modulo.js?
+
+Modulo.js is a solution to a hard challenge: How can we make a very tiny, robust, useful framework in 2000 lines of understandable code? Basically, how do we build frameworks that aren't mysterious labyrinths of `node_module` dependencies? A Vue/Svelte/React-lite framework a single, easy-to-read file is appealing to beginners and wizened old-head hackers alike!
+
+Modulo.js is a single 2000 line file without any dependencies. It is HTML-first, and browser-first, and integrates with only a few lines of code in any HTML file. It immediately enables you to write productive Web Components. It has most of the features you'd expect from frontend or JAMStack SSG stacks with React.js or Vue.js including state, props, directives, liquid-style templating, data binding and reactive forms, global server-side rendering, hydration, DOM reconciliation tools, and more. If you just want to learn more about this, check it out here: [ModuloJS.org](https://modulojs.org)
+
+
+----
+
+## Turning private state into pseudo-global store
+
+
+Let's start with the classic "MVC TODO" app in Modulo:
+
+
+```html
+<State
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+<Script>
+    function addItem() {
+        state.list.push(state.text); // add to list
+        state.text = ""; // clear input
+    }
+</Script>
+```
+
+Okay, ommitted is a _Template_ CPart (see below for code) that renders an `ol` (ordered list) HTML content using a `{% for %}` template-tag, however the rest consists of state data being declared on a _State_ CPart, while being modified by the `addItem` function defined in the _Script_.
+
+Right now, if we were to use this (e.g. `<x-TodoList></x-TodoList>`), each instance would have a private state. This means two things: 1) the state is only available at `element.cparts.state.data` (e.g., on the element itself), meaning it will be forgotten if removed, and 2) the state is private to most instances. Both of these things are usually what you want. However, sometimes you might want to keep data attached at a global location, or share data between components, so if one component updates, it will update them all.
+
+## How to configure a Modulo _State_ to use a store
+
+Configuring a store for a _State_ is easy, it just requires changing one line:
+
+```html
+<State
+    -store="shopping_list"
+    list:='["Milk", "Bread", "Candy"]'
+    text="Coffee"
+></State>
+```
+
+Here we created a new store with the name `shopping_list`. This means that this data will now be maintained even if the component goes away and comes back.  Furthermore, it means that all `x-TodoList` components will share the same data.
+
+## How to access global store data
+
+![Global Store Data](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/natt233rrxrqrxvoog1q.png)
+
+So, I keep on saying it's "pseudo-global", and by that I mean it uses the current `Modulo` instance as it's parent. That means it won't pollute the global namespace, and you can even configure multiple `modulo` instances on the same page if needed, in the case of unintended conflicts. However, this is a more rare situation: For our purposes, it might as well be global.
+
+Here's how to access the global data by default (see screenshot above): `modulo.stores.shopping_list.data`
+
+---
+
+## All together: Web components with two-way state binding with only one 2000 line file dependency
+
+
+For a complete example, try saving the snippet below as an HTML file, then open using your browser. Since it has no dependencies other than the 2000 line JS file, you can try out the demo without anything else (not even a test server is needed).
+
+```html
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="ToDoList">
+    <Template>
+      <ol>{% for item in state.list %}<li>{{ item }}</li>{% endfor %}
+        <li><input [state.bind] name="text" /><button @click:=script.addItem>Add</button></li>
+      </ol>
+    </Template>
+    <State
+        -store="shopping_list"
+        list:='["Milk", "Bread", "Candy"]'
+        text="Coffee"
+    ></State>
+    <Script>
+        function addItem() {
+            state.list.push(state.text); // add to list
+            state.text = ""; // clear input
+        }
+    </Script>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<h1>Shopping list #1:</h1> <x-TodoList></x-TodoList>
+<h1>Shopping list #2:</h1> <x-TodoList></x-TodoList>
+```
+
+## Conclusion
+
+Hope this code is useful! Next time I'll go over how to add multiple state variables, so we can keep `text` private, while making `list` the only public / shared variable.

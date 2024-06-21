@@ -1,0 +1,22 @@
+<script Configuration -src="./Portal.js"></script>
+
+<Component name="PortalTester">
+    <Params
+        moreinfo
+    ></Params>
+    <Template>
+        <h1>PORTALS</h1>
+        <hr />
+        <slot></slot>
+        {% if params.moreinfo is "true" %}
+            <h2>MORE INFO (IS TRUE!)</h2>
+        {% endif %}
+    </Template>
+    <Script>
+        function updateCallback() {
+            console.log('rerender succ');
+        }
+    </Script>
+    <Portal></Portal>
+</Component>
+

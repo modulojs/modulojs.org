@@ -1,0 +1,145 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Creating a SVG-based Word Art curve designer
+description: Hey all -- as I'm back to Modulo.js tutorial writing, I am always looking for more content ideas....
+published: true
+published_at: 2024-01-22T19:58:41.061Z
+slug: creating-a-word-art-text-curving-design-picke-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-4ei7
+path: /michaelpb/creating-a-word-art-text-curving-design-picke-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-4ei7
+url: https://dev.to/michaelpb/creating-a-word-art-text-curving-design-picke-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-4ei7
+published_timestamp: 2024-01-22T19:58:41Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fre8smvn793lg6vanqvgz.gif
+tag_list: webdev,javascript,programming,tutorial
+canonical_url: https://dev.to/michaelpb/creating-a-word-art-text-curving-design-picke-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-4ei7
+reading_time_minutes: 5
+---
+Hey all -- as I'm back to Modulo.js tutorial writing, I am always looking for more content ideas. **Have an idea? Be sure to let me know in the comments!**
+
+Previously, I showed [how to use the `-store=` processor to make a reactive shared _State_ store between components](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-build-web-components-with-two-way-state-binding-with-only-1-file-and-no-nodemodules-2jmf), [a deep dive into Modulo's Markdown-HTML file format](https://dev.to/michaelpb/how-i-made-a-markdown-html-dual-file-format-modulojs-development-k48), or, last week, [how to make a circular text-art tool](https://dev.to/michaelpb/making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7). Today, let's make another SVG text design tool, except using `<path>` instead of `<circle>`. While slightly more complex, using `<path>` elements for Text allows for fun and arbitrary text arrangements -- and, most importantly, is supported by Chrome!
+
+## The final result
+
+![Screenshot showing range sliders allowing to adjust the alignment of Modulo Text FX letters, currently aligned to cause them to spill into a wave-like pattern](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/k70vwkg5b61ql55kvul7.png)
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll
+to the end and copy the ~30 lines of HTML code into any local HTML file, and
+then open it in your browser. Modulo has no dependencies and even runs embedded
+in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Starting with SVG and text input
+
+Let's add an `SVG` along with a text input, bound to the text. Let's use a `<Template>` and a `<State>`  component parts, as follows:
+
+```django
+<Template>
+  <section>
+    <p><input [state.bind] name="text" title="Text" maxlength="15" /></p>
+  </section>
+  <svg viewBox="0 0 200 100" style="width: 55%; margin-top: 100px">
+      <path id="curve" fill="transparent" d="M 10,50 C 20,40 40,10 60,40 80,70 100,65 120,90" />
+      <text><textPath href="#curve">{{ state.text }}</textPath></text>
+  </svg>
+</Template>
+<State
+    text="Modulo Text FX!"
+></State>
+```
+
+
+
+In this snippet, we have a `<input>` element that's bound to _State_ using `[state.bind]`. If the _State_ concept is giving you conceptual trouble,  [consider warming up with this tutorial on creating a font design tool](https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d), or the [the corresponding section in the interactive Modulo tutorial](https://modulojs.org/tutorial/ramping-up/part2.html). If SVG `<textPath>` elements are confusing you, check out [MDN's documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath). After that, we have an `<svg>` element, containing `<path>` and `<textPath>` elements. These are linked together with `id="curve"`, and `href="#curve"` respectively. The `{{ state.text }}` links the state to the `<textPath>` -- [also in previous tutorial](https://dev.to/michaelpb/making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7). But unlike the previous tutorial, we'll use a `<path>` element that takes a `d=` attribute, which consist of a series of `x,y` coordinate points for each point (dot) on the curve itself ([documented here](It's not 100% needed to fully understand the syntax here, but if you are curious, [check out MDN's tutorial](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/path).)).
+
+Okay, I realize that's dense code, but bare with me -- it's only a few more steps to get the tool working!
+
+
+
+## Moving the points to _State_
+
+We currently only have `state.text`. We need to also store the points themselves, so we can adjust them with sliders. Let's move to state the Array of points:
+
+```django
+<State
+    text="Modulo Text FX!"
+    points:='[ [ 20,40 ], [40,10], [60,40], [80,70], [100,65], [120,90] ]'
+></State>
+```
+
+The `:='[` and `]'` syntax is the syntax for creating _Arrays_ in Modulo: If this concept is new to you, consider reading the section on _Container types_ in [part 4 of the Modulo.js interactive tutorial](https://modulojs.org/tutorial/ramping-up/part4.html#datatypes). Next, we need to put the points back into our SVG. We can use the `|join:' '` filter to combine the points with spaces:
+
+```django
+<path id="curve" fill="transparent" d="M 10,50 C {{ state.points|join:' ' }}" />
+<text><textPath href="#curve">{{ state.text }}</textPath></text>
+```
+
+
+
+## Creating a hard-coded, rotated range input
+
+At this point, we have moved the points into the _State_ variable, but we still don't have range sliders for them! Let's do that next. We'll use a "for-loop" for this, so we can repeat the same range-slider code for every point in our point Array. But before we do that, let's start with a "hardcoded" range-slider, which will only control "Point #2", just to make sure we can at least control one of them successfully:
+
+
+```html
+<label style="display: inline-block; width: 5%">
+  <strong>2</strong>
+  <input [state.bind] name="points.2.1"
+      style="position: relative; transform: rotate(90deg); left: -60px; top: 60px"
+      type="range" max="100" min="0" />
+</label>
+```
+
+Let's decipher this: The label and input have `style=` attributes to space it by 5% width of the page, rotate the input 90 degrees, and move it 60x60 pixels. The `name="points.2.1"` (equivalent to `points[2][1]` in other languages) causes the input to control one specific value in the _State_ variable.
+
+
+
+
+## Duplicating the input with a for-loop
+
+We've successfully gotten an input to work with a single point (`points.2`). We could copy and paste this `name="points.2.1"` code 6 times (once for each point), altering each copy to `name="points.3.1"`, `name="points.4.1"` etc. This would allow us to control every point. Or, we could save ourselves time, and use the Modulo _Template_ `for loop`. Let's see how that looks:
+
+```django
+{% for index, point in state.points %}
+    {# ... #} <strong>{{ index }}</strong>
+    <input [state.bind] name="points.{{ index }}.1" {# ... #}
+{% endfor %}
+```
+
+Note the only difference here is the `2` is replaced with `{{ index }}` -- the "index" of the current point we are looping through.
+
+## `<x-CurvedTextArtTool>` - Embeddable results
+
+Add the range smooth-rendering `="input"` tweak, [explained in this tutorial](https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6#tweak-smooth-rerendering-with-sliders), and we get the following results. Hope you enjoy this tutorial -- follow for more like this!
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="CurvedTextArtTool">
+    <Template>
+      <section>
+        <p><input [state.bind] name="text" title="Text" maxlength="15" /></p>
+        {% for index, point in state.points %}
+          <label style="display: inline-block; width: 5%">
+            <strong>{{ index }}</strong>
+            <input [state.bind]="input" name="points.{{ index }}.1"
+                style="position: relative; transform: rotate(90deg); left: -60px; top: 60px"
+                type="range" max="100" min="0" />
+          </label>
+        {% endfor %}
+      </section>
+      <svg viewBox="0 0 200 100" style="width: 55%; margin-top: 100px">
+          <path id="curve" fill="transparent" d="M 10,50 C {{ state.points|join:' ' }}" />
+          <text><textPath href="#curve">{{ state.text }}</textPath></text>
+      </svg>
+    </Template>
+    <State
+        text="Modulo Text FX!"
+        points:='[ [ 20,40 ], [40,10], [60,40], [80,70], [100,65], [120,90] ]'
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-CurvedTextArtTool></x-CurvedTextArtTool>
+```

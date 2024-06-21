@@ -1,0 +1,170 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Creating a CSS-based 3D extruded Word Art picker
+description: "HTML-only, no JS!" ✨🪄   Hey all! Today's Modulo.js tutorial will be another "HTML-only, no...
+published: true
+published_at: 2024-01-27T15:09:12.541Z
+slug: creating-a-3d-extruded-text-word-art-picker-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-3b86
+path: /michaelpb/creating-a-3d-extruded-text-word-art-picker-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-3b86
+url: https://dev.to/michaelpb/creating-a-3d-extruded-text-word-art-picker-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-3b86
+published_timestamp: 2024-01-27T15:09:12Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fmacld7vu48992wqirgt7.gif
+tag_list: javascript,programming,tutorial,webdev
+canonical_url: https://dev.to/michaelpb/creating-a-3d-extruded-text-word-art-picker-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-3b86
+reading_time_minutes: 5
+---
+## "HTML-only, no JS!" ✨🪄
+
+Hey all! Today's Modulo.js tutorial will be another "HTML-only, no JS"
+tutorial. The 2000-line, small-but-mighty Modulo framework adds just enough JS
+magic that we can build these cool design tools in pure HTML. **Have an idea
+for a next topic? Be sure to let me know in the comments!**
+
+In previous tutorials, I covered topics like [adding an API or JSON/CSV file in
+a few lines of
+HTML](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771),
+and more recently, I showed how to make [word art skew
+adjusters](https://dev.to/michaelpb/making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8)
+or [a word art shadow throw and range picker
+tool](https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6).
+Today's tutorial will be similar to these last two, and could even be combined
+(lemme know if you try this!). However, today we're focused on generating a
+more advanced 3D effect from a palette of colors using the power of Modulo's
+`{% for %}` loop template tag. Before we begin, a warning: Text-shadows are
+intensive and can slow down pages (especially on mobile), so use this technique
+cautiously on any public-facing pages!
+
+## The final result
+
+### Animated GIF
+
+![An animated GIF of extruding 3D text letters, in a three striped palette pattern of pastel colors](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/tkm44crj61gtj778vm1j.gif)
+
+
+
+### Screenshot
+
+![A 3D text designer showing extruded letters with shading that shows them in 3D, in a three striped palette pattern of pastel colors: Yellow, mint, and lavendar.](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1ki9m0owmyilg8r1y99n.png)
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Wanna skip ahead? Scroll to the end and copy the ~30 lines of HTML code into any local HTML file, and then open it in your browser. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Starting with H1 and a text input
+
+As with previous tutorials, we'll start with `<Template>` and `<State>`:
+
+```modulo
+<Template>
+  <label>Text: <input [state.bind] name="text" /></label>
+  <h1 style="text-shadow: 0 0 3px #fff
+      ,1px 1px 0    red
+      ,1px 1px 10px #00000033;">{{ state.text }}</h1>
+</Template>
+<State
+  text="Modulo 3D Text Generator!"
+></State>
+```
+
+In this snippet, we have a `<input>` element that's bound to _State_ using `[state.bind]`, followed by an `H1` element with a hard-coded (red) [text-shadow](https://developer.mozilla.org/en-US/docs/Web/CSS/text-shadow) effect: The `0 0 3px #fff` creates a 3PX white glow around the top, the `1px 1px 0 #B90183` creates the "solid"-looking 3D extrusion effect, and finally the `1px 1px 10px #00000033` creates a 10px blurred shadow at about ~20% opacity. If the _State_ concept is giving you conceptual trouble,  [try this tutorial on a font-picker](https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d), or the play around with the interactive examples in [Part 2 of the Modulo.js tutorial](https://modulojs.org/tutorial/ramping-up/part2.html).
+
+
+
+## Generating a shadow from _State_
+
+Our next step is to make the shadow get auto-generated from state. Let's start by hard-coding 6 shadows (3 red, 3 green):
+
+```modulo
+<State
+    text="Modulo 3D Text Generator!"
+    shadows:='[ "red",  "red", "red", "green", "green", "green" ]'
+></State>
+```
+
+Next, we'll use a `{% for %}` for loop that uses the index as the shadow distance. This creates the "3D" effect. This replaces the hard-coded "red" values with for-loop generated shadows:
+
+```modulo
+<h1 style="
+  text-shadow: 0 0 3px #fff
+  {% for index, shadow in state.shadows %}
+    ,{{ index }}px {{ index }}px 0 {{ shadow }}
+    ,{{ index }}px {{ index }}px 10px #00000033
+  {% endfor %};
+"> ...
+```
+
+This generates a total of 13 shadows (1 extra "white glow" shadow, plus each item in the "shadows" array gets 2 shadows each, so 2 * 6 + 1 = 13). The `:='[` and `]'` syntax is the syntax for creating _Arrays_, and the `{% for %}` template-tag is the syntax to duplicate a bit of HTML for every item in the array (not to mention each _index_, e.g. a number counting up from 0). For further practice, both of these concepts have lots of interactive examples in [part 4 of the Modulo.js tutorial](https://modulojs.org/tutorial/ramping-up/part4.html).
+
+## Adding a palette and shadow add button
+
+Right now, our 3D text generator is sort of working, but it can't be adjusted. Let's make it customizable: First we clear hard-coded values from `shadows:=` array, and then create a new array for our color palette:
+
+```modulo
+<State
+    text="Modulo 3D Text Generator!"
+    shadows:='[ ]'
+    colors:='[ "#B90183", "#A2E4B8", "#FFE45A" ]'
+></State>
+```
+
+Now, [in a similar procedure my last tutorial](https://dev.to/michaelpb/creating-a-word-art-text-curving-design-picke-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-4ei7), let's write a for loop that generates an input for each color in our palette, using the `{{ index }}` variable to "bind" each input to each element in the `colors:=` Array:
+
+```modulo
+{% for index, color in state.colors %}
+  <div style="background: {{ color }}">
+    <button @click:=state.shadows.push
+         payload="{{ color }}">+</button>
+    <label>Palette #{{ index }}
+      <input [state.bind] name="colors.{{ index }}"
+         type="color" /></label>
+  </div>
+{% endfor %}
+```
+
+Here we loop through each color in our color palette, creating "divs" with the background color to preview it, along with buttons that, when clicked, invoke the `state.shadows.push` function to push the "payload" (in this case, the `{{ color }}` itself) onto the shadow array. Thus, every time you click the button, another shadow gets added! If the `@click` event concept is giving you trouble, there are many interactive examples in [part 5 of the Modulo.js tutorial](https://modulojs.org/tutorial/ramping-up/part5.html).
+
+
+
+
+
+## `<x-WordArt3DTool>` - Embeddable snippet 
+
+Combining it all, and adding a few final CSS tweaks to the H1 (`font-size`, `color`, and `transform`), and we get the following results that can be embedded anywhere:
+
+
+```modulo
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="WordArt3DTool">
+    <Template>
+      <label>Text: <input [state.bind] name="text" /></label>
+      {% for index, color in state.colors %}
+        <div style="background: {{ color }}">
+          <button @click:=state.shadows.push payload="{{ color }}">+</button>
+          <label>Palette #{{ index }} <input [state.bind] name="colors.{{ index }}" type="color" /></label>
+        </div>
+      {% endfor %}
+      <h1 style="
+        font-size: 64px;
+        transform: skew(-10deg, -3deg);
+        color: white;
+        text-shadow: 0 0 3px #fff
+        {% for index, shadow in state.shadows %}
+          ,{{ index }}px {{ index }}px 0 {{ shadow }}
+          ,{{ index }}px {{ index }}px 10px #00000033
+        {% endfor %};
+      ">{{ state.text }}</h1>
+    </Template>
+    <State
+      text="Modulo 3D Text Generator!"
+      colors:='[ "#B90183", "#A2E4B8", "#FFE45A" ]'
+      shadows:=[]
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js">/script>
+<x-WordArt3DTool></x-WordArt3DTool>
+```
+

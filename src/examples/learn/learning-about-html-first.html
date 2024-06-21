@@ -1,0 +1,101 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Learning about the Modulo HTML-first approach
+description: In this article, we will look at 1) why Modulo.js aims to be HTML framework first, and 2) how it...
+published: true
+published_at: 2023-09-30T15:55:07.718Z
+slug: what-it-means-for-modulo-to-be-an-html-framework-first-and-why-that-makes-it-simpler-and-more-powerful-3dnh
+path: /michaelpb/what-it-means-for-modulo-to-be-an-html-framework-first-and-why-that-makes-it-simpler-and-more-powerful-3dnh
+url: https://dev.to/michaelpb/what-it-means-for-modulo-to-be-an-html-framework-first-and-why-that-makes-it-simpler-and-more-powerful-3dnh
+published_timestamp: 2023-09-30T15:55:07Z
+cover_image: null
+tag_list: development,webdev,javascript,html
+canonical_url: https://dev.to/michaelpb/what-it-means-for-modulo-to-be-an-html-framework-first-and-why-that-makes-it-simpler-and-more-powerful-3dnh
+reading_time_minutes: 3
+---
+In this article, we will look at 1) why [Modulo.js](https://modulojs.org/) aims to be HTML framework first, and 2) how it achieves that.
+
+---
+
+
+
+## Why HTML?
+
+Modulo was developed with several goals in mind. Here are a few of them, in no particular order, with a brief explanation of each:
+
+* Declarative (Coding should feel like configuration)
+* Explicit (Middleware is included and referenced explicitly)
+* Simple (KISS - Keep it simple, silly!)
+* Educational (It should be easy to start small when learning)
+* Complexity layers (Complexity should be in layers, with simple tasks requiring knowledge of fewer layers)
+
+HTML checks all those boxes: It's declarative and tends to be explicit, and it is so simple and educational that it is often the first thing taught in coding!
+
+That's why Modulo's goal is to add "complexity layers" on top of that. For example, "non-coders" do declarative programming all the time without knowing it, or at least something conceptually similar enough. For example, changing settings in a web browsers, setting a microwave, programming an electronic music keyboard, or writing an email template. *It's all kinda programming... when you think about it!*
+
+---------------
+
+## Let's see the code!
+
+
+See below how _State_ is created using HTML syntax + Template syntax, and then used to create an interactive gradient picker:
+
+```django
+<Template>
+    <!-- (snip) -->
+    <div style="background: linear-gradient(to right,
+              {{ state.from }} {{ state.percent }}%,
+              {{ state.to }});"></div>
+</Template>
+<State
+    from="#AABAAA"
+    to="#5D655E"
+    percent:=50
+></State>
+```
+
+
+----------------
+
+## How Modulo aims to be HTML-first
+
+Modulo aims to be much more HTML-oriented compared to other web framework. In some ways, you might like to think of it as an HTML framework that happens to be written in JavaScript.
+
+
+### HTML-first learning
+
+When learning Modulo through the [Ramping Up with
+Modulo](https://modulojs.org/tutorial/ramping-up/part1.html), it is HTML-first,
+sprinkling in Template syntax and Modulo concepts as needed. Only in the end
+does it touch on JavaScript.
+
+### HTML-first syntax
+
+Modulo is HTML-first in that it piggy-backs off of HTML syntax. Component Parts
+are declared using HTML tags, within other HTML tags, as opposed to within
+JavaScript. It follows HTML syntax and semantics, and does not include a custom
+parser, so it can be compatible with the browser's parser. Script tags embed JS
+into HTML, instead of the other way around (e.g. JSX in React).
+
+
+### HTML-first workflow
+
+Thirdly, it is HTML-first in terms of development workflow. A greenfield
+Modulo-powered website starts as a static site of HTML and CSS files, created
+and edited by hand. As the requirements become more demanding, the vanilla HTML
+tags are gradually swapped for Modulo web-components, with templated HTML and
+bundled CSS. Only as requirements grow beyond the common use-cases offered by
+"canned" CParts does JavaScript come into play.
+
+### HTML-first integration
+
+Finally it is HTML-first in terms of interoperability. Modulo exposes itself as
+a extension to vanilla HTML via the Web Components standard. The boilerplate is
+as lightweight possible: Typically just ~4 lines (Modulo tag, possibly
+including a Library), and you can now integrate your Modulo HTML components
+throughout the rest of the HTML. This means it will comfortably integrate with
+anything that deals with HTML, e.g. PHP, Django, Rails, and even other frontend
+frameworks.
+
+
+

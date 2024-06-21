@@ -1,0 +1,181 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Making a text-effect and SVG circle designer
+description: Hey all, I'm back to writing my Modulo.js tutorial series, and am always looking for more content...
+published: true
+published_at: 2024-01-20T17:50:01.611Z
+slug: making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7
+path: /michaelpb/making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7
+url: https://dev.to/michaelpb/making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7
+published_timestamp: 2024-01-20T17:50:01Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fd0mrpcn36tg9nrot65kx.gif
+tag_list: webdev,javascript,tutorial,programming
+canonical_url: https://dev.to/michaelpb/making-a-text-art-and-svg-circle-picker-design-tool-in-34-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-hm7
+reading_time_minutes: 5
+---
+Hey all, I'm back to writing my Modulo.js tutorial series, and am always
+looking for more content ideas. **If you want to see a certain type of tutorial
+in the future, be sure let me know in the comments -- and follow, if you
+haven't already!**
+
+In my previous tutorials, I showed how to use the single-file, 2000-line,
+small-but-mighty Modulo.js framework to [make a gradient picker component in 13
+lines](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1),
+[quickly embed
+APIs](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771),
+or even [how to build an animated text-shadow "wave" effect text
+picker](https://dev.to/michaelpb/making-a-text-shadow-wave-animation-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-532p).
+This time, we'll be making something like the last one, except instead of using
+pure HTML and CSS, we'll be employing the full power of SVG. This lets us
+really get wild with our text art designer tool! Ready for some creative and
+exciting shapes in SVG Text Art?
+
+
+## The final result
+
+![Screenshot showing design tool with several inputs (offset, border, radius, fill color, and border color) and the words Modulo.js Text FX in a circle around with lavendar and mint colors](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/42y0gu7jzg4tq8pvyrky.png)
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the end and copy the ~40 lines of HTML code into any local HTML file, and then open it in **[Firefox](#firefox-footnotes)*. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Template and SVG
+
+Including SVG in Modulo is as simple as adding it to a _Template_: 
+
+```django
+<Template>
+  <svg viewBox="0 0 600 600" style="width: 600px; float: right">
+    <circle id="circle" cx="60" cy="100" r="40"
+      stroke="{{ state.stroke }}" fill="{{ state.color }}"
+      stroke-width="10" />
+    <text width="2000">
+        <textPath
+            xlink:href="#circle"
+            startOffset="10"
+        >Modulo.js: Text FX!</textPath>
+    </text>
+  </svg>
+</Template>
+<State
+    color="#B90183"
+    stroke="#A2E4B8"
+></State>
+```
+
+In this snippet, we build a 600x600 SVG image (`<svg viewBox="0 0 600 600" ...>`), put a 4-radius circle in it at 60x100, and use `state.stroke` and `state.color` state variables to assign it's color scheme. We then add a text element that "follows" the shape of the circle referring to it by it's ID: `<textPath xlink:href="#circle">`.
+
+
+## Binding color inputs
+
+We have our colors in our state, but the user has no way of adjusting them. Let's add to our _Template_ two bound color inputs:
+
+```django
+<label><input [state.bind] name="color" type="color"> Fill Color</label><br/>
+<label><input [state.bind] name="stroke" type="color"> Border Color</label><br/>
+```
+
+The `[state.bind] name="..."` binds each of these to those state variables, so the component will rerender with the new state when a new color is picked. If you are new to Modulo.js, and state and binding is confusing you, [consider warming up with this tutorial on creating a font design tool](https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d), or the [Modulo JS - Ramping Up Part 2: State](https://modulojs.org/tutorial/ramping-up/part2.html). If SVG `<textPath>` elements are confusing you, check out [MDN's documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/textPath).  
+
+
+
+## Finishing up the other inputs: Offset, Border, Radius, and Text
+
+Start with three new state variables, like the initial `color` and `stroke` ones, except using the data-prop `:=` syntax for the numbers:
+
+```django
+<State
+    text="Modulo.js: Text FX!"
+    radius:=40
+    width:=20
+    offset:=20
+    color="#B90183"
+    stroke="#A2E4B8"
+></State>
+```
+
+And, just like before, add in inputs:
+
+
+```html
+<input [state.bind] name="text" />
+<input [state.bind]="input" name="offset" type="range" min="0" max="300" />
+<input [state.bind]="input" name="width" type="range" min="0" max="40" />
+<input [state.bind]="input" name="radius" type="range" min="10" max="80" />
+```
+
+The first input controls the text (default type), and the other three `input` tags with `[state.bind]="input"` control numbers using `type="range"` (the `="input"` tweak explained in [this tutorial](https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6#tweak-smooth-rerendering-with-sliders)). 
+
+
+## Adding in the new state variables back to the SVG
+
+Let's go back to the SVG to assign the new state variables to `cx=`, `cy=`, `r=`, and `stroke-width=` attributes on the `<circle>`, and the `startOffset` and content of the `<textPath>` itself:
+
+```django
+<circle id="circle"
+    cx="{{ state.radius|add:20 }}" cy="100"
+    r="{{ state.radius }}"
+    stroke="{{ state.stroke }}" fill="{{ state.color }}"
+    stroke-width="{{ state.width }}" />
+<text width="2000">
+    <textPath xlink:href="#circle" startOffset="{{ state.offset }}">
+       {{ state.text }}
+    </textPath>
+</text>
+```
+
+Note the `|add:20` for the `cx=`: This [|add filter](https://modulojs.org/docs/templating/filters.html#add) gives an offset of 20 to the circle so it doesn't overflow on the left.
+
+
+## Firefox Footnotes
+
+This tutorial requires [the SVG feature of circular text](https://caniuse.com/?search=textPath), which Chrome hasn't yet implemented. My next tutorial will talk about SVG paths, which _is_ supported by Chrome. The images generated can still be used cross-platform, however.
+
+## `<x-TextArtCircleTool>` - Embeddable results
+
+
+Combine everything, and we get the following results. Hope you enjoy this tutorial -- follow for more like this!
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="TextArtCircleTool">
+    <Template>
+      <svg viewBox="0 0 600 600" style="width: 600px; float: right">
+          <circle id="circle"
+            cx="{{ state.radius|add:20 }}" cy="100"
+            r="{{ state.radius }}"
+            stroke="{{ state.stroke }}" fill="{{ state.color }}"
+            stroke-width="{{ state.width }}" />
+          <text width="2000">
+              <textPath
+                  xlink:href="#circle"
+                  startOffset="{{ state.offset }}"
+              >{{ state.text }}</textPath>
+          </text>
+      </svg>
+      <label><input [state.bind] name="text" /></label><br/>
+      <label><input [state.bind]="input" name="offset"
+        type="range" min="0" max="300" /> Offset</label><br/>   
+      <label><input [state.bind]="input" name="width"
+        type="range" min="0" max="40" /> Border</label><br/>
+      <label><input [state.bind]="input" name="radius"
+        type="range" min="10" max="80" /> Radius</label><br/>
+      <label><input [state.bind] name="color" type="color"> Fill Color</label><br/>
+      <label><input [state.bind] name="stroke" type="color"> Border Color</label><br/>
+    </Template>
+    <State
+        text="Modulo.js: Text FX!"
+        radius:=40
+        width:=20
+        offset:=20
+        color="#B90183"
+        stroke="#A2E4B8"
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-TextArtCircleTool></x-TextArtCircleTool>
+```

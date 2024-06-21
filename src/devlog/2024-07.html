@@ -1,0 +1,45 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+title: Summer Release
+devlog: 2024-06
+---
+
+I'm happy to announce the release of Alpha 0.0.73, which brings quite a few new
+handy features, while still keeping it all under 2000 lines of code. It also
+introduces the first deprecation notice: `vanish-into-document` is being
+removed.  Why? We already have `vanish`, and now we also have `Include`, making
+`vanish-into-document` obsolute as a component render mode.
+
+
+## Alpha 73
+
+### New feature: Include Component Part and Core Definition
+
+The big new feature is the _Include_ definition. This definition is very
+verstatile, and can be used for including virtually any type of head content,
+including `<script>` tags for raw inclusion of JS, and `<link>` for CSS.
+
+Not only that, but it supports a "NPM-light" sort of usage as well, that allows
+you to quickly include JS and CSS, instantly accessing many NPM packages.
+
+### Example 1: For dependencies
+
+One of the most powerful features of _Include_ is the ability to bring in
+packages from NPM (or equivalent), given their package name and a CDN server.
+See below:
+
+```
+<Include>
+
+```
+
+### Example 2: Including raw content
+
+The simplest way to use `Include` is as a global definition. It will "include"
+it's contents in the head of the document  as soon as Modulo loads. Note that
+it will NEVER include the same thing twice (it uses hashes to identify
+resources).
+
+This mode is great for following tutorials for integrating JS projects. You can
+often simply copy and paste whatever you are given into the `Include`, as such:
+
+

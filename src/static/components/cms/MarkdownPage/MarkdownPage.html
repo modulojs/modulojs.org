@@ -24,12 +24,42 @@
         navbreadcrumb="{{ page.title }}"
     >
         <h1 style="font-size: 3rem">{{ page.title }}</h1>
-
-        <div class="markdown-body">
+<div class="markdown-body">
             <aside class="date-stamp">{{ page.devlog }}</aside>
             {{ page.body }}
         </div>
     </x-Page>
+{% elif page.canonical_url %}
+    {# means we are syndicating something first published elsewhere -- tutoiral, goes in Examples page #}
+    <x-Page
+        pagetitle="{{ page.short_title|default:page.title }} - Learn Modulo"
+        navselected="examples/"
+        navbreadcrumb="{{ page.short_title|default:page.title }}"
+    >
+        {% if page.cover_image %}
+            <img 
+                src="{{ page.cover_image }}"
+                style="border: 2px solid black; border-radius: 20px; margin-left: -100px; margin-right: -100px; width: calc(100% + 200px);"
+            />
+        {% endif %}
+        {% if page.short_title %}
+            <h1>{{ page.short_title }}</h1>
+        {% endif %}
+        <h2 style="font-size: 4rem">{{ page.title }}</h2>
+        <div class="markdown-body">
+            {{ page.body }}
+        </div>
+        <x-TwoPanes>
+            <article slot="left">
+                <h3>🗣️ Comments </h3>
+                <p>Commenting available on dev.to:</p>
+                <a class="cta-btn" href="{{ page.canonical_url }}">View Comments (dev.to)</a>
+            </article>
+            <article slot="right">
+                <h3>More Learning! 🎓</h3>
+                <cms-ArticleList show="random"></cms-ArticleList>
+            </article>
+        </x-TwoPanes>
 {% else %}
     <x-Page
         pagetitle="{{ page.title }}"

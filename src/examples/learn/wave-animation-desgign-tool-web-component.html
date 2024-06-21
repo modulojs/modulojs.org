@@ -1,0 +1,155 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Creating a shadow animation adjustment tool
+description: In my previous tutorials, I showed how to use the single-file Modulo.js to make a gradient picker...
+published: true
+published_at: 2023-12-29T19:49:19.344Z
+slug: making-a-text-shadow-wave-animation-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-532p
+path: /michaelpb/making-a-text-shadow-wave-animation-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-532p
+url: https://dev.to/michaelpb/making-a-text-shadow-wave-animation-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-532p
+published_timestamp: 2023-12-29T19:49:19Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fclue6f0pf1e2wwpprw60.gif
+tag_list: webdev,tutorial,programming,javascript
+canonical_url: https://dev.to/michaelpb/making-a-text-shadow-wave-animation-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-532p
+reading_time_minutes: 4
+---
+In my previous tutorials, I showed how to use the single-file Modulo.js to [make a gradient picker component in 13 lines](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), [quickly embed APIs](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771), or even [how to build a full CMS-powered site with Modulo](https://dev.to/michaelpb/using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4). Today, we'll go with a fun and flashy example: A animated "Word Art" tool for making a "shadow wave" animation effect in text.
+
+## The final result
+
+Today, we'll learn how to create a text shadow "ripple" animation where each character gets its own animation delay, causing the "wave" effect you see captured below:
+
+
+![Image showing design tool with text input and speed input and the words Fun With Modulo.js with a rippling or wave font shadow naimmation](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ogx9zihijd31271k82ui.gif)
+
+
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the end and copy the ~30 lines of HTML code into any local HTML file, and then open it in your browser. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Template, State, and Style CParts
+
+Let's start with an H1 tag, an input bound to text, and a Style CPart to style it with a (non-waving) animation:
+
+```django
+<Template>
+    <label>Text  <input [state.bind] name="text" /> </label>
+    <h1 style="animation: 3000ms ShadowAnimation 1000ms infinite alternate;">
+        {{ state.text }}
+    </h1>
+</Template>
+<State
+    text="Fun with Modulo.js!"
+></State>
+<Style>
+    h1 {
+        color: #1A5FB4;
+        font-size: 40px;
+        text-shadow: -3px -3px 1px #99C1F188, 3px 3px 1px #1A5FB488;
+    }
+    @keyframes ShadowAnimation {
+        from { text-shadow: -3px -3px 1px #99C1F188, 3px 3px 1px #1A5FB488; }
+        to { text-shadow: -7px -10px 5px #99C1F188, 7px 10px 5px #1A5FB488; }
+    }
+</Style>
+```
+
+In this example, we create a `<input>` element that's bound to state  using `[state.bind]`. This means the "text" variable in state will be reflected on the page, and can be edited within the input. We also use a `<Style>` CPart to give the H1 some styling: We give the `h1` a colorful text shadow, and define `ShadowAnimation` keyframes that slides the text shadows up and down.  In the `<h1>` element, we use `style=` to activate the `ShadowAnimation`, hard-coding 3000ms (3 seconds) as the delay time between repeating.
+
+Make sense? If not, and state and binding is confusing you, [consider warming up with this tutorial on creating a font design tool](https://dev.to/michaelpb/making-a-font-picker-and-text-designer-tool-in-only-40-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-3l1d), or the [Modulo JS - Ramping Up Part 2: State](https://modulojs.org/tutorial/ramping-up/part2.html). If `@keyframes` are confusing you, check out [MDN's documentation](https://developer.mozilla.org/en-US/docs/Web/CSS/@keyframes).  Or, simply continue on to see if things clear up as we bind more inputs!
+
+## Making animation speed adjustable
+
+The first tweak we'll do is add a slider to make the animation timing adjustable. To do so, we add a new state variable called `speed`. The syntax we will use is: `speed:=30` -- note the `:=` syntax, since we are dealing with numbers.
+
+```django
+<State
+    speed:=30
+    text="Fun with Modulo.js!"
+></State>
+```
+
+
+Then, we add an `input` with `name="speed"` and `[state.bind]="input"` --- the "input" event type tweak is explained in [this tutorial](https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6)),
+
+
+```html
+<label>Speed <input [state.bind]="input" name="speed" type="range" min="1" max="30" /></label>
+```
+
+Finally, we use templating to insert it into the `style=` attribute on the H1 tag:
+
+```html
+<h1 style="animation: {{ state.speed }}00ms ShadowAnimation 1000ms infinite alternate;">
+```
+
+
+## Separating the letters into spans to style individually
+
+The animation currently is applied to the entire H1 tag at once. To achieve a "ripple" or "wave" effect, we need to animate letters individually. To "split up" the text into letters, we can use the `{% for %}` template tag:
+
+```django
+<h1 style="...">
+    {% for i, letter in state.text %}
+        <span> {{ letter }} </span>
+    {% endfor %}
+</h1>
+```
+
+This is saying that we want each character (`letter`) and it's index (`i`) in the `h1` tag to get it's own span tag. The [for loop](https://modulojs.org/docs/templating/tags.html#for) will duplicate code between the open the `for` and the `endfor`.
+
+Next, we need to now move the `style=` animation to the span tag (deleting it from the h1 tag). Then, we need to use that `i` index number (the letter's index) to stagger the animations, so the delay is increasing for each
+character. We do this by substituting `1000ms` (hardcoded) with `{{ i }}00ms` (templated). This is the result:
+
+```django
+{% for i, letter in state.text %}
+    <span style="animation: {{ state.speed }}00ms ShadowAnimation {{ i }}00ms infinite alternate;">
+{% endfor %}
+```
+
+One last tweak: Our `Style` tag needs to now target `h1 > span` instead of just `h1`.
+
+## `<x-FloatingShadowTool>` - Embeddable results
+
+Adding in that last tweak and combining everything gives this result.  Keep in mind this is a pretty intense style effect, from both a visual and page-speed perspective, so use sparingly!  Hope you enjoy this tutorial -- follow for more like this!
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="FloatingShadowTool">
+    <Template>
+        <label>Text  <input [state.bind] name="text" /> </label>
+        <label>Speed <input [state.bind]="input" name="speed" type="range" min="1" max="30" /></label>
+        <h1>
+            {% for i, letter in state.text %}
+                <span style="animation: {{ state.speed }}00ms ShadowAnimation {{ i }}00ms infinite alternate;">
+                    {{ letter }}
+                </span>
+            {% endfor %}
+        </h1>
+    </Template>
+    <State
+        speed:=30
+        text="Fun with Modulo.js!"
+    ></State>
+    <Style>
+        h1 > span {
+            margin: -4px;
+            color: #1A5FB4;
+            display: inline-block;
+            font-size: 40px;
+            text-shadow: -3px -3px 1px #99C1F188, 3px 3px 1px #1A5FB488;
+        }
+        @keyframes ShadowAnimation {
+            from { text-shadow: -3px -3px 1px #99C1F188, 3px 3px 1px #1A5FB488; }
+            to { text-shadow: -7px -10px 5px #99C1F188, 7px 10px 5px #1A5FB488; }
+        }
+    </Style>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-FloatingShadowTool></x-FloatingShadowTool>
+```

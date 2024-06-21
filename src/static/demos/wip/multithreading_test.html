@@ -1,0 +1,194 @@
+<!--
+  Idea for multithreading:
+
+
+-->
+
+<script src="/static/js/Modulo.js"></script>
+<script>
+    /*
+    if (this.attrs.backend === 'SharedWorker') {
+        this.backend = new SharedWorker('/static/js/Modulo.js');
+    } else {
+        this.backend = new Worker('/static/js/Modulo.js');
+    }
+    */
+    if (!modulo.remote && !modulo.clientMultip) { // First time setting up...
+        if ((typeof importScripts) === 'function') {// In a Worker script, add "client" method
+            modulo.clientMultip = (cid, methodName, args) =>
+                postMessage('M', 'receiveMultipComponentSignal', [ cid, methodName, args ]);
+        } else {
+            // Setup remote & worker RPC messaging
+            modulo.worker = new Worker('/static/js/Modulo.js');
+            modulo.remote = (method, args) => modulo.worker.postMessage('M', method, args);
+            modulo.worker.onmessage = (ch, method, args) => ch === 'M' && modulo[method].apply(modulo, args);
+            // TODO: Potentially have a modulo.config.jsImports, e.g. <Modulo
+            // js-imports:='[ ... ]'> to keep standard, which just does force='file' imports of files
+            modulo.remote('importScripts', [ '/static/js/VWindow.js', '/static/js/MultiProcessingCPart.js' ]);
+        }
+
+        modulo.multipRegistry = new WeakMap();
+        modulo.receiveMultipComponentSignal = (cid, methodName, args) => {
+            const cpart = modulo.multipRegistry.get(cid);
+            if (!cpart) {
+                console.log(cid, methodName, args);
+                console.error('Multi-Processing / Remote system weak ref expired:', cid);
+            } else {
+                cpart[methodName].apply(cpart, args);
+            }
+        };
+        if (typeof window.moduloBuild !== 'undefined') {
+            console.error('build not implemented');
+        }
+        //modulo.remote('loadString', window.document.innerHTML); // something like this! (requires VW in BE)
+    }
+
+    modulo.registry.core.RemoteDOMLoader = class RemoteDOMLoader extends modulo.registry.core.DOMLoader {
+        loadFromDOM(elem, parentName = null, quietErrors = false) {
+            if (elem._multipSerialized) {
+                elem = makeDiv(elem._multipSerialized.trim()).firstChild; // Turn into DOM (using, assumedly, VWindow)
+                super(elem, parentName = null, quietErrors = false);
+            } else {
+                elem = { _multipSerialized: elem.outerHTML };
+                this.modulo.remote('loadFromDOM', [ elem, parentName, quietErrors ]);
+            }
+        }
+    };
+    modulo.registry.core.DOMLoader = modulo.registry.core.RemoteDOMLoader;
+
+    modulo.registry.cparts.MultiProcessing = class MultiProcessing {
+        subscribeRemote() {
+            /*
+            if (typeof window.moduloBuild === 'undefined') { // Not a build, probably dev mode
+                //this.modulo.remote('remote', 'loadMultipDevmode');
+            } else { // is a build
+                console.error('build not implemented');
+            }
+            */
+        }
+
+        initializedCallback() {
+            // TODO: Later, setup "fetch" mode that sends messages to BE server and received patches from it
+            this.cid = this.element.cparts.component.id;
+            this.lcMode = this.attrs.lifecycle || 'reconcile';
+            this.modulo.multipRegistry.set(this.cid, this); // add weak back reference
+
+            this.isRemote = (typeof importScripts) === 'function'; // In a Worker script
+            if (this.isRemote) {
+                //this.modulo.subscribeRemote(
+            } else {
+                // Initializing
+            }
+            console.log('thsi is cid', this.cid);
+        }
+
+        _consumeMountCallbacks(attr, renameTo) { // Prepare the element, "hydrating" the "multip-patches"
+            const { get } = this.modulo.registry.utils;
+            for (const elem of this.element.querySelectorAll(`[${ attr }]`)) {
+                for (const line of elem.getAttribute(attr).split('\n')) {
+                    const [ count, rawName ] = line.split(','); // Comma seperated
+                    const nodePath = '.parentNode'.repeat(count).substr(1);
+                    if (this.element === get(elem, nodePath)) { // It's me!
+                        if (!renameTo) { // Should be doing the patch itself
+                            this.reconciler.patchDirectives(elem, rawName, 'Mount');
+                        } else { // should just be renaming
+                            const existing = el.getAttribute(renameTo) || '';
+                            if (!existing.includes(count + ',' + rawName)) { // Not a dupe
+                                const value = existing + '\n' + count + ',' + rawName;
+                                el.setAttribute(renameTo, value.trim());
+                            }
+
+                        }
+                        const newVal = elem.getAttribute(attr).replace(line, '');
+                        elem.setAttribute(attr, newVal); // "Consume" line from attr
+                    }
+                }
+            }
+        }
+
+        mountCallback() { // Prepare the element, "hydrating" the "multip-patches"
+            this._consumeMountCallbacks('modulo-multip-patches', false);
+            /*
+            const ATTR = 'modulo-multip-patches'; // Attribute used
+            const { get } = this.modulo.registry.utils;
+            for (const elem of this.element.querySelectorAll(`[${ ATTR }]`)) {
+                for (const line of elem.getAttribute(ATTR).split('\n')) {
+                    const [ count, rawName ] = line.split(','); // Comma seperated
+                    const nodePath = '.parentNode'.repeat(count).substr(1);
+                    if (this.element === get(elem, nodePath)) { // It's me!
+                        this.reconciler.patchDirectives(elem, rawName, 'Mount');
+                        const newVal = elem.getAttribute(ATTR).replace(line, '');
+                        elem.setAttribute(ATTR, newVal); // "Consume" line from attr
+                    }
+                }
+            }
+            */
+        }
+
+        buildCallback() { // Rename all of "my" mount-patches callbacks to multip-patches
+            this._consumeMountCallbacks('modulo-mount-patches', 'modulo-multip-patches');
+            /*
+            // "Rename" the "mount" attribute to "multip" attribute
+            const MOUNT_ATTR = 'modulo-mount-patches';
+            const ATTR = 'modulo-multip-patches';
+            for (const elem of this.element.querySelectorAll(`[${ ATTR }]`)) {
+                for (const line of elem.getAttribute(ATTR).split('\n')) {
+                    const [ count, rawName ] = line.split(','); // Comma seperated
+                    const nodePath = '.parentNode'.repeat(count).substr(1);
+                    if (this.element === get(elem, nodePath)) { // It's me!
+                        elem.setAttribute(ATTR, elem.getAttribute(MOUNT_ATTR));
+                        elem.removeAttribute(MOUNT_ATTR);
+                        const newVal = elem.getAttribute(ATTR).replace(line, '');
+                        elem.setAttribute(ATTR, newVal); // "Consume" line from attr
+                    }
+                }
+
+            }
+            */
+        }
+
+        serializePatches(patches) {
+            for (const patch of patches) { // Simply loop through given iterable
+                this.applyPatch(patch[0], patch[1], patch[2], patch[3]);
+            }
+        }
+
+        hydrateSerializedPatches(patches) {
+        }
+
+        receiveRerender(sPatches, html) {
+            // TODO: Move to extended reconciler class?
+            // Allows
+            const patches = sPatches !== null ? this.hydrateSerializedPatches(sPatches) : null;
+            const innerDOM = html !== null ? this.hydrateSerializedDOM(html) : null;
+            component._lifecycle([ 'reconcile', 'update' ], { patches, innerDOM });
+        }
+
+        prepareCallback(renderObj) {
+            if (!this.isRemote) {
+                // TODO: Make this a no-op - prevent rerender of this element
+                // entirely, since it should only be "pupetted"
+            }
+        }
+
+        reconcileCallback(renderObj) {
+            if (this.isRemote && this.lcMode === 'reconcile') {
+                const html = renderObj.innerDOM.innerHTML; // Simply retrieve innerHTML of innerDOM
+                modulo.clientMultip(this.cid, 'receiveRerender', [ null, html ] );
+            }
+        }
+
+        updateCallback(renderObj) {
+            if (this.isRemote && this.lcMode === 'update') {
+                const serializedPatches = this.serializePatches(renderObj.patches);
+                modulo.clientMultip(this.cid, 'receiveRerender', [ serializedPatches, null ] );
+            }
+        }
+
+    };
+</script>
+
+<template Modulo>
+</template>
+
+

@@ -1,0 +1,152 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Building a text-shadow design tool
+description: In my previous tutorials, I showed how to use the single-file Modulo.js to make a gradient picker...
+published: true
+published_at: 2023-12-26T19:15:33.778Z
+slug: making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6
+path: /michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6
+url: https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6
+published_timestamp: 2023-12-26T19:15:33Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F0inqmyy4sjdxgtk6z719.gif
+tag_list: webdev,javascript,tutorial,programming
+canonical_url: https://dev.to/michaelpb/making-a-90s-aesthetic-text-shadow-design-tool-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-29p6
+reading_time_minutes: 4
+---
+In my previous tutorials, I showed how to use the single-file Modulo.js to [make a gradient picker component in 13 lines](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), [quickly embed APIs](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771), or even [how to build a full CMS-powered site with Modulo](https://dev.to/michaelpb/using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4). The greatest interest, however, has been in Modulo's ease at making design tools and similar useful components. Let's revisit the "Word Art" design tool topic today!
+
+## The final result
+
+Today, we'll learn how to create a "duo-tone" text-shadow word art aesthetic generator, with customizable symmetric colorful shadows. Look below for an example of what we'll be building:
+
+![Screenshot showing sliders controlling shadow distance and spread and color adjustment inputs](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lel831zfk92ecfzgikko.png)
+
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the end and copy the ~30 lines of HTML code into any local HTML file, and then open it in your browser. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Starting with an H1 tag and some State variables
+
+Let's start with an H1 tag with lots of CSS text styling:
+
+```django
+<Template>
+   <h1 style="
+      text-shadow: 0    0   2px black,
+                -3px -3px 1px {{ state.shadow1 }},
+                 3px  3px 1px {{ state.shadow2 }};
+      color: white;
+      text-stroke: 2px black;
+      -webkit-text-stroke: 2px black;
+      font-size: 50px;
+      transform: skew(-30deg, -10deg);
+      text-align: center;
+   ">90s Text Art FX in Modulo.js!</h1>
+</Template>
+<State
+  shadow1="#B90183"
+  shadow2="#A2E4B8"
+></State>
+```
+
+Note how most of the rules are hard-coded (`color`, `font-size`, `transform`, etc), except for the colors of the two `text-shadow` drop shadows, which are replaced with the two _State_ variables (`shadow1` and `shadow2` respectively). This lets us "move" our colors into our _State_ so we can control them using bound inputs. If you want to make the other hard-coded aspects customizable [follow the previous tutorial in the series](https://dev.to/michaelpb/making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8).
+
+## Controlling shadow color state variables with inputs
+
+Next we will learn how to let users modify these variables, so they can preview different color schemes:
+
+```html
+<label>Shadow 1
+<input [state.bind] name="shadow1" type="color"></label>
+<label>Shadow 2
+<input [state.bind] name="shadow2" type="color"></label>
+```
+
+Tricky? [Learn more on color pickers here](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1) or [get more State practice in Part two of the interactive Modulo tutorial](https://modulojs.org/tutorial/ramping-up/).
+
+
+
+## Adding a "shadow throw distance" and "shadow blur amount" sliders
+
+Next, let's make both the "shadow distance" and "blur amount" adjustable with two new state variables:
+
+```django
+<State
+  distance:=3
+  spread:=2
+  shadow1="#B90183"
+  shadow2="#A2E4B8"
+></State>
+```
+Note the `:=` syntax: We use this since we are dealing with numbers instead of strings. We then add these new variables into the `style=` attribute in the _Template_:
+
+```django
+text-shadow: 0    0   2px black,
+  -{{ state.distance }}px -{{ state.distance }}px {{ state.spread }}px {{ state.shadow1 }},
+   {{ state.distance }}px  {{ state.distance }}px {{ state.spread }}px {{ state.shadow2 }};
+```
+
+Finally, we add an `input` with `name="size"` and `[state.bind]`, so that it binds to the state variable just like the `name="text"` textarea was bound:
+
+
+```html
+<label>Shadow throw distance <input [state.bind] name="distance"
+             type="range" min="1" max="20" /></label>
+<label>Shadow blur amount <input [state.bind] name="spread"
+             type="range" min="1" max="10" /></label>
+```
+
+Important to note: The `type="range"`, along with `min="..."` and `max="..."` lets you create a slider-type input such that the user can "drag" a knob between those two values.
+
+
+### Tweak: Smooth rerendering with sliders
+
+Examine the following GIF:
+
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/71g9eqfi2yjpsj9chdxw.gif)
+
+
+A slight tweak was applied: `[state.bind]="input"`. This tells _State_ to rerender during drag (`input` event), not just during release (`change` event, the default).
+
+
+## `<x-TextArt>` - Embeddable results
+
+Adding in that last tweak and combining everything gives this result. Hope you enjoy this tutorial -- follow for more!
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="TextArt">
+    <Template>
+      <label>Shadow 1 <input [state.bind] name="shadow1"  type="color"></label><br/>
+      <label>Shadow 2 <input [state.bind] name="shadow2" type="color"></label><br/>
+      <label>Shadow throw distance<input [state.bind]="input"
+        name="distance" type="range" min="1" max="50" /></label><br/>
+      <label>Shadow blur amount <input [state.bind]="input"
+        name="spread" type="range" min="1" max="30" /></label><br/>
+      <h1 style="
+        text-shadow: 0    0   2px black,
+          -{{ state.distance }}px -{{ state.distance }}px {{ state.spread }}px {{ state.shadow1 }},
+          {{ state.distance }}px {{ state.distance }}px {{ state.spread }}px {{ state.shadow2 }};
+        color: white;
+        text-stroke: 2px black;
+        -webkit-text-stroke: 2px black;
+        font-size: 50px;
+        transform: skew(-30deg, -10deg);
+        text-align: center;
+      ">90s Text Art FX in Modulo.js!</h1>
+    </Template>
+    <State
+      distance:=3
+      spread:=2
+      shadow1="#B90183"
+      shadow2="#A2E4B8"
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-TextArt></x-TextArt>
+```

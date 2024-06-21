@@ -1,0 +1,32 @@
+
+
+{% if state.ready %}
+<section class="article-list-{{ props.show }} {% if props.show is "random" %}narrow-grid{% endif %}">
+{% for article in state.results %}
+    <article>
+        {% if article.cover_image %}
+            {% if props.show is "learn" %}
+            <div class="image-div">
+                <a href="{{ article.url }}"><img src="{{ article.cover_image }}" alt="Screenshot" /></a>
+            </div>
+            {% endif %}
+        {% endif %}
+        <div>
+            {% if props.show is "random" %}
+                <img src="{{ article.cover_image }}" alt="Screenshot" style="width: 80px" />
+            {% endif %}
+            {% if article.title %}
+              <a class="article-title" href="{{ article.url }}">{{ article.title }}</a>
+            {% endif %}
+            {% comment %}
+            {% if article.description %}
+              <p>{{ article.description }}</p>
+            {% endif %}
+            {% endcomment %}
+        </div>
+    </article>
+{% endfor %}
+</section>
+{% else %}
+<em>Loading...</em>
+{% endif %}

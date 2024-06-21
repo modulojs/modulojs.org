@@ -5,9 +5,9 @@ title: Definition Processors
 # Processors
 
 **Definition processors** are a feature of Modulo that allows for component
-parts and other definitions to have allow for special attributes that trigger
-certain behavior. They are commonly used for configuring, loading, or
-tranforming definitions.
+parts and other definitions to support special attributes that trigger certain
+behavior. They are commonly used for configuring, loading, or tranforming
+definitions.
 
 Definition processors are conventionally prefixed with a dash (that is, `-`).
 This distinguishes them from regular attributes. Some processors can only be
@@ -34,15 +34,31 @@ processor for loading content from external files.
 
 ## Behavior
 
-Definition processors have two important rules of behavior:
+Definition processors have three important rules of behavior:
 
-- Definition processors are applied _before_ anything else is loaded. That is,
-  _every_ processor finishes its tasks before any components are mounted on the
-  screen.
+1.  As the name implies, definition processors are run while Modulo first loads
+definitions, meaning all the _Processors_ will all complete before your web
+components register their tag names. Definition processors are applied _before_
+any other behavior. That is to say, _every_ processor finishes its tasks before
+_any_ components are mounted on the screen.
 
-- Definition processors are _not_ run in built or packed scripts. That is, the
-  definitions stored in the compiled JS file are "pre-processed", and thus the
-  processor only will run during development or when building.
+2. Processors can be asyncronous, load data, process data, and can even do
+"slow" operations compared to other aspects of Modulo.  CParts can load
+asyncronously, or even block loading if they choose to do so. This is what
+allows Modulo to self-configure and users to "invent" their own CParts:
+`<Configuration -src="...">` will block loading any future `-src=` attributes
+until it's finished with all it's Processors; however, `<Template -src="...">`
+is written to assumed to not need any particular ordering, and will be loaded
+asynchrously.
+
+
+3. Definition processors are _not_ run in built or packed scripts. That is, the
+definitions stored in the compiled JS file are "pre-processed", and thus the
+processor only will run during development or when building.  If accumulating
+many files and definition processors is slowing down your growing site, the
+good news is that after building, no one will notice, since _Processors_ are
+(typically) only run during development. See [Building Apps with Modulo Part
+3](/tutorial/building-apps/part3.html) for more on pre-building.
 
 
 
@@ -151,17 +167,23 @@ Allows you to apply [template filters](/templating/filters.html) at load time.
 
 ### Example 1: Trim excess code
 
-For example, you could use `trim` to remove excess characters from a
-_Template_. For example, here we load content from an external document file,
-and then use `|trim` to remove "boilerplate" that we know exists at the
-beginning of the file that we don't want to include:
+You can use `trim` to remove excess characters from a remotely loaded file. For
+example, here we load content from an external document file, and then use
+`|trim` to clean up the doctype information, text we don't want in the _Template_:
 
 ```modulo
 <Template
-    -src="/my-html-doc.html"
-    -filter-content="trim:'<!doctype><html>,</html>'"
+    -src="https://some-site.com/some-old-document.xhtml"
+    -filter-content="trim:'<xml version=1.0><html>,</html>'"
 ></Template>
 ```
+
+In this case, the `trim` filter will remove the XML doctype and an HTML opening
+tag, along withe the HTML closing tag, if they are found at the  beginning and
+end of the document retrieved from:
+`https://some-site.com/some-old-document.xhtml`. Processors all happen during
+initial loading of components and definitions, meaning the trimmed text will be
+ignored and omitted from the JS builds.
 
 
 ### Example 2: Style template with trim

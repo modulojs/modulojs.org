@@ -1,0 +1,122 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Building a word art skew design tool
+description: In previous mini-tutorials, I showed how to use the single-file Modulo.js to create a gradient picker...
+published: true
+published_at: 2023-12-24T19:40:44.800Z
+slug: making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8
+path: /michaelpb/making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8
+url: https://dev.to/michaelpb/making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8
+published_timestamp: 2023-12-24T19:40:44Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fxyvhoeqyky09ynd73ilj.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/making-a-90s-aesthetic-word-art-text-picker-in-only-20-lines-of-pure-html-web-component-code-1-extra-file-no-node-or-js-2oi8
+reading_time_minutes: 4
+---
+In previous mini-tutorials, I showed how to use the single-file Modulo.js to create [a gradient picker in 13 lines](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), or even [embed JSON files and APIs in just 3 lines of web component code](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771). Now, let's recreate a classic aesthetic as a Modulo tool. I really like this topic, so stay tuned for more. Many word processors and website graphics generators from the 90s and early 00s generated complex text art with all manner of shadows, angles, and contour. This leads to the  colorful, kinetic, and playful reputation of the retro Word Art aesthetic elements you see below:
+
+
+![90 Word Art creator screenshot showing sliders for size and skew of X and y](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/1pxep0hsq7dhqtu8635o.png)
+
+
+
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the bottom and simply copy the ~20 lines of HTML code into any local HTML file, then open that in your browser to see the result locally. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+
+------
+
+## Styling and binding a textarea
+
+Let's start with a textarea that's bound to state:
+
+```django
+<Template>
+  <textarea [state.bind] name="text" style="
+        border: none; margin: 1.5em; color: #B90183;
+        text-shadow: 5px 5px 0 #aaffaa;
+    "></textarea>
+</Template>
+<State
+  text="Word Art test"
+></State>
+```
+
+In this example, we create a `<textarea>` element that's bound to state  using `[state.bind]`. This means the "text" variable in state will be reflected on the page, and can be edited within the textarea. We also use a `style=` attribute to give the textarea some styling: We give it a margin, a color, a text-shadow, and get rid of the default border. In future tutorials, we'll show how to customize these elements, but for now, if you want to customize the colors and other aspects, consider following [this tutorial that builds a gradient picker in 13 lines](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), which is similar. Also, if _State_ is giving you conceptual trouble, consider trying trying the [corresponding section in the interactive Modulo JS tutorial](https://modulojs.org/tutorial/ramping-up/part2.html#state). 
+
+
+## Adding font-size slider
+
+Next, let's make the `font-size` adjustable, since this is one of the core features of a word art designer. To do so, we add a new state variable called `size`:
+
+```django
+<State
+  size:=70
+  text="90s Word Art Tool in 3 min with Modulo.js"
+></State>
+```
+Note the `:=` syntax: We use this since we are dealing with numbers. We then add the size into the `style=` attribute in the _Template_:
+
+```django
+font-size: {{ state.size }}px;
+```
+
+Finally, we add an `input` with `name="size"` and `[state.bind]`, so that it binds to the state variable just like the `name="text"` textarea was bound:
+
+```django
+<label>SIZE <input [state.bind] name="size"
+             type="range" min="20" max="100" /></label>
+```
+
+Notice how the `type="range"`, along with `min="..."` and `max="..."` lets you create a slider-type input, so users can "drag" a knob between those two values.
+
+
+
+## Adding two new sliders for skew (x and y)
+
+We're going to "rinse and repeat" for the two new values, and utilize the CSS property `transform: skew(x deg, y deg)` (where `x` and `y` respectively need to be the numbers in degrees). We start with adding it to _State_ just like we did `size`: Using syntax like `x:=30` and `y:=10`. Then, we'll create two new sliders. Since degrees go from negative to positive, we'll use boundaries of `-45` and `45` degrees, as follows:
+
+```django
+<label>SKEW X <input [state.bind] name="x"
+             type="range" min="-45" max="45" /></label>
+<label>SKEW Y <input [state.bind] name="y"
+             type="range" min="-45" max="45" /></label>
+```
+
+Finally, just like before, we add the finishing touches of inserting the state variables in to the CSS:
+
+```django
+transform: skew({{ state.x }}deg, {{ state.y }}deg);
+```
+
+## `<x-WordArt>` - Embeddable results
+
+Once we repeat the same pattern of HTML code, and add the necessary CSS tweaks to the `style=` attribute, we end up with the final result:
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="WordArt">
+    <Template>
+        <label>SIZE <input [state.bind] name="size" type="range" min="20" max="100" /></label>
+        <label>SKEW X<input [state.bind] name="x" type="range" min="-45" max="45" /></label>
+        <label>SKEW Y<input [state.bind] name="y" type="range" min="-45" max="45" /></label>
+        <textarea [state.bind] name="text" style="
+                border: none; margin: 1.5em; color: #B90183;
+                text-shadow: 5px 5px 0 #aaffaa;
+                font-size: {{ state.size }}px;
+                transform: skew({{ state.x }}deg, {{ state.y }}deg);
+            "></textarea>
+    </Template>
+    <State
+        x:=30
+        y:=10
+        size:=70
+        text="90s Word Art Tool in 3 min with Modulo.js"
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-WordArt></x-WordArt>
+```

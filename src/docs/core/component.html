@@ -63,7 +63,7 @@ lifecycle.
 
 ### Examples of patches
 
-Using `console.table(component.patches);`, you can easily inspect the
+Using `console.table(component.patches)`, you can easily inspect the
 exact order of DOM operations that Modulo will do for every operation.
 This produces useful results in both Firefox and Chromium-based browsers.
 
@@ -193,6 +193,8 @@ of valid options are below:
   and anything else it finds will be put directly into the document's body, for
   a clean DOM structure that removes itself entirely during this "one-time
   render".
+        * *DEPRECATION NOTICE* - `vanish-into-document` may be removed, and
+          simply `vanish` will also support insertion to head
 
 * `mode="custom-root"` - This is rarely useful, but allows for setting some
   other DOM element as the new root element for the component to target for
@@ -203,7 +205,7 @@ of valid options are below:
 
 ## Directives
 
-The *Component* defines 3 directives:
+The *Component* defines 2 directives:
 
 * `[component.event]` (*shortcut:* `@`) -
 Attach event listeners to DOM elements, and remove them when the DOM
@@ -221,12 +223,78 @@ events</li>
 Reattach the original child elements that this component had when it was first
 mounted to a new DOM element.  (For React users, this is similar to doing
 `{this.props.children}`.)  For more on the slot interface, see Mozilla's
-[https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot](The Web
-Component Slot element).  Note that Modulo uses this interface for both
-`mode="shadow"` (e.g. using `shadowRoot` as the root element for
-reconciliation) and all the other DOM rendering modes (e.g.  `mode="regular"`,
-`mode="vanish-into-document"`). For Shadow DOM, it will fall-back on Browser
-behavior. For everything else, it will detach any nodes it finds and reattach
-the nodes just before the beginning of the reconciliation process (it's DOM
-load-directive).
+[The Web Component Slot element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot)
+
+Note that Modulo uses this interface for both `mode="shadow"` (e.g. using
+`shadowRoot` as the root element for reconciliation) and all the other DOM
+rendering modes (e.g.  `mode="regular"`, `mode="vanish-into-document"`). For
+Shadow DOM, it will fall-back on Browser behavior. For everything else, it will
+detach any nodes it finds and reattach the nodes just before the beginning of
+the reconciliation process (it's DOM load-directive).
+
+### Defaults
+
+The HTML content of the slot will be untouched if no elements are provided.
+This allows you to use this like a default or placeholder. View the `USAGE`
+mode to see how it's used.
+
+
+
+```modulo_demo_example
+<Template>
+    <p>Hey <slot>First Name</slot>, what's up?</p>
+</Template>
+<!--%%% Greet %%%-->
+1:
+<x-Greet></x-Greet>
+2:
+<x-Greet>Richarlison</x-Greet>
+```
+
+
+### Named slots
+
+If you give a name to your slot (e.g. `<slot name="content"></slot>`), then it
+will _only_ be attached to similarly "slotted" elements (e.g. `<div
+slot="content">...</div>`).  Below we have an example showing off multiple
+named slots. View the `USAGE` mode to see how it's used.
+
+```modulo_demo_example
+<Template>
+    <div class="fancy-frame">
+        <h1><slot name="topTitle">Picture</slot></h1>
+        <slot>
+            <em>No caption provided.</em>
+        </slot>
+    </div>
+    <div class="fancy-frame">
+        <slot name="photograph">No photograph provided</slot>
+    </div>
+</Template>
+<Style>
+    :host {
+        text-align: center;
+    }
+    .fancy-frame {
+        display: inline-block;
+        border: 10px inset salmon;
+        padding: 10px;
+        margin: 10px;
+        width: 100px;
+        background: pink;
+    }
+</Style>
+<!--%%% PhotoFrame %%%-->
+<x-PhotoFrame>
+    <!-- No slot="...", thus it becomes "the default" -->
+    <p><em>Caption:</em> The Return of the Hippo</p>
+    <!-- Since slot="photograph", it goes into the second location -->
+    <img
+        slot="photograph"
+        style="width: 50px; height: 50px"
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Hippo_walking.jpg/320px-Hippo_walking.jpg"
+    />
+    <!-- Note there are no elements with slot="topTitle", thus the default is shown -->
+</x-PhotoFrame>
+```
 

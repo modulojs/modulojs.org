@@ -1,0 +1,145 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Creating a button or box design tool
+description: In previous "2000 line challenge" tutorials, I showed how to use Modulo.js to create a gradient...
+published: true
+published_at: 2023-12-20T18:51:59.116Z
+slug: making-a-shadow-picker-and-box-designer-in-30-lines-of-html-web-component-template-code-1-extra-file-no-js-or-node-needed-55ch
+path: /michaelpb/making-a-shadow-picker-and-box-designer-in-30-lines-of-html-web-component-template-code-1-extra-file-no-js-or-node-needed-55ch
+url: https://dev.to/michaelpb/making-a-shadow-picker-and-box-designer-in-30-lines-of-html-web-component-template-code-1-extra-file-no-js-or-node-needed-55ch
+published_timestamp: 2023-12-20T18:51:59Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F7rx7fh5uqh6z2x7i5o49.png
+tag_list: javascript,webdev,programming,tutorial
+canonical_url: https://dev.to/michaelpb/making-a-shadow-picker-and-box-designer-in-30-lines-of-html-web-component-template-code-1-extra-file-no-js-or-node-needed-55ch
+reading_time_minutes: 5
+---
+In previous tutorials, I showed how to use Modulo.js to create [a gradient picker](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1). This tutorial is a continuation of this, a task very relevant to front-end developers:  Let's build a little development tool to allow us to better visualize CSS, and iterate over better CSS and HTML styles! 
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Want to skip ahead? Scroll to the bottom and simply copy the ~31 lines of HTML code into any local HTML file, then open that in your browser to see the result locally. Modulo has no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+---- 
+
+## The final product
+
+Let's build a little "box designer". A picture is worth a thousand words, so look below for what I'm talking about:
+
+![Screenshot of box designer, showing color, badkground, shadow, and rounding sliders that control the appearance of a box below it, styling sample text saying "hi there"](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/k3ve9vopt6ad8yz0u2og.png)
+
+You might wonder why we would want to build a box designer like this. Well, it could be useful in design teams: By assembling a little "CSS preview" tool that makes certain assumptions, the web developers and designers on your team can get creative within criteria set by the developer of these tools. The best thing is that since Modulo is so simple, all the web designers (not just the frontend engineers) can feel empowered in altering and expanding on the tool.
+
+Modulo.js is great for this, since it's a tiny 2000 line file for making web components without the need of using JavaScript, Node.js, or node_modules (although it works with those too!). If you are new to Modulo.js, then read the next section. Otherwise, jump down to the "good stuff" below.
+
+
+##  Wait, what is this 2000-line framework, Modulo.js? 
+
+> Modulo.js features go deeper than just building front-end styling tools, such as in this tutorial. In previous tutorials, I talked more about features such as the [-store= attribute](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80) and [how Modulo.js can use JSON and APIs to quickly assemble small web components without any custom JavaScript](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-split-state-when-using-global-stores-with-no-extra-dependencies-beyond-modulojs-4o80). How can a small framework do all this? I call it the 2000 line framework challenge, and Modulo.js is a solution to that hard challenge.
+
+> How can we build frontend tools that are much, much simpler, so it's easier for static site builders, Rails, PHP, Python, and Wordpress users, or coding students? Basically, how do we build frameworks which are appealing to modern JS developers while not being mysterious labyrinths of node_module dependencies? Modulo's goal is to do this in only 2000-lines of code, functioning as a sort of "Vue-lite / Svelte-lite / React-lite" framework.
+
+> Modulo is HTML-first, and browser-first, meaning it integrates with only a few lines of code in any HTML file. It immediately enables you to write productive Web Components with many modern features. Check it out: ModuloJS.org
+
+## Getting started with a color picker
+
+Like the previous tutorial, let's start with a basic color picker. [Read the previous tutorial for a deeper discussion](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1) of this code, or just read the short summary below:
+
+```django
+<Template>
+    <p><label>Color: <input [state.bind] name="fgcolor" type="color" /> </label></p>
+    <p><label>BG: <input [state.bind] name="bgcolor" type="color" /> </label></p>
+    <div style="
+              height: 100px;
+              width: 200px;
+              font-size: 2rem;
+              color: {{ state.fgcolor }};
+              background: {{ state.bgcolor }};
+        ">Hey, there!</div>
+</Template>
+<State
+    fgcolor="#AABAAA"
+    bgcolor="#1A5FB4"
+></State>
+```
+
+Here, we have two inputs of type color, each in a label, in a p-tag. This will cause two color pickers to show in the browser. It's hooked up (bound) to a State CPart. We use the name="fgcolor" attribute to tell the State CPart which state variable should be "assigned" (bound) to this input. When it re-renders, it uses the `style=` attribute of the `div` to preview the foreground (`fgcolor`) and background (`bgcolor`) colors being selected.
+
+Make sense so far? If not, check out [the previous tutorial for a deeper discussion](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), and/or [Modulo's 5-part Ramping Up tutorial](https://modulojs.org/tutorial/ramping-up/part1.html). Otherwise, continue reading.
+
+## Adding a new variable for "rounding" and slider
+
+So far, we have added the color picker aspect of the original example. We now need to be able to adjust "Rounding:" and "Shadow:", so we will need two new _State_ variables:
+
+```django
+    <State
+        fgcolor="#99C1F1"
+        bgcolor="#1A5FB4"
+        rounding:=10
+        shadow:=5
+    ></State>
+```
+
+
+Then, we add corresponding sliders to the _Template_:
+
+```django
+<p><label>Rounding:
+    <input [state.bind] name="rounding" type="range" min="1" max="100" step="1" />
+</label></p> 
+<p><label>Shadow:
+    <input [state.bind] name="shadow" type="range" min="1" max="20" step="0.1" />
+</label></p>
+```
+
+Note how these are `type="range"`. This is what shows the slider. By using `min=`, `max=`, and `step=`, we can customize how the slider behaves (what values it will correspond to in the state variable, that is). In this example, the `rounding` slider can go from `1`, `2`, `3`, ... to `100`. The `shadow` slider, however, is like `1.0`, `1.1`, `1.2`, ... to `19.9`, `20.0`.
+
+Now, let's update the div CSS so it includes the rounding and shadow properties. Unlike `fgcolor=` (which corresponds to the CSS property of `color:`) and `bgcolor=` (which corresponds to  `background:`), the new properties we are adding have no 1:1 correspondence. Instead, it will drive several CSS properties: `padding:` and `border-radius:` for `rounding`, and the the offset and spread of `box-shadow:` for `shadow`. The _Template_ code looks a such:
+
+```django
+<div style=" {# ... snip ... #}
+    border: 6px solid {{ state.fgcolor }};
+    border-radius: {{ state.rounding }}px;
+    padding:  {{ state.rounding }}px;
+    box-shadow: {{ state.shadow }}px {{ state.shadow }}px {{ state.shadow }}px #000000aa;
+">Hey, there!</div>
+```
+
+Note how we also  add in a `border:` property which gets its color from `fgcolor`.
+
+## The final result
+
+I hope you enjoyed that tutorial! Once we put all these pieces together, we have a box selector, as follow:
+
+```django
+<!DOCTYPE html>
+<template Modulo>
+  <Component name="BoxDesigner">
+    <Template>
+        <p><label>Color: <input [state.bind] name="fgcolor" type="color" /> </label></p>
+        <p><label>BG: <input [state.bind] name="bgcolor" type="color" /> </label></p>
+        <p><label>Rounding: <input [state.bind] name="rounding" type="range" min="1" max="100" step="1" /></label></p> 
+        <p><label>Shadow: <input [state.bind] name="shadow" type="range" min="1" max="20" step="0.1" /></label></p>
+        <div style="
+              height: 100px;
+              width: 200px;
+              font-size: 2rem;
+              color: {{ state.fgcolor }};
+              background: {{ state.bgcolor }};
+              border: 6px solid {{ state.fgcolor }};
+              border-radius: {{ state.rounding }}px;
+              padding:  {{ state.rounding }}px;
+              box-shadow: 
+                {{ state.shadow }}px {{ state.shadow }}px {{ state.shadow }}px #000000aa;
+        ">Hey, there!</div>
+    </Template>
+    <State
+        fgcolor="#99C1F1"
+        bgcolor="#1A5FB4"
+        rounding:=10
+        shadow:=5
+    ></State>
+  </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-BoxDesigner></x-BoxDesigner>
+```
+
+**Try it out now (30 seconds):** Copy and paste the above code into an empty file, save with a `.html` extension, then open directly in your browser. No node.js, installations, test servers, or NPM necessary!

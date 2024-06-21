@@ -1,0 +1,145 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: Fun with the PokéAPI: Dance party!
+description: Hey everyone! Are you excited about anything this beautiful Spring Friday? I am excited to be back to...
+published: true
+published_at: 2024-03-23T02:42:38.924Z
+slug: how-to-build-an-api-driven-pokemon-dance-party-component-in-less-than-30-lines-of-html-web-component-template-code-modulojs-3c2g
+path: /michaelpb/how-to-build-an-api-driven-pokemon-dance-party-component-in-less-than-30-lines-of-html-web-component-template-code-modulojs-3c2g
+url: https://dev.to/michaelpb/how-to-build-an-api-driven-pokemon-dance-party-component-in-less-than-30-lines-of-html-web-component-template-code-modulojs-3c2g
+published_timestamp: 2024-03-23T02:42:38Z
+cover_image: https://media.dev.to/cdn-cgi/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fmx31jwjrj6cofucvyut1.gif
+tag_list: javscript,webdev,tutorial,beginners
+canonical_url: https://dev.to/michaelpb/how-to-build-an-api-driven-pokemon-dance-party-component-in-less-than-30-lines-of-html-web-component-template-code-modulojs-3c2g
+reading_time_minutes: 4
+---
+Hey everyone! Are you excited about anything this beautiful Spring Friday? I am excited to be back to writing another tutorial after a month-long hiatus... and also excited to make it about one of my favorite video games of all time: Pokémon! As always, if you have an idea for a next topic, be sure to let me know in the comments!
+
+## "HTML-only, no JS!" ✨🪄
+
+In previous tutorials, I focused more on design: I showed how to make a simple [gradient picker](https://dev.to/michaelpb/the-2000-line-framework-challenge-making-a-gradient-picker-tool-in-13-lines-of-pure-html-code-1-extra-file-no-node-or-js-2jb1), or [a more flashy 3D extruded text art effect](https://dev.to/michaelpb/creating-a-3d-extruded-text-word-art-picker-in-only-30-lines-of-pure-html-web-component-code-1-extra-file-3b86), all written in pure HTML and templating, leaving the JS heavy-lifting to the framework.
+
+Today's tutorial takes a very different approach: It shows how you can quickly display public "web APIs" (that is, public data sets or web services) with just a few lines of code.
+
+## How to use the PokéAPI
+
+This tutorial is 100% thanks to [PokéAPI](https://pokeapi.co/), which is a fun, fan-maintained database and API for retrieval of Pokémon franchise information and media. For example, this link provides info in JSON format for my favorite pink puff: https://pokeapi.co/api/v2/pokemon/jigglypuff
+
+
+## The final result
+
+![A screenshot of eight dancing Jigglypuffs on a web page with the title "Jigglypuff Party"](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ci6tnn91lsek6eqmdfjp.png)
+
+
+
+
+-----
+
+
+
+**Try it out now, in less than 30 seconds:** 🚀🚀🚀 Wanna skip ahead? Scroll to the end and copy the ~30 lines of HTML code into any local HTML file, and then open it in your browser. Modulo is a single-file framework with no dependencies and even runs embedded in local HTML files, so it's really that easy!
+
+
+## Starting with a basic H1 and StaticData
+
+Let's start with something super basic: Let's get info from the API. We can start with `<Template>` and `<StaticData>`:
+
+```django
+<Template>
+   <h1>{{ staticdata.name|capfirst }} Party!</h1>
+</Template>
+<StaticData
+  -src="https://pokeapi.co/api/v2/pokemon/jigglypuff"
+></StaticData>
+```
+
+In this snippet, we have a very simple, one-line `<Template>` that shows the `name` property of the returned PokéAPI. We apply the `|capfirst` filter to capitalize it (it is all-lowercase by default). The `StaticData` supports JSON (among other formats) out of the box, which means all it needs is the URL to the API and it will integrate it into your component. If the `StaticData` concept is giving you conceptual trouble, try this tutorial [on integrating the GitHub API](https://dev.to/michaelpb/the-2000-line-framework-challenge-how-to-template-json-or-apis-in-3-lines-of-component-code-1-extra-file-no-npm-needed-3771), or the play around with the interactive examples in [Part 4](https://modulojs.org/tutorial/ramping-up/part4.html) of the Modulo.js tutorial.
+
+
+## Looping through generations and the games
+
+We have to write 2 for loops now: One for the generations, and one for the games.
+
+How did I figure this out? I clicked through the results of the API, and deduced that `.sprites`, and specifically `.sprites.versions` has all the "generations" of games in the JSON _Object_ data structure. This is where the data gets tricky, since it's not accessible "at the top level" (like `.name`). We'll need to "drill down" to the right data.
+
+So, nesting the two `for-loops`, we get:
+
+```django
+{% for generation, games in staticdata.sprites.versions %}
+    {% for game, images in games %}
+```
+
+## Showing the `front_default` image in the loop
+
+Finally, we'll need to reference the `front_default` image in an `<img>` tag to display it. See below:
+
+
+```django
+{% for generation, games in staticdata.sprites.versions %}
+    {% for game, images in games %}
+        <img src="{{ images.front_default }}" class="dancing-image" />
+    {% endfor %}
+{% endfor %}
+```
+
+The `{% for %}` loop repeats the HTML code contained within. This is how it "duplicates" the `<img src="...">` over and over to show all the images. For more practice on `{% for %}` loops, play around with the [interactive examples in the documentation](https://modulojs.org/docs/templating/tags.html#for).
+
+## Adding the CSS animation
+
+Finally, to wrap this up, we'll need to make 'em dance! I made a "PokeDance" animation, which rocks back and forth, notably making the `transform-origin: bottom center` to make it look like their "center of gravity" is at the bottom (at their feet), as such:
+
+```html
+.dancing-image {
+    transform-origin: bottom center;
+    animation: PokeDance 3s ease-in-out infinite alternate;
+    width: 200px;
+}
+@keyframes PokeDance {
+   20% { transform: rotate(15deg); }	
+   40% { transform: rotate(-10deg); }
+   60% { transform: rotate(5deg); }	
+   80% { transform: rotate(-5deg); }	
+  100% { transform: rotate(10deg); }
+}
+```
+
+
+## `<x-PokeParty>` - Embeddable snippet
+
+Combining it all, and adding a few final tweaks (the `title` on the image, and a tweak of adding `-auto-isolate:=false` to prevent `PokeDance` animation from being modified), we get the following:
+
+```django
+<template Modulo>
+    <Component name="PokeParty">
+        <Template>
+            <h1>{{ staticdata.name|capfirst }} Party!</h1>
+            {% for generation, games in staticdata.sprites.versions %}
+                {% for game, images in games %}
+                    <img class="dancing-image"
+                        title="{{ generation }}: {{ game }}"
+                        src="{{ images.front_default }}" />
+                {% endfor %}
+            {% endfor %}
+        </Template>
+        <StaticData
+            -src="https://pokeapi.co/api/v2/pokemon/bellsprout"
+        ></StaticData>
+        <Style -auto-isolate:=false>
+            .dancing-image {
+                transform-origin: bottom center;
+	              animation: PokeDance 3s ease-in-out infinite alternate;
+	              width: 200px;
+            }
+            @keyframes PokeDance {
+	             20% { transform: rotate(15deg); }	
+	             40% { transform: rotate(-10deg); }
+	             60% { transform: rotate(5deg); }	
+	             80% { transform: rotate(-5deg); }	
+	            100% { transform: rotate(10deg); }
+            }
+        </Style>
+    </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-PokeParty></x-PokeParty>
+```

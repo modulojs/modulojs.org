@@ -1,0 +1,63 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+type_of: article
+title: How Decap CMS can be used for a "headless" CMS
+description: Recently I wrote several huge updates for the Modulo.js project, making the Modulo project far more...
+published: true
+published_at: 2023-10-16T14:10:33.904Z
+slug: using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4
+path: /michaelpb/using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4
+url: https://dev.to/michaelpb/using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4
+published_timestamp: 2023-10-16T14:10:33Z
+cover_image: null
+tag_list: jamstack,webdev,javascript,programming
+canonical_url: https://dev.to/michaelpb/using-decap-for-a-headless-cms-on-modulo-jamstack-template-to-let-non-coders-work-directly-on-git-23p4
+reading_time_minutes: 4
+---
+Recently I wrote several huge updates for [the Modulo.js project](https://modulojs.org/), making the Modulo project far more welcoming to newcomers!
+
+## Quick start (starter templates)
+
+I created a brand new starter templates and project structure based on the most useful patterns I've developed while using Modulo over the last few months in production. These contain all the features that most people want for a large variety of websites: Multiple pages, a contact form example, a blog example, and a multi-user GUI CMS to edit the blog. If you are eager to get started ASAP with a ZIP file or an `npm` command (save you a click: `npm init modulo`), you might want to just skip ahead and look at the list of instructions here: [Modulo Tutorial - Building Apps Part 2 - SSG / Jamstack](https://modulojs.org/tutorial/building-apps/part2.html)
+
+
+
+## Decap CMS
+
+
+![Screenshot of Decap CMS GUI](https://modulojs.org/static/images/example-projects/jamstack-cms.png)
+
+Earlier this year, [Netlify CMS became Decap CMS](https://www.netlify.com/blog/netlify-cms-to-become-decap-cms/), no doubt a pun on it being "headless". Whatever you call it, it's a quality JavaScript based Content Management System, allowing for people used to WordPress or other graphical CMS's to jump right in and be productive. Decap allows for local editing with a GUI, which can be good in some team situations for content developers and designers to maintain Markdown and data files directly via a GUI. In the new `create-modulo` JAMStack template, Decap is installed by default.
+
+More importantly, Decap can be configured to use GitHub or another service as a 3rd party authenticator, which allows for online editing of a Git repo from a user-friendly GUI. Given that Modulo is intended to satisfy each team member and help teams come together, Decap is a natural choice since it allows the more experienced developers to continue editing Markdown, JSON, and code files tracked via git using the tools they prefer, while non-technical team members can be make editing and git commits editing Markdown and media files via the GUI, which will merge seamlessly with the normal git workflow. Everybody gets to use the tools that are best for their jobs, while keeping everything in one repo, and avoiding *any* in-house DB usage or app server usage (still "100% staticly generated frontend").
+
+
+## What is this trying to accomplish?
+
+The problem we are trying to solve is the issue of bridging the divide between developers and content creators in teams (especially small-to-medium teams). This is especially useful for content that is edited by a small enough team that is to be managed via a third party authentication (e.g., Netlify or GitHub), and that the content is produced a rate that they can work out a publishing flow amongst them that prevents conflicts. Any extra enhancements are external (e.g. database, "serverless" functions, etc), and can be added as SPA's mounted on pages.
+
+I think this approach to building CMS's is fantastic, and in this particular situation (which I find covers about 90% of the web projects I'm doing these days), the best tool for the job.
+
+* Developers: They like git. They like simple text files that are easily git trackable. They like easy templating languages. They like editing simple HTML. They don't like managing servers.
+
+* Content managers: They like GUIs. They want something "like WordPress". They want an easy interface to edit links. They want a fast and simple interface that doesn't get slow or buggy. They want a way to revert to previous versions. They usually don't have the skills or time to use git or any coding or usage of the terminal.
+
+How can we combine both of these needs into one CMS?
+
+We can create a CMS that is the backend to a static site generator, of course! One popular one is Decap CMS.
+
+
+## How to add and run Decap CMS locally
+
+Curious about how to get started with Decap on your own project and run it locally to edit Markdown with a GUI? Read below for a quick summary -- in general, much easier than any CMS that requires DB setup!
+
+1. Add and configure the [Decap CMS](https://decapcms.org/docs/configuration-options/) to your project. If you are using the Jamstack Modulo project, this is already done for you.
+
+2. In one terminal, make sure you start your normal HTTP server, e.g. `npm run start`. In the case of the Modulo project, this will starts a simple HTTP server for convenient testing at http://127.0.0.1:3334/
+3. In another terminal, you'll need to run the Decap CMS command (`npx decap-server`). Modulo has a shortcut for this in the package.json: `npm run startcms`
+4. This will then in turn run a proxy for the Decap CMS. On the Modulo Jamstack project, it will be at: http://127.0.0.1:3334/static/cms/admin/
+5. Now when you visit it, you can do local content editing from within your browser! If you have more time, you can configure this to work with a 3rd party authenticator and a git backend so you can run it remotely and share it with teammates.
+
+----
+
+
+I've used Netlify CMS (and now Decap CMS) for a bit now, and can highly recommend it!

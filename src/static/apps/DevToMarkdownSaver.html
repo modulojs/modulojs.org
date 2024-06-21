@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<template Modulo>
+    <Component name="MarkdownSaver">
+        <Template>
+            <p>Step 1: <a href="https://dev.to/api/articles/me">View my JSON results</a></p>
+            <p>Step 2: Paste in results below:</p>
+            <textarea [state.bind] name="rawdata"></textarea>
+            <button @click:=script.clear>Clear &times;</button>
+            <button @click:=script.go>Show &rarr;</button>
+            {% if not state.results %}
+                <p>(Paste in your endpoint JSON above to begin)</p>
+            {% else %}
+                {% for i, result in state.results %}
+                    <div>
+                        <button @click:=script.save payload:='{{ i }}'>&darr; Save</button>
+                    <strong>{{ result.title }}</strong> | {{ result.description }}</div>
+                {% endfor %}
+            {% endif %}
+            <p><button @click:=script.downloadAll>Download All &darr;</button></p>
+        </Template>
+        <State
+            rawdata=""
+            results:=null
+        ></State>
+        <StaticData
+            -src="https://pokeapi.co/api/v2/pokemon/bellsprout"
+        ></StaticData>
+        <Script>
+            const boilerplate = '<!DOCTYPE HTML><' +
+                'script Modulo src="/static/js/Modulo.js" -src="/static/"></'+
+                'script><cms-MarkdownPage><script type=md>';
+            const key = 'DevToMarkdownSaver-json';
+
+            function prepareCallback() {
+                if (localStorage.getItem(key)) {
+                    state.rawdata = localStorage.getItem(key);
+                    go();
+                }
+            }
+
+            function clear() {
+                state.rawdata = '';
+                localStorage.setItem(key, state.rawdata);
+            }
+
+            function go() {
+                localStorage.setItem(key, state.rawdata);
+                state.results = JSON.parse(state.rawdata);
+            }
+
+            function save(index) {
+                const article = state.results[index];
+                const fn = article.slug.replace(/-[a-z0-9]{4}$/i, '') + '.html'; // remove hash
+                let header = '';
+                for (const [ key, value ] of Object.entries(article)) {
+                    if (key in { id: 1, body_markdown: 1, user: 1 } || key.includes('count')) {
+                        continue;
+                    }
+                    header += key + ': ' + value + '\n';
+                }
+                const dashes = '---\n';
+                const content = boilerplate + dashes + header + dashes + article.body_markdown;
+                modulo.registry.utils.saveFileAs(fn, content);
+            }
+
+            function downloadAll() {
+                let i = 0;
+                while (state.results && i < state.results.length) {
+                    save(i);
+                    i++;
+                }
+            }
+        </Script>
+        <Style
+            -src="https://unpkg.com/almond.css/dist/almond.lite.min.css"
+        ></Style>
+    </Component>
+</template>
+<script src="https://unpkg.com/mdu.js"></script>
+<x-MarkdownSaver></x-MarkdownSaver>

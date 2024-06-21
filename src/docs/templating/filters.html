@@ -542,12 +542,21 @@ Subtracts the argument from the value. Example:
 ## tagswap
 
 Given a string of HTML code, this will transform that HTML code by doing a
-simple find-and-replace operation, swapping given one or more HTML tags for
-other HTML tags. This is mostly useful when applied to templates (e.g. see
-[renderas filter](#renderas) below), or for doing things like making previews
-of HTML (e.g., substituting real HTML tags with components that generate
-previews). The result will be automatically marked as safe, since the only
-purpose of this tag is to output HTML.
+simple find-and-replace operation, swapping one or more HTML tags for other
+HTML tags. A few examples of uses: Applying to templates (e.g. see [renderas
+filter](#renderas) below), making quick previews of user-inputted HTML by
+substituting real HTML tags with components that generate previews, or
+to get around limitations of HTML with how certain tags behave differently when
+parsing (e.g. see how it's used in the
+[`-filter-content`](/docs/processors.html#filtercontent) _Processor_ to more
+conveniently construct `<table>` tags).
+
+handles content in `<table>` and `<td>`
+tags differently than other tags).
+
+. The
+result will be automatically marked as safe, since the only purpose of this tag
+is to output HTML.
 
 The argument can be in the format of a String (using `=` to indicate
 substitution, separating each one by a space) or an Object. Examples of both
