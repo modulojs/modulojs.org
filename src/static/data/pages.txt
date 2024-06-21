@@ -1,7 +1,7 @@
+src/examples/topics/how-decap-cms-headless.html
+src/examples/topics/learning-about-html-first.html
 src/examples/learn/creating-cpart-classes-action-state-binding.html
 src/examples/learn/word-art-text-picker.html
-src/examples/learn/how-decap-cms-headless.html
-src/examples/learn/learning-about-html-first.html
 src/examples/learn/wave-animation-desgign-tool-web-component.html
 src/examples/learn/two-way-state-binding-global-store.html
 src/examples/learn/creating-3d-extruded-picker.html

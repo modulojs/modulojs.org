@@ -172,6 +172,17 @@ a.cta-btn:active {
     font-size: 2rem;
 }
 
+section.article-list-random .article-title {
+    font-size: 1.5rem;
+    margin-bottom: 70px;
+    display: block;
+}
+
+section.article-list-random img {
+    float: left;
+    width: 160px;
+    margin: 5px;
+}
 
 @media (min-width: 992px) {
     section {

@@ -1,7 +1,7 @@
 
 
 {% if state.ready %}
-<section class="article-list-{{ props.show }} {% if props.show is "random" %}narrow-grid{% endif %}">
+<section class="article-list-{{ props.show }} {% if props.show is "random" %}article-list-random{% endif %}">
 {% for article in state.results %}
     <article>
         {% if article.cover_image %}
@@ -16,13 +16,14 @@
             {% endif %}
         {% endif %}
         <div>
-            {% if props.show is "random" %}
-            {% if article.cover_image %}
-                <img src="{{ article.cover_image }}" alt="Screenshot" style="width: 80px" />
-            {% endif %}
-            {% endif %}
             {% if article.title %}
-              <a class="article-title" href="{{ article.url }}" title="{% if article.description %}{{ article.description }}{% endif %}">{{ article.title }}</a>
+              <a class="article-title" href="{{ article.url }}" title="{% if article.description %}{{ article.description }}{% endif %}">
+                    {% if props.show is "random" %}
+                    {% if article.cover_image %}
+                        <img src="{{ article.cover_image }}" alt="Screenshot" />
+                    {% endif %}
+                    {% endif %}
+              {{ article.title }}</a>
             {% endif %}
         </div>
     </article>

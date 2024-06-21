@@ -45,7 +45,7 @@ Let's start with the classic "MVC TODO" app in Modulo:
         state.list.push(state.text); // add to list
         state.text = ""; // clear input
     }
-</Script>
+/Script>
 ```
 
 Okay, ommitted is a _Template_ CPart (see below for code) that renders an `ol` (ordered list) HTML content using a `{% for %}` template-tag, however the rest consists of state data being declared on a _State_ CPart, while being modified by the `addItem` function defined in the _Script_.
@@ -100,10 +100,10 @@ For a complete example, try saving the snippet below as an HTML file, then open 
             state.list.push(state.text); // add to list
             state.text = ""; // clear input
         }
-    </Script>
+    /Script>
   </Component>
 </template>
-<script src="https://unpkg.com/mdu.js"></script>
+<script src="https://unpkg.com/mdu.js">/script>
 <h1>Shopping list #1:</h1> <x-TodoList></x-TodoList>
 <h1>Shopping list #2:</h1> <x-TodoList></x-TodoList>
 ```

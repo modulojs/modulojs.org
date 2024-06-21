@@ -75,7 +75,7 @@ We can use these steps to start patching up references:
         shopping_list.list.push(state.text); // add to list
         state.text = ""; // clear input
     }
-</Script>
+/Script>
 ```
 
 To recap, the two important things we did with this split: 1) the `-name=` attribute to rename the second shopping list, and 2) that the shopping list then gets used as `shopping_list.list.push()` in the `addItem` function in the `Script` tag.
@@ -125,10 +125,10 @@ For a complete example, try saving the snippet below as an HTML file, then open 
             shopping_list.list.push(state.text); // add to list
             state.text = ""; // clear input
         }
-    </Script>
+    /Script>
   </Component>
 </template>
-<script src="https://unpkg.com/mdu.js"></script>
+<script src="https://unpkg.com/mdu.js">/script>
 <h1>Shopping list #1:</h1> <x-TodoList></x-TodoList>
 <h1>Shopping list #2:</h1> <x-TodoList></x-TodoList>
 ```

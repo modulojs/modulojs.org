@@ -4,7 +4,7 @@
 -->
 
 <!-- Set up a markdown function, using showdown -->
-<script Configuration -src="https://unpkg.com/showdown@2.1.0/dist/showdown.min.js">
+<script Configuration -src="./MarkdownPage/showdown_2.1.0/showdown.min.js">
     function getMarkdownData(source) {
         //source = source.replace(new RegExp('\n```demo', 'i'), '\n<x-DemoEditora value="');
         // TODO: Do a replace ahead of time for syntax highlihgter/ demo editor etc
@@ -128,5 +128,6 @@
     ></Script>
     <Style
         -src="./ArticleList/ArticleList.css"
+        -auto-isolate="vanish"
     ></Style>
 </Component>
