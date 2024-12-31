@@ -1,0 +1,43 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+title: Include
+---
+
+
+# Include
+
+
+Use a _Include_ definition to add in _script_, _link_, _meta_, or _head_
+dependencies.
+
+### Example 1: For script and link dependencies
+
+The simplest way to use `Include` is as a global definition. It will "include"
+it's contents in the head of the document  as soon as Modulo loads. Note that
+it will NEVER include the same thing twice (it uses hashes to identify
+resources).  This mode is great for following tutorials for integrating JS
+projects. 
+
+For example, to include Quill JS, it's as easy as just pasting in the head
+content they give you:
+
+```
+<Include>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+</Include>
+```
+
+
+
+### Example 2: Including meta content
+
+_Include_ can be used for adding meta tags to your page as well:
+
+```
+<Include>
+    <meta name="description" content="A great Modulo website" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="charset" charset="utf8" />
+</Include>
+```
+
