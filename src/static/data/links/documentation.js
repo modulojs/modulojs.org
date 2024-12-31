@@ -142,6 +142,12 @@
                     'component.event', 'component.slot', 'component.dataProp'],
                 },
                 {
+                    label: 'Include',
+                    filename: 'include.html',
+                    keywords: ['head', 'integrating scripts', 'integrating link tags',
+                    'meta tags', 'lazy loading', 'component includes' ],
+                },
+                {
                     label: 'Library',
                     filename: 'library.html',
                     keywords: ['namespace', 'tag alias'],

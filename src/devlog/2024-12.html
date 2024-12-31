@@ -5,12 +5,10 @@ devlog: 2024-12
 
 
 I'm happy to announce the release of Alpha 0.0.73, which brings quite a few new
-handy features, while still keeping it all under 2000 lines of code.
-
-Finally, I'm happy to announce that after extensive "dog-fooding", Modulo is
-getting ready for prime time -- or at least "prime-ish" time!). To communicate
-it's feature stability, the project is ready to transition to a "beta" phase.
-More info on the release plans contained below.
+handy features, while still keeping it all under 2000 lines of code.  This
+release marks the first that starts the process toward a more stable `0.1.0` or
+"beta" release (likely around the `~0.0.75` or `~0.0.80` releases).  More info
+on the release plans contained below.
 
 
 ## Alpha 73
@@ -60,13 +58,17 @@ legacy Apple devices from 2014-2018.
 The simplest way to use `Include` is as a global definition. It will "include"
 it's contents in the head of the document  as soon as Modulo loads. Note that
 it will NEVER include the same thing twice (it uses hashes to identify
-resources).
+resources).  This mode is great for following tutorials for integrating JS
+projects. 
 
-This mode is great for following tutorials for integrating JS projects. You can
-often simply copy and paste whatever you are given into the `Include`, as such:
+For example, to include Quill JS, it's as easy as just pasting in the head
+content they give you:
 
 ```
-<Include></Include>
+<Include>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+</Include>
 ```
 
 
@@ -77,31 +79,18 @@ _Include_ can be used for adding meta tags to your page as well:
 
 ```
 <Include>
-    <meta name="charset" charset="utf8" />
-    <meta name="content-type" http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="A great Modulo website" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="charset" charset="utf8" />
 </Include>
 ```
 
-### Example 3: For NPM dependencies
+### Additional features
 
-One of the most powerful features of _Include_ is the ability to bring in
-packages from NPM (or equivalent), given their package name and a CDN server.
-See below:
-
-```
-<Component>
-    <Include
-        -server="unpkg.com"
-        cke="1.3.4"
-    ></Include>
-    <Template>
-        <textare></textarea>
-    </Template>
-</Component>
-```
-
-Also, note that you can use `-load-mode="lazy"` to make it skip
+Also, note that you can use `-load-mode="lazy"` to make it skip the bundle, and
+only get inserted as-is on page load. This is great for fixing bugs with
+integrating other JS packages, while supporting advanced features like
+JavaScript modules and `import` statements.
 
 
 ### Alpha 73 Deprecation FAQ
@@ -144,8 +133,9 @@ deprecated features will be removed in the first beta release.
 
 This means I am trying my best to avoid having to add or remove any major
 features from "beta" to "1.0".  The goal of the subseuqent beta releases (e.g.,
-`0.2.x`, `0.3.x`), in preparation for a highly-stable, semi-final 1.0 release, are
-to polish
+`0.2.x`, `0.3.x`), in preparation for a highly-stable, semi-final 1.0 release,
+are to polish, stabilize, and provide crystal-clear documentation and
+best-practices.
 
 In the mean time, check out the following early work in progress "teasers" of
 what's in store:
