@@ -1,4 +1,4 @@
-// Copyright 2024 MichaelB | https://modulojs.org | Modulo v0.0.72 | LGPLv3
+// Copyright 2024 MichaelB | https://modulojs.org | Modulo v0.0.73 | LGPLv3
 // Modulo LGPLv3 NOTICE: Any direct modifications to the Modulo.js source code
 // must be LGPL or compatible. It is acceptable to distribute dissimilarly
 // licensed code built with the Modulo framework bundled in the same file for
@@ -17,10 +17,13 @@ window.Modulo = class Modulo {
         this._configSteps = 0; // Used to check for an infinite loop during load
         this.registry = { cparts: { }, coreDefs: { }, utils: { }, core: { },
                            engines: { }, commands: { }, templateFilters: { },
-                           templateTags: { }, processors: { }, elements: { } };
+                           templateTags: { }, processors: { }, elements: { },
+                           events: { }, listeners: { }, send: { } };
+        this.registered = {}; // TODO Have this get populated with injected versions after full config (maybe in a Modulo CodeTemplate -> Main?) -- could just subclass everything and attach modulo etc
         this.config = {}; // Default confs for classes (e.g. all Components)
         this.definitions = {}; // For specific definitions (e.g. one Component)
         this.stores = {}; // Global data store (by default, only used by State)
+        this.fs = new Map(); // Add global ultra-lite "in-memory fs" interface
     }
 
     register(type, cls, defaults = undefined) {
@@ -30,10 +33,12 @@ window.Modulo = class Modulo {
         }
         this.assert(type in this.registry, 'Unknown registry type: ' + type);
         this.registry[type][cls.name] = cls;
+        //this.tools[cls.name] = (...args) => this.registry[type][cls.name](this, ...args); // TODO: FINISH
         if (cls.name[0].toUpperCase() === cls.name[0]) { // e.g. class FooBar
             const conf = this.config[cls.name.toLowerCase()] || {};
             Object.assign(conf, { Type: cls.name }, cls.defaults, defaults);
             this.config[cls.name.toLowerCase()] = conf; // e.g. config.foobar
+            //this.tools[cls.name] = extra => this.instance(conf, extra, new this.registry[type][cls.name]);
         }
     }
 
@@ -166,6 +171,14 @@ window.modulo.registry.registryCallbacks = { // Set up default registry hooks
     },
     processors(modulo, cls) {
         modulo.registry.processors[cls.name.toLowerCase()] = cls; // Alias lower
+    },
+    listeners(modulo, cls) { // Simple sub/pub system
+        const { events, send } = modulo.registry;
+        events[cls.name] = events[cls.name] || []; // Initialize and add
+        events[cls.name].push(cls);
+        send[cls.name] = send[cls.name] || function sender (...args) {
+            return events[cls.name].map(func => func(modulo, ...args));
+        };
     },
     core(modulo, cls) { // Global / core class getting registered
         const lowerName = cls.name[0].toLowerCase() + cls.name.slice(1);
@@ -359,7 +372,7 @@ modulo.register('util', function initComponentClass (modulo, def, cls) {
         this.isModulo = true;
         this.originalHTML = null;
         this.originalChildren = [];
-        this.cparts = modulo.instanceParts(def, { element: this });
+        this.cparts = modulo.instanceParts(def, { element: this }); // Idea: Reduce all properties to just one called "modulo" (or maybe moduloParts)?
     };
     modulo._connectedQueue = modulo._connectedQueue || []; // Ensure array
     modulo._drainQueue = () => { // "Clusters" all moduloMount calls
@@ -643,26 +656,23 @@ modulo.register('coreDef', class Component {
     }
 
     domCallback(renderObj) {
-        const { clone, newNode } = this.modulo.registry.utils;
         let { slots, root, innerHTML, innerDOM } = renderObj.component;
-        if (this.attrs.mode === 'regular' || this.attrs.mode === 'vanish') {
+        if (this.attrs.mode === 'regular' || this.attrs.mode === 'vanish' || this.attrs.mode === 'vanish-into-document') {
             root = this.element; // default, use element as root
         } else if (this.attrs.mode === 'shadow') {
             if (!this.element.shadowRoot) {
                 this.element.attachShadow({ mode: 'open' });
             }
             root = this.element.shadowRoot; // render into attached shadow
-        } else if (this.attrs.mode === 'vanish-into-document') {
-            root = this.element.ownerDocument.body; // render into body
         } else if (!root) {
             this.modulo.assert(this.attrs.mode === 'custom-root', 'Bad mode')
         }
         if (innerHTML !== null && !innerDOM) { // Use component.innerHTML as DOM
-            innerDOM = newNode(innerHTML);
+            innerDOM = this.modulo.registry.utils.newNode(innerHTML);
         }
         if (innerDOM && this.attrs.mode === 'vanish-into-document') {
             for (const el of innerDOM.querySelectorAll('script,link,title,meta')) {
-                this.element.ownerDocument.head.append(clone(el)); // Move clone
+                this.modulo.registry.utils.loadHead(this.modulo, 'bundle', el, {}, this.element.ownerDocument);
                 el.remove(); // Old one is removed from previous location
             }
         }
@@ -696,8 +706,11 @@ modulo.register('coreDef', class Component {
             this._mountPatchset = this._mountPatchset || patches; // 1st render
             this.reconciler.applyPatches(patches); // Apply patches to DOM
         }
-        if (this.attrs.mode === 'vanish') { // If we need to vanish, do it now
+        if (this.attrs.mode === 'vanish') {
             this.element.replaceWith(...this.element.childNodes);
+        } else if (this.attrs.mode === 'vanish-into-document') { // If we need to vanish, do it now // TODO rm vid
+            this.element.ownerDocument.body.innerHTML = '';
+            this.element.ownerDocument.body.append(...this.element.childNodes);
         }
     }
 
@@ -710,16 +723,16 @@ modulo.register('coreDef', class Component {
         }
     }
 
-    eventMount({ el, value, attrName, rawName }) {
+    eventMount({ el, value, attrName, rawName, listen }) {
         const { resolveDataProp } = this.modulo.registry.utils;
         const get = (key, key2) => resolveDataProp(key, el, key2 && get(key2));
         this.modulo.assert(get(attrName), `Not found: ${ rawName }=${ value }`);
         el.moduloEvents = el.moduloEvents || {}; // Attach if not already
-        const listen = ev => { // Define a listen event func to run handleEvent
+        listen = listen ? listen : (ev) => { // Define a event func to run handleEvent
             ev.preventDefault();
             const payload = get(attrName + '.payload', 'payload');
             this.handleEvent(resolveDataProp(attrName, el), payload, ev);
-        };
+        }
         el.moduloEvents[attrName] = listen;
         el.addEventListener(attrName, listen);
     }
@@ -780,18 +793,6 @@ modulo.register('util', function stripWord (text) {
                .replace(/[^a-zA-Z0-9$_\.]$/, '');
 });
 
-modulo.register('util', function clone (el) { // Clones an element
-    const newElement = window.document.createElement(el.tagName);
-    for (const attr of el.attributes) { // Copy all attributes from old elem
-        newElement.setAttributeNode(attr.cloneNode(true)); // ...to new elem
-    }
-    newElement.textContent = el.textContent; // (e.g. <title>Hi</title>)
-    if (el.tagName === 'SCRIPT') { // Need to fix SCRIPT tag fluke
-        newElement.src = el.src; // (TODO: Still needed?)
-    }
-    return newElement;
-});
-
 modulo.register('util', function hash (str) {
     // Simple, insecure, "hashCode()" implementation. Returns base32 hash
     let h = 0;
@@ -806,8 +807,31 @@ modulo.register('util', function hash (str) {
 modulo.register('util', function newNode(innerHTML, tag) {
     const obj = { innerHTML }; // Extra properties to assign
     return Object.assign(window.document.createElement(tag || 'div'), obj);
+}); modulo.registry.utils.makeDiv = modulo.registry.utils.newNode; // TODO: Find and replace wehre this is used
+
+modulo.register('util', function loadHead(modulo, loadMode, elem, knownBundled, doc = null) {
+    doc = doc || window.document;
+    const { newNode, hash } = modulo.registry.utils;
+    const url = elem.getAttribute('src') || elem.getAttribute('href') || null;
+    const id = hash(elem.name || url || elem.textContent);
+    if (doc.getElementById(id) || knownBundled[id]) {
+        return; // already exists, never add twice
+    }
+    knownBundled[id] = loadMode === 'bundle' ? url : false; // (if bundling this)
+    const newElem = newNode(elem.innerHTML, elem.tagName);
+    for (const attr of elem.attributes || []) { // Copy all attributes from old elem
+        newElem.setAttributeNode(attr.cloneNode(true)); // ...to new elem
+    }
+    newElem.setAttribute('id', id); // TODO: Create a "setAttrs" func for this, or enhance newNode
+    if (loadMode !== 'bundle') {
+        newElem.setAttribute('modulo-asset', 'y');
+    }
+    /*if (elem.tagName === 'SCRIPT') { // Need to fix SCRIPT tag fluke
+        newElem.src = elem.src; // (TODO: Still needed?)
+    }*/
+    newElem.textContent = elem.textContent; // Evaluate code
+    doc.head.append(newElem);
 });
-modulo.registry.utils.makeDiv = modulo.registry.utils.newNode; // TODO: Rm alias
 
 modulo.register('util', function normalize(html) {
     // Normalize space to ' ' & trim around tags
@@ -845,7 +869,7 @@ modulo.register('util', function getParentDefPath(modulo, def) {
 });
 
 modulo.register('core', class AssetManager {
-    constructor (modulo) { // TODO: Refactor this class into util / processors
+    constructor (modulo) { // TODO: Delete this, replace with loadHead + extras
         this.modulo = modulo;
         this.stylesheets = {}; // Object with hash of CSS (prevents double add)
         this.cssAssetsArray = []; // List of CSS assets added, in order
@@ -890,8 +914,8 @@ modulo.register('core', class AssetManager {
         }
         const elem = doc.createElement(tagName);
         elem.setAttribute('modulo-asset', 'y'); // Mark as an "asset"
-        doc.head.append(elem);
-        elem.textContent = codeStr; // Blocking, causes eval
+        doc.head.append(elem); // Append the element and eval
+        elem.textContent = codeStr; // ERROR here? This "evals" the code. Check syntax!
     }
 });
 
@@ -1365,10 +1389,10 @@ modulo.register('processor', function contentTXT (modulo, def, value) {
 
 modulo.register('processor', function dataType (modulo, def, value) {
     if (value === '?') { // '?' means determine based on extension
-        const ext = def.Src && def.Src.match(/(?<=\.)[a-z]+$/i);
-        value = ext ? ext[0] : 'json';
+        const ext = def.Src && def.Src.match(/\.([a-z]+)$/i);
+        value = ext ? ext[1] : 'json'; // If extension, use; else use "json"
     }
-    def['Content' + value.toUpperCase()] = value;
+    def['Content' + value.toUpperCase()] = value; // Check for processor
 });
 
 modulo.register('processor', function filterContent (modulo, def, value) {
@@ -1417,6 +1441,41 @@ modulo.register('coreDef', class Configuration { }, {
     DefLoaders: [ 'DefTarget', 'DefinedAs', 'Src|SrcSync', 'Content|Code', 'DefinitionName|MainRequire' ],
 });
 
+modulo.config.include = {
+    GlobalBundled: { },
+    LoadMode: 'bundle',
+    ServerTemplate: 'https://{{ server }}/{{ path }}',
+    TagTemplate: '{% if isCSS %}<link rel="stylesheet" href="{{ url }}" />' +
+                 '{% else %}<script src="{{ url }}"></' + 'script>{% endif %}',
+    DefLoaders: [ 'DefTarget', 'DefinedAs', 'Src', 'Server', 'LoadMode' ], // TODO: Test 'LoadMode' here
+};
+modulo.register('cpart', class Include {
+    static Server(modulo, def, value) { // Loads given Include def
+        const { keyFilter } = modulo.registry.utils;
+        const lower = key => key[0].toLowerCase() === key[0]; // skip "-prefixed"
+        const ctx = { def, modulo, server: value };
+        const render = code => new modulo.registry.cparts.Template(code).render(ctx);
+        def.Content = def.Content || '';
+        for (const [ pkg, v ] of Object.entries(keyFilter(def, lower))) {
+            ctx.path = v.contains('@') ? v : pkg + (v ? ('@' + v) : '');
+            ctx.isCSS = (ctx.path.contains('/') && ctx.path.endsWith('.css'));
+            ctx.url = render(def.ServerTemplate); // Render URL using ServerTemplate
+            def.Content += render(def.TagTemplate); // Append tag to head Content
+        }
+    }
+    static LoadMode(modulo, def, value) { // Loads given Include def
+        const { loadHead, newNode } = modulo.registry.utils;
+        for (const elem of newNode(def.Content).children) { // Loop through combined
+            loadHead(modulo, value, elem, modulo.config.include.GlobalBundled);
+        }
+    }
+    intitializedCallback(renderObj) {
+        const { Include } = this.modulo.registry.cparts; // Can I use self. reliably?
+        Include.LoadMode(this.modulo, this.conf, 'lazy', { }); // Always load if ID not exist
+    }
+});
+modulo.register('coreDef', modulo.registry.cparts.Include); // Allow globally
+
 modulo.config.script = {
     lifecycle: null,
     DefBuilders: [ 'Content|AutoExport', 'CodeTemplate' ],
@@ -1430,7 +1489,7 @@ modulo.config.script = {
         setLocalVariables: function (o) {
             {% for n in def.locals %}{{ n }} = o.{{ n }};{% endfor %}
         }
-    }`.replace(/\s\s+/g, ' '),
+    }`.replace(/\s\s+/g, ' ') /* + '{% if def.Source %}\n//# sourceURL={{ def.Source }}{% endif %}'*/,
 };
 
 modulo.register('cpart', class Script {
@@ -1509,7 +1568,7 @@ modulo.register('cpart', class State {
         return store.data; // TODO: Possibly, push ALL sibling CParts with stateChangedCallback
     }
 
-    bindMount({ el, attrName, value }) {
+    bindMount({ el, attrName, value, listen }) {
         const name = attrName || el.getAttribute('name');
         const val = this.modulo.registry.utils.get(this.data, name);
         this.modulo.assert(val !== undefined, `state.bind "${name}" undefined`);
@@ -1519,9 +1578,9 @@ modulo.register('cpart', class State {
             this.boundElements[name] = [];
         }
         // Bind the "listen" event to propagate to all, and trigger initial vals
-        const listen = () => this.propagate(name, el.value, el);
+        listen = listen ? listen : () => this.propagate(name, el.value, el);
         this.boundElements[name].push([ el, evName, listen ]);
-        el.addEventListener(evName, listen); // todo: make optional, e.g. to support cparts?
+        el.addEventListener(evName, listen); // TODO: Document that it is now optional, e.g. to support cparts or threading
         this.propagate(name, val, this); // trigger initial assignment(s)
     }
 
@@ -1900,32 +1959,38 @@ modulo.register('util', function getAutoExportNames(contents) {
 });
 
 modulo.register('util', function showDevMenu() {
-    const cmd = new URLSearchParams(window.location.search).get('mod-cmd');
-    const rerun = `<h1><a href="?mod-cmd=${ cmd }">&#x27F3; ${ cmd }</a></h1>`;
+    const cmd = new URLSearchParams(window.location.search).get('argv'); // TODO: change to getAll
+    const rerun = `<h1><a href="?argv=${ cmd }">&#x27F3; ${ cmd }</a></h1>`;
     if (cmd) { // Command specified, skip dev menu, run, and replace HTML after
         const callback = () => { window.document.body.innerHTML = rerun; };
         const start = () => modulo.registry.commands[cmd](modulo, { callback });
         return window.setTimeout(start, modulo.config.commandDelay || 1000);
     } // Else: Display "COMMANDS:" menu in console
     const href = 'window.location.href += ';
-    const font = 'font-size: 28px; padding: 0 8px 0 8px; border: 2px solid black;';
+    const font = 'font-size: 28px; padding:0 8px 0 8px; border:2px solid #000;';
     const commandGetters = Object.keys(modulo.registry.commands).map(cmd =>
-        ('get ' + cmd + ' () {' + href + '"?mod-cmd=' + cmd + '";}'));
+        ('get ' + cmd + ' () {' + href + '"?argv=' + cmd + '";}'));
     const clsCode = 'class COMMANDS {' + commandGetters.join('\n') + '}';
     new Function(`console.log('%c%', '${ font }', new (${ clsCode }))`)();
 });
 
+modulo.register('command', function noop () {});
 modulo.register('command', function build (modulo, opts = {}) {
     modulo.preprocessAndDefine(opts.callback, 'BuildCommand');
 });
 
-if (typeof window.moduloBuild === 'undefined') { // Not in a build, try loading
-    if (typeof window.document !== 'undefined') { // Document exists
+if (typeof importScripts === 'function') { // In a Worker script, set up RPC
+    onmessage = (ch, method, args) => ch === 'M' && modulo[method](args);
+    modulo.importScripts = (...args) => importScripts(...args); // Expose import
+} else if (typeof window.moduloBuild === 'undefined') { // Not a build, try load
+    if (new URLSearchParams(window.location.search).get('modulo-load') == 'n') {
+    } if (typeof window.document !== 'undefined') { // Document exists
+        modulo.registry.send.load = modulo.registry.utils.showDevMenu;
         modulo.loadString(modulo._DEVLIB_SOURCE, '_artifact'); // Load dev lib
         modulo.loadFromDOM(window.document.head, null, true); // Blocking load
         window.document.addEventListener('DOMContentLoaded', () => {
             modulo.loadFromDOM(window.document.body, null, true); // Async load
-            modulo.preprocessAndDefine(modulo.registry.utils.showDevMenu);
+            modulo.preprocessAndDefine(() => modulo.registry.send.load());
         });
     } else if (typeof module !== 'undefined') { // Node.js
         module.exports = { modulo, window };

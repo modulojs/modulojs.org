@@ -1,6 +1,6 @@
 <!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
-title: Summer Release
-devlog: 2024-06
+title: Holiday Release
+devlog: 2024-12
 ---
 
 I'm happy to announce the release of Alpha 0.0.73, which brings quite a few new
@@ -28,9 +28,13 @@ packages from NPM (or equivalent), given their package name and a CDN server.
 See below:
 
 ```
-<Include>
-
+<Include
+    -server="unpkg.com"
+    cke="1.3.4"
+></Include>
 ```
+
+
 
 ### Example 2: Including raw content
 
@@ -41,5 +45,30 @@ resources).
 
 This mode is great for following tutorials for integrating JS projects. You can
 often simply copy and paste whatever you are given into the `Include`, as such:
+
+
+## On the road to beta?
+
+
+This release represents one of the last big feature additions until the Modulo
+beta, version 0.1.0! Going forward, the focus will be fully documenting the
+_build_ and _Include_ architecture, for fine-tuning of large, multi-page
+websites that use Modulo.
+
+In the mean time, check out the following sneak peaks of what's in store:
+
+### Coming soon: Modulo in the Wild
+
+The Modulo JS framework, despite still being only "alpha", has now been used to
+power everything from tiny app projects to building out multi-media experiences
+with thousands of users a day. It's time we start showcasing what the (tiny)
+Modulo community has been up to!
+
+### Coming soon: Modulo Studio
+
+The embedded, mini-editor is getting a major facelift, and, more importantly,
+being exposed as a general editor framework! Soon,. 
+
+
 
 
