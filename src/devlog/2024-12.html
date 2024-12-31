@@ -1,0 +1,211 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+title: Release + Beta Info
+devlog: 2024-12
+---
+
+
+I'm happy to announce the release of Alpha 0.0.73, which brings quite a few new
+handy features, while still keeping it all under 2000 lines of code.
+
+Finally, I'm happy to announce that after extensive "dog-fooding", Modulo is
+getting ready for prime time -- or at least "prime-ish" time!). To communicate
+it's feature stability, the project is ready to transition to a "beta" phase.
+More info on the release plans contained below.
+
+
+## Alpha 73
+
+
+### Alpha 73 New Feature
+
+The big new feature is the _Include_ definition. This definition is very
+verstatile, and can be used for including virtually any type of head content,
+including `<script>` tags for raw inclusion of JS, and `<link>` for CSS.
+
+Not only that, but it supports a "NPM-light" sort of usage as well, that allows
+you to quickly include JS and CSS, instantly accessing many NPM packages.
+
+
+### Alpha 73 Deprecations
+
+This is one of the first releases with deprecations. The following features
+will be removed in future versions:
+
+- `mode="vanish-into-document"` - Use `mode="vanish"` and _Include_ instead (see below)
+- `mountRender` Lifecycle - Use `mount` instead
+
+Furthermore, take note about the following changes which will be gradually
+implemented in this and future versions:
+
+- Directives: The `[` and `]` is becoming optional, e.g. `state.bind` and
+  `on.click:=script.count` will now be preferred
+- Artifacts will be changing to _only_ bundle from _Include_ by default,
+  leaving other JS and CSS untouched
+- Default dehydrate/hydrate behavior will no longer hydrate directives in DOM, but
+  instead always attempt to rerender to re-attach directives
+
+
+### Alpha 73 Bug Fixes
+
+Browser support got a big boost: Rewriting some incompatible regex has now
+enabled Safari 11 support, improving Modulo's shim-free support for unsupported
+legacy Apple devices from 2014-2018.
+
+
+
+## Getting started with Alpha 73's include
+
+### Example 1: For script and link dependencies
+
+The simplest way to use `Include` is as a global definition. It will "include"
+it's contents in the head of the document  as soon as Modulo loads. Note that
+it will NEVER include the same thing twice (it uses hashes to identify
+resources).
+
+This mode is great for following tutorials for integrating JS projects. You can
+often simply copy and paste whatever you are given into the `Include`, as such:
+
+```
+<Include></Include>
+```
+
+
+
+### Example 2: Including meta content
+
+_Include_ can be used for adding meta tags to your page as well:
+
+```
+<Include>
+    <meta name="charset" charset="utf8" />
+    <meta name="content-type" http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</Include>
+```
+
+### Example 3: For NPM dependencies
+
+One of the most powerful features of _Include_ is the ability to bring in
+packages from NPM (or equivalent), given their package name and a CDN server.
+See below:
+
+```
+<Component>
+    <Include
+        -server="unpkg.com"
+        cke="1.3.4"
+    ></Include>
+    <Template>
+        <textare></textarea>
+    </Template>
+</Component>
+```
+
+Also, note that you can use `-load-mode="lazy"` to make it skip
+
+
+### Alpha 73 Deprecation FAQ
+
+
+- Q: Why is `vanish-into-document` is being removed? A: We already have `vanish`, and
+  now we also have `Include`, making `vanish-into-document` obsolute as a
+  component render mode.  Some of the changes may seem like steps backward.
+
+- Q: Why the directive syntax change? A: While browsers technically allow those
+  characters, this makes the directive attribute naming convention follow the
+  W3C HTML spec more strictly, which, in practice, enables better
+  compatibility. Otherwise, third-party JS libraries crash when using the
+  stricter `setAttribute` interface on HTML generated from Modulo.
+
+- Q: Why are directives no longer going to be dehydrated? A: Note that  this
+  change will result in slightly less efficient hydration steps in some cases.
+  However, the trade-off is simpler and faster builds, more consistent behavior
+  between development and production, and preventing easy "foot guns" that
+  result in excess re-render during hydration loops. That said, the old
+  behavior will still be available as a recipe for an alternative build
+  command, as it might be a nice tweak to further optimize specific SSG
+  projects.
+
+
+
+
+
+## Beta Teaser: On the road to Modulo JS Beta release!
+
+This release represents one of the last big feature additions until the Modulo
+beta, `Modulo.js v0.1.0`! Going forward, the focus will be fully documenting
+the _build_ and _Include_ architecture, for fine-tuning of large, multi-page
+websites that use Modulo.
+
+I expect this release, and the next few releases, to be among the last alpha
+releases. The remaining alphas will continue to support the deprecated
+features, but as soon as the new replacements are finished and documented, the
+deprecated features will be removed in the first beta release.
+
+This means I am trying my best to avoid having to add or remove any major
+features from "beta" to "1.0".  The goal of the subseuqent beta releases (e.g.,
+`0.2.x`, `0.3.x`), in preparation for a highly-stable, semi-final 1.0 release, are
+to polish
+
+In the mean time, check out the following early work in progress "teasers" of
+what's in store:
+
+### Coming soon: Modulo Studio
+
+The embedded, mini-editor is getting a major remix with the Modulo JS Beta
+release.  This enables all Modulo users to take advantage of it's
+ultra-minimalist structure, as an easy-to-use "glue" to combine editors,
+previewers and in-browser emulators, and more. This creates an ultra-simple set
+of building-blocks for IDEs, embedded editors, and even graphical WYZIWIG
+editors.
+
+For example, a simple website editor IDE might be assembled as such:
+
+```
+<Component name="WebEditor">
+  <!-- Include some core editor HTML and CSS -->
+  <Template -src="./parts/EditorBase.html"></Template>
+  <Style -src="./parts/EditorBase.css"></Style>
+
+  <!-- Include the Virtual Browser part, which enables a preview -->
+  <VBrowser></VBrowser>
+
+  <!-- Load a sample website into the virtual browser -->
+  <Template
+      -file="index.html"
+      -name="index_template"
+      -default-view
+      -default-edit>
+        <h1>Hello web world!</h1>
+        <p>Edit me...</p>
+  </Template>
+
+  <!-- Define menus, buttons, etc -->
+  <Template
+      -button="run"
+      -button-emoji="&#x27F3;"
+      -button-click="vbrowser.refresh"
+      -name="run_button_template"
+  ><!-- (a "re-run" button) --></Template>
+</Component>
+```
+
+WIP teaser:
+<https://modulo.codeberg.page/studio.html>
+
+
+
+### Coming soon: New, clean Modulo repo
+
+The Modulo [beta branch](https://codeberg.org/modulo/modulo) is being developed
+on Codeberg.  Once complete, this minimalist repo structure will become the
+main repo, and the GitHub repo will be deprecated.
+
+
+
+### Coming soon: Modulo in the Wild
+
+The Modulo JS framework, despite still being only "alpha", has now been used to
+power everything from tiny app projects to building out multi-media experiences
+with thousands of users a day. It's time we start showcasing what the (tiny)
+Modulo community has been up to! There are _dozens_ of us! _Dozens!_

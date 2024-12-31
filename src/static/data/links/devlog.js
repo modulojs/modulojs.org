@@ -1,6 +1,10 @@
 {
     articles: [
         {
+            file: "devlog/2024-12.html",
+            title: "release; beta"
+        },
+        {
             file: "devlog/2024-05.html",
             title: "14 new tutorials"
         },
