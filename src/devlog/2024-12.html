@@ -1,17 +1,18 @@
 <!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
-title: Release + Beta Info
+title: Holiday Release
 devlog: 2024-12
 ---
 
 
-I'm happy to announce the release of Alpha 0.0.73, which brings quite a few new
-handy features, while still keeping it all under 2000 lines of code.  This
-release marks the first that starts the process toward a more stable `0.1.0` or
+Happy Holidays, all! I added the finishing touches and pushed out the newest
+batch of improvements, fixes, and new features.
+This release marks the first that starts the process toward a more stable `0.1.0` or
 "beta" release (likely around the `~0.0.75` or `~0.0.80` releases).  More info
-on the release plans contained below.
+on the release plans contained below. Here's to a fantastic 2025!
 
 
 ## Alpha 73
+
 
 
 ### Alpha 73 New Feature
@@ -119,12 +120,13 @@ JavaScript modules and `import` statements.
 
 
 
-## Beta Teaser: On the road to Modulo JS Beta release!
+## Beta Road Map: On the road to stability!
 
 This release represents one of the last big feature additions until the Modulo
 beta, `Modulo.js v0.1.0`! Going forward, the focus will be fully documenting
 the _build_ and _Include_ architecture, for fine-tuning of large, multi-page
-websites that use Modulo.
+websites that use Modulo. Furthermore, the Component Part extension interface
+will get fully documented.
 
 I expect this release, and the next few releases, to be among the last alpha
 releases. The remaining alphas will continue to support the deprecated
@@ -137,65 +139,3 @@ features from "beta" to "1.0".  The goal of the subseuqent beta releases (e.g.,
 are to polish, stabilize, and provide crystal-clear documentation and
 best-practices.
 
-In the mean time, check out the following early work in progress "teasers" of
-what's in store:
-
-### Coming soon: Modulo Studio
-
-The embedded, mini-editor is getting a major remix with the Modulo JS Beta
-release.  This enables all Modulo users to take advantage of it's
-ultra-minimalist structure, as an easy-to-use "glue" to combine editors,
-previewers and in-browser emulators, and more. This creates an ultra-simple set
-of building-blocks for IDEs, embedded editors, and even graphical WYZIWIG
-editors.
-
-For example, a simple website editor IDE might be assembled as such:
-
-```
-<Component name="WebEditor">
-  <!-- Include some core editor HTML and CSS -->
-  <Template -src="./parts/EditorBase.html"></Template>
-  <Style -src="./parts/EditorBase.css"></Style>
-
-  <!-- Include the Virtual Browser part, which enables a preview -->
-  <VBrowser></VBrowser>
-
-  <!-- Load a sample website into the virtual browser -->
-  <Template
-      -file="index.html"
-      -name="index_template"
-      -default-view
-      -default-edit>
-        <h1>Hello web world!</h1>
-        <p>Edit me...</p>
-  </Template>
-
-  <!-- Define menus, buttons, etc -->
-  <Template
-      -button="run"
-      -button-emoji="&#x27F3;"
-      -button-click="vbrowser.refresh"
-      -name="run_button_template"
-  ><!-- (a "re-run" button) --></Template>
-</Component>
-```
-
-WIP teaser:
-<https://modulo.codeberg.page/studio.html>
-
-
-
-### Coming soon: New, clean Modulo repo
-
-The Modulo [beta branch](https://codeberg.org/modulo/modulo) is being developed
-on Codeberg.  Once complete, this minimalist repo structure will become the
-main repo, and the GitHub repo will be deprecated.
-
-
-
-### Coming soon: Modulo in the Wild
-
-The Modulo JS framework, despite still being only "alpha", has now been used to
-power everything from tiny app projects to building out multi-media experiences
-with thousands of users a day. It's time we start showcasing what the (tiny)
-Modulo community has been up to! There are _dozens_ of us! _Dozens!_

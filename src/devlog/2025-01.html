@@ -1,0 +1,169 @@
+<!DOCTYPE HTML><script Modulo src="/static/js/Modulo.js" -src="/static/"></script><cms-MarkdownPage><script type=md>---
+title: Update + Beta Info
+devlog: 2025-01
+---
+
+
+I'm happy to announce the release of Alpha 0.0.74, which documents and fixes some 
+much needed tweaks to Alpha 73, while still keeping it all under 2000 lines of code.
+These are essential to continue to move to _Include_-focused architecture.
+
+
+## Alpha 74
+
+
+### Alpha 74 New Feature
+
+The big new feature from the last release is the _Include_ definition.
+
+Previously, we only focused on it being used to include LINK
+
+Not only that, but it supports a "NPM-light" sort of usage as well, that allows
+you to quickly include JS and CSS, instantly accessing many NPM packages.
+
+### New behavior: Blocking by default.
+
+New behavior: _Includes_ are now blocking by default. To disable this behavior, use `async`.
+
+By default, _Include_ blocks loading. This means that _Configuration_ scripts can freely reference
+things loaded. This can be disabled with the `-async:=true` setting. See below:
+
+```
+<Include -async:=true>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+</Include>
+<script Configuration>
+    console.log(window.Quill) // will be undefined    
+/script>
+```
+
+However, without `-async`, the _Include_ becomes blocking. So, the following would work as intended:
+
+```
+<Include> <!-- defaults to -async:=false -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+</Include>
+<script Configuration>
+    // Modulo will pause everything until the quill script's onload event fires
+    console.log(window.Quill) // Will be defined, since the script is loaded
+/script>
+```
+
+
+
+### New settings: `-load-mode` and Component includes
+
+### Example 1: Un-bundled include
+
+By default, `-load-mode="bundled"`. However, you can set it to `-load-mode="lazy"` to make it only
+load later.
+
+```
+<Include -load-mode="lazy">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+</Include>
+<script Configuration>
+    console.log(window.Quill) // Will be defined, but when built, will not be in bundle (will be separate tag)
+/script>
+```
+
+
+### Example 2: Component includes
+
+Includes can now be embedded in `<Component>` as well:
+
+```
+<Component>
+    <Include -load-mode="lazy">
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js">/script>
+    </Include>
+</Component>
+```
+
+This is super useful when combined with load-modes, since then you can have certain JavaScript or CSS only
+load when a component first appears.
+
+### New settings: `-server` for package management
+
+
+Use `-server="..."` - use for packages from NPM. Thus, _Include_ can be used kind of like
+a simple `package.json`-type version locking system. See the following:
+
+```
+<Include
+    -server="unpkg.com"
+    my-package="3.2.5"
+    my-other-package="5.2.3"
+></Include>
+```
+
+
+
+
+## Modulo Beta Teaser - Coming soon!
+
+These last releases represent some of the last big feature additions until the Modulo
+beta, `Modulo.js v0.1.0`!  In the mean time, check out the following early work in
+progress "teasers" of what's in store:
+
+### Coming soon: Modulo Studio
+
+The embedded, mini-editor is getting a major remix with the Modulo JS Beta
+release.  This enables all Modulo users to take advantage of it's
+ultra-minimalist structure, as an easy-to-use "glue" to combine editors,
+previewers and in-browser emulators, and more. This creates an ultra-simple set
+of building-blocks for IDEs, embedded editors, and even graphical WYZIWIG
+editors.
+
+For example, a simple website editor IDE might be assembled as such:
+
+```
+<Component name="WebEditor">
+  <!-- Include some core editor HTML and CSS -->
+  <Template -src="./parts/EditorBase.html"></Template>
+  <Style -src="./parts/EditorBase.css"></Style>
+
+  <!-- Include the Virtual Browser part, which enables a preview -->
+  <VBrowser></VBrowser>
+
+  <!-- Load a sample website into the virtual browser -->
+  <Template
+      -file="index.html"
+      -name="index_template"
+      -default-view
+      -default-edit>
+        <h1>Hello web world!</h1>
+        <p>Edit me...</p>
+  </Template>
+
+  <!-- Define menus, buttons, etc -->
+  <Template
+      -button="run"
+      -button-emoji="&#x27F3;"
+      -button-click="vbrowser.refresh"
+      -name="run_button_template"
+  ><!-- (a "re-run" button) --></Template>
+</Component>
+```
+
+WIP teaser:
+<https://modulo.codeberg.page/studio.html>
+
+
+
+### Coming soon: New, clean Modulo repo
+
+The Modulo [beta branch](https://codeberg.org/modulo/modulo) is being developed
+on Codeberg.  Once complete, this minimalist repo structure will become the
+main repo, and the GitHub repo will be deprecated.
+
+
+
+### Coming soon: Modulo in the Wild
+
+The Modulo JS framework, despite still being only "alpha", has now been used to
+power everything from tiny app projects to building out multi-media experiences
+with thousands of users a day. It's time we start showcasing what the (tiny)
+Modulo community has been up to! There are _dozens_ of us! _Dozens!_

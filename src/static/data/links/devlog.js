@@ -1,8 +1,12 @@
 {
     articles: [
+        //{
+        //    file: "devlog/2024-12.html",
+        //    title: "update; beta"
+        //},
         {
             file: "devlog/2024-12.html",
-            title: "release; beta"
+            title: "holiday release"
         },
         {
             file: "devlog/2024-05.html",
